@@ -1,12 +1,18 @@
 import { BrowserRouter } from 'react-router-dom';
-import AppRoutes from './routes/routes';
-import './index.css';
+import { Suspense } from 'react';
+import Routes from './routes';
+import { AuthProvider } from './hooks/useAuth';
+import LoadingSpinner from './components/common/LoadingSpinner';
 
 function App() {
   return (
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Suspense fallback={<LoadingSpinner />}>
+          <Routes />
+        </Suspense>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

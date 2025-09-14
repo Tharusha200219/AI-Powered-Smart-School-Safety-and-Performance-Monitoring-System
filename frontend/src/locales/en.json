@@ -1,13 +1,80 @@
 {
-  "navbar": {
-    "home": "Home",
-    "features": "Features",
-    "contact": "Contact"
+  "header": {
+    "title": "School Safety System",
+    "login": "Login",
+    "logout": "Logout",
+    "admin_dashboard": "Admin Dashboard",
+    "security_dashboard": "Security Dashboard",
+    "teacher_dashboard": "Teacher Dashboard",
+    "student_dashboard": "Student Dashboard"
   },
-  "hero": {
-    "title": "Power Your HR with Our Modern HRM Solution",
-    "description": "Featuring over 500,000 screens and 1,000+ iOS, Android & Web apps - New content weekly.",
-    "join": "Join for Free",
-    "plans": "See our Plans"
+  "sidebar": {
+    "navigation": "Navigation",
+    "threats": "Threats",
+    "seating": "Seating Arrangements",
+    "performance": "Performance Predictions",
+    "threat_alerts": "Threat Alerts",
+    "objects": "Left-Behind Objects",
+    "quizzes": "Generate Quizzes",
+    "class_performance": "Class Performance",
+    "daily_quiz": "Daily Quiz",
+    "my_performance": "My Performance",
+    "user_management": "User Management"
+  },
+  "login": {
+    "title": "Login",
+    "username": "Username",
+    "password": "Password",
+    "submit": "Login",
+    "error": "Login failed: {{message}}"
+  },
+  "dashboard": {
+    "admin_title": "Admin Dashboard",
+    "security_title": "Security Dashboard",
+    "teacher_title": "Teacher Dashboard",
+    "student_title": "Student Dashboard",
+    "recent_threats": "Recent Threats",
+    "no_threats": "No recent threats",
+    "seating": "Seating Arrangements",
+    "seating_info": "View and manage seating plans",
+    "threat_alerts": "Threat Alerts",
+    "no_alerts": "No active alerts",
+    "class_performance": "Class Performance",
+    "no_performance": "No data available",
+    "daily_quiz": "Daily Quiz",
+    "no_quiz": "No quiz available",
+    "not_logged_in": "Please log in to view the dashboard"
+  },
+  "user_management": {
+    "title": "User Management",
+    "add_user": "Add User",
+    "username": "Username",
+    "password": "Password",
+    "role": "Role",
+    "permissions": "Permissions",
+    "submit": "Create User",
+    "update": "Update",
+    "delete": "Delete",
+    "error": "Error: {{message}}",
+    "success": "User {{action}} successfully",
+    "view_threats": "View Threats",
+    "manage_users": "Manage Users",
+    "view_performance": "View Performance",
+    "manage_seating": "Manage Seating",
+    "generate_quizzes": "Generate Quizzes",
+    "view_objects": "View Left-Behind Objects",
+    "take_quiz": "Take Quiz",
+    "view_own_performance": "View Own Performance"
+  },
+  "unauthorized": {
+    "title": "Unauthorized",
+    "message": "You do not have permission to access this page"
+  },
+  "not_found": {
+    "title": "404 - Page Not Found",
+    "message": "The page you are looking for does not exist"
+  },
+  "footer": {
+    "copyright": "© 2025 School Safety System. All rights reserved."
   }
 }
