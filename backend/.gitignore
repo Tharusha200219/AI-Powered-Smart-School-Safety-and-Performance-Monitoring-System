@@ -1,0 +1,44 @@
+# Virtual environments
+
+venv/
+
+env/
+ 
+# Python bytecode and cache files
+
+__pycache__/
+
+*.pyc
+
+*.pyd
+
+*.pyo
+ 
+# IDE specific files
+
+.idea/
+
+.vscode/
+ 
+# Build and distribution files
+
+build/
+
+dist/
+
+*.egg-info/
+
+*.egg
+
+*.whl
+ 
+# Log files and local databases
+
+*.log
+
+*.sqlite3
+ 
+# Configuration files (if they contain sensitive data)
+
+.env
+ 
