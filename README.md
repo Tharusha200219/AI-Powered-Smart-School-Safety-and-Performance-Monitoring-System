@@ -301,3 +301,10 @@ Follow coding standards (PEP 8 for Python, ESLint for JavaScript).
 Submit pull requests with clear descriptions.
 
 For issues or contributions, contact the team via [repository issues](/issues).
+
+
+Python completelu Uninstall in windows
+choco uninstall python -y
+
+Then reinstall python
+choco install python -y
