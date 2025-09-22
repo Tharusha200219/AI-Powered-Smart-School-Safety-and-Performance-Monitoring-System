@@ -1,59 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('css')
-    <style>
-        .stat-card {
-            transition: all 0.3s ease;
-            border-radius: 12px;
-            border: none;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1rem;
-        }
-
-        .recent-activity-item {
-            transition: all 0.2s ease;
-            border-radius: 8px;
-            padding: 0.75rem;
-            margin-bottom: 0.5rem;
-            border: 1px solid #f0f2f5;
-        }
-
-        .recent-activity-item:hover {
-            background-color: #f8f9fa;
-            border-color: #dee2e6;
-        }
-
-        .grade-chart {
-            height: 300px;
-        }
-
-        .progress-ring {
-            width: 80px;
-            height: 80px;
-        }
-
-        .dashboard-title {
-            background: #06C167;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 700;
-        }
-    </style>
+    @vite('resources/css/admin/dashboard.css')
 @endsection
 
 @section('content')
@@ -320,26 +268,5 @@
 @endsection
 
 @section('js')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add some interactive animations
-            const statCards = document.querySelectorAll('.stat-card');
-
-            statCards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-5px) scale(1.02)';
-                });
-
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0) scale(1)';
-                });
-            });
-
-            // Auto-refresh data every 5 minutes
-            setInterval(function() {
-                // You can add AJAX calls here to refresh statistics
-                console.log('Dashboard data refresh...');
-            }, 300000);
-        });
-    </script>
+    @vite('resources/js/admin/dashboard.js')
 @endsection

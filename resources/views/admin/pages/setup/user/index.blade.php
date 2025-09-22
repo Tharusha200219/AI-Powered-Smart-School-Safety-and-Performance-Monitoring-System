@@ -4,12 +4,7 @@
 
 
 @section('css')
-    <style>
-        .dropdown-menu::before,
-        .dropdown-menu::after {
-            display: none !important;
-        }
-    </style>
+    @vite('resources/css/admin/tables.css')
 @endsection
 
 
