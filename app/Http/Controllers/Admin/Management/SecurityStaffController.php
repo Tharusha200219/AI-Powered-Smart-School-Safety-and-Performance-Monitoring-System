@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Management;
 
 use App\Http\Controllers\Controller;
+use App\Traits\CreatesNotifications;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Hash;
 
 class SecurityStaffController extends Controller
 {
+    use CreatesNotifications;
     protected SecurityStaffRepositoryInterface $repository;
     protected $parentViewPath = 'admin.pages.management.security.';
     protected $parentRoutePath = 'admin.management.security.';
@@ -115,6 +117,9 @@ class SecurityStaffController extends Controller
             }
 
             $security = $this->repository->create($securityData);
+
+            // Create notification for security staff creation
+            $this->notifyCreated('SecurityStaff', $security);
 
             DB::commit();
 

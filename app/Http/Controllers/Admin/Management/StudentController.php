@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Management;
 
 use App\Http\Controllers\Controller;
+use App\Traits\CreatesNotifications;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -22,6 +23,7 @@ use Illuminate\Support\Facades\Hash;
 
 class StudentController extends Controller
 {
+    use CreatesNotifications;
     protected StudentRepositoryInterface $repository;
     protected SchoolClassRepositoryInterface $classRepository;
     protected SubjectRepositoryInterface $subjectRepository;
@@ -178,6 +180,9 @@ class StudentController extends Controller
             }
 
             $student = $this->repository->create($studentData);
+
+            // Create notification for student creation
+            $this->notifyCreated('Student', $student);
 
             // Create parents if provided
             $parentIds = [];
@@ -341,6 +346,9 @@ class StudentController extends Controller
 
             $this->repository->update($id, $studentData);
 
+            // Create notification for student update
+            $this->notifyUpdated('Student', $student);
+
             // Update parents
             $existingParentIds = $request->input('existing_parents', []);
             $linkedParentIds = $request->input('parents', []);
@@ -433,6 +441,9 @@ class StudentController extends Controller
                 flashResponse('Student not found.', 'danger');
                 return Redirect::back();
             }
+
+            // Create notification for student deletion (before deletion)
+            $this->notifyDeleted('Student', $student);
 
             // Delete user account
             $student->user->delete();

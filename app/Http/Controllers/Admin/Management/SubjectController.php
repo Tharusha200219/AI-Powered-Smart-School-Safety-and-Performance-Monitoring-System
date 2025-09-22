@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Management;
 
 use App\Http\Controllers\Controller;
+use App\Traits\CreatesNotifications;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -14,6 +15,7 @@ use App\Enums\Status;
 
 class SubjectController extends Controller
 {
+    use CreatesNotifications;
     protected SubjectRepositoryInterface $repository;
     protected $parentViewPath = 'admin.pages.management.subjects.';
     protected $parentRoutePath = 'admin.management.subjects.';
@@ -74,6 +76,9 @@ class SubjectController extends Controller
 
             $subject = $this->repository->create($request->all());
 
+            // Create notification for subject creation
+            $this->notifyCreated('Subject', $subject);
+
             DB::commit();
 
             flashResponse('Subject created successfully.', 'success');
@@ -124,6 +129,9 @@ class SubjectController extends Controller
 
             $this->repository->update($id, $request->all());
 
+            // Create notification for subject update
+            $this->notifyUpdated('Subject', $subject);
+
             DB::commit();
 
             flashResponse('Subject updated successfully.', 'success');
@@ -147,6 +155,9 @@ class SubjectController extends Controller
                 flashResponse('Subject not found.', 'danger');
                 return Redirect::back();
             }
+
+            // Create notification for subject deletion (before deletion)
+            $this->notifyDeleted('Subject', $subject);
 
             $this->repository->delete($id);
 

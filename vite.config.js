@@ -26,6 +26,7 @@ export default defineConfig({
         "resources/js/admin/dashboard.js",
         "resources/js/admin/student-form.js",
         "resources/js/admin/student-table.js",
+        "resources/js/admin/notifications.js",
 
         // Component JavaScript files
         "resources/js/components/notifications.js",
