@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Management;
 
 use App\Http\Controllers\Controller;
+use App\Traits\CreatesNotifications;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -20,6 +21,7 @@ use Illuminate\Support\Facades\Hash;
 
 class TeacherController extends Controller
 {
+    use CreatesNotifications;
     protected TeacherRepositoryInterface $repository;
     protected SubjectRepositoryInterface $subjectRepository;
     protected $parentViewPath = 'admin.pages.management.teachers.';
@@ -132,6 +134,9 @@ class TeacherController extends Controller
 
             $teacher = $this->repository->create($teacherData);
 
+            // Create notification for teacher creation
+            $this->notifyCreated('Teacher', $teacher);
+
             // Assign subjects if provided
             if ($request->has('subjects') && !empty($request->subjects)) {
                 $this->repository->assignSubjects($teacher->teacher_id, $request->subjects);
@@ -233,6 +238,9 @@ class TeacherController extends Controller
 
             $this->repository->update($id, $teacherData);
 
+            // Create notification for teacher update
+            $this->notifyUpdated('Teacher', $teacher);
+
             // Update subjects
             if ($request->has('subjects')) {
                 $this->repository->assignSubjects($teacher->teacher_id, $request->subjects ?? []);
@@ -261,6 +269,9 @@ class TeacherController extends Controller
                 flashResponse('Teacher not found.', 'danger');
                 return Redirect::back();
             }
+
+            // Create notification for teacher deletion (before deletion)
+            $this->notifyDeleted('Teacher', $teacher);
 
             // Delete user account
             $teacher->user->delete();

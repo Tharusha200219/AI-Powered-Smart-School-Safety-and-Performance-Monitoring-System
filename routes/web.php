@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\Management\StudentController;
 use App\Http\Controllers\Admin\Management\TeacherController;
 use App\Http\Controllers\Admin\Management\ParentController;
@@ -133,6 +134,15 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::post('/update', 'update')->name('update');
             });
+        });
+
+        // Notification API routes
+        Route::prefix('notifications')->name('notifications.')->controller(NotificationController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/mark-as-read', 'markAsRead')->name('mark-as-read');
+            Route::post('/mark-all-as-read', 'markAllAsRead')->name('mark-all-as-read');
+            Route::get('/unread-count', 'getUnreadCount')->name('unread-count');
+            Route::delete('/{id}', 'destroy')->name('destroy');
         });
     });
 });
