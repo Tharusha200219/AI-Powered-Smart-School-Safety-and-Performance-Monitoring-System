@@ -1,29 +1,24 @@
-# dependencies
+/.phpunit.cache
 /node_modules
-
-# testing
-/coverage
-
-# production
-/build
-/dist
-/out
-/public
-
-# misc
-.DS_Store
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/vendor
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.idea/
-.vscode/
-*.log
-*.tgz
-*.pnpm-debug.log
-.cache/
-.next/ # For Next.js projects
+.env.backup
+.env.production
+.phpactor.json
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+/auth.json
+/.fleet
+/.idea
+/.nova
+/.vscode
+/.zed
+node_modules
