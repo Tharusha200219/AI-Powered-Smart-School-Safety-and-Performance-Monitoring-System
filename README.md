@@ -1,310 +1,279 @@
-AI-Powered Smart School Safety and Performance Monitoring System
-This project is a web-based application for school safety and performance monitoring, featuring AI-powered threat detection, attendance tracking, performance analytics, and quiz generation. It includes a FastAPI backend with MySQL and a React frontend with Vite and Tailwind CSS. The system supports role-based access control (RBAC) for admins, teachers, security personnel, and students, with internationalization (i18n) support.
-Features
+# School Management System
 
-Role-Based Access:
-Admin: Manage users, view threats, seating arrangements, and performance predictions.
-Security: Monitor threat alerts and left-behind objects.
-Teacher: Generate quizzes and view class performance.
-Student: Take quizzes and view personal performance.
+A comprehensive school management system built with Laravel framework for managing students, teachers, classes, security staff, and other school operations.
 
+## 🚀 Quick Setup Guide
 
-AI Integration: Threat detection and performance analytics (placeholder endpoints).
-IoT Integration: Attendance tracking (placeholder endpoints).
-Internationalization: English translations with extensible language support.
-Security: JWT authentication, password hashing, and permission-based access.
+Follow these step-by-step instructions to get the project running on your local machine.
 
-Prerequisites
-Before setting up the project, ensure you have the following installed:
+### Prerequisites
 
-Python 3.8+:
-Windows: Download from python.org or Microsoft Store.
-Mac: Install via Homebrew (brew install python) or python.org.
+Before you begin, make sure you have the following installed on your system:
 
+#### For Windows:
 
-Node.js 18+:
-Windows/Mac: Download from nodejs.org or use Homebrew on Mac (brew install node).
+-   **PHP 8.2 or higher** - [Download from php.net](https://www.php.net/downloads)
+-   **Composer** - [Download from getcomposer.org](https://getcomposer.org/download/)
+-   **Node.js (18+)** - [Download from nodejs.org](https://nodejs.org/)
+-   **Git** - [Download from git-scm.com](https://git-scm.com/)
 
+#### For Mac:
 
-MySQL 8.0+:
-Windows: Download from mysql.com or use WSL.
-Mac: Install via Homebrew (brew install mysql).
+```bash
+# Install Homebrew if you haven't already
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
+# Install required packages
+brew install php@8.2
+brew install composer
+brew install node
+brew install git
+```
 
-Git: For cloning the repository.
-Code Editor: VS Code recommended.
+### 📋 Setup Instructions
 
-Project Structure
-AI-Powered-Smart-School-Safety-and-Performance-Monitoring-System/
-├── backend/              # FastAPI backend
-│   ├── app/
-│   │   ├── models/       # SQLAlchemy models
-│   │   ├── routers/      # API endpoints
-│   │   ├── seeders/      # Database seeders
-│   │   ├── database.py   # Database configuration
-│   │   ├── main.py       # FastAPI entry point
-│   ├── .env              # Environment variables
-├── frontend/             # React frontend
-│   ├── src/
-│   │   ├── components/   # React components
-│   │   ├── locales/      # Translation files
-│   │   ├── routes/       # React Router routes
-│   │   ├── services/     # API services
-│   ├── .env             # Frontend environment variables
-├── README.md            # This file
+#### Step 1: Clone or Download the Project
 
-Setup Instructions
-1. Clone the Repository
-Clone the project to your local machine:
+```bash
+# If using Git
 git clone <repository-url>
-cd AI-Powered-Smart-School-Safety-and-Performance-Monitoring-System
+cd school-management-system
 
-2. Set Up the Backend (FastAPI)
-The backend requires Python, MySQL, and dependencies.
-Windows
+# Or simply extract the downloaded zip file and navigate to the folder
+cd path/to/your/project
+```
 
-Install Python:
+#### Step 2: Install PHP Dependencies
 
-Download and install Python 3.8+ from python.org.
-Ensure Python is added to PATH during installation.
-Verify: python --version
+```bash
+composer install
+```
 
+#### Step 3: Install Node.js Dependencies
 
-Install MySQL:
-
-Download MySQL Community Server from mysql.com.
-Follow the installer, set a root password, and start the MySQL service.
-Verify: mysql -u root -p
-
-
-Set Up Virtual Environment:
-cd backend
-python -m venv venv
-.\venv\Scripts\activate
-
-
-Install Dependencies:
-pip install fastapi uvicorn sqlalchemy pymysql python-dotenv python-jose[cryptography] passlib[bcrypt] python-multipart
-
-
-Configure Environment Variables:
-
-Create a backend/.env file:DB_USER=root
-DB_PASSWORD=your_mysql_password
-DB_HOST=localhost
-DB_NAME=school_safety_db
-SECRET_KEY=your-secret-key-32-characters-long
-
-
-Generate a SECRET_KEY:python -c "import secrets; print(secrets.token_hex(16))"
-
-
-
-
-Set Up MySQL Database:
-
-Create the database:mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS school_safety_db;"
-
-
-
-
-Create Database Tables:
-python -c "from app.database import Base, engine; Base.metadata.create_all(bind=engine)"
-
-
-Seed Default Admin User:
-
-Creates an admin user (admin/admin123):python -m app.seeders.seed_admin
-
-
-
-
-Run the Backend:
-uvicorn app.main:app --host 0.0.0.0 --port 8000
-
-
-Access API docs at http://localhost:8000/docs.
-
-
-
-Mac
-
-Install Python:
-
-Install via Homebrew:brew install python
-
-
-Verify: python3 --version
-
-
-Install MySQL:
-
-Install via Homebrew:brew install mysql
-brew services start mysql
-
-
-Set up root password:mysql_secure_installation
-
-
-Verify: mysql -u root -p
-
-
-Set Up Virtual Environment:
-cd backend
-python3 -m venv venv
-source venv/bin/activate
-
-
-Install Dependencies:
-pip install fastapi uvicorn sqlalchemy pymysql python-dotenv python-jose[cryptography] passlib[bcrypt] python-multipart
-
-
-Configure Environment Variables:
-
-Create a backend/.env file:DB_USER=root
-DB_PASSWORD=your_mysql_password
-DB_HOST=localhost
-DB_NAME=school_safety_db
-SECRET_KEY=your-secret-key-32-characters-long
-
-
-Generate a SECRET_KEY:python3 -c "import secrets; print(secrets.token_hex(16))"
-
-
-
-
-Set Up MySQL Database:
-
-Create the database:mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS school_safety_db;"
-
-
-
-
-Create Database Tables:
-python3 -c "from app.database import Base, engine; Base.metadata.create_all(bind=engine)"
-
-
-Seed Default Admin User:
-
-Creates an admin user (admin/admin123):python3 -m app.seeders.seed_admin
-
-
-
-
-Run the Backend:
-uvicorn app.main:app --host 0.0.0.0 --port 8000
-
-
-Access API docs at http://localhost:8000/docs.
-
-
-
-3. Set Up the Frontend (React)
-The frontend requires Node.js and npm.
-Windows/Mac
-
-Install Node.js:
-
-Windows: Download from nodejs.org.
-Mac: Install via Homebrew:brew install node
-
-
-Verify: node --version and npm --version
-
-
-Install Dependencies:
-cd frontend
+```bash
 npm install
+```
 
+#### Step 4: Environment Configuration
 
-Configure Environment Variables:
+```bash
+# Copy the environment file
+cp .env.example .env
 
-Create a frontend/.env file:VITE_API_URL=http://localhost:8000
+# Generate application key
+php artisan key:generate
+```
 
+#### Step 5: Configure Your Environment
 
+Edit the `.env` file with your preferred settings:
 
+```bash
+APP_NAME="School Management System"
+APP_URL=http://localhost:8000
 
-Run the Frontend:
+# Database Configuration (SQLite is used by default)
+DB_CONNECTION=sqlite
+
+# For MySQL (optional)
+# DB_CONNECTION=mysql
+# DB_HOST=127.0.0.1
+# DB_PORT=3306
+# DB_DATABASE=school_management
+# DB_USERNAME=root
+# DB_PASSWORD=your_password
+```
+
+#### Step 6: Database Setup
+
+```bash
+# Create SQLite database file (if using SQLite)
+touch database/database.sqlite
+
+# Run migrations and seeders
+php artisan migrate --seed
+```
+
+#### Step 7: Build Frontend Assets
+
+```bash
+# Build assets for production
+npm run build
+
+# Or run in development mode with hot reload
 npm run dev
+```
 
+#### Step 8: Start the Development Server
 
-Access the app at http://localhost:5173.
+```bash
+# Start Laravel development server
+php artisan serve
+```
 
+Your application will be available at: **http://localhost:8000**
 
+---
 
-4. Using the Application
+## 🔧 Alternative Setup Methods
 
-Log In:
+### Option 1: Using Laravel Sail (Docker)
 
-Open http://localhost:5173/login.
-Use the default admin credentials:
-Username: admin
-Password: admin123
+If you have Docker installed:
 
+```bash
+# Install dependencies first
+composer install
 
-Change the password after first login (recommended).
+# Start with Sail
+./vendor/bin/sail up -d
 
+# Run migrations
+./vendor/bin/sail artisan migrate --seed
+```
 
-Admin Features:
+### Option 2: All-in-One Development Command
 
-Navigate to /dashboard/admin/users to manage users (add, edit, delete).
-Assign roles (admin, teacher, security, student) and permissions (e.g., view_threats, manage_users).
+After completing steps 1-6 above, you can use:
 
+```bash
+composer run dev
+```
 
-Test API:
+This will start:
 
-Use the API docs (http://localhost:8000/docs) to test endpoints like /auth/login, /auth/users.
+-   Laravel development server
+-   Queue worker
+-   Application logs
+-   Vite development server
 
+---
 
+## 🗂️ Project Structure
 
-5. Troubleshooting
+```
+├── app/                    # Application logic
+│   ├── Http/Controllers/   # Controllers
+│   ├── Models/            # Eloquent models
+│   ├── DataTables/        # DataTable classes
+│   └── ...
+├── database/              # Database files
+│   ├── migrations/        # Database migrations
+│   └── seeders/          # Database seeders
+├── public/               # Public assets
+├── resources/            # Views, CSS, JS
+│   ├── views/           # Blade templates
+│   ├── css/             # Stylesheets
+│   └── js/              # JavaScript files
+└── routes/              # Application routes
+```
 
-Backend Errors:
-MySQL Connection: Ensure MySQL is running and credentials in .env are correct.
-ModuleNotFoundError: Verify you're in the virtual environment (source venv/bin/activate or .\venv\Scripts\activate) and dependencies are installed.
-Table Issues: Recreate tables if schema errors occur:mysql -u root -p school_safety_db -e "DROP TABLE users;"
-python3 -c "from app.database import Base, engine; Base.metadata.create_all(bind=engine)"
+---
 
+## 🎯 Default Login Credentials
 
+After seeding the database, you can log in with:
 
+-   **Email:** admin@example.com
+-   **Password:** password
 
-Frontend Errors:
-API Connection: Ensure VITE_API_URL matches the backend URL.
-Port Conflict: Change the port in npm run dev if 5173 is in use (--port 5174).
+_(Note: Change these credentials in production)_
 
+---
 
-Seeding Issues: If seed_admin.py fails, check MySQL connection and table schema.
+## 🛠️ Common Issues & Solutions
 
-6. Security Notes
+### Issue: "Class not found" errors
 
-Change Default Password: Update the admin password after setup.
-Production Setup:
-Disable seeding in production (SEED_ADMIN=false in .env).
-Use HTTPS for backend/frontend.
-Store SECRET_KEY securely.
+**Solution:**
 
+```bash
+composer dump-autoload
+php artisan cache:clear
+php artisan config:clear
+```
 
-Database Backup: Before schema changes, back up:mysqldump -u root -p school_safety_db > backup.sql
+### Issue: Permission denied (Mac/Linux)
 
+**Solution:**
 
+```bash
+sudo chmod -R 755 storage/
+sudo chmod -R 755 bootstrap/cache/
+```
 
-7. Extending the Project
+### Issue: NPM build fails
 
-Add Features: Implement endpoints for attendance, quizzes, and AI model integration in backend/app/routers/.
-More Languages: Add translation files (e.g., frontend/src/locales/es.json) for i18n.
-IoT/AI: Add endpoints for IoT data (e.g., /api/attendance/mark) and AI model outputs.
+**Solution:**
 
-8. Contributing
+```bash
+rm -rf node_modules package-lock.json
+npm install
+npm run build
+```
 
-Fork the repository and create feature branches.
-Follow coding standards (PEP 8 for Python, ESLint for JavaScript).
-Submit pull requests with clear descriptions.
+### Issue: Database connection error
 
-For issues or contributions, contact the team via [repository issues](/issues).
+**Solution:**
 
+-   Verify your `.env` database settings
+-   Make sure database exists
+-   Check database credentials
 
-Python completelu Uninstall in windows
-choco uninstall python -y
+---
 
-Then reinstall python
-choco install python -y
+## 📱 Features
+
+-   **Student Management** - Register, manage student profiles and records
+-   **Teacher Management** - Manage teacher information and assignments
+-   **Class Management** - Organize classes and subjects
+-   **Security Staff** - Manage security personnel
+-   **User Roles & Permissions** - Role-based access control
+-   **Responsive Design** - Works on desktop and mobile devices
+
+---
+
+## 🔄 Development Workflow
+
+### Daily Development
+
+```bash
+# Start development environment
+npm run dev          # In one terminal
+php artisan serve    # In another terminal
+```
+
+### Code Updates
+
+```bash
+# After pulling new changes
+composer install
+npm install
+php artisan migrate
+npm run build
+```
+
+### Database Reset
+
+```bash
+# Reset and reseed database
+php artisan migrate:fresh --seed
+```
+
+---
+
+## 📞 Support
+
+If you encounter any issues during setup:
+
+1. Check the Laravel logs: `storage/logs/laravel.log`
+2. Verify all prerequisites are installed
+3. Ensure file permissions are correct
+4. Make sure all environment variables are set
+
+---
+
+## 📄 License
+
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
