@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\Management\StudentController;
 use App\Http\Controllers\Admin\Management\TeacherController;
 use App\Http\Controllers\Admin\Management\ParentController;
@@ -26,6 +27,17 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::prefix('dashboard')->name('dashboard.')->controller(DashboardController::class)->group(function () {
             Route::get('/', 'index')->name('index');
+        });
+
+        // Profile Management
+        Route::prefix('profile')->name('profile.')->controller(ProfileController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/edit', 'edit')->name('edit');
+            Route::put('/update', 'update')->name('update');
+            Route::post('/change-password', 'changePassword')->name('change-password');
+            Route::delete('/delete-image', 'deleteProfileImage')->name('delete-image');
+            Route::post('/upload-image', 'update')->name('upload-image');
+            Route::get('/stats', 'getProfileStats')->name('stats');
         });
 
         Route::prefix('management')->name('management.')->group(function () {
