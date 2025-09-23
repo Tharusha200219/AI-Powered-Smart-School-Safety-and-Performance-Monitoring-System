@@ -10,7 +10,8 @@ use App\Http\Controllers\Admin\Management\SecurityStaffController;
 use App\Http\Controllers\Admin\Management\SchoolClassController;
 use App\Http\Controllers\Admin\Management\SubjectController;
 use App\Http\Controllers\Admin\PlaceholderController;
-use App\Http\Controllers\Admin\Setup\SettingsController;
+use App\Http\Controllers\Admin\Setup\SettingsController as SetupSettingsController;
+use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\Setup\RoleController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -142,10 +143,24 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/enroll', 'enroll')->name('enroll');
             });
 
-            Route::prefix('settings')->name('settings.')->controller(SettingsController::class)->group(function () {
+            Route::prefix('settings')->name('settings.')->controller(SetupSettingsController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::post('/update', 'update')->name('update');
+
+                // AJAX endpoints for settings page
+                Route::post('/school-info', 'updateSchoolInfo')->name('school-info');
+                Route::post('/theme', 'updateTheme')->name('theme');
+                Route::post('/academic', 'updateAcademic')->name('academic');
             });
+        });
+
+        // Dashboard Settings Routes
+        Route::prefix('settings')->name('settings.')->controller(SettingsController::class)->group(function () {
+            Route::post('/update-school-info', 'updateSchoolInfo')->name('update-school-info');
+            Route::post('/update-theme', 'updateTheme')->name('update-theme');
+            Route::post('/update-academic', 'updateAcademic')->name('update-academic');
+            Route::post('/update-social-media', 'updateSocialMedia')->name('update-social-media');
+            Route::get('/theme-colors', 'getThemeColors')->name('theme-colors');
         });
 
         // Notification API routes

@@ -30,5 +30,80 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.js"></script>
 
+    <!-- Dynamic Theme Colors -->
+    @php
+        $settings = \App\Models\Setting::first() ?? new \App\Models\Setting();
+        $themeColors = $settings->theme_colors ?? [];
+    @endphp
+    <style>
+        :root {
+            --primary-green: {{ $themeColors['--primary-color'] ?? '#06C167' }};
+            --light-green: {{ $themeColors['--secondary-color'] ?? '#10B981' }};
+            --dark-green: {{ $themeColors['--secondary-color'] ?? '#10B981' }};
+            --accent-green: {{ $themeColors['--accent-color'] ?? '#F0FDF4' }};
+            --soft-green: #DCFCE7;
+            --success-green: {{ $themeColors['--success-color'] ?? '#10B981' }};
+            --info-blue: {{ $themeColors['--info-color'] ?? '#3B82F6' }};
+            --warning-orange: {{ $themeColors['--warning-color'] ?? '#F59E0B' }};
+            --danger-red: {{ $themeColors['--danger-color'] ?? '#EF4444' }};
+            --light-gray: #F9FAFB;
+            --medium-gray: #F3F4F6;
+            --dark-gray: #6B7280;
+            --text-dark: #374151;
+            --white: #FFFFFF;
+            --shadow-soft: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-large: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+            /* Apply theme colors to common elements */
+            --bs-primary: {{ $themeColors['--primary-color'] ?? '#06C167' }};
+            --bs-primary-rgb: {{ hexToRgb($themeColors['--primary-color'] ?? '#06C167') }};
+            --bs-secondary: {{ $themeColors['--secondary-color'] ?? '#10B981' }};
+            --bs-secondary-rgb: {{ hexToRgb($themeColors['--secondary-color'] ?? '#10B981') }};
+            --bs-success: {{ $themeColors['--success-color'] ?? '#10B981' }};
+            --bs-success-rgb: {{ hexToRgb($themeColors['--success-color'] ?? '#10B981') }};
+            --bs-info: {{ $themeColors['--info-color'] ?? '#3B82F6' }};
+            --bs-info-rgb: {{ hexToRgb($themeColors['--info-color'] ?? '#3B82F6') }};
+            --bs-warning: {{ $themeColors['--warning-color'] ?? '#F59E0B' }};
+            --bs-warning-rgb: {{ hexToRgb($themeColors['--warning-color'] ?? '#F59E0B') }};
+            --bs-danger: {{ $themeColors['--danger-color'] ?? '#EF4444' }};
+            --bs-danger-rgb: {{ hexToRgb($themeColors['--danger-color'] ?? '#EF4444') }};
+        }
+
+        /* Override default styles with theme colors */
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green)) !important;
+        }
+
+        .bg-primary {
+            background-color: var(--primary-green) !important;
+        }
+
+        .text-primary {
+            color: var(--primary-green) !important;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+            border-color: var(--primary-green);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--light-green), var(--dark-green));
+            border-color: var(--dark-green);
+        }
+
+        /* School customization - hide animations if disabled */
+        @if (!($settings->enable_animations ?? true))
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        @endif
+    </style>
+
     @yield('css')
 </head>
