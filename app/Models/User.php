@@ -27,6 +27,13 @@ class User extends Authenticatable
         'password',
         'status',
         'usertype',
+        'phone',
+        'address',
+        'bio',
+        'date_of_birth',
+        'profile_image',
+        'login_count',
+        'last_login_at',
     ];
 
     /**
@@ -51,6 +58,8 @@ class User extends Authenticatable
             'password' => 'hashed',
             'usertype' => UserType::class,
             'status' => Status::class,
+            'date_of_birth' => 'date',
+            'last_login_at' => 'datetime',
         ];
     }
 
