@@ -1,0 +1,197 @@
+<?php
+
+namespace App\DataTables\Admin\Management;
+
+use App\Models\Teacher;
+use App\Enums\Status;
+use Yajra\DataTables\Services\DataTable;
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Yajra\DataTables\EloquentDataTable;
+use Yajra\DataTables\Html\Builder as HtmlBuilder;
+use Yajra\DataTables\Html\Column;
+use Illuminate\Support\Facades\Auth;
+
+class TeacherDataTable extends DataTable
+{
+    protected $model = 'teachers';
+
+    public function dataTable($query): EloquentDataTable
+    {
+        return (new EloquentDataTable($query))
+            ->addColumn('DT_RowIndex', function ($row) {
+                static $index = 0;
+                return ++$index;
+            })
+            ->addColumn('action', function ($row) {
+                $show = checkPermission('admin.management.teachers.show') ? view('admin.layouts.actions.show', [
+                    'url' => route('admin.management.' . $this->model . '.show', ['id' => $row->teacher_id]),
+                    'id' => $row->teacher_id
+                ])->render() : '';
+
+                $edit = checkPermission('admin.management.teachers.edit') ? view('admin.layouts.actions.edit', [
+                    'url' => route('admin.management.' . $this->model . '.form', ['id' => $row->teacher_id]),
+                    'id' => $row->teacher_id
+                ])->render() : '';
+
+                $delete = checkPermission('admin.management.teachers.delete') ? view('admin.layouts.actions.delete', [
+                    'url' => route('admin.management.' . $this->model . '.delete', ['id' => $row->teacher_id]),
+                    'id' => $row->teacher_id
+                ])->render() : '';
+
+                $dropdownItems = [];
+
+                if ($show) {
+                    $dropdownItems[] = $show;
+                }
+
+                if ($edit) {
+                    $dropdownItems[] = $edit;
+                }
+
+                if ($delete) {
+                    $dropdownItems[] = $delete;
+                }
+
+                if (empty($dropdownItems)) {
+                    return '<span class="text-muted">No actions</span>';
+                }
+
+                $dropdownContent = implode('<li><hr class="dropdown-divider"></li>', $dropdownItems);
+
+                $dropdown = '
+                <div class="dropdown text-end">
+                    <button class="btn btn-icon border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="material-symbols-outlined text-lg">more_vert</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow rounded-3 p-2 w-100">
+                        ' . $dropdownContent . '
+                    </ul>
+                </div>';
+                return $dropdown;
+            })
+            ->addColumn('name', function ($row) {
+                $teacherType = $row->is_class_teacher ? 'CT' : 'TEA';
+                $badgeClass = $row->is_class_teacher ? 'bg-gradient-primary' : 'bg-gradient-info';
+                return '<div class="d-flex align-items-center">
+                    <span class="badge ' . $badgeClass . ' badge-sm me-2">' . $teacherType . '</span>
+                    <span class="fw-bold">' . $row->full_name . '</span>
+                </div>';
+            })
+            ->addColumn('teacher_code', function ($row) {
+                return '<span class="text-secondary">' . $row->teacher_code . '</span>';
+            })
+            ->addColumn('specialization', function ($row) {
+                return $row->specialization ? '<span class="text-primary">' . $row->specialization . '</span>' : '<span class="text-muted">Not specified</span>';
+            })
+            ->addColumn('subjects', function ($row) {
+                if ($row->subjects->count() === 0) {
+                    return '<span class="text-muted">No subjects</span>';
+                }
+
+                $subjectNames = $row->subjects->take(3)->pluck('subject_name')->toArray();
+                $display = implode(', ', $subjectNames);
+
+                if ($row->subjects->count() > 3) {
+                    $display .= ' <span class="text-primary">+' . ($row->subjects->count() - 3) . ' more</span>';
+                }
+
+                return $display;
+            })
+            ->addColumn('experience', function ($row) {
+                if ($row->experience_years) {
+                    $years = floor($row->experience_years);
+                    return '<span class="badge bg-gradient-warning badge-sm">' . $years . ' year' . ($years != 1 ? 's' : '') . '</span>';
+                }
+                return '<span class="text-muted">Not specified</span>';
+            })
+            ->addColumn('email', function ($row) {
+                return $row->user ? $row->user->email : '<span class="text-muted">No email</span>';
+            })
+            ->addColumn('status', function ($row) {
+                $color = $row->is_active ? 'success' : 'danger';
+                $text = $row->is_active ? 'Active' : 'Inactive';
+                return '<span class="badge badge-sm bg-gradient-' . $color . ' me-1">' . $text . '</span>';
+            })
+            ->addColumn('modified', function ($row) {
+                return $row->updated_at ? $row->updated_at->format('M d, Y') : 'Never';
+            })
+            ->rawColumns(['action', 'name', 'teacher_code', 'specialization', 'subjects', 'experience', 'email', 'status', 'modified'])
+            ->orderColumn('name', function ($query, $order) {
+                return $query->orderBy('first_name', $order)->orderBy('last_name', $order);
+            })
+            ->orderColumn('modified', function ($query, $order) {
+                return $query->orderBy('updated_at', $order);
+            });
+    }
+
+    /**
+     * Get query source of dataTable.
+     */
+    public function query(Teacher $model): QueryBuilder
+    {
+        return $model->with(['user', 'subjects'])->orderBy('created_at', 'desc');
+    }
+
+    public function html(): HtmlBuilder
+    {
+        return $this->builder()
+            ->setTableId('teacher-table')
+            ->columns($this->getColumns())
+            ->minifiedAjax()
+            ->orderBy(1)
+            ->parameters([
+                'scrollX' => true,
+                'autoWidth' => false,
+                'drawCallback' => 'function(settings) {
+                    // Add horizontal scroll styles
+                    $("#student-table_wrapper .dt-layout-table").css({
+                        "overflow": "hidden",
+                        "overflow-x": "auto"
+                    });
+                }',
+                'initComplete' => 'function(settings, json) {
+                    // Apply horizontal scroll on initialization
+                    $("#student-table_wrapper .dt-layout-table").css({
+                        "overflow": "hidden",
+                        "overflow-x": "auto"
+                    });
+                }',
+                'rowCallback' => 'function(row, data, index) {
+                    if (index % 2 === 0) {
+                        $(row).css("background-color", "rgba(0, 0, 0, 0.05)");
+                    }
+                }'
+            ]);
+    }
+
+    protected function getColumns(): array
+    {
+        $columns = [
+            Column::make('DT_RowIndex')->title('#')->addClass('text-start align-middle text-xs')->searchable(false)->orderable(false),
+            Column::make('teacher_code')->title('CODE')->addClass('align-middle text-xs')->searchable(true),
+            Column::make('name')->title('NAME')->addClass('align-middle text-xs')->searchable(true),
+            Column::make('specialization')->title('SPECIALIZATION')->addClass('text-center align-middle text-xs')->searchable(true),
+            Column::make('subjects')->title('SUBJECTS')->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
+            Column::make('experience')->title('EXPERIENCE')->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
+            Column::make('email')->title('EMAIL')->addClass('text-start align-middle text-xs')->searchable(true),
+            Column::make('status')->title('STATUS')->searchable(false)->orderable(false)->addClass('text-center align-middle text-xs'),
+            Column::make('modified')->title('MODIFIED')->addClass('text-start align-middle text-xs')->searchable(false),
+        ];
+
+        if (
+            checkPermission('admin.management.teachers.show') ||
+            checkPermission('admin.management.teachers.form') ||
+            checkPermission('admin.management.teachers.edit') ||
+            checkPermission('admin.management.teachers.delete')
+        ) {
+            $columns[] = Column::computed('action')->title('ACTIONS')->addClass('text-end align-middle pt-3 pb-0 text-xs')->exportable(false)->printable(false)->orderable(false)->searchable(false);
+        }
+
+        return $columns;
+    }
+
+    protected function filename(): string
+    {
+        return 'Teacher_' . date('YmdHis');
+    }
+}
