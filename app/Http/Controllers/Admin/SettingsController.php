@@ -23,7 +23,7 @@ class SettingsController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'school_name' => 'nullable|string|max:255',
-                'school_type' => 'nullable|in:Primary,Secondary,Combined',
+                'school_type' => 'nullable|in:Primary,Secondary,Combined,International',
                 'school_motto' => 'nullable|string|max:500',
                 'principal_name' => 'nullable|string|max:255',
                 'established_year' => 'nullable|integer|min:1800|max:' . date('Y'),
@@ -67,11 +67,11 @@ class SettingsController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'primary_color' => 'required|regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/',
-                'secondary_color' => 'required|regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/',
-                'accent_color' => 'required|regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/',
-                'theme_mode' => 'required|in:light,dark,auto',
-                'enable_animations' => 'required|boolean',
+                'primary_color' => ['required', 'string', 'size:7', 'regex:~^#[0-9a-fA-F]{6}$~'],
+                'secondary_color' => ['required', 'string', 'size:7', 'regex:~^#[0-9a-fA-F]{6}$~'],
+                'accent_color' => ['required', 'string', 'size:7', 'regex:~^#[0-9a-fA-F]{6}$~'],
+                'theme_mode' => 'nullable|in:light,dark,auto',
+                'enable_animations' => 'nullable|boolean',
             ]);
 
             if ($validator->fails()) {
@@ -108,10 +108,10 @@ class SettingsController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
+                'academic_year_start' => 'required|in:January,February,March,April,May,June,July,August,September,October,November,December',
+                'academic_year_end' => 'required|in:January,February,March,April,May,June,July,August,September,October,November,December|different:academic_year_start',
                 'school_start_time' => 'required|date_format:H:i',
                 'school_end_time' => 'required|date_format:H:i|after:school_start_time',
-                'academic_year_start' => 'required|in:January,February,March,April,May,June,July,August,September,October,November,December',
-                'academic_year_end' => 'required|in:January,February,March,April,May,June,July,August,September,October,November,December',
             ]);
 
             if ($validator->fails()) {
@@ -125,10 +125,10 @@ class SettingsController extends Controller
             $settings = Setting::first() ?? new Setting();
 
             $settings->update([
-                'school_start_time' => $request->school_start_time,
-                'school_end_time' => $request->school_end_time,
                 'academic_year_start' => $request->academic_year_start,
                 'academic_year_end' => $request->academic_year_end,
+                'school_start_time' => $request->school_start_time,
+                'school_end_time' => $request->school_end_time,
             ]);
 
             return response()->json([

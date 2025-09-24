@@ -21,7 +21,7 @@ class SettingsController extends Controller
     protected function index(Request $request)
     {
         $setting = Setting::first() ?? new Setting();
-        return view('admin.pages.setup.settings.index', compact(['setting']));
+        return view('admin.pages.setup.settings.index', compact('setting'));
     }
 
     protected function update(Request $request)
@@ -114,9 +114,9 @@ class SettingsController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'primary_color' => 'required|regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/',
-                'secondary_color' => 'required|regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/',
-                'accent_color' => 'required|regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/',
+                'primary_color' => ['required', 'string', 'size:7', 'regex:~^#[0-9a-fA-F]{6}$~'],
+                'secondary_color' => ['required', 'string', 'size:7', 'regex:~^#[0-9a-fA-F]{6}$~'],
+                'accent_color' => ['required', 'string', 'size:7', 'regex:~^#[0-9a-fA-F]{6}$~'],
             ]);
 
             if ($validator->fails()) {
@@ -154,10 +154,10 @@ class SettingsController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'academic_year_start' => 'nullable|date',
-                'academic_year_end' => 'nullable|date|after:academic_year_start',
-                'school_start_time' => 'nullable|date_format:H:i',
-                'school_end_time' => 'nullable|date_format:H:i|after:school_start_time',
+                'academic_year_start' => 'required|in:January,February,March,April,May,June,July,August,September,October,November,December',
+                'academic_year_end' => 'required|in:January,February,March,April,May,June,July,August,September,October,November,December|different:academic_year_start',
+                'school_start_time' => 'required|date_format:H:i',
+                'school_end_time' => 'required|date_format:H:i|after:school_start_time',
             ]);
 
             if ($validator->fails()) {

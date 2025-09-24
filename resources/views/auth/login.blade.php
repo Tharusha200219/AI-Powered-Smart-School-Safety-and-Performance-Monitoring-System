@@ -5,10 +5,27 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    @php
+        $settings = \App\Models\Setting::first() ?? new \App\Models\Setting();
+        $themeColors = $settings->theme_colors ?? [];
+        $primaryColor = $themeColors['--primary-color'] ?? '#06C167';
+        $secondaryColor = $themeColors['--secondary-color'] ?? '#10B981';
+        $accentColor = $themeColors['--accent-color'] ?? '#F0FDF4';
+    @endphp
+
     <style>
+        :root {
+            --login-primary: {{ $primaryColor }};
+            --login-secondary: {{ $secondaryColor }};
+            --login-accent: {{ $accentColor }};
+            --login-primary-rgb: {{ hexToRgb($primaryColor) }};
+            --login-secondary-rgb: {{ hexToRgb($secondaryColor) }};
+        }
+
         .login-page {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--login-primary) 0%, var(--login-secondary) 100%);
             min-height: 100vh;
             position: relative;
             overflow: hidden;
@@ -22,9 +39,9 @@
             right: 0;
             bottom: 0;
             background:
-                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 40% 80%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+                radial-gradient(circle at 20% 50%, rgba(var(--login-primary-rgb), 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(var(--login-secondary-rgb), 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(var(--login-primary-rgb), 0.2) 0%, transparent 50%);
             z-index: 1;
         }
 
@@ -42,6 +59,7 @@
             position: absolute;
             opacity: 0.1;
             animation: float 6s ease-in-out infinite;
+            background: var(--login-primary);
         }
 
         .shape:nth-child(1) {
@@ -181,8 +199,8 @@
         }
 
         .form-input:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: var(--login-primary);
+            box-shadow: 0 0 0 3px rgba(var(--login-primary-rgb), 0.1);
             transform: translateY(-2px);
         }
 
@@ -197,7 +215,7 @@
         }
 
         .form-input:focus+.input-icon {
-            color: #667eea;
+            color: var(--login-primary);
         }
 
         .password-toggle {
@@ -247,8 +265,8 @@
         }
 
         .custom-checkbox input:checked~.checkmark {
-            background-color: #667eea;
-            border-color: #667eea;
+            background-color: var(--login-primary);
+            border-color: var(--login-primary);
         }
 
         .checkmark:after {
@@ -269,20 +287,20 @@
         }
 
         .forgot-link {
-            color: #667eea;
+            color: var(--login-primary);
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s ease;
         }
 
         .forgot-link:hover {
-            color: #764ba2;
+            color: var(--login-secondary);
         }
 
         .login-button {
             width: 100%;
             padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--login-primary) 0%, var(--login-secondary) 100%);
             border: none;
             border-radius: 12px;
             color: white;
@@ -296,7 +314,7 @@
 
         .login-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 10px 25px rgba(var(--login-primary-rgb), 0.3);
         }
 
         .login-button:active {
@@ -315,7 +333,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            background: linear-gradient(135deg, var(--login-secondary) 0%, var(--login-primary) 100%);
             transition: left 0.3s ease;
             z-index: 1;
         }
@@ -451,8 +469,8 @@
 
                     <div class="form-group">
                         <input type="email" class="form-input @error('email') is-invalid @enderror" name="email"
-                            value="{{ old('email') }}" placeholder="Enter your email address" required autocomplete="email"
-                            autofocus>
+                            value="{{ old('email') }}" placeholder="Enter your email address" required
+                            autocomplete="email" autofocus>
                         <i class="fas fa-envelope input-icon"></i>
                     </div>
 
