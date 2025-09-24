@@ -180,13 +180,15 @@
                                             <div class="form-group mb-3">
                                                 <label class="form-label text-success">Success Color</label>
                                                 <div class="color-picker-group">
-                                                    <input type="color" class="form-control color-picker" id="success-color"
-                                                        name="success_color" value="{{ $setting->success_color ?? '#10B981' }}"
+                                                    <input type="color" class="form-control color-picker"
+                                                        id="success-color" name="success_color"
+                                                        value="{{ $setting->success_color ?? '#10B981' }}"
                                                         onchange="updateThemePreview()">
                                                     <input type="text" class="form-control color-text"
                                                         id="success-color-text" name="success_color_text"
                                                         value="{{ $setting->success_color ?? '#10B981' }}"
-                                                        onchange="updateColorFromText('success-color')" placeholder="#10B981">
+                                                        onchange="updateColorFromText('success-color')"
+                                                        placeholder="#10B981">
                                                 </div>
                                             </div>
                                         </div>
@@ -194,13 +196,15 @@
                                             <div class="form-group mb-3">
                                                 <label class="form-label text-info">Info Color</label>
                                                 <div class="color-picker-group">
-                                                    <input type="color" class="form-control color-picker" id="info-color"
-                                                        name="info_color" value="{{ $setting->info_color ?? '#3B82F6' }}"
+                                                    <input type="color" class="form-control color-picker"
+                                                        id="info-color" name="info_color"
+                                                        value="{{ $setting->info_color ?? '#3B82F6' }}"
                                                         onchange="updateThemePreview()">
                                                     <input type="text" class="form-control color-text"
                                                         id="info-color-text" name="info_color_text"
                                                         value="{{ $setting->info_color ?? '#3B82F6' }}"
-                                                        onchange="updateColorFromText('info-color')" placeholder="#3B82F6">
+                                                        onchange="updateColorFromText('info-color')"
+                                                        placeholder="#3B82F6">
                                                 </div>
                                             </div>
                                         </div>
@@ -208,13 +212,15 @@
                                             <div class="form-group mb-3">
                                                 <label class="form-label text-warning">Warning Color</label>
                                                 <div class="color-picker-group">
-                                                    <input type="color" class="form-control color-picker" id="warning-color"
-                                                        name="warning_color" value="{{ $setting->warning_color ?? '#F59E0B' }}"
+                                                    <input type="color" class="form-control color-picker"
+                                                        id="warning-color" name="warning_color"
+                                                        value="{{ $setting->warning_color ?? '#F59E0B' }}"
                                                         onchange="updateThemePreview()">
                                                     <input type="text" class="form-control color-text"
                                                         id="warning-color-text" name="warning_color_text"
                                                         value="{{ $setting->warning_color ?? '#F59E0B' }}"
-                                                        onchange="updateColorFromText('warning-color')" placeholder="#F59E0B">
+                                                        onchange="updateColorFromText('warning-color')"
+                                                        placeholder="#F59E0B">
                                                 </div>
                                             </div>
                                         </div>
@@ -222,13 +228,15 @@
                                             <div class="form-group mb-3">
                                                 <label class="form-label text-danger">Danger Color</label>
                                                 <div class="color-picker-group">
-                                                    <input type="color" class="form-control color-picker" id="danger-color"
-                                                        name="danger_color" value="{{ $setting->danger_color ?? '#EF4444' }}"
+                                                    <input type="color" class="form-control color-picker"
+                                                        id="danger-color" name="danger_color"
+                                                        value="{{ $setting->danger_color ?? '#EF4444' }}"
                                                         onchange="updateThemePreview()">
                                                     <input type="text" class="form-control color-text"
                                                         id="danger-color-text" name="danger_color_text"
                                                         value="{{ $setting->danger_color ?? '#EF4444' }}"
-                                                        onchange="updateColorFromText('danger-color')" placeholder="#EF4444">
+                                                        onchange="updateColorFromText('danger-color')"
+                                                        placeholder="#EF4444">
                                                 </div>
                                             </div>
                                         </div>
@@ -237,7 +245,9 @@
 
                                 <!-- Gradient Color Pairs Section -->
                                 <div class="color-section mb-4">
-                                    <h6 class="mb-3" style="background: linear-gradient(45deg, #6366F1, #8B5CF6); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Gradient Color Pairs</h6>
+                                    <h6 class="mb-3"
+                                        style="background: linear-gradient(45deg, #6366F1, #8B5CF6); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                                        Gradient Color Pairs</h6>
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label class="form-label">Primary Gradient</label>
@@ -247,13 +257,17 @@
                                                         <div class="form-group">
                                                             <small class="text-muted">Start Color</small>
                                                             <div class="color-picker-group">
-                                                                <input type="color" class="form-control color-picker" id="primary-gradient-start"
-                                                                    name="primary_gradient_start" value="{{ $setting->primary_gradient_start ?? '#06C167' }}"
+                                                                <input type="color" class="form-control color-picker"
+                                                                    id="primary-gradient-start"
+                                                                    name="primary_gradient_start"
+                                                                    value="{{ $setting->primary_gradient_start ?? '#06C167' }}"
                                                                     onchange="updateGradientPreview('primary')">
                                                                 <input type="text" class="form-control color-text"
-                                                                    id="primary-gradient-start-text" name="primary_gradient_start_text"
+                                                                    id="primary-gradient-start-text"
+                                                                    name="primary_gradient_start_text"
                                                                     value="{{ $setting->primary_gradient_start ?? '#06C167' }}"
-                                                                    onchange="updateColorFromText('primary-gradient-start')" placeholder="#06C167">
+                                                                    onchange="updateColorFromText('primary-gradient-start')"
+                                                                    placeholder="#06C167">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -261,19 +275,23 @@
                                                         <div class="form-group">
                                                             <small class="text-muted">End Color</small>
                                                             <div class="color-picker-group">
-                                                                <input type="color" class="form-control color-picker" id="primary-gradient-end"
-                                                                    name="primary_gradient_end" value="{{ $setting->primary_gradient_end ?? '#10B981' }}"
+                                                                <input type="color" class="form-control color-picker"
+                                                                    id="primary-gradient-end" name="primary_gradient_end"
+                                                                    value="{{ $setting->primary_gradient_end ?? '#10B981' }}"
                                                                     onchange="updateGradientPreview('primary')">
                                                                 <input type="text" class="form-control color-text"
-                                                                    id="primary-gradient-end-text" name="primary_gradient_end_text"
+                                                                    id="primary-gradient-end-text"
+                                                                    name="primary_gradient_end_text"
                                                                     value="{{ $setting->primary_gradient_end ?? '#10B981' }}"
-                                                                    onchange="updateColorFromText('primary-gradient-end')" placeholder="#10B981">
+                                                                    onchange="updateColorFromText('primary-gradient-end')"
+                                                                    placeholder="#10B981">
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="gradient-preview mt-2" id="primary-gradient-preview" 
-                                                    style="height: 40px; border-radius: 8px; background: linear-gradient(135deg, {{ $setting->primary_gradient_start ?? '#06C167' }}, {{ $setting->primary_gradient_end ?? '#10B981' }}); box-shadow: 0 2px 8px rgba(0,0,0,0.1);"></div>
+                                                <div class="gradient-preview mt-2" id="primary-gradient-preview"
+                                                    style="height: 40px; border-radius: 8px; background: linear-gradient(135deg, {{ $setting->primary_gradient_start ?? '#06C167' }}, {{ $setting->primary_gradient_end ?? '#10B981' }}); box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -284,13 +302,17 @@
                                                         <div class="form-group">
                                                             <small class="text-muted">Start Color</small>
                                                             <div class="color-picker-group">
-                                                                <input type="color" class="form-control color-picker" id="secondary-gradient-start"
-                                                                    name="secondary_gradient_start" value="{{ $setting->secondary_gradient_start ?? '#8B5CF6' }}"
+                                                                <input type="color" class="form-control color-picker"
+                                                                    id="secondary-gradient-start"
+                                                                    name="secondary_gradient_start"
+                                                                    value="{{ $setting->secondary_gradient_start ?? '#8B5CF6' }}"
                                                                     onchange="updateGradientPreview('secondary')">
                                                                 <input type="text" class="form-control color-text"
-                                                                    id="secondary-gradient-start-text" name="secondary_gradient_start_text"
+                                                                    id="secondary-gradient-start-text"
+                                                                    name="secondary_gradient_start_text"
                                                                     value="{{ $setting->secondary_gradient_start ?? '#8B5CF6' }}"
-                                                                    onchange="updateColorFromText('secondary-gradient-start')" placeholder="#8B5CF6">
+                                                                    onchange="updateColorFromText('secondary-gradient-start')"
+                                                                    placeholder="#8B5CF6">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -298,19 +320,24 @@
                                                         <div class="form-group">
                                                             <small class="text-muted">End Color</small>
                                                             <div class="color-picker-group">
-                                                                <input type="color" class="form-control color-picker" id="secondary-gradient-end"
-                                                                    name="secondary_gradient_end" value="{{ $setting->secondary_gradient_end ?? '#EC4899' }}"
+                                                                <input type="color" class="form-control color-picker"
+                                                                    id="secondary-gradient-end"
+                                                                    name="secondary_gradient_end"
+                                                                    value="{{ $setting->secondary_gradient_end ?? '#EC4899' }}"
                                                                     onchange="updateGradientPreview('secondary')">
                                                                 <input type="text" class="form-control color-text"
-                                                                    id="secondary-gradient-end-text" name="secondary_gradient_end_text"
+                                                                    id="secondary-gradient-end-text"
+                                                                    name="secondary_gradient_end_text"
                                                                     value="{{ $setting->secondary_gradient_end ?? '#EC4899' }}"
-                                                                    onchange="updateColorFromText('secondary-gradient-end')" placeholder="#EC4899">
+                                                                    onchange="updateColorFromText('secondary-gradient-end')"
+                                                                    placeholder="#EC4899">
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="gradient-preview mt-2" id="secondary-gradient-preview" 
-                                                    style="height: 40px; border-radius: 8px; background: linear-gradient(135deg, {{ $setting->secondary_gradient_start ?? '#8B5CF6' }}, {{ $setting->secondary_gradient_end ?? '#EC4899' }}); box-shadow: 0 2px 8px rgba(0,0,0,0.1);"></div>
+                                                <div class="gradient-preview mt-2" id="secondary-gradient-preview"
+                                                    style="height: 40px; border-radius: 8px; background: linear-gradient(135deg, {{ $setting->secondary_gradient_start ?? '#8B5CF6' }}, {{ $setting->secondary_gradient_end ?? '#EC4899' }}); box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -531,7 +558,7 @@
             const primaryRgb = hexToRgb(primaryColor);
             const secondaryRgb = hexToRgb(secondaryColor);
             const accentRgb = hexToRgb(accentColor);
-            
+
             if (primaryRgb) {
                 root.style.setProperty('--primary-rgb', `${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}`);
             }
@@ -552,19 +579,27 @@
             // Show preview badge
             showColorPreview(primaryColor, secondaryColor, accentColor);
 
-            console.log('Comprehensive theme colors applied:', {primaryColor, secondaryColor, accentColor, successColor, infoColor, warningColor, dangerColor});
+            console.log('Comprehensive theme colors applied:', {
+                primaryColor,
+                secondaryColor,
+                accentColor,
+                successColor,
+                infoColor,
+                warningColor,
+                dangerColor
+            });
         }
 
         function updateGradientPreview(type) {
             const startColor = document.getElementById(`${type}-gradient-start`)?.value;
             const endColor = document.getElementById(`${type}-gradient-end`)?.value;
-            
+
             if (startColor && endColor) {
                 const preview = document.getElementById(`${type}-gradient-preview`);
                 if (preview) {
                     preview.style.background = `linear-gradient(135deg, ${startColor}, ${endColor})`;
                 }
-                
+
                 // Update text inputs
                 const startText = document.getElementById(`${type}-gradient-start-text`);
                 const endText = document.getElementById(`${type}-gradient-end-text`);
@@ -709,7 +744,7 @@
                                 'bg-gradient-dark') || selector.includes('bg-gradient-secondary')) {
                             element.style.background = `linear-gradient(135deg, ${primary}, ${secondary})`;
                         } else if (selector.includes('btn-primary') || selector.includes(
-                            'quick-action-btn') || selector.includes('stat-icon')) {
+                                'quick-action-btn') || selector.includes('stat-icon')) {
                             element.style.background = `linear-gradient(135deg, ${primary}, ${secondary})`;
                             element.style.borderColor = primary;
                             element.style.color = 'white';
@@ -723,7 +758,7 @@
                             element.style.color = primary;
                             element.style.borderColor = primary;
                         } else if (selector.includes('nav-link.active') || selector.includes(
-                            'card-primary')) {
+                                'card-primary')) {
                             element.style.background = `linear-gradient(135deg, ${primary}, ${secondary})`;
                             element.style.color = 'white';
                         }
@@ -732,7 +767,7 @@
 
                 // Special handling for Material Dashboard classes
                 const materialElements = document.querySelectorAll(
-                '.bg-gradient-faded-primary, .bg-gradient-faded-success');
+                    '.bg-gradient-faded-primary, .bg-gradient-faded-success');
                 materialElements.forEach(element => {
                     element.style.background = `linear-gradient(135deg, ${primary}cc, ${secondary}cc)`;
                 });
