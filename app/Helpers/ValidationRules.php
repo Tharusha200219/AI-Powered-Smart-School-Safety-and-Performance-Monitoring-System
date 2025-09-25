@@ -150,4 +150,118 @@ class ValidationRules
             'parent_address_line1.*' => 'nullable|max:255',
         ];
     }
+
+    /**
+     * Get security staff specific validation rules
+     */
+    public static function getSecurityStaffRules(bool $isUpdate = false, ?int $userId = null): array
+    {
+        $rules = self::getPersonRules($isUpdate, $userId);
+
+        return array_merge($rules, [
+            'joining_date' => 'required|date',
+            'employee_id' => 'nullable|max:50',
+            'shift' => 'required|in:Morning,Afternoon,Night',
+            'position' => 'required|max:100',
+            'roles' => 'required|array',
+            'roles.*' => 'exists:roles,name',
+        ]);
+    }
+
+    /**
+     * Get parent specific validation rules (single parent)
+     */
+    public static function getParentRules(bool $isUpdate = false, ?int $userId = null): array
+    {
+        $rules = self::getPersonRules($isUpdate, $userId);
+
+        return array_merge($rules, [
+            'relationship_type' => 'required|' . RelationshipType::getValidationRule(),
+            'occupation' => 'nullable|max:100',
+            'workplace' => 'nullable|max:100',
+            'work_phone' => self::PHONE_RULES,
+            'is_emergency_contact' => self::BOOLEAN_RULES,
+            'roles' => 'required|array',
+            'roles.*' => 'exists:roles,name',
+        ]);
+    }
+
+    /**
+     * Get school class validation rules
+     */
+    public static function getSchoolClassRules(): array
+    {
+        return [
+            'class_name' => 'required|max:100|unique:school_classes,class_name',
+            'grade_level' => self::GRADE_LEVEL_RULES,
+            'section' => 'nullable|max:10',
+            'class_teacher_id' => 'nullable|exists:teachers,teacher_id',
+            'room_number' => 'nullable|max:20',
+            'capacity' => 'required|integer|min:1|max:100',
+            'is_active' => self::BOOLEAN_RULES,
+        ];
+    }
+
+    /**
+     * Get subject validation rules
+     */
+    public static function getSubjectRules(): array
+    {
+        return [
+            'subject_name' => 'required|max:100|unique:subjects,subject_name',
+            'subject_code' => 'required|max:20|unique:subjects,subject_code',
+            'grade_level' => self::GRADE_LEVEL_RULES,
+            'description' => 'nullable|max:500',
+            'credits' => 'required|integer|min:1|max:10',
+            'is_core' => self::BOOLEAN_RULES,
+            'is_active' => self::BOOLEAN_RULES,
+        ];
+    }
+
+    /**
+     * Get user management validation rules
+     */
+    public static function getUserRules(bool $isUpdate = false, ?int $userId = null): array
+    {
+        if ($isUpdate && $userId) {
+            $emailRule = [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($userId, 'id'),
+            ];
+        } else {
+            $emailRule = self::EMAIL_RULES . '|unique:users,email';
+        }
+
+        return [
+            'name' => self::PERSONAL_NAME_RULES,
+            'email' => $emailRule,
+            'password' => $isUpdate ? self::OPTIONAL_PASSWORD_RULES : self::PASSWORD_RULES,
+            'usertype' => 'required|in:admin,teacher,student,parent,security',
+            'status' => 'required|in:active,inactive',
+            'roles' => 'required|array',
+            'roles.*' => 'exists:roles,name',
+        ];
+    }
+
+    /**
+     * Get settings validation rules
+     */
+    public static function getSettingsRules(): array
+    {
+        return [
+            'school_name' => 'required|max:255',
+            'school_address' => 'required|max:500',
+            'school_phone' => self::REQUIRED_PHONE_RULES,
+            'school_email' => self::EMAIL_RULES,
+            'academic_year_start' => 'required|date',
+            'academic_year_end' => 'required|date|after:academic_year_start',
+            'timezone' => 'required|max:100',
+            'date_format' => 'required|in:Y-m-d,d/m/Y,m/d/Y,d-m-Y',
+            'time_format' => 'required|in:H:i,h:i A',
+            'currency' => 'required|max:10',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ];
+    }
 }
