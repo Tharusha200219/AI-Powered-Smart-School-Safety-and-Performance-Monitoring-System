@@ -18,7 +18,14 @@ class TeacherDataTable extends DataTable
     public function dataTable($query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
+<<<<<<< HEAD
             ->addIndexColumn()
+=======
+            ->addColumn('DT_RowIndex', function ($row) {
+                static $index = 0;
+                return ++$index;
+            })
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
             ->addColumn('action', function ($row) {
                 $show = checkPermission('admin.management.teachers.show') ? view('admin.layouts.actions.show', [
                     'url' => route('admin.management.' . $this->model . '.show', ['id' => $row->teacher_id]),
@@ -164,7 +171,11 @@ class TeacherDataTable extends DataTable
     protected function getColumns(): array
     {
         $columns = [
+<<<<<<< HEAD
             Column::make('id')->title('#')->addClass('text-start align-middle text-xs'),
+=======
+            Column::make('DT_RowIndex')->title('#')->addClass('text-start align-middle text-xs')->searchable(false)->orderable(false),
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
             Column::make('teacher_code')->title('CODE')->addClass('align-middle text-xs')->searchable(true),
             Column::make('name')->title('NAME')->addClass('align-middle text-xs')->searchable(true),
             Column::make('specialization')->title('SPECIALIZATION')->addClass('text-center align-middle text-xs')->searchable(true),

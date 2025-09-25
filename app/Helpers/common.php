@@ -63,3 +63,27 @@ function checkPermissionAndRedirect($permission)
         abort(403, 'Unauthorized action.');
     }
 }
+<<<<<<< HEAD
+=======
+
+function hexToRgb($hex)
+{
+    // Remove # if present
+    $hex = ltrim($hex, '#');
+
+    // Convert hex to RGB
+    if (strlen($hex) == 3) {
+        $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+    }
+
+    if (strlen($hex) != 6) {
+        return '6, 193, 103'; // Default green RGB
+    }
+
+    $r = hexdec(substr($hex, 0, 2));
+    $g = hexdec(substr($hex, 2, 2));
+    $b = hexdec(substr($hex, 4, 2));
+
+    return "$r, $g, $b";
+}
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606

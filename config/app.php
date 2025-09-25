@@ -107,6 +107,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+<<<<<<< HEAD
+=======
+    | Default Parent Password
+    |--------------------------------------------------------------------------
+    |
+    | This password will be used as the default password for parent accounts
+    | created automatically during student enrollment.
+    |
+    */
+
+    'default_parent_password' => env('DEFAULT_PARENT_PASSWORD', 'password123'),
+
+    /*
+    |--------------------------------------------------------------------------
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
     | Maintenance Mode Driver
     |--------------------------------------------------------------------------
     |

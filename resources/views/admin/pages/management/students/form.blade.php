@@ -3,11 +3,16 @@
 @section('title', pageTitle())
 
 @section('css')
+<<<<<<< HEAD
     <style>
         .card-header {
             border-radius: 12px 12px 0 0 !important;
         }
 
+=======
+    @vite('resources/css/admin/forms.css')
+    <style>
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
         .card {
             border-radius: 12px !important;
             border: none;
@@ -696,6 +701,7 @@
 
 @section('js')
     <script>
+<<<<<<< HEAD
         // Global variables
         let parentCount = 0;
 
@@ -994,4 +1000,11 @@
             }
         });
     </script>
+=======
+        // Set blade template variables for JavaScript
+        window.isEditMode = {{ $id ? 'true' : 'false' }};
+        window.generateCodeUrl = '{{ route('admin.management.students.generate-code') }}';
+    </script>
+    @vite('resources/js/admin/student-form.js')
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
 @endsection

@@ -45,6 +45,7 @@
     {{ $dataTable->scripts(attributes: ['type' => 'module', 'class' => 'table table-bordered']) }}
 @endisset
 
+<<<<<<< HEAD
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Enhanced DataTable functionality
@@ -157,6 +158,9 @@
         };
     }
 </script>
+=======
+@vite(['resources/css/admin/tables.css', 'resources/js/admin/student-table.js'])
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
 
 {{-- Include common scripts if they exist --}}
 @if (file_exists(public_path('build/js/common/show.js')))

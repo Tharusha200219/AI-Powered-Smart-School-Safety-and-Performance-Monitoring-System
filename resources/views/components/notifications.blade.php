@@ -1,4 +1,5 @@
 {{-- Beautiful Notification System --}}
+<<<<<<< HEAD
 <style>
     .notification-container {
         position: fixed;
@@ -202,6 +203,9 @@
             'opsz' 24;
     }
 </style>
+=======
+@vite('resources/css/components/notifications.css')
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
 
 {{-- Material Symbols Font --}}
 <link rel="stylesheet"
@@ -211,6 +215,7 @@
     {{-- Notifications will be dynamically added here --}}
 </div>
 
+<<<<<<< HEAD
 <script>
     class NotificationManager {
         constructor() {
@@ -325,6 +330,11 @@
     // Global instance
     window.notificationManager = new NotificationManager();
 
+=======
+@vite('resources/js/components/notifications.js')
+
+<script>
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
     // Laravel Flash Message Integration
     document.addEventListener('DOMContentLoaded', function() {
         @if (session('success'))

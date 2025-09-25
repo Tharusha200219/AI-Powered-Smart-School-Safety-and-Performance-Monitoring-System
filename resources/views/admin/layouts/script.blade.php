@@ -29,3 +29,9 @@
 </script>
 
 @yield('script')
+<<<<<<< HEAD
+=======
+
+{{-- Vite Assets --}}
+@vite(['resources/js/admin/notifications.js'])
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606

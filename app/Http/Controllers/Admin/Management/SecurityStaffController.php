@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Admin\Management;
 
 use App\Http\Controllers\Controller;
+<<<<<<< HEAD
+=======
+use App\Traits\CreatesNotifications;
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -19,6 +23,10 @@ use Illuminate\Support\Facades\Hash;
 
 class SecurityStaffController extends Controller
 {
+<<<<<<< HEAD
+=======
+    use CreatesNotifications;
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
     protected SecurityStaffRepositoryInterface $repository;
     protected $parentViewPath = 'admin.pages.management.security.';
     protected $parentRoutePath = 'admin.management.security.';
@@ -116,6 +124,12 @@ class SecurityStaffController extends Controller
 
             $security = $this->repository->create($securityData);
 
+<<<<<<< HEAD
+=======
+            // Create notification for security staff creation
+            $this->notifyCreated('SecurityStaff', $security);
+
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
             DB::commit();
 
             flashResponse('Security Staff created successfully.', 'success');

@@ -1,12 +1,16 @@
 @extends('admin.layouts.app')
 
 @section('css')
+<<<<<<< HEAD
     <style>
         .dropdown-menu::before,
         .dropdown-menu::after {
             display: none !important;
         }
     </style>
+=======
+    @vite('resources/css/admin/tables.css')
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
 @endsection
 
 @section('content')

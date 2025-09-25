@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Admin\Management;
 
 use App\Http\Controllers\Controller;
+<<<<<<< HEAD
+=======
+use App\Traits\CreatesNotifications;
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -20,6 +24,10 @@ use Illuminate\Support\Facades\Hash;
 
 class TeacherController extends Controller
 {
+<<<<<<< HEAD
+=======
+    use CreatesNotifications;
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
     protected TeacherRepositoryInterface $repository;
     protected SubjectRepositoryInterface $subjectRepository;
     protected $parentViewPath = 'admin.pages.management.teachers.';
@@ -132,6 +140,12 @@ class TeacherController extends Controller
 
             $teacher = $this->repository->create($teacherData);
 
+<<<<<<< HEAD
+=======
+            // Create notification for teacher creation
+            $this->notifyCreated('Teacher', $teacher);
+
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
             // Assign subjects if provided
             if ($request->has('subjects') && !empty($request->subjects)) {
                 $this->repository->assignSubjects($teacher->teacher_id, $request->subjects);
@@ -233,6 +247,12 @@ class TeacherController extends Controller
 
             $this->repository->update($id, $teacherData);
 
+<<<<<<< HEAD
+=======
+            // Create notification for teacher update
+            $this->notifyUpdated('Teacher', $teacher);
+
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
             // Update subjects
             if ($request->has('subjects')) {
                 $this->repository->assignSubjects($teacher->teacher_id, $request->subjects ?? []);
@@ -262,6 +282,12 @@ class TeacherController extends Controller
                 return Redirect::back();
             }
 
+<<<<<<< HEAD
+=======
+            // Create notification for teacher deletion (before deletion)
+            $this->notifyDeleted('Teacher', $teacher);
+
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
             // Delete user account
             $teacher->user->delete();
 

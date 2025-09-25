@@ -1,6 +1,11 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+<<<<<<< HEAD
+=======
+use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\ProfileController;
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
 use App\Http\Controllers\Admin\Management\StudentController;
 use App\Http\Controllers\Admin\Management\TeacherController;
 use App\Http\Controllers\Admin\Management\ParentController;
@@ -8,7 +13,12 @@ use App\Http\Controllers\Admin\Management\SecurityStaffController;
 use App\Http\Controllers\Admin\Management\SchoolClassController;
 use App\Http\Controllers\Admin\Management\SubjectController;
 use App\Http\Controllers\Admin\PlaceholderController;
+<<<<<<< HEAD
 use App\Http\Controllers\Admin\Setup\SettingsController;
+=======
+use App\Http\Controllers\Admin\Setup\SettingsController as SetupSettingsController;
+use App\Http\Controllers\Admin\SettingsController;
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
 use App\Http\Controllers\Admin\Setup\RoleController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -27,6 +37,20 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/', 'index')->name('index');
         });
 
+<<<<<<< HEAD
+=======
+        // Profile Management
+        Route::prefix('profile')->name('profile.')->controller(ProfileController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/edit', 'edit')->name('edit');
+            Route::put('/update', 'update')->name('update');
+            Route::post('/change-password', 'changePassword')->name('change-password');
+            Route::delete('/delete-image', 'deleteProfileImage')->name('delete-image');
+            Route::post('/upload-image', 'update')->name('upload-image');
+            Route::get('/stats', 'getProfileStats')->name('stats');
+        });
+
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
         Route::prefix('management')->name('management.')->group(function () {
             // Students Management
             Route::prefix('students')->name('students.')->controller(StudentController::class)->group(function () {
@@ -129,10 +153,41 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/enroll', 'enroll')->name('enroll');
             });
 
+<<<<<<< HEAD
             Route::prefix('settings')->name('settings.')->controller(SettingsController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::post('/update', 'update')->name('update');
             });
         });
+=======
+            Route::prefix('settings')->name('settings.')->controller(SetupSettingsController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::post('/update', 'update')->name('update');
+
+                // AJAX endpoints for settings page
+                Route::post('/school-info', 'updateSchoolInfo')->name('school-info');
+                Route::post('/theme', 'updateTheme')->name('theme');
+                Route::post('/academic', 'updateAcademic')->name('academic');
+            });
+        });
+
+        // Dashboard Settings Routes
+        Route::prefix('settings')->name('settings.')->controller(SettingsController::class)->group(function () {
+            Route::post('/update-school-info', 'updateSchoolInfo')->name('update-school-info');
+            Route::post('/update-theme', 'updateTheme')->name('update-theme');
+            Route::post('/update-academic', 'updateAcademic')->name('update-academic');
+            Route::post('/update-social-media', 'updateSocialMedia')->name('update-social-media');
+            Route::get('/theme-colors', 'getThemeColors')->name('theme-colors');
+        });
+
+        // Notification API routes
+        Route::prefix('notifications')->name('notifications.')->controller(NotificationController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/mark-as-read', 'markAsRead')->name('mark-as-read');
+            Route::post('/mark-all-as-read', 'markAllAsRead')->name('mark-all-as-read');
+            Route::get('/unread-count', 'getUnreadCount')->name('unread-count');
+            Route::delete('/{id}', 'destroy')->name('destroy');
+        });
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
     });
 });

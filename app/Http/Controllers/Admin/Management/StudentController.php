@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Admin\Management;
 
 use App\Http\Controllers\Controller;
+<<<<<<< HEAD
+=======
+use App\Traits\CreatesNotifications;
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -22,6 +26,10 @@ use Illuminate\Support\Facades\Hash;
 
 class StudentController extends Controller
 {
+<<<<<<< HEAD
+=======
+    use CreatesNotifications;
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
     protected StudentRepositoryInterface $repository;
     protected SchoolClassRepositoryInterface $classRepository;
     protected SubjectRepositoryInterface $subjectRepository;
@@ -179,6 +187,12 @@ class StudentController extends Controller
 
             $student = $this->repository->create($studentData);
 
+<<<<<<< HEAD
+=======
+            // Create notification for student creation
+            $this->notifyCreated('Student', $student);
+
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
             // Create parents if provided
             $parentIds = [];
             if ($request->has('parent_first_name') && is_array($request->parent_first_name)) {
@@ -341,6 +355,12 @@ class StudentController extends Controller
 
             $this->repository->update($id, $studentData);
 
+<<<<<<< HEAD
+=======
+            // Create notification for student update
+            $this->notifyUpdated('Student', $student);
+
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
             // Update parents
             $existingParentIds = $request->input('existing_parents', []);
             $linkedParentIds = $request->input('parents', []);
@@ -434,6 +454,12 @@ class StudentController extends Controller
                 return Redirect::back();
             }
 
+<<<<<<< HEAD
+=======
+            // Create notification for student deletion (before deletion)
+            $this->notifyDeleted('Student', $student);
+
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
             // Delete user account
             $student->user->delete();
 

@@ -27,6 +27,16 @@ class User extends Authenticatable
         'password',
         'status',
         'usertype',
+<<<<<<< HEAD
+=======
+        'phone',
+        'address',
+        'bio',
+        'date_of_birth',
+        'profile_image',
+        'login_count',
+        'last_login_at',
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
     ];
 
     /**
@@ -51,6 +61,11 @@ class User extends Authenticatable
             'password' => 'hashed',
             'usertype' => UserType::class,
             'status' => Status::class,
+<<<<<<< HEAD
+=======
+            'date_of_birth' => 'date',
+            'last_login_at' => 'datetime',
+>>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
         ];
     }
 
