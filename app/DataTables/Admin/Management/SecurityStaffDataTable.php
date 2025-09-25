@@ -3,13 +3,11 @@
 namespace App\DataTables\Admin\Management;
 
 use App\Models\SecurityStaff;
-use App\Enums\Status;
-use Yajra\DataTables\Services\DataTable;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Column;
-use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\Services\DataTable;
 
 class SecurityStaffDataTable extends DataTable
 {
@@ -21,18 +19,18 @@ class SecurityStaffDataTable extends DataTable
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
                 $show = checkPermission('admin.management.security.show') ? view('admin.layouts.actions.show', [
-                    'url' => route('admin.management.' . $this->model . '.show', ['id' => $row->security_id]),
-                    'id' => $row->security_id
+                    'url' => route('admin.management.'.$this->model.'.show', ['id' => $row->security_id]),
+                    'id' => $row->security_id,
                 ])->render() : '';
 
                 $edit = checkPermission('admin.management.security.edit') ? view('admin.layouts.actions.edit', [
-                    'url' => route('admin.management.' . $this->model . '.form', ['id' => $row->security_id]),
-                    'id' => $row->security_id
+                    'url' => route('admin.management.'.$this->model.'.form', ['id' => $row->security_id]),
+                    'id' => $row->security_id,
                 ])->render() : '';
 
                 $delete = checkPermission('admin.management.security.delete') ? view('admin.layouts.actions.delete', [
-                    'url' => route('admin.management.' . $this->model . '.delete', ['id' => $row->security_id]),
-                    'id' => $row->security_id
+                    'url' => route('admin.management.'.$this->model.'.delete', ['id' => $row->security_id]),
+                    'id' => $row->security_id,
                 ])->render() : '';
 
                 $dropdownItems = [];
@@ -61,9 +59,10 @@ class SecurityStaffDataTable extends DataTable
                         <span class="material-symbols-outlined text-lg">more_vert</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow rounded-3 p-2 w-100">
-                        ' . $dropdownContent . '
+                        '.$dropdownContent.'
                     </ul>
                 </div>';
+
                 return $dropdown;
             })
             ->addColumn('name', function ($row) {
@@ -71,50 +70,50 @@ class SecurityStaffDataTable extends DataTable
                     'Morning' => 'bg-gradient-warning',
                     'Afternoon' => 'bg-gradient-info',
                     'Evening' => 'bg-gradient-primary',
-                    'Night' => 'bg-gradient-dark'
+                    'Night' => 'bg-gradient-dark',
                 ];
 
                 $shiftColor = $shiftColors[$row->shift] ?? 'bg-gradient-secondary';
 
                 return '<div class="d-flex align-items-center">
-                    <span class="badge ' . $shiftColor . ' badge-sm me-2">' . substr($row->shift, 0, 1) . '</span>
-                    <span class="fw-bold">' . $row->full_name . '</span>
+                    <span class="badge '.$shiftColor.' badge-sm me-2">'.substr($row->shift, 0, 1).'</span>
+                    <span class="fw-bold">'.$row->full_name.'</span>
                 </div>';
             })
             ->addColumn('security_code', function ($row) {
-                return '<span class="text-secondary fw-bold">' . $row->security_code . '</span>';
+                return '<span class="text-secondary fw-bold">'.$row->security_code.'</span>';
             })
             ->addColumn('position', function ($row) {
-                return '<span class="text-primary">' . $row->position . '</span>';
+                return '<span class="text-primary">'.$row->position.'</span>';
             })
             ->addColumn('shift', function ($row) {
                 $shiftColors = [
                     'Morning' => 'bg-gradient-warning',
                     'Evening' => 'bg-gradient-info',
                     'Night' => 'bg-gradient-dark',
-                    'Rotating' => 'bg-gradient-secondary'
+                    'Rotating' => 'bg-gradient-secondary',
                 ];
 
                 $shiftColor = $shiftColors[$row->shift] ?? 'bg-gradient-primary';
 
-                return '<span class="badge ' . $shiftColor . ' badge-sm">' . $row->shift . '</span>';
+                return '<span class="badge '.$shiftColor.' badge-sm">'.$row->shift.'</span>';
             })
             ->addColumn('contact', function ($row) {
                 $contact = [];
                 if ($row->mobile_phone) {
-                    $contact[] = '<span class="badge bg-gradient-info badge-sm me-1">📞 ' . $row->mobile_phone . '</span>';
+                    $contact[] = '<span class="badge bg-gradient-info badge-sm me-1">📞 '.$row->mobile_phone.'</span>';
                 }
                 if ($row->home_phone) {
-                    $contact[] = '<span class="badge bg-gradient-secondary badge-sm">🏠 ' . $row->home_phone . '</span>';
+                    $contact[] = '<span class="badge bg-gradient-secondary badge-sm">🏠 '.$row->home_phone.'</span>';
                 }
 
                 return $contact ? implode('<br>', $contact) : '<span class="text-muted">No contact</span>';
             })
             ->addColumn('joining_date', function ($row) {
-                return $row->joining_date ? '<span class="badge bg-gradient-success badge-sm">' . $row->joining_date->format('M d, Y') . '</span>' : '<span class="text-muted">Not set</span>';
+                return $row->joining_date ? '<span class="badge bg-gradient-success badge-sm">'.$row->joining_date->format('M d, Y').'</span>' : '<span class="text-muted">Not set</span>';
             })
             ->addColumn('employee_id', function ($row) {
-                return $row->employee_id ? '<span class="badge bg-gradient-warning badge-sm">' . $row->employee_id . '</span>' : '<span class="text-muted">Not set</span>';
+                return $row->employee_id ? '<span class="badge bg-gradient-warning badge-sm">'.$row->employee_id.'</span>' : '<span class="text-muted">Not set</span>';
             })
             ->addColumn('email', function ($row) {
                 return $row->email ? $row->email : '<span class="text-muted">No email</span>';
@@ -125,13 +124,13 @@ class SecurityStaffDataTable extends DataTable
                     'Off Duty' => 'secondary',
                     'On Leave' => 'warning',
                     'Emergency' => 'danger',
-                    'Inactive' => 'dark'
+                    'Inactive' => 'dark',
                 ];
 
                 $statusText = $row->is_active ? 'On Duty' : 'Inactive';
                 $color = $statusColors[$statusText] ?? 'secondary';
 
-                return '<span class="badge badge-sm bg-gradient-' . $color . ' me-1">' . $statusText . '</span>';
+                return '<span class="badge badge-sm bg-gradient-'.$color.' me-1">'.$statusText.'</span>';
             })
             ->addColumn('modified', function ($row) {
                 return $row->updated_at ? $row->updated_at->format('M d, Y') : 'Never';
@@ -184,7 +183,7 @@ class SecurityStaffDataTable extends DataTable
                     if (index % 2 === 0) {
                         $(row).css("background-color", "rgba(0, 0, 0, 0.05)");
                     }
-                }'
+                }',
             ]);
     }
 
@@ -218,6 +217,6 @@ class SecurityStaffDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'SecurityStaff_' . date('YmdHis');
+        return 'SecurityStaff_'.date('YmdHis');
     }
 }

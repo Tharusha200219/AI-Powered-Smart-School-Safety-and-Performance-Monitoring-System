@@ -8,7 +8,7 @@ function getSideBarElement($icon, $text, $route, $route_params = [], $other_sele
         'route' => $route,
         'route_params' => $route_params,
         'other_selected_routes' => $other_selected_routes,
-        'additional_permissions' => $additional_permissions
+        'additional_permissions' => $additional_permissions,
     ];
 }
 

@@ -5,11 +5,12 @@ namespace App\Repositories\Admin\Management;
 use App\Models\Student;
 use App\Models\Subject;
 use App\Repositories\Interfaces\Admin\Management\StudentRepositoryInterface;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class StudentRepository implements StudentRepositoryInterface
 {
-    protected $model;
+    protected Student $model;
 
     public function __construct(Student $model)
     {
@@ -19,7 +20,7 @@ class StudentRepository implements StudentRepositoryInterface
     /**
      * Get all students
      */
-    public function getAll()
+    public function getAll(): Collection
     {
         return $this->model->with(['user', 'schoolClass', 'parents'])
             ->orderBy('created_at', 'desc')
@@ -29,7 +30,7 @@ class StudentRepository implements StudentRepositoryInterface
     /**
      * Get student by ID
      */
-    public function getById($id)
+    public function getById($id): ?Student
     {
         return $this->model->with(['user', 'schoolClass', 'parents', 'subjects'])
             ->where('student_id', $id)
@@ -39,10 +40,10 @@ class StudentRepository implements StudentRepositoryInterface
     /**
      * Create new student
      */
-    public function create(array $data)
+    public function create(array $data): Student
     {
         return DB::transaction(function () use ($data) {
-            if (!isset($data['student_code'])) {
+            if (! isset($data['student_code'])) {
                 $data['student_code'] = $this->generateStudentCode();
             }
 
@@ -60,12 +61,12 @@ class StudentRepository implements StudentRepositoryInterface
     /**
      * Update student
      */
-    public function update($id, array $data)
+    public function update($id, array $data): Student|bool
     {
         return DB::transaction(function () use ($id, $data) {
             $student = $this->model->where('student_id', $id)->first();
 
-            if (!$student) {
+            if (! $student) {
                 return false;
             }
 
@@ -86,7 +87,7 @@ class StudentRepository implements StudentRepositoryInterface
     /**
      * Delete student
      */
-    public function delete($id)
+    public function delete($id): bool
     {
         return $this->model->where('student_id', $id)->delete();
     }
@@ -94,7 +95,7 @@ class StudentRepository implements StudentRepositoryInterface
     /**
      * Get students by grade level
      */
-    public function getByGrade($grade)
+    public function getByGrade(int $grade): Collection
     {
         return $this->model->with(['user', 'schoolClass'])
             ->where('grade_level', $grade)
@@ -105,7 +106,7 @@ class StudentRepository implements StudentRepositoryInterface
     /**
      * Get students by class
      */
-    public function getByClass($classId)
+    public function getByClass(int $classId): Collection
     {
         return $this->model->with(['user', 'schoolClass'])
             ->where('class_id', $classId)
@@ -116,12 +117,12 @@ class StudentRepository implements StudentRepositoryInterface
     /**
      * Update student grade and subjects
      */
-    public function updateGrade($id, $newGrade)
+    public function updateGrade($id, int $newGrade): Student|bool
     {
         return DB::transaction(function () use ($id, $newGrade) {
             $student = $this->model->where('student_id', $id)->first();
 
-            if (!$student) {
+            if (! $student) {
                 return false;
             }
 
@@ -145,7 +146,7 @@ class StudentRepository implements StudentRepositoryInterface
     /**
      * Get student with relationships
      */
-    public function getWithRelations($id)
+    public function getWithRelations($id): ?Student
     {
         return $this->model->with(['user', 'schoolClass', 'parents', 'subjects'])
             ->where('student_id', $id)
@@ -155,11 +156,11 @@ class StudentRepository implements StudentRepositoryInterface
     /**
      * Assign subjects to student
      */
-    public function assignSubjects($studentId, array $subjectIds, $grade)
+    public function assignSubjects($studentId, array $subjectIds, int $grade): bool
     {
         $student = $this->model->where('student_id', $studentId)->first();
 
-        if (!$student) {
+        if (! $student) {
             return false;
         }
 
@@ -169,17 +170,19 @@ class StudentRepository implements StudentRepositoryInterface
                 'enrollment_date' => now(),
                 'grade' => $grade,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ];
         }
 
-        return $student->subjects()->sync($syncData);
+        $student->subjects()->sync($syncData);
+
+        return true;
     }
 
     /**
      * Generate student code
      */
-    public function generateStudentCode()
+    public function generateStudentCode(): string
     {
         return Student::generateStudentCode();
     }

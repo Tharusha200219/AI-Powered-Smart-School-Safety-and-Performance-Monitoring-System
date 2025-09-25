@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Setting;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
 
 class SettingsController extends Controller
 {
@@ -14,8 +13,9 @@ class SettingsController extends Controller
 
     public function index()
     {
-        $settings = Setting::first() ?? new Setting();
-        return view($this->directory . 'index', compact('settings'));
+        $settings = Setting::first() ?? new Setting;
+
+        return view($this->directory.'index', compact('settings'));
     }
 
     public function updateSchoolInfo(Request $request)
@@ -26,7 +26,7 @@ class SettingsController extends Controller
                 'school_type' => 'nullable|in:Primary,Secondary,Combined,International',
                 'school_motto' => 'nullable|string|max:500',
                 'principal_name' => 'nullable|string|max:255',
-                'established_year' => 'nullable|integer|min:1800|max:' . date('Y'),
+                'established_year' => 'nullable|integer|min:1800|max:'.date('Y'),
                 'total_capacity' => 'nullable|integer|min:1',
                 'website_url' => 'nullable|url|max:255',
             ]);
@@ -35,11 +35,11 @@ class SettingsController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Validation failed',
-                    'errors' => $validator->errors()
+                    'errors' => $validator->errors(),
                 ], 422);
             }
 
-            $settings = Setting::first() ?? new Setting();
+            $settings = Setting::first() ?? new Setting;
 
             $settings->update([
                 'school_name' => $request->school_name,
@@ -53,12 +53,12 @@ class SettingsController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'School information updated successfully'
+                'message' => 'School information updated successfully',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error updating school information: ' . $e->getMessage()
+                'message' => 'Error updating school information: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -78,11 +78,11 @@ class SettingsController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Validation failed',
-                    'errors' => $validator->errors()
+                    'errors' => $validator->errors(),
                 ], 422);
             }
 
-            $settings = Setting::first() ?? new Setting();
+            $settings = Setting::first() ?? new Setting;
 
             $settings->update([
                 'primary_color' => $request->primary_color,
@@ -94,12 +94,12 @@ class SettingsController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Theme updated successfully'
+                'message' => 'Theme updated successfully',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error updating theme: ' . $e->getMessage()
+                'message' => 'Error updating theme: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -118,11 +118,11 @@ class SettingsController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Validation failed',
-                    'errors' => $validator->errors()
+                    'errors' => $validator->errors(),
                 ], 422);
             }
 
-            $settings = Setting::first() ?? new Setting();
+            $settings = Setting::first() ?? new Setting;
 
             $settings->update([
                 'academic_year_start' => $request->academic_year_start,
@@ -133,12 +133,12 @@ class SettingsController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Academic settings updated successfully'
+                'message' => 'Academic settings updated successfully',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error updating academic settings: ' . $e->getMessage()
+                'message' => 'Error updating academic settings: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -156,11 +156,11 @@ class SettingsController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Validation failed',
-                    'errors' => $validator->errors()
+                    'errors' => $validator->errors(),
                 ], 422);
             }
 
-            $settings = Setting::first() ?? new Setting();
+            $settings = Setting::first() ?? new Setting;
 
             $settings->update([
                 'social_facebook' => $request->social_facebook,
@@ -170,12 +170,12 @@ class SettingsController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Social media settings updated successfully'
+                'message' => 'Social media settings updated successfully',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error updating social media settings: ' . $e->getMessage()
+                'message' => 'Error updating social media settings: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -183,17 +183,17 @@ class SettingsController extends Controller
     public function getThemeColors()
     {
         try {
-            $settings = Setting::first() ?? new Setting();
+            $settings = Setting::first() ?? new Setting;
 
             return response()->json([
                 'success' => true,
                 'colors' => $settings->theme_colors,
-                'css_variables' => $settings->css_variables
+                'css_variables' => $settings->css_variables,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error fetching theme colors: ' . $e->getMessage()
+                'message' => 'Error fetching theme colors: '.$e->getMessage(),
             ], 500);
         }
     }

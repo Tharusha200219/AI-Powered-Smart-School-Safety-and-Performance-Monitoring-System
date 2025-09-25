@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\SchoolClass;
-use App\Models\Teacher;
 use App\Models\Subject;
+use App\Models\Teacher;
 use Illuminate\Database\Seeder;
 
 class ClassTeacherAssignmentSeeder extends Seeder
@@ -80,11 +80,11 @@ class ClassTeacherAssignmentSeeder extends Seeder
         foreach ($classes as $class) {
             foreach ($subjectNames as $subjectName) {
                 $subject = Subject::where('subject_name', $subjectName)->first();
-                if ($subject && !$class->subjects()->where('subject_id', $subject->id)->exists()) {
+                if ($subject && ! $class->subjects()->where('subject_id', $subject->id)->exists()) {
                     $class->subjects()->attach($subject->id);
                 }
             }
-            $this->command->info("Assigned subjects to {$class->class_name}: " . implode(', ', $subjectNames));
+            $this->command->info("Assigned subjects to {$class->class_name}: ".implode(', ', $subjectNames));
         }
     }
 }

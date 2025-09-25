@@ -2,28 +2,30 @@
 
 namespace App\Http\Controllers\Admin\Management;
 
+use App\Enums\UserType;
+use App\Helpers\Constants;
+use App\Helpers\ValidationRules;
 use App\Http\Controllers\Admin\BaseManagementController;
-use App\Services\UserService;
-use App\Services\ImageUploadService;
+use App\Repositories\Interfaces\Admin\Management\ParentRepositoryInterface;
+use App\Repositories\Interfaces\Admin\Management\SchoolClassRepositoryInterface;
+use App\Repositories\Interfaces\Admin\Management\StudentRepositoryInterface;
+use App\Repositories\Interfaces\Admin\Management\SubjectRepositoryInterface;
 use App\Services\DatabaseTransactionService;
+use App\Services\ImageUploadService;
 use App\Services\ParentCreationService;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
-use App\DataTables\Admin\Management\StudentDataTable;
-use App\Repositories\Interfaces\Admin\Management\StudentRepositoryInterface;
-use App\Repositories\Interfaces\Admin\Management\SchoolClassRepositoryInterface;
-use App\Repositories\Interfaces\Admin\Management\SubjectRepositoryInterface;
-use App\Repositories\Interfaces\Admin\Management\ParentRepositoryInterface;
-use App\Helpers\ValidationRules;
-use App\Helpers\Constants;
-use App\Enums\UserType;
 use Spatie\Permission\Models\Role;
 
 class ImprovedStudentController extends BaseManagementController
 {
     protected SchoolClassRepositoryInterface $classRepository;
+
     protected SubjectRepositoryInterface $subjectRepository;
+
     protected ParentRepositoryInterface $parentRepository;
+
     protected ParentCreationService $parentCreationService;
 
     public function __construct(
@@ -100,12 +102,12 @@ class ImprovedStudentController extends BaseManagementController
                 return $student;
             },
             $this->entityName,
-            Constants::getSuccessMessage('created', $this->entityName . ' and parents'),
+            Constants::getSuccessMessage('created', $this->entityName.' and parents'),
         );
 
         flashResponse($result['message'], $result['success'] ? Constants::FLASH_SUCCESS : Constants::FLASH_ERROR);
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        return redirect()->route($this->parentRoutePath.'index');
     }
 
     /**
@@ -114,9 +116,10 @@ class ImprovedStudentController extends BaseManagementController
     private function updateStudent(Request $request, int $id)
     {
         $student = $this->repository->getById($id);
-        if (!$student) {
+        if (! $student) {
             flashResponse(Constants::getErrorMessage('not_found', $this->entityName), Constants::FLASH_ERROR);
-            return Redirect::route($this->parentRoutePath . 'index');
+
+            return Redirect::route($this->parentRoutePath.'index');
         }
 
         $result = $this->transactionService->executeUpdate(
@@ -149,7 +152,7 @@ class ImprovedStudentController extends BaseManagementController
 
         flashResponse($result['message'], $result['success'] ? Constants::FLASH_SUCCESS : Constants::FLASH_ERROR);
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        return redirect()->route($this->parentRoutePath.'index');
     }
 
     /**
@@ -158,7 +161,7 @@ class ImprovedStudentController extends BaseManagementController
     public function generateCode()
     {
         return response()->json([
-            'code' => $this->repository->generateStudentCode()
+            'code' => $this->repository->generateStudentCode(),
         ]);
     }
 
@@ -197,13 +200,13 @@ class ImprovedStudentController extends BaseManagementController
             'roles',
             'parents',
             'subjects',
-            'profile_image'
+            'profile_image',
         ]);
 
         // Remove parent fields
         $parentFields = array_filter(
             array_keys($request->all()),
-            fn($key) => str_starts_with($key, 'parent_')
+            fn ($key) => str_starts_with($key, 'parent_')
         );
         $data = array_diff_key($data, array_flip($parentFields));
 
@@ -233,12 +236,12 @@ class ImprovedStudentController extends BaseManagementController
         $parentIds = array_merge($parentIds, $newParentIds);
 
         // Add existing parent selections
-        if ($request->has('parents') && !empty($request->parents)) {
+        if ($request->has('parents') && ! empty($request->parents)) {
             $parentIds = array_merge($parentIds, $request->parents);
         }
 
         // Link all parents to student
-        if (!empty($parentIds)) {
+        if (! empty($parentIds)) {
             $student->parents()->sync(array_unique($parentIds));
         }
     }

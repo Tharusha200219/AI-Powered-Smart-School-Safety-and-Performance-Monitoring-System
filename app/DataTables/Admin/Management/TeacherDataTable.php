@@ -3,13 +3,11 @@
 namespace App\DataTables\Admin\Management;
 
 use App\Models\Teacher;
-use App\Enums\Status;
-use Yajra\DataTables\Services\DataTable;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Column;
-use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\Services\DataTable;
 
 class TeacherDataTable extends DataTable
 {
@@ -20,22 +18,23 @@ class TeacherDataTable extends DataTable
         return (new EloquentDataTable($query))
             ->addColumn('DT_RowIndex', function ($row) {
                 static $index = 0;
+
                 return ++$index;
             })
             ->addColumn('action', function ($row) {
                 $show = checkPermission('admin.management.teachers.show') ? view('admin.layouts.actions.show', [
-                    'url' => route('admin.management.' . $this->model . '.show', ['id' => $row->teacher_id]),
-                    'id' => $row->teacher_id
+                    'url' => route('admin.management.'.$this->model.'.show', ['id' => $row->teacher_id]),
+                    'id' => $row->teacher_id,
                 ])->render() : '';
 
                 $edit = checkPermission('admin.management.teachers.edit') ? view('admin.layouts.actions.edit', [
-                    'url' => route('admin.management.' . $this->model . '.form', ['id' => $row->teacher_id]),
-                    'id' => $row->teacher_id
+                    'url' => route('admin.management.'.$this->model.'.form', ['id' => $row->teacher_id]),
+                    'id' => $row->teacher_id,
                 ])->render() : '';
 
                 $delete = checkPermission('admin.management.teachers.delete') ? view('admin.layouts.actions.delete', [
-                    'url' => route('admin.management.' . $this->model . '.delete', ['id' => $row->teacher_id]),
-                    'id' => $row->teacher_id
+                    'url' => route('admin.management.'.$this->model.'.delete', ['id' => $row->teacher_id]),
+                    'id' => $row->teacher_id,
                 ])->render() : '';
 
                 $dropdownItems = [];
@@ -64,24 +63,26 @@ class TeacherDataTable extends DataTable
                         <span class="material-symbols-outlined text-lg">more_vert</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow rounded-3 p-2 w-100">
-                        ' . $dropdownContent . '
+                        '.$dropdownContent.'
                     </ul>
                 </div>';
+
                 return $dropdown;
             })
             ->addColumn('name', function ($row) {
                 $teacherType = $row->is_class_teacher ? 'CT' : 'TEA';
                 $badgeClass = $row->is_class_teacher ? 'bg-gradient-primary' : 'bg-gradient-info';
+
                 return '<div class="d-flex align-items-center">
-                    <span class="badge ' . $badgeClass . ' badge-sm me-2">' . $teacherType . '</span>
-                    <span class="fw-bold">' . $row->full_name . '</span>
+                    <span class="badge '.$badgeClass.' badge-sm me-2">'.$teacherType.'</span>
+                    <span class="fw-bold">'.$row->full_name.'</span>
                 </div>';
             })
             ->addColumn('teacher_code', function ($row) {
-                return '<span class="text-secondary">' . $row->teacher_code . '</span>';
+                return '<span class="text-secondary">'.$row->teacher_code.'</span>';
             })
             ->addColumn('specialization', function ($row) {
-                return $row->specialization ? '<span class="text-primary">' . $row->specialization . '</span>' : '<span class="text-muted">Not specified</span>';
+                return $row->specialization ? '<span class="text-primary">'.$row->specialization.'</span>' : '<span class="text-muted">Not specified</span>';
             })
             ->addColumn('subjects', function ($row) {
                 if ($row->subjects->count() === 0) {
@@ -92,7 +93,7 @@ class TeacherDataTable extends DataTable
                 $display = implode(', ', $subjectNames);
 
                 if ($row->subjects->count() > 3) {
-                    $display .= ' <span class="text-primary">+' . ($row->subjects->count() - 3) . ' more</span>';
+                    $display .= ' <span class="text-primary">+'.($row->subjects->count() - 3).' more</span>';
                 }
 
                 return $display;
@@ -100,8 +101,10 @@ class TeacherDataTable extends DataTable
             ->addColumn('experience', function ($row) {
                 if ($row->experience_years) {
                     $years = floor($row->experience_years);
-                    return '<span class="badge bg-gradient-warning badge-sm">' . $years . ' year' . ($years != 1 ? 's' : '') . '</span>';
+
+                    return '<span class="badge bg-gradient-warning badge-sm">'.$years.' year'.($years != 1 ? 's' : '').'</span>';
                 }
+
                 return '<span class="text-muted">Not specified</span>';
             })
             ->addColumn('email', function ($row) {
@@ -110,7 +113,8 @@ class TeacherDataTable extends DataTable
             ->addColumn('status', function ($row) {
                 $color = $row->is_active ? 'success' : 'danger';
                 $text = $row->is_active ? 'Active' : 'Inactive';
-                return '<span class="badge badge-sm bg-gradient-' . $color . ' me-1">' . $text . '</span>';
+
+                return '<span class="badge badge-sm bg-gradient-'.$color.' me-1">'.$text.'</span>';
             })
             ->addColumn('modified', function ($row) {
                 return $row->updated_at ? $row->updated_at->format('M d, Y') : 'Never';
@@ -160,7 +164,7 @@ class TeacherDataTable extends DataTable
                     if (index % 2 === 0) {
                         $(row).css("background-color", "rgba(0, 0, 0, 0.05)");
                     }
-                }'
+                }',
             ]);
     }
 
@@ -192,6 +196,6 @@ class TeacherDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'Teacher_' . date('YmdHis');
+        return 'Teacher_'.date('YmdHis');
     }
 }

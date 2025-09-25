@@ -9,7 +9,7 @@ trait CreatesNotifications
 {
     protected function createNotification(string $type, string $entityType, $entity, array $additionalData = [])
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return;
         }
 
@@ -28,7 +28,7 @@ trait CreatesNotifications
             'data' => array_merge([
                 'entity_name' => $entityName,
                 'action_at' => now()->toISOString(),
-            ], $additionalData)
+            ], $additionalData),
         ]);
 
         return $notification;
@@ -39,10 +39,11 @@ trait CreatesNotifications
         $actionMap = [
             'created' => 'Created',
             'updated' => 'Updated',
-            'deleted' => 'Deleted'
+            'deleted' => 'Deleted',
         ];
 
         $action = $actionMap[$type] ?? ucfirst($type);
+
         return "{$entityType} {$action}";
     }
 
@@ -51,7 +52,7 @@ trait CreatesNotifications
         $messages = [
             'created' => "{$userName} created a new {$entityType}: {$entityName}",
             'updated' => "{$userName} updated {$entityType}: {$entityName}",
-            'deleted' => "{$userName} deleted {$entityType}: {$entityName}"
+            'deleted' => "{$userName} deleted {$entityType}: {$entityName}",
         ];
 
         return $messages[$type] ?? "{$userName} performed {$type} action on {$entityType}: {$entityName}";
@@ -70,12 +71,12 @@ trait CreatesNotifications
 
         // For students, combine first and last name
         if ($entityType === 'Student' && isset($entity->first_name)) {
-            return trim($entity->first_name . ' ' . ($entity->last_name ?? ''));
+            return trim($entity->first_name.' '.($entity->last_name ?? ''));
         }
 
         // For security staff, use first and last name
         if ($entityType === 'SecurityStaff' && isset($entity->first_name)) {
-            return trim($entity->first_name . ' ' . ($entity->last_name ?? ''));
+            return trim($entity->first_name.' '.($entity->last_name ?? ''));
         }
 
         // Fallback to ID

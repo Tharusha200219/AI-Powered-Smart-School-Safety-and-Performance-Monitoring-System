@@ -2,27 +2,30 @@
 
 namespace App\Http\Controllers\Admin\Management;
 
+use App\DataTables\Admin\Management\SecurityStaffDataTable;
+use App\Enums\Status;
+use App\Enums\UserType;
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Repositories\Interfaces\Admin\Management\SecurityStaffRepositoryInterface;
 use App\Traits\CreatesNotifications;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
-use App\DataTables\Admin\Management\SecurityStaffDataTable;
-use App\Repositories\Interfaces\Admin\Management\SecurityStaffRepositoryInterface;
-use App\Enums\Status;
-use App\Enums\UserType;
-use App\Models\User;
 use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\Hash;
 
 class SecurityStaffController extends Controller
 {
     use CreatesNotifications;
+
     protected SecurityStaffRepositoryInterface $repository;
+
     protected $parentViewPath = 'admin.pages.management.security.';
+
     protected $parentRoutePath = 'admin.management.security.';
 
     public function __construct(SecurityStaffRepositoryInterface $repository)
@@ -35,33 +38,37 @@ class SecurityStaffController extends Controller
     {
         checkPermissionAndRedirect('admin.management.security.index');
         Session::put('title', 'Security Staff Management');
-        return $datatable->render($this->parentViewPath . 'index');
+
+        return $datatable->render($this->parentViewPath.'index');
     }
 
     public function form($id = null)
     {
-        checkPermissionAndRedirect('admin.management.security.' . ($id ? 'edit' : 'form'));
-        Session::put('title', ($id ? 'Update' : 'Create') . ' Security Staff');
+        checkPermissionAndRedirect('admin.management.security.'.($id ? 'edit' : 'form'));
+        Session::put('title', ($id ? 'Update' : 'Create').' Security Staff');
 
         $roles = Role::where('name', 'security')->get();
 
         if ($id) {
             $security = $this->repository->getWithRelations($id);
-            if (!$security) {
+            if (! $security) {
                 flashResponse('Security Staff not found.', 'danger');
-                return Redirect::route($this->parentRoutePath . 'index');
+
+                return Redirect::route($this->parentRoutePath.'index');
             }
-            return view($this->parentViewPath . 'form', compact('security', 'id', 'roles'));
+
+            return view($this->parentViewPath.'form', compact('security', 'id', 'roles'));
         }
 
         $security = null;
-        return view($this->parentViewPath . 'form', compact('id', 'roles'));
+
+        return view($this->parentViewPath.'form', compact('id', 'roles'));
     }
 
     public function enroll(Request $request)
     {
         $id = $request->input('id');
-        checkPermissionAndRedirect('admin.management.security.' . ($id ? 'edit' : 'form'));
+        checkPermissionAndRedirect('admin.management.security.'.($id ? 'edit' : 'form'));
 
         if ($request->has('id') && $request->filled('id')) {
             return $this->update($request);
@@ -91,7 +98,7 @@ class SecurityStaffController extends Controller
 
             // Create user account
             $user = User::create([
-                'name' => trim($request->first_name . ' ' . $request->last_name),
+                'name' => trim($request->first_name.' '.$request->last_name),
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'usertype' => UserType::SECURITY->value,
@@ -111,7 +118,7 @@ class SecurityStaffController extends Controller
             // Handle profile image upload
             if ($request->hasFile('profile_image')) {
                 $image = $request->file('profile_image');
-                $imageName = 'security_' . time() . '_' . $user->id . '.' . $image->getClientOriginalExtension();
+                $imageName = 'security_'.time().'_'.$user->id.'.'.$image->getClientOriginalExtension();
                 $imagePath = $image->storeAs('security/profiles', $imageName, 'public');
                 $securityData['photo_path'] = $imagePath;
             }
@@ -129,7 +136,7 @@ class SecurityStaffController extends Controller
             flashResponse('Failed to create Security Staff. Please try again.', 'danger');
         }
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        return redirect()->route($this->parentRoutePath.'index');
     }
 
     public function show(string $id)
@@ -137,12 +144,13 @@ class SecurityStaffController extends Controller
         checkPermissionAndRedirect('admin.management.security.show');
         $security = $this->repository->getWithRelations($id);
 
-        if (!$security) {
+        if (! $security) {
             flashResponse('Security Staff not found.', 'danger');
+
             return Redirect::back();
         }
 
-        return view($this->parentViewPath . 'view', compact('security'));
+        return view($this->parentViewPath.'view', compact('security'));
     }
 
     public function update(Request $request)
@@ -172,14 +180,15 @@ class SecurityStaffController extends Controller
             DB::beginTransaction();
 
             $security = $this->repository->getById($id);
-            if (!$security) {
+            if (! $security) {
                 flashResponse('Security Staff not found.', 'danger');
-                return Redirect::route($this->parentRoutePath . 'index');
+
+                return Redirect::route($this->parentRoutePath.'index');
             }
 
             // Update user account
             $userData = [
-                'name' => trim($request->first_name . ' ' . $request->last_name),
+                'name' => trim($request->first_name.' '.$request->last_name),
                 'email' => $request->email,
             ];
 
@@ -205,7 +214,7 @@ class SecurityStaffController extends Controller
                 }
 
                 $image = $request->file('profile_image');
-                $imageName = 'security_' . time() . '_' . $security->user_id . '.' . $image->getClientOriginalExtension();
+                $imageName = 'security_'.time().'_'.$security->user_id.'.'.$image->getClientOriginalExtension();
                 $imagePath = $image->storeAs('security/profiles', $imageName, 'public');
                 $securityData['photo_path'] = $imagePath;
             }
@@ -220,7 +229,7 @@ class SecurityStaffController extends Controller
             flashResponse('Failed to update Security Staff. Please try again.', 'danger');
         }
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        return redirect()->route($this->parentRoutePath.'index');
     }
 
     public function delete(string $id)
@@ -231,8 +240,9 @@ class SecurityStaffController extends Controller
             DB::beginTransaction();
 
             $security = $this->repository->getById($id);
-            if (!$security) {
+            if (! $security) {
                 flashResponse('Security Staff not found.', 'danger');
+
                 return Redirect::back();
             }
 
@@ -250,6 +260,6 @@ class SecurityStaffController extends Controller
             flashResponse('Failed to delete Security Staff. Please try again.', 'danger');
         }
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        return redirect()->route($this->parentRoutePath.'index');
     }
 }

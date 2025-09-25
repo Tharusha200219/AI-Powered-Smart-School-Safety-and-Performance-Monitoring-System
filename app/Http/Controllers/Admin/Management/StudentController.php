@@ -2,33 +2,39 @@
 
 namespace App\Http\Controllers\Admin\Management;
 
+use App\DataTables\Admin\Management\StudentDataTable;
+use App\Enums\Status;
+use App\Enums\UserType;
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Repositories\Interfaces\Admin\Management\ParentRepositoryInterface;
+use App\Repositories\Interfaces\Admin\Management\SchoolClassRepositoryInterface;
+use App\Repositories\Interfaces\Admin\Management\StudentRepositoryInterface;
+use App\Repositories\Interfaces\Admin\Management\SubjectRepositoryInterface;
 use App\Traits\CreatesNotifications;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
-use App\DataTables\Admin\Management\StudentDataTable;
-use App\Repositories\Interfaces\Admin\Management\StudentRepositoryInterface;
-use App\Repositories\Interfaces\Admin\Management\SchoolClassRepositoryInterface;
-use App\Repositories\Interfaces\Admin\Management\SubjectRepositoryInterface;
-use App\Repositories\Interfaces\Admin\Management\ParentRepositoryInterface;
-use App\Enums\Status;
-use App\Enums\UserType;
-use App\Models\User;
 use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\Hash;
 
 class StudentController extends Controller
 {
     use CreatesNotifications;
+
     protected StudentRepositoryInterface $repository;
+
     protected SchoolClassRepositoryInterface $classRepository;
+
     protected SubjectRepositoryInterface $subjectRepository;
+
     protected ParentRepositoryInterface $parentRepository;
+
     protected $parentViewPath = 'admin.pages.management.students.';
+
     protected $parentRoutePath = 'admin.management.students.';
 
     public function __construct(
@@ -48,13 +54,14 @@ class StudentController extends Controller
     {
         checkPermissionAndRedirect('admin.management.students.index');
         Session::put('title', 'Student Management');
-        return $datatable->render($this->parentViewPath . 'index');
+
+        return $datatable->render($this->parentViewPath.'index');
     }
 
     public function form($id = null)
     {
-        checkPermissionAndRedirect('admin.management.students.' . ($id ? 'edit' : 'form'));
-        Session::put('title', ($id ? 'Update' : 'Create') . ' Student');
+        checkPermissionAndRedirect('admin.management.students.'.($id ? 'edit' : 'form'));
+        Session::put('title', ($id ? 'Update' : 'Create').' Student');
 
         $classes = $this->classRepository->getAll();
         $subjects = $this->subjectRepository->getAll();
@@ -63,21 +70,24 @@ class StudentController extends Controller
 
         if ($id) {
             $student = $this->repository->getWithRelations($id);
-            if (!$student) {
+            if (! $student) {
                 flashResponse('Student not found.', 'danger');
-                return Redirect::route($this->parentRoutePath . 'index');
+
+                return Redirect::route($this->parentRoutePath.'index');
             }
-            return view($this->parentViewPath . 'form', compact('student', 'id', 'classes', 'subjects', 'parents', 'roles'));
+
+            return view($this->parentViewPath.'form', compact('student', 'id', 'classes', 'subjects', 'parents', 'roles'));
         }
 
         $student = null;
-        return view($this->parentViewPath . 'form', compact('id', 'classes', 'subjects', 'parents', 'roles'));
+
+        return view($this->parentViewPath.'form', compact('id', 'classes', 'subjects', 'parents', 'roles'));
     }
 
     public function enroll(Request $request)
     {
         $id = $request->input('id');
-        checkPermissionAndRedirect('admin.management.students.' . ($id ? 'edit' : 'form'));
+        checkPermissionAndRedirect('admin.management.students.'.($id ? 'edit' : 'form'));
 
         if ($request->has('id') && $request->filled('id')) {
             return $this->update($request);
@@ -129,7 +139,7 @@ class StudentController extends Controller
 
             // Create user account
             $user = User::create([
-                'name' => trim($request->first_name . ' ' . $request->last_name),
+                'name' => trim($request->first_name.' '.$request->last_name),
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'usertype' => UserType::STUDENT->value,
@@ -161,7 +171,7 @@ class StudentController extends Controller
                 'parent_workplace',
                 'parent_work_phone',
                 'parent_is_emergency_contact',
-                'parent_address_line1'
+                'parent_address_line1',
             ]);
             $studentData['user_id'] = $user->id;
             $studentData['is_active'] = $request->has('is_active') ? true : false;
@@ -169,7 +179,7 @@ class StudentController extends Controller
             // Handle profile image upload
             if ($request->hasFile('profile_image')) {
                 $image = $request->file('profile_image');
-                $imageName = 'student_' . time() . '_' . $user->id . '.' . $image->getClientOriginalExtension();
+                $imageName = 'student_'.time().'_'.$user->id.'.'.$image->getClientOriginalExtension();
                 $imagePath = $image->storeAs('students/profiles', $imageName, 'public');
                 $studentData['photo_path'] = $imagePath;
             }
@@ -188,7 +198,7 @@ class StudentController extends Controller
             $parentIds = [];
             if ($request->has('parent_first_name') && is_array($request->parent_first_name)) {
                 foreach ($request->parent_first_name as $index => $firstName) {
-                    if (!empty($firstName) && !empty($request->parent_last_name[$index])) {
+                    if (! empty($firstName) && ! empty($request->parent_last_name[$index])) {
                         // Create user account for parent
                         $parentEmail = $request->parent_email[$index] ?? null;
                         $parentUser = null;
@@ -196,9 +206,9 @@ class StudentController extends Controller
                         if ($parentEmail) {
                             // Check if user with this email already exists
                             $existingUser = User::where('email', $parentEmail)->first();
-                            if (!$existingUser) {
+                            if (! $existingUser) {
                                 $parentUser = User::create([
-                                    'name' => trim($firstName . ' ' . $request->parent_last_name[$index]),
+                                    'name' => trim($firstName.' '.$request->parent_last_name[$index]),
                                     'email' => $parentEmail,
                                     'password' => Hash::make('password123'), // Default password
                                     'usertype' => UserType::PARENT->value,
@@ -226,7 +236,7 @@ class StudentController extends Controller
                             'workplace' => $request->parent_workplace[$index] ?? null,
                             'work_phone' => $request->parent_work_phone[$index] ?? null,
                             'is_emergency_contact' => isset($request->parent_is_emergency_contact) &&
-                                in_array($index + 1, (array)$request->parent_is_emergency_contact),
+                                in_array($index + 1, (array) $request->parent_is_emergency_contact),
                             'address_line1' => $request->parent_address_line1[$index] ?? null,
                             'is_active' => true,
                         ];
@@ -238,17 +248,17 @@ class StudentController extends Controller
             }
 
             // Assign existing parents if provided
-            if ($request->has('parents') && !empty($request->parents)) {
+            if ($request->has('parents') && ! empty($request->parents)) {
                 $parentIds = array_merge($parentIds, $request->parents);
             }
 
             // Link parents to student
-            if (!empty($parentIds)) {
+            if (! empty($parentIds)) {
                 $student->parents()->sync($parentIds);
             }
 
             // Assign subjects if provided
-            if ($request->has('subjects') && !empty($request->subjects)) {
+            if ($request->has('subjects') && ! empty($request->subjects)) {
                 $this->repository->assignSubjects($student->student_id, $request->subjects, $request->grade_level);
             }
 
@@ -257,10 +267,10 @@ class StudentController extends Controller
             flashResponse('Student and parents created successfully.', 'success');
         } catch (\Exception $e) {
             DB::rollBack();
-            flashResponse('Failed to create Student. Please try again. Error: ' . $e->getMessage(), 'danger');
+            flashResponse('Failed to create Student. Please try again. Error: '.$e->getMessage(), 'danger');
         }
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        return redirect()->route($this->parentRoutePath.'index');
     }
 
     public function show(string $id)
@@ -268,12 +278,13 @@ class StudentController extends Controller
         checkPermissionAndRedirect('admin.management.students.show');
         $student = $this->repository->getWithRelations($id);
 
-        if (!$student) {
+        if (! $student) {
             flashResponse('Student not found.', 'danger');
+
             return Redirect::back();
         }
 
-        return view($this->parentViewPath . 'view', compact('student'));
+        return view($this->parentViewPath.'view', compact('student'));
     }
 
     public function update(Request $request)
@@ -306,14 +317,15 @@ class StudentController extends Controller
             DB::beginTransaction();
 
             $student = $this->repository->getById($id);
-            if (!$student) {
+            if (! $student) {
                 flashResponse('Student not found.', 'danger');
-                return Redirect::route($this->parentRoutePath . 'index');
+
+                return Redirect::route($this->parentRoutePath.'index');
             }
 
             // Update user account
             $userData = [
-                'name' => trim($request->first_name . ' ' . $request->last_name),
+                'name' => trim($request->first_name.' '.$request->last_name),
                 'email' => $request->email,
             ];
 
@@ -339,7 +351,7 @@ class StudentController extends Controller
                 }
 
                 $image = $request->file('profile_image');
-                $imageName = 'student_' . time() . '_' . $student->user_id . '.' . $image->getClientOriginalExtension();
+                $imageName = 'student_'.time().'_'.$student->user_id.'.'.$image->getClientOriginalExtension();
                 $imagePath = $image->storeAs('students/profiles', $imageName, 'public');
                 $studentData['photo_path'] = $imagePath;
             }
@@ -357,7 +369,7 @@ class StudentController extends Controller
             $newParentIds = [];
             if ($request->has('parent_first_name') && is_array($request->parent_first_name)) {
                 foreach ($request->parent_first_name as $index => $firstName) {
-                    if (!empty($firstName) && !empty($request->parent_last_name[$index])) {
+                    if (! empty($firstName) && ! empty($request->parent_last_name[$index])) {
                         // Create user account for parent
                         $parentEmail = $request->parent_email[$index] ?? null;
                         $parentUser = null;
@@ -365,9 +377,9 @@ class StudentController extends Controller
                         if ($parentEmail) {
                             // Check if user with this email already exists
                             $existingUser = User::where('email', $parentEmail)->first();
-                            if (!$existingUser) {
+                            if (! $existingUser) {
                                 $parentUser = User::create([
-                                    'name' => trim($firstName . ' ' . $request->parent_last_name[$index]),
+                                    'name' => trim($firstName.' '.$request->parent_last_name[$index]),
                                     'email' => $parentEmail,
                                     'password' => Hash::make('password123'), // Default password
                                     'usertype' => UserType::PARENT->value,
@@ -395,7 +407,7 @@ class StudentController extends Controller
                             'workplace' => $request->parent_workplace[$index] ?? null,
                             'work_phone' => $request->parent_work_phone[$index] ?? null,
                             'is_emergency_contact' => isset($request->parent_is_emergency_contact) &&
-                                in_array($index + 1, (array)$request->parent_is_emergency_contact),
+                                in_array($index + 1, (array) $request->parent_is_emergency_contact),
                             'address_line1' => $request->parent_address_line1[$index] ?? null,
                             'is_active' => true,
                         ];
@@ -426,7 +438,7 @@ class StudentController extends Controller
             flashResponse('Failed to update Student. Please try again.', 'danger');
         }
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        return redirect()->route($this->parentRoutePath.'index');
     }
 
     public function delete(string $id)
@@ -437,8 +449,9 @@ class StudentController extends Controller
             DB::beginTransaction();
 
             $student = $this->repository->getById($id);
-            if (!$student) {
+            if (! $student) {
                 flashResponse('Student not found.', 'danger');
+
                 return Redirect::back();
             }
 
@@ -459,13 +472,13 @@ class StudentController extends Controller
             flashResponse('Failed to delete Student. Please try again.', 'danger');
         }
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        return redirect()->route($this->parentRoutePath.'index');
     }
 
     public function generateCode()
     {
         return response()->json([
-            'code' => \App\Models\Student::generateStudentCode()
+            'code' => \App\Models\Student::generateStudentCode(),
         ]);
     }
 }

@@ -23,7 +23,7 @@ class ImageUploadService
 
         // Generate unique filename
         $extension = $image->getClientOriginalExtension();
-        $filename = "{$type}_" . time() . "_{$userId}.{$extension}";
+        $filename = "{$type}_".time()."_{$userId}.{$extension}";
 
         // Store in appropriate directory
         $directory = $this->getDirectoryForType($type);
@@ -60,10 +60,10 @@ class ImageUploadService
      */
     public function getProfileImageUrl(?string $imagePath): ?string
     {
-        if (!$imagePath) {
+        if (! $imagePath) {
             return null;
         }
 
-        return asset('storage/' . $imagePath);
+        return asset('storage/'.$imagePath);
     }
 }

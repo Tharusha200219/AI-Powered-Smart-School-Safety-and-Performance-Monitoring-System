@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
 class PlaceholderController extends Controller
 {
@@ -14,7 +13,7 @@ class PlaceholderController extends Controller
     {
         return view('admin.pages.placeholder.index', [
             'module' => ucfirst($module ?? 'Feature'),
-            'message' => 'This feature is coming soon! Our development team is working on implementing this functionality.'
+            'message' => 'This feature is coming soon! Our development team is working on implementing this functionality.',
         ]);
     }
 
@@ -23,14 +22,17 @@ class PlaceholderController extends Controller
     {
         return $this->index('assignments');
     }
+
     public function grades()
     {
         return $this->index('grades');
     }
+
     public function attendance()
     {
         return $this->index('attendance');
     }
+
     public function timetable()
     {
         return $this->index('timetable');
@@ -41,6 +43,7 @@ class PlaceholderController extends Controller
     {
         return $this->index('visitors');
     }
+
     public function incidents()
     {
         return $this->index('incidents');
@@ -51,10 +54,12 @@ class PlaceholderController extends Controller
     {
         return $this->index('student reports');
     }
+
     public function academicReports()
     {
         return $this->index('academic reports');
     }
+
     public function attendanceReports()
     {
         return $this->index('attendance reports');
@@ -65,6 +70,7 @@ class PlaceholderController extends Controller
     {
         return $this->index('announcements');
     }
+
     public function messages()
     {
         return $this->index('messages');
@@ -75,18 +81,22 @@ class PlaceholderController extends Controller
     {
         return $this->index('school information');
     }
+
     public function gradeLevels()
     {
         return $this->index('grade levels');
     }
+
     public function academicYear()
     {
         return $this->index('academic year');
     }
+
     public function roles()
     {
         return $this->index('roles & permissions');
     }
+
     public function users()
     {
         return $this->index('users');

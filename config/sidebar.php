@@ -4,7 +4,7 @@ return [
     [
         'items' => [
             getSideBarElement('home', 'Dashboard', 'admin.dashboard.index'),
-        ]
+        ],
     ],
     [
         'name' => 'Management',
@@ -15,7 +15,7 @@ return [
             getSideBarElement('class', 'Classes', 'admin.management.classes.index'),
             getSideBarElement('subject', 'Subjects', 'admin.management.subjects.index'),
             getSideBarElement('security', 'Security Staff', 'admin.management.security.index'),
-        ]
+        ],
     ],
     [
         'name' => 'Academic Operations',
@@ -24,14 +24,14 @@ return [
             getSideBarElement('grade', 'Grades', 'admin.grades.index'),
             getSideBarElement('calendar_today', 'Attendance', 'admin.attendance.index'),
             getSideBarElement('schedule', 'Timetable', 'admin.timetable.index'),
-        ]
+        ],
     ],
     [
         'name' => 'Security',
         'items' => [
             getSideBarElement('person_add', 'Visitors', 'admin.security.visitors.index'),
             getSideBarElement('report_problem', 'Incidents', 'admin.security.incidents.index'),
-        ]
+        ],
     ],
     [
         'name' => 'Reports',
@@ -39,14 +39,14 @@ return [
             getSideBarElement('assessment', 'Student Reports', 'admin.reports.students.index'),
             getSideBarElement('trending_up', 'Academic Reports', 'admin.reports.academic.index'),
             getSideBarElement('event_note', 'Attendance Reports', 'admin.reports.attendance.index'),
-        ]
+        ],
     ],
     [
         'name' => 'Communication',
         'items' => [
             getSideBarElement('notifications', 'Announcements', 'admin.communication.announcements.index'),
             getSideBarElement('mail', 'Messages', 'admin.communication.messages.index'),
-        ]
+        ],
     ],
     [
         'name' => 'System Setup',
@@ -57,6 +57,6 @@ return [
             getSideBarElement('admin_panel_settings', 'Roles & Permissions', 'admin.setup.role.index'),
             getSideBarElement('account_circle', 'Users', 'admin.setup.users.index'),
             getSideBarElement('settings', 'Settings', 'admin.setup.settings.index'),
-        ]
-    ]
+        ],
+    ],
 ];

@@ -3,13 +3,11 @@
 namespace App\DataTables\Admin\Management;
 
 use App\Models\Student;
-use App\Enums\Status;
-use Yajra\DataTables\Services\DataTable;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Column;
-use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\Services\DataTable;
 
 class StudentDataTable extends DataTable
 {
@@ -21,18 +19,18 @@ class StudentDataTable extends DataTable
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
                 $show = checkPermission('admin.management.students.show') ? view('admin.layouts.actions.show', [
-                    'url' => route('admin.management.' . $this->model . '.show', ['id' => $row->student_id]),
-                    'id' => $row->student_id
+                    'url' => route('admin.management.'.$this->model.'.show', ['id' => $row->student_id]),
+                    'id' => $row->student_id,
                 ])->render() : '';
 
                 $edit = checkPermission('admin.management.students.edit') ? view('admin.layouts.actions.edit', [
-                    'url' => route('admin.management.' . $this->model . '.form', ['id' => $row->student_id]),
-                    'id' => $row->student_id
+                    'url' => route('admin.management.'.$this->model.'.form', ['id' => $row->student_id]),
+                    'id' => $row->student_id,
                 ])->render() : '';
 
                 $delete = checkPermission('admin.management.students.delete') ? view('admin.layouts.actions.delete', [
-                    'url' => route('admin.management.' . $this->model . '.delete', ['id' => $row->student_id]),
-                    'id' => $row->student_id
+                    'url' => route('admin.management.'.$this->model.'.delete', ['id' => $row->student_id]),
+                    'id' => $row->student_id,
                 ])->render() : '';
 
                 $dropdownItems = [];
@@ -61,27 +59,29 @@ class StudentDataTable extends DataTable
                         <span class="material-symbols-outlined text-lg">more_vert</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow rounded-3 p-2 w-100">
-                        ' . $dropdownContent . '
+                        '.$dropdownContent.'
                     </ul>
                 </div>';
+
                 return $dropdown;
             })
             ->addColumn('name', function ($row) {
                 return '<div class="d-flex align-items-center">
                     <span class="badge bg-gradient-success badge-sm me-2">STU</span>
-                    <span class="fw-bold">' . $row->full_name . '</span>
+                    <span class="fw-bold">'.$row->full_name.'</span>
                 </div>';
             })
             ->addColumn('student_code', function ($row) {
-                return '<span class="text-secondary">' . $row->student_code . '</span>';
+                return '<span class="text-secondary">'.$row->student_code.'</span>';
             })
             ->addColumn('grade_level', function ($row) {
-                return '<span class="badge bg-gradient-primary badge-sm">Grade ' . $row->grade_level . '</span>';
+                return '<span class="badge bg-gradient-primary badge-sm">Grade '.$row->grade_level.'</span>';
             })
             ->addColumn('class', function ($row) {
                 if ($row->schoolClass) {
-                    return '<span class="text-primary fw-medium">' . $row->schoolClass->full_name . '</span>';
+                    return '<span class="text-primary fw-medium">'.$row->schoolClass->full_name.'</span>';
                 }
+
                 return '<span class="text-muted">No class assigned</span>';
             })
             ->addColumn('email', function ($row) {
@@ -96,7 +96,7 @@ class StudentDataTable extends DataTable
                 $display = implode(', ', $parentNames);
 
                 if ($row->parents->count() > 2) {
-                    $display .= ' <span class="text-primary">+' . ($row->parents->count() - 2) . ' more</span>';
+                    $display .= ' <span class="text-primary">+'.($row->parents->count() - 2).' more</span>';
                 }
 
                 return $display;
@@ -104,7 +104,8 @@ class StudentDataTable extends DataTable
             ->addColumn('status', function ($row) {
                 $color = $row->is_active ? 'success' : 'danger';
                 $text = $row->is_active ? 'Active' : 'Inactive';
-                return '<span class="badge badge-sm bg-gradient-' . $color . ' me-1">' . $text . '</span>';
+
+                return '<span class="badge badge-sm bg-gradient-'.$color.' me-1">'.$text.'</span>';
             })
             ->addColumn('modified', function ($row) {
                 return $row->updated_at ? $row->updated_at->format('M d, Y') : 'Never';
@@ -154,7 +155,7 @@ class StudentDataTable extends DataTable
                     if (index % 2 === 0) {
                         $(row).css("background-color", "rgba(0, 0, 0, 0.05)");
                     }
-                }'
+                }',
             ]);
     }
 
@@ -186,6 +187,6 @@ class StudentDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'Student_' . date('YmdHis');
+        return 'Student_'.date('YmdHis');
     }
 }

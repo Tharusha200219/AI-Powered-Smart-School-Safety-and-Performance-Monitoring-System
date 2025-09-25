@@ -8,19 +8,20 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
 {
     public function index()
     {
         $user = Auth::user();
+
         return view('admin.pages.profile.index', compact('user'));
     }
 
     public function edit()
     {
         $user = Auth::user();
+
         return view('admin.pages.profile.edit', compact('user'));
     }
 
@@ -70,7 +71,7 @@ class ProfileController extends Controller
 
         $user = Auth::user();
 
-        if (!Hash::check($request->current_password, $user->password)) {
+        if (! Hash::check($request->current_password, $user->password)) {
             return back()->withErrors(['current_password' => 'The current password is incorrect.']);
         }
 
@@ -116,7 +117,7 @@ class ProfileController extends Controller
         $completedFields = 0;
 
         foreach ($fields as $field) {
-            if (!empty($user->$field)) {
+            if (! empty($user->$field)) {
                 $completedFields++;
             }
         }

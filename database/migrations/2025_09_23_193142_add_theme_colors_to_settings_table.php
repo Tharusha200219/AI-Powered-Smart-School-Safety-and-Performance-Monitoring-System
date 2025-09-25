@@ -82,7 +82,7 @@ return new class extends Migration
                 'theme_mode',
                 'enable_animations',
                 'sidebar_style',
-                'navbar_style'
+                'navbar_style',
             ]);
         });
     }

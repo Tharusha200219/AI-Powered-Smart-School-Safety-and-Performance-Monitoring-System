@@ -1,22 +1,20 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\NotificationController;
-use App\Http\Controllers\Admin\ProfileController;
-use App\Http\Controllers\Admin\Management\StudentController;
-use App\Http\Controllers\Admin\Management\TeacherController;
 use App\Http\Controllers\Admin\Management\ParentController;
-use App\Http\Controllers\Admin\Management\SecurityStaffController;
 use App\Http\Controllers\Admin\Management\SchoolClassController;
+use App\Http\Controllers\Admin\Management\SecurityStaffController;
+use App\Http\Controllers\Admin\Management\StudentController;
 use App\Http\Controllers\Admin\Management\SubjectController;
+use App\Http\Controllers\Admin\Management\TeacherController;
+use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\PlaceholderController;
-use App\Http\Controllers\Admin\Setup\SettingsController as SetupSettingsController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\SettingsController;
-use App\Http\Controllers\Admin\Setup\RoleController;
+use App\Http\Controllers\Admin\Setup\SettingsController as SetupSettingsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
-
 
 Auth::routes(['register' => true, 'verify' => false]);
 

@@ -2,27 +2,33 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Traits\CreatesNotifications;
-use App\Services\UserService;
-use App\Services\ImageUploadService;
-use App\Services\DatabaseTransactionService;
-use App\Helpers\ValidationRules;
 use App\Helpers\Constants;
-use Illuminate\Support\Facades\Session;
+use App\Http\Controllers\Controller;
+use App\Services\DatabaseTransactionService;
+use App\Services\ImageUploadService;
+use App\Services\UserService;
+use App\Traits\CreatesNotifications;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 
 abstract class BaseManagementController extends Controller
 {
     use CreatesNotifications;
 
     protected $repository;
+
     protected UserService $userService;
+
     protected ImageUploadService $imageService;
+
     protected DatabaseTransactionService $transactionService;
+
     protected string $parentViewPath;
+
     protected string $parentRoutePath;
+
     protected string $entityName;
+
     protected string $entityType;
 
     public function __construct(
@@ -45,7 +51,8 @@ abstract class BaseManagementController extends Controller
     {
         checkPermissionAndRedirect($this->getPermissionKey('index'));
         Session::put('title', $this->getPageTitle('Management'));
-        return $datatable->render($this->parentViewPath . 'index');
+
+        return $datatable->render($this->parentViewPath.'index');
     }
 
     /**
@@ -57,12 +64,13 @@ abstract class BaseManagementController extends Controller
 
         $entity = $this->repository->getWithRelations($id);
 
-        if (!$entity) {
+        if (! $entity) {
             flashResponse(Constants::getErrorMessage('not_found', $this->entityName), Constants::FLASH_ERROR);
+
             return Redirect::back();
         }
 
-        return view($this->parentViewPath . 'view', [$this->getEntityVariableName() => $entity]);
+        return view($this->parentViewPath.'view', [$this->getEntityVariableName() => $entity]);
     }
 
     /**
@@ -73,16 +81,17 @@ abstract class BaseManagementController extends Controller
         $action = $id ? 'edit' : 'form';
         checkPermissionAndRedirect($this->getPermissionKey($action));
 
-        $pageTitle = ($id ? 'Update' : 'Create') . ' ' . $this->entityName;
+        $pageTitle = ($id ? 'Update' : 'Create').' '.$this->entityName;
         Session::put('title', $pageTitle);
 
         $data = $this->getFormData($id);
 
         if ($id) {
             $entity = $this->repository->getWithRelations($id);
-            if (!$entity) {
+            if (! $entity) {
                 flashResponse(Constants::getErrorMessage('not_found', $this->entityName), Constants::FLASH_ERROR);
-                return Redirect::route($this->parentRoutePath . 'index');
+
+                return Redirect::route($this->parentRoutePath.'index');
             }
             $data[$this->getEntityVariableName()] = $entity;
             $data['id'] = $id;
@@ -90,7 +99,7 @@ abstract class BaseManagementController extends Controller
             $data['id'] = $id;
         }
 
-        return view($this->parentViewPath . 'form', $data);
+        return view($this->parentViewPath.'form', $data);
     }
 
     /**
@@ -101,8 +110,9 @@ abstract class BaseManagementController extends Controller
         checkPermissionAndRedirect($this->getPermissionKey('delete'));
 
         $entity = $this->repository->getById($id);
-        if (!$entity) {
+        if (! $entity) {
             flashResponse(Constants::getErrorMessage('not_found', $this->entityName), Constants::FLASH_ERROR);
+
             return Redirect::back();
         }
 
@@ -124,7 +134,7 @@ abstract class BaseManagementController extends Controller
 
         flashResponse($result['message'], $result['success'] ? Constants::FLASH_SUCCESS : Constants::FLASH_ERROR);
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        return redirect()->route($this->parentRoutePath.'index');
     }
 
     /**
@@ -132,7 +142,7 @@ abstract class BaseManagementController extends Controller
      */
     protected function handleProfileImageUpload($request, $entity = null): ?string
     {
-        if (!$request->hasFile('profile_image')) {
+        if (! $request->hasFile('profile_image')) {
             return null;
         }
 
@@ -152,7 +162,7 @@ abstract class BaseManagementController extends Controller
      */
     protected function getPermissionKey(string $action): string
     {
-        return str_replace('/', '.', $this->parentRoutePath) . $action;
+        return str_replace('/', '.', $this->parentRoutePath).$action;
     }
 
     /**
@@ -160,7 +170,7 @@ abstract class BaseManagementController extends Controller
      */
     protected function getPageTitle(string $suffix = ''): string
     {
-        return $this->entityName . ($suffix ? " $suffix" : '');
+        return $this->entityName.($suffix ? " $suffix" : '');
     }
 
     /**

@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
+use App\Traits\CreatesNotifications;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Traits\CreatesNotifications;
 
 class DatabaseTransactionService
 {
@@ -25,19 +25,19 @@ class DatabaseTransactionService
             return [
                 'success' => true,
                 'message' => $successMessage,
-                'data' => $result
+                'data' => $result,
             ];
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error($errorMessage . ': ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString()
+            Log::error($errorMessage.': '.$e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
             ]);
 
             return [
                 'success' => false,
                 'message' => $errorMessage,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ];
         }
     }
@@ -48,8 +48,8 @@ class DatabaseTransactionService
     public function executeCreate(
         callable $operation,
         string $entityType,
-        string $successMessage = null,
-        string $errorMessage = null
+        ?string $successMessage = null,
+        ?string $errorMessage = null
     ): array {
         $successMessage = $successMessage ?? "{$entityType} created successfully.";
         $errorMessage = $errorMessage ?? "Failed to create {$entityType}. Please try again.";
@@ -69,9 +69,9 @@ class DatabaseTransactionService
     public function executeUpdate(
         callable $operation,
         string $entityType,
-        $entity = null,
-        string $successMessage = null,
-        string $errorMessage = null
+        mixed $entity = null,
+        ?string $successMessage = null,
+        ?string $errorMessage = null
     ): array {
         $successMessage = $successMessage ?? "{$entityType} updated successfully.";
         $errorMessage = $errorMessage ?? "Failed to update {$entityType}. Please try again.";
@@ -91,9 +91,9 @@ class DatabaseTransactionService
     public function executeDelete(
         callable $operation,
         string $entityType,
-        $entity = null,
-        string $successMessage = null,
-        string $errorMessage = null
+        mixed $entity = null,
+        ?string $successMessage = null,
+        ?string $errorMessage = null
     ): array {
         // Create notification before deletion
         if ($entity) {

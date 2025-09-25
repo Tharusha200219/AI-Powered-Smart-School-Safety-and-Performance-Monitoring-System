@@ -2,40 +2,55 @@
 
 namespace App\Helpers;
 
+use App\Enums\Gender;
+use App\Enums\RelationshipType;
+use Illuminate\Validation\Rule;
+
 class ValidationRules
 {
     // Common field validation rules
-    const PERSONAL_NAME_RULES = 'required|min:2|max:50';
-    const OPTIONAL_NAME_RULES = 'nullable|max:50';
-    const EMAIL_RULES = 'required|email|max:255';
-    const PASSWORD_RULES = 'required|min:8|confirmed';
-    const OPTIONAL_PASSWORD_RULES = 'nullable|min:8|confirmed';
-    const PHONE_RULES = 'nullable|max:15';
-    const REQUIRED_PHONE_RULES = 'required|max:15';
-    const DATE_RULES = 'required|date|before:today';
-    const PROFILE_IMAGE_RULES = 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048';
-    const NUMERIC_RULES = 'nullable|numeric|min:0';
-    const REQUIRED_NUMERIC_RULES = 'required|numeric|min:0';
-    const BOOLEAN_RULES = 'boolean';
-    const GRADE_LEVEL_RULES = 'required|integer|min:1|max:13';
-    const ADDRESS_RULES = 'nullable|max:255';
+    public const PERSONAL_NAME_RULES = 'required|min:2|max:50';
+
+    public const OPTIONAL_NAME_RULES = 'nullable|max:50';
+
+    public const EMAIL_RULES = 'required|email|max:255';
+
+    public const PASSWORD_RULES = 'required|min:8|confirmed';
+
+    public const OPTIONAL_PASSWORD_RULES = 'nullable|min:8|confirmed';
+
+    public const PHONE_RULES = 'nullable|max:15';
+
+    public const REQUIRED_PHONE_RULES = 'required|max:15';
+
+    public const DATE_RULES = 'required|date|before:today';
+
+    public const PROFILE_IMAGE_RULES = 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048';
+
+    public const NUMERIC_RULES = 'nullable|numeric|min:0';
+
+    public const REQUIRED_NUMERIC_RULES = 'required|numeric|min:0';
+
+    public const BOOLEAN_RULES = 'boolean';
+
+    public const GRADE_LEVEL_RULES = 'required|integer|min:1|max:13';
+
+    public const ADDRESS_RULES = 'nullable|max:255';
 
     /**
      * Get common person validation rules
      */
     public static function getPersonRules(bool $isUpdate = false, ?int $userId = null): array
     {
-        $emailRule = self::EMAIL_RULES;
-
         if ($isUpdate && $userId) {
             $emailRule = [
                 'required',
                 'email',
                 'max:255',
-                \Illuminate\Validation\Rule::unique('users', 'email')->ignore($userId, 'id')
+                Rule::unique('users', 'email')->ignore($userId, 'id'),
             ];
         } else {
-            $emailRule .= '|unique:users,email';
+            $emailRule = self::EMAIL_RULES.'|unique:users,email';
         }
 
         return [
@@ -43,7 +58,7 @@ class ValidationRules
             'last_name' => self::PERSONAL_NAME_RULES,
             'middle_name' => self::OPTIONAL_NAME_RULES,
             'date_of_birth' => self::DATE_RULES,
-            'gender' => 'required|' . \App\Enums\Gender::getValidationRule(),
+            'gender' => 'required|'.Gender::getValidationRule(),
             'email' => $emailRule,
             'password' => $isUpdate ? self::OPTIONAL_PASSWORD_RULES : self::PASSWORD_RULES,
             'profile_image' => self::PROFILE_IMAGE_RULES,
@@ -116,9 +131,9 @@ class ValidationRules
             'parent_middle_name' => 'nullable|array',
             'parent_middle_name.*' => 'nullable|max:50',
             'parent_gender' => 'nullable|array',
-            'parent_gender.*' => 'required_with:parent_first_name.*|' . \App\Enums\Gender::getValidationRule(),
+            'parent_gender.*' => 'required_with:parent_first_name.*|'.Gender::getValidationRule(),
             'parent_relationship_type' => 'nullable|array',
-            'parent_relationship_type.*' => 'required_with:parent_first_name.*|' . \App\Enums\RelationshipType::getValidationRule(),
+            'parent_relationship_type.*' => 'required_with:parent_first_name.*|'.RelationshipType::getValidationRule(),
             'parent_mobile_phone' => 'nullable|array',
             'parent_mobile_phone.*' => 'required_with:parent_first_name.*|max:15',
             'parent_email' => 'nullable|array',

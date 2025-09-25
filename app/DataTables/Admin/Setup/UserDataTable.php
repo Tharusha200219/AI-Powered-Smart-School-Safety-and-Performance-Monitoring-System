@@ -2,15 +2,14 @@
 
 namespace App\DataTables\Admin\Setup;
 
-use App\Models\User;
-use App\Enums\Status;
 use App\Enums\UserType;
-use Yajra\DataTables\Services\DataTable;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Column;
-use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\Services\DataTable;
 
 class UserDataTable extends DataTable
 {
@@ -25,18 +24,18 @@ class UserDataTable extends DataTable
                 $isAdminUser = $row->hasRole('admin');
 
                 $show = checkPermission('admin.setup.users.show') ? view('admin.layouts.actions.show', [
-                    'url' => route('admin.setup.' . $this->model . '.show', ['id' => $row->id]),
-                    'id' => $row->id
+                    'url' => route('admin.setup.'.$this->model.'.show', ['id' => $row->id]),
+                    'id' => $row->id,
                 ])->render() : '';
 
-                $edit = (checkPermission('admin.setup.users.edit') && !$isCurrentUser) ? view('admin.layouts.actions.edit', [
-                    'url' => route('admin.setup.' . $this->model . '.form', ['id' => $row->id]),
-                    'id' => $row->id
+                $edit = (checkPermission('admin.setup.users.edit') && ! $isCurrentUser) ? view('admin.layouts.actions.edit', [
+                    'url' => route('admin.setup.'.$this->model.'.form', ['id' => $row->id]),
+                    'id' => $row->id,
                 ])->render() : '';
 
-                $delete = (checkPermission('admin.setup.users.delete') && !$isCurrentUser && !$isAdminUser) ? view('admin.layouts.actions.delete', [
-                    'url' => route('admin.setup.' . $this->model . '.delete', ['id' => $row->id]),
-                    'id' => $row->id
+                $delete = (checkPermission('admin.setup.users.delete') && ! $isCurrentUser && ! $isAdminUser) ? view('admin.layouts.actions.delete', [
+                    'url' => route('admin.setup.'.$this->model.'.delete', ['id' => $row->id]),
+                    'id' => $row->id,
                 ])->render() : '';
 
                 $dropdownItems = [];
@@ -65,9 +64,10 @@ class UserDataTable extends DataTable
                         <span class="material-symbols-outlined text-lg">more_vert</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow rounded-3 p-2 w-100">
-                        ' . $dropdownContent . '
+                        '.$dropdownContent.'
                     </ul>
                 </div>';
+
                 return $dropdown;
             })
             ->addColumn('name', function ($row) {
@@ -82,12 +82,12 @@ class UserDataTable extends DataTable
                         'security' => 'bg-gradient-warning',
                         default => 'bg-gradient-secondary'
                     };
-                    $rolesBadge = '<span class="badge ' . $badgeClass . ' badge-sm me-2">' . strtoupper(substr($primaryRole->name, 0, 3)) . '</span>';
+                    $rolesBadge = '<span class="badge '.$badgeClass.' badge-sm me-2">'.strtoupper(substr($primaryRole->name, 0, 3)).'</span>';
                 }
 
                 return '<div class="d-flex align-items-center">
-                    ' . $rolesBadge . '
-                    <span class="fw-bold">' . $row->name . '</span>
+                    '.$rolesBadge.'
+                    <span class="fw-bold">'.$row->name.'</span>
                 </div>';
             })
             ->addColumn('roles', function ($row) {
@@ -105,11 +105,11 @@ class UserDataTable extends DataTable
                         'security' => 'bg-gradient-warning',
                         default => 'bg-gradient-secondary'
                     };
-                    $rolesBadges .= '<span class="badge ' . $badgeClass . ' badge-sm me-1">' . ucfirst($role->name) . '</span>';
+                    $rolesBadges .= '<span class="badge '.$badgeClass.' badge-sm me-1">'.ucfirst($role->name).'</span>';
                 }
 
                 if ($row->roles->count() > 2) {
-                    $rolesBadges .= '<span class="badge bg-gradient-dark badge-sm">+' . ($row->roles->count() - 2) . '</span>';
+                    $rolesBadges .= '<span class="badge bg-gradient-dark badge-sm">+'.($row->roles->count() - 2).'</span>';
                 }
 
                 return $rolesBadges;
@@ -121,7 +121,7 @@ class UserDataTable extends DataTable
                     default => 'success',
                 };
                 try {
-                    return '<span class="badge badge-sm bg-gradient-' . $color . ' me-1">' . ucfirst(strtolower($row->status->name)) . '</span>';
+                    return '<span class="badge badge-sm bg-gradient-'.$color.' me-1">'.ucfirst(strtolower($row->status->name)).'</span>';
                 } catch (\ValueError $e) {
                     return '<span class="badge badge-sm bg-gradient-danger me-1">Invalid</span>';
                 }
@@ -136,7 +136,7 @@ class UserDataTable extends DataTable
                     default => 'secondary',
                 };
                 try {
-                    return '<span class="badge badge-sm bg-gradient-' . $color . ' me-1">' . ucfirst(strtolower($row->usertype->name)) . '</span>';
+                    return '<span class="badge badge-sm bg-gradient-'.$color.' me-1">'.ucfirst(strtolower($row->usertype->name)).'</span>';
                 } catch (\ValueError $e) {
                     return '<span class="badge badge-sm bg-gradient-danger me-1">Invalid</span>';
                 }
@@ -168,7 +168,7 @@ class UserDataTable extends DataTable
                     if (index % 2 === 0) {
                         $(row).css("background-color", "rgba(0, 0, 0, 0.05)");
                     }
-                }'
+                }',
             ]);
     }
 
@@ -198,6 +198,6 @@ class UserDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'Users_' . date('YmdHis');
+        return 'Users_'.date('YmdHis');
     }
 }
