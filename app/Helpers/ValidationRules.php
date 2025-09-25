@@ -50,7 +50,7 @@ class ValidationRules
                 Rule::unique('users', 'email')->ignore($userId, 'id'),
             ];
         } else {
-            $emailRule = self::EMAIL_RULES.'|unique:users,email';
+            $emailRule = self::EMAIL_RULES . '|unique:users,email';
         }
 
         return [
@@ -58,7 +58,7 @@ class ValidationRules
             'last_name' => self::PERSONAL_NAME_RULES,
             'middle_name' => self::OPTIONAL_NAME_RULES,
             'date_of_birth' => self::DATE_RULES,
-            'gender' => 'required|'.Gender::getValidationRule(),
+            'gender' => 'required|' . Gender::getValidationRule(),
             'email' => $emailRule,
             'password' => $isUpdate ? self::OPTIONAL_PASSWORD_RULES : self::PASSWORD_RULES,
             'profile_image' => self::PROFILE_IMAGE_RULES,
@@ -131,9 +131,9 @@ class ValidationRules
             'parent_middle_name' => 'nullable|array',
             'parent_middle_name.*' => 'nullable|max:50',
             'parent_gender' => 'nullable|array',
-            'parent_gender.*' => 'required_with:parent_first_name.*|'.Gender::getValidationRule(),
+            'parent_gender.*' => 'required_with:parent_first_name.*|' . Gender::getValidationRule(),
             'parent_relationship_type' => 'nullable|array',
-            'parent_relationship_type.*' => 'required_with:parent_first_name.*|'.RelationshipType::getValidationRule(),
+            'parent_relationship_type.*' => 'required_with:parent_first_name.*|' . RelationshipType::getValidationRule(),
             'parent_mobile_phone' => 'nullable|array',
             'parent_mobile_phone.*' => 'required_with:parent_first_name.*|max:15',
             'parent_email' => 'nullable|array',

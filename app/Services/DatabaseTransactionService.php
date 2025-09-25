@@ -30,7 +30,7 @@ class DatabaseTransactionService
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error($errorMessage.': '.$e->getMessage(), [
+            Log::error($errorMessage . ': ' . $e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
             ]);
 

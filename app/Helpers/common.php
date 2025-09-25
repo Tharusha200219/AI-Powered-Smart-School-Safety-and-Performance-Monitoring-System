@@ -24,7 +24,7 @@ function flashResponse(string $message, string $color = 'success'): void
 
 function getDataTableAction(string $title, string $route, string $color = 'secondary'): string
 {
-    return '<a href="'.$route.'" class="btn btn-sm text-'.$color.' font-weight-bold text-xs" data-toggle="tooltip" data-original-title="'.$title.'">'.$title.'</a>';
+    return '<a href="' . $route . '" class="btn btn-sm text-' . $color . ' font-weight-bold text-xs" data-toggle="tooltip" data-original-title="' . $title . '">' . $title . '</a>';
 }
 
 function uploadImage(string $driver, $image): string
@@ -34,13 +34,13 @@ function uploadImage(string $driver, $image): string
 
 function confirmActionButton(string $title, string $route, string $id, string $color = 'danger', string $icon = 'fa-trash'): string
 {
-    return '<a href="#" class="btn btn-sm btn-'.$color.' confirm-action"
-            data-id="'.$id.'"
-            data-route="'.$route.'"
-            data-title="'.$title.'"
+    return '<a href="#" class="btn btn-sm btn-' . $color . ' confirm-action"
+            data-id="' . $id . '"
+            data-route="' . $route . '"
+            data-title="' . $title . '"
             data-toggle="tooltip"
-            data-original-title="'.$title.'">
-            <i class="fa '.$icon.'"></i>
+            data-original-title="' . $title . '">
+            <i class="fa ' . $icon . '"></i>
         </a>';
 }
 
@@ -73,7 +73,7 @@ function hexToRgb(string $hex): string
 
     // Convert hex to RGB
     if (strlen($hex) == 3) {
-        $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
+        $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
     }
 
     if (strlen($hex) != 6) {

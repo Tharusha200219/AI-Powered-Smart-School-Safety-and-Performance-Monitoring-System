@@ -57,7 +57,7 @@ class DashboardController extends Controller
         // Get settings for theme and school configuration
         $settings = Setting::first() ?? new Setting;
 
-        return view($this->directory.'index', compact(
+        return view($this->directory . 'index', compact(
             'stats',
             'recent_enrollments',
             'grade_distribution',
