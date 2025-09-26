@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Subject;
 use App\Models\Teacher;
 use App\Models\User;
-use App\Models\Subject;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -37,7 +37,7 @@ class TeacherSeeder extends Seeder
                 'home_phone' => '+1-217-555-3101',
                 'mobile_phone' => '+1-217-555-3102',
                 'email' => 'emily.parker@school.edu',
-                'subjects' => ['Mathematics']
+                'subjects' => ['Mathematics'],
             ],
             [
                 'first_name' => 'Jonathan',
@@ -61,7 +61,7 @@ class TeacherSeeder extends Seeder
                 'home_phone' => '+1-217-555-3201',
                 'mobile_phone' => '+1-217-555-3202',
                 'email' => 'jonathan.stevens@school.edu',
-                'subjects' => ['English Language Arts', 'Library Skills']
+                'subjects' => ['English Language Arts', 'Library Skills'],
             ],
             [
                 'first_name' => 'Sarah',
@@ -84,7 +84,7 @@ class TeacherSeeder extends Seeder
                 'home_phone' => '+1-217-555-3301',
                 'mobile_phone' => '+1-217-555-3302',
                 'email' => 'sarah.martinez@school.edu',
-                'subjects' => ['Science']
+                'subjects' => ['Science'],
             ],
             [
                 'first_name' => 'Robert',
@@ -107,7 +107,7 @@ class TeacherSeeder extends Seeder
                 'home_phone' => '+1-217-555-3401',
                 'mobile_phone' => '+1-217-555-3402',
                 'email' => 'robert.thompson@school.edu',
-                'subjects' => ['Social Studies']
+                'subjects' => ['Social Studies'],
             ],
             [
                 'first_name' => 'Angela',
@@ -131,7 +131,7 @@ class TeacherSeeder extends Seeder
                 'home_phone' => '+1-217-555-3501',
                 'mobile_phone' => '+1-217-555-3502',
                 'email' => 'angela.wilson@school.edu',
-                'subjects' => ['Visual Arts']
+                'subjects' => ['Visual Arts'],
             ],
             [
                 'first_name' => 'David',
@@ -154,7 +154,7 @@ class TeacherSeeder extends Seeder
                 'home_phone' => '+1-217-555-3601',
                 'mobile_phone' => '+1-217-555-3602',
                 'email' => 'david.brown@school.edu',
-                'subjects' => ['Music']
+                'subjects' => ['Music'],
             ],
             [
                 'first_name' => 'Michelle',
@@ -177,7 +177,7 @@ class TeacherSeeder extends Seeder
                 'home_phone' => '+1-217-555-3701',
                 'mobile_phone' => '+1-217-555-3702',
                 'email' => 'michelle.davis@school.edu',
-                'subjects' => ['Physical Education']
+                'subjects' => ['Physical Education'],
             ],
             [
                 'first_name' => 'Carlos',
@@ -201,7 +201,7 @@ class TeacherSeeder extends Seeder
                 'home_phone' => '+1-217-555-3801',
                 'mobile_phone' => '+1-217-555-3802',
                 'email' => 'carlos.rodriguez@school.edu',
-                'subjects' => ['Spanish Language']
+                'subjects' => ['Spanish Language'],
             ],
             [
                 'first_name' => 'Lisa',
@@ -224,7 +224,7 @@ class TeacherSeeder extends Seeder
                 'home_phone' => '+1-217-555-3901',
                 'mobile_phone' => '+1-217-555-3902',
                 'email' => 'lisa.garcia@school.edu',
-                'subjects' => ['Technology Education']
+                'subjects' => ['Technology Education'],
             ],
             [
                 'first_name' => 'Jennifer',
@@ -247,14 +247,14 @@ class TeacherSeeder extends Seeder
                 'home_phone' => '+1-217-555-4001',
                 'mobile_phone' => '+1-217-555-4002',
                 'email' => 'jennifer.taylor@school.edu',
-                'subjects' => ['Library Skills', 'English Language Arts']
+                'subjects' => ['Library Skills', 'English Language Arts'],
             ],
         ];
 
         foreach ($teachers as $teacherData) {
             // Create user account for teacher
             $user = User::create([
-                'name' => $teacherData['first_name'] . ' ' . $teacherData['last_name'],
+                'name' => $teacherData['first_name'].' '.$teacherData['last_name'],
                 'email' => $teacherData['email'],
                 'password' => Hash::make('teacher123'), // Default password
                 'email_verified_at' => now(),
@@ -299,7 +299,7 @@ class TeacherSeeder extends Seeder
                 }
             }
 
-            $this->command->info("Created teacher: {$teacher->full_name} ({$teacher->teacher_code}) - Subjects: " . implode(', ', $teacherData['subjects']));
+            $this->command->info("Created teacher: {$teacher->full_name} ({$teacher->teacher_code}) - Subjects: ".implode(', ', $teacherData['subjects']));
         }
     }
 }

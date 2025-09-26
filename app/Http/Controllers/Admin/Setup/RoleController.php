@@ -2,23 +2,24 @@
 
 namespace App\Http\Controllers\Admin\Setup;
 
+use App\DataTables\Admin\Setup\RoleDataTable;
+use App\Enums\Status;
 use App\Http\Controllers\Controller;
+use App\Repositories\Interfaces\Admin\Setup\RoleRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Permission;
-use App\DataTables\Admin\Setup\RoleDataTable;
-use App\Repositories\Interfaces\Admin\Setup\RoleRepositoryInterface;
-use App\Enums\Status;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
 
 class RoleController extends Controller
 {
     protected RoleRepositoryInterface $repository;
+
     protected $parentViewPath = 'admin.pages.setup.role.';
+
     protected $parentRoutePath = 'admin.setup.role.';
 
     public function __construct(RoleRepositoryInterface $repository)
@@ -31,13 +32,14 @@ class RoleController extends Controller
     {
         checkPermissionAndRedirect('admin.setup.role.index');
         Session::put('title', 'Role Management');
-        return $datatable->render($this->parentViewPath . 'index');
+
+        return $datatable->render($this->parentViewPath.'index');
     }
 
     public function form($id = null)
     {
-        checkPermissionAndRedirect('admin.setup.role.' . ($id ? 'edit' : 'form'));
-        Session::put('title', ($id ? 'Update' : 'Create') . ' Role');
+        checkPermissionAndRedirect('admin.setup.role.'.($id ? 'edit' : 'form'));
+        Session::put('title', ($id ? 'Update' : 'Create').' Role');
         $permissionsGrouped = $this->getPermissionsGrouped();
         $processedPermissionsGrouped = [];
 
@@ -47,29 +49,32 @@ class RoleController extends Controller
             });
             $processedPermissionsGrouped[$groupName] = [
                 'permissions' => $permissions,
-                'groupedByModule' => $groupedByModule
+                'groupedByModule' => $groupedByModule,
             ];
         }
 
         if ($id) {
             $role = $this->repository->getOne($id);
-            if (!$role) {
+            if (! $role) {
                 flashResponse('Role not found.', 'danger');
-                return Redirect::route($this->parentRoutePath . 'index');
+
+                return Redirect::route($this->parentRoutePath.'index');
             }
             $rolePermissions = $role->permissions->pluck('name')->toArray();
-            return view($this->parentViewPath . 'form', compact('role', 'id', 'processedPermissionsGrouped', 'rolePermissions'));
+
+            return view($this->parentViewPath.'form', compact('role', 'id', 'processedPermissionsGrouped', 'rolePermissions'));
         }
 
         $role = null;
         $rolePermissions = [];
-        return view($this->parentViewPath . 'form', compact('id', 'processedPermissionsGrouped', 'rolePermissions'));
+
+        return view($this->parentViewPath.'form', compact('id', 'processedPermissionsGrouped', 'rolePermissions'));
     }
 
     public function enroll(Request $request)
     {
         $id = $request->input('id');
-        checkPermissionAndRedirect('admin.setup.role.' . ($id ? 'edit' : 'form'));
+        checkPermissionAndRedirect('admin.setup.role.'.($id ? 'edit' : 'form'));
         if ($request->has('id') && $request->filled('id')) {
             return $this->update($request);
         }
@@ -79,12 +84,12 @@ class RoleController extends Controller
                 'required',
                 'min:2',
                 'max:100',
-                'unique:roles,name'
+                'unique:roles,name',
             ],
             'description' => 'nullable|max:255',
-            'status' => 'sometimes|in:' . implode(',', Status::values()),
+            'status' => 'sometimes|in:'.implode(',', Status::values()),
             'permissions' => 'sometimes|array',
-            'permissions.*' => 'exists:permissions,name'
+            'permissions.*' => 'exists:permissions,name',
         ];
 
         $request->validate($rules);
@@ -96,7 +101,7 @@ class RoleController extends Controller
                 'name' => $request->name,
                 'description' => $request->description,
                 'status' => $request->status ?? 1,
-                'guard_name' => 'web'
+                'guard_name' => 'web',
             ]);
 
             if ($role && $request->has('permissions')) {
@@ -111,7 +116,7 @@ class RoleController extends Controller
             flashResponse('Failed to create Role. Please try again.', 'danger');
         }
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        return redirect()->route($this->parentRoutePath.'index');
     }
 
     public function show(string $id)
@@ -119,8 +124,9 @@ class RoleController extends Controller
         checkPermissionAndRedirect('admin.setup.role.show');
         $role = $this->repository->getOne($id);
 
-        if (!$role) {
+        if (! $role) {
             flashResponse('Role not found.', 'danger');
+
             return Redirect::back();
         }
 
@@ -133,12 +139,12 @@ class RoleController extends Controller
                 $groupedByModule = $permissionsWithRole->groupBy('display_name');
                 $processedPermissionsGrouped[$groupName] = [
                     'permissions' => $permissionsWithRole->toArray(),
-                    'groupedByModule' => $groupedByModule
+                    'groupedByModule' => $groupedByModule,
                 ];
             }
         }
 
-        return view($this->parentViewPath . 'view', compact('role', 'processedPermissionsGrouped'));
+        return view($this->parentViewPath.'view', compact('role', 'processedPermissionsGrouped'));
     }
 
     public function update(Request $request)
@@ -148,12 +154,12 @@ class RoleController extends Controller
                 'required',
                 'min:2',
                 'max:100',
-                Rule::unique('roles')->ignore($request->id)
+                Rule::unique('roles')->ignore($request->id),
             ],
             'description' => 'nullable|max:255',
-            'status' => 'sometimes|in:' . implode(',', Status::values()),
+            'status' => 'sometimes|in:'.implode(',', Status::values()),
             'permissions' => 'sometimes|array',
-            'permissions.*' => 'exists:permissions,name'
+            'permissions.*' => 'exists:permissions,name',
         ];
 
         $request->validate($rules);
@@ -164,7 +170,7 @@ class RoleController extends Controller
             $role = $this->repository->update($request->id, [
                 'name' => $request->name,
                 'description' => $request->description,
-                'status' => $request->status ?? 1
+                'status' => $request->status ?? 1,
             ]);
 
             if ($role) {
@@ -183,7 +189,7 @@ class RoleController extends Controller
             flashResponse('Failed to update Role. Please try again.', 'danger');
         }
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        return redirect()->route($this->parentRoutePath.'index');
     }
 
     public function delete($id)
@@ -192,18 +198,21 @@ class RoleController extends Controller
 
         $role = $this->repository->getOne($id);
 
-        if (!$role) {
+        if (! $role) {
             flashResponse('Role not found.', 'danger');
+
             return Redirect::back();
         }
 
         if ($role->name === 'admin') {
             flashResponse('Cannot delete admin role.', 'danger');
+
             return Redirect::back();
         }
 
         if ($role->users()->count() > 0) {
             flashResponse('Cannot delete role assigned to users.', 'danger');
+
             return Redirect::back();
         }
 
@@ -244,7 +253,7 @@ class RoleController extends Controller
                             'display_name' => $element['text'],
                             'icon' => $element['icon'],
                             'action' => $this->getActionFromPermission($permission->name),
-                            'slug' => Str::slug($permission->name)
+                            'slug' => Str::slug($permission->name),
                         ];
                     }
 
@@ -259,7 +268,7 @@ class RoleController extends Controller
                                     'display_name' => $element['text'],
                                     'icon' => $element['icon'],
                                     'action' => $this->getActionFromPermission($otherPermission->name),
-                                    'slug' => Str::slug($otherPermission->name)
+                                    'slug' => Str::slug($otherPermission->name),
                                 ];
                             }
                         }
@@ -276,7 +285,7 @@ class RoleController extends Controller
                                     'display_name' => $element['text'],
                                     'icon' => $element['icon'],
                                     'action' => $this->getActionFromPermission($additionalPermissionModel->name),
-                                    'slug' => Str::slug($additionalPermissionModel->name)
+                                    'slug' => Str::slug($additionalPermissionModel->name),
                                 ];
                             }
                         }
@@ -292,6 +301,7 @@ class RoleController extends Controller
     {
         $parts = explode('.', $permissionName);
         $action = end($parts);
+
         return ucfirst(Str::replace('-', ' ', $action));
     }
 

@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Setting;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class SettingSeed extends Seeder
@@ -22,8 +21,8 @@ class SettingSeed extends Seeder
                 'company_phone' => '+1234567890',
                 'company_address' => '123 Education Street, Learning City',
                 'mail_signature' => 'Best Regards,\nSmart School Management Team',
-                'date_format' => 'DD/MM/YYYY',
-                'time_format' => 'HH:MM:SS',
+                'date_format' => 'd-m-Y',
+                'time_format' => 'H:i:s',
                 'timezone' => 'Asia/Colombo',
                 'country' => 'LK',
                 'copyright_text' => '© 2025 Smart School Management System. All rights reserved.',

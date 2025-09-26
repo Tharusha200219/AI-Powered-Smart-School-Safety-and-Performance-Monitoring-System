@@ -48,7 +48,7 @@ class Setting extends Model
         'theme_mode',
         'enable_animations',
         'sidebar_style',
-        'navbar_style'
+        'navbar_style',
     ];
 
     protected $casts = [
@@ -87,7 +87,7 @@ class Setting extends Model
     protected function logo(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => $value ? asset('storage/uploads/' . $value) : $value,
+            get: fn ($value) => $value ? asset('storage/uploads/'.$value) : $value,
         );
     }
 
@@ -138,6 +138,7 @@ class Setting extends Model
         foreach ($colors as $property => $value) {
             $css .= "{$property}: {$value}; ";
         }
+
         return $css;
     }
 }

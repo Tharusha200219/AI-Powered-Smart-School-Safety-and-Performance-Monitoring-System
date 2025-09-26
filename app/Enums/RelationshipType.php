@@ -17,12 +17,12 @@ enum RelationshipType: string
 
     public static function getValues(): array
     {
-        return array_map(fn($case) => $case->value, self::cases());
+        return array_map(fn ($case) => $case->value, self::cases());
     }
 
     public static function getValidationRule(): string
     {
-        return 'in:' . implode(',', self::getValues());
+        return 'in:'.implode(',', self::getValues());
     }
 
     public function getLabel(): string

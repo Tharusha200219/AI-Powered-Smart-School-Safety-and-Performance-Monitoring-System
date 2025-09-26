@@ -2,40 +2,63 @@
 
 namespace App\Helpers;
 
+use App\Enums\Gender;
+use App\Enums\RelationshipType;
+use Illuminate\Validation\Rule;
+
 class ValidationRules
 {
     // Common field validation rules
-    const PERSONAL_NAME_RULES = 'required|min:2|max:50';
-    const OPTIONAL_NAME_RULES = 'nullable|max:50';
-    const EMAIL_RULES = 'required|email|max:255';
-    const PASSWORD_RULES = 'required|min:8|confirmed';
-    const OPTIONAL_PASSWORD_RULES = 'nullable|min:8|confirmed';
-    const PHONE_RULES = 'nullable|max:15';
-    const REQUIRED_PHONE_RULES = 'required|max:15';
-    const DATE_RULES = 'required|date|before:today';
-    const PROFILE_IMAGE_RULES = 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048';
-    const NUMERIC_RULES = 'nullable|numeric|min:0';
-    const REQUIRED_NUMERIC_RULES = 'required|numeric|min:0';
-    const BOOLEAN_RULES = 'boolean';
-    const GRADE_LEVEL_RULES = 'required|integer|min:1|max:13';
-    const ADDRESS_RULES = 'nullable|max:255';
+    public const PERSONAL_NAME_RULES = 'required|min:2|max:50';
+
+    public const OPTIONAL_NAME_RULES = 'nullable|max:50';
+
+    public const EMAIL_RULES = 'required|email|max:255';
+
+    public const PASSWORD_RULES = 'required|min:8|confirmed';
+
+    public const OPTIONAL_PASSWORD_RULES = 'nullable|min:8|confirmed';
+
+    public const PHONE_RULES = 'nullable|max:15';
+
+    public const REQUIRED_PHONE_RULES = 'required|max:15';
+
+    public const DATE_RULES = 'required|date|before:today';
+
+    public const PROFILE_IMAGE_RULES = 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048';
+
+    public const NUMERIC_RULES = 'nullable|numeric|min:0';
+
+    public const REQUIRED_NUMERIC_RULES = 'required|numeric|min:0';
+
+    public const BOOLEAN_RULES = 'boolean';
+
+    public const GRADE_LEVEL_RULES = 'required|integer|min:1|max:13';
+
+    public const ADDRESS_RULES = 'nullable|max:255';
+
+    public const GENDER_RULES = 'required|in:' . Constants::GENDER_MALE . ',' . Constants::GENDER_FEMALE . ',' . Constants::GENDER_OTHER;
+
+    public const SHIFT_RULES = 'required|in:' . Constants::SHIFT_MORNING . ',' . Constants::SHIFT_AFTERNOON . ',' . Constants::SHIFT_NIGHT;
+
+    public const SUBJECT_TYPE_RULES = 'required|in:' . Constants::SUBJECT_TYPE_CORE . ',' . Constants::SUBJECT_TYPE_ELECTIVE . ',' . Constants::SUBJECT_TYPE_OPTIONAL;
+
+    public const STATUS_RULES = 'required|in:' . Constants::STATUS_ACTIVE . ',' . Constants::STATUS_INACTIVE;
 
     /**
      * Get common person validation rules
      */
     public static function getPersonRules(bool $isUpdate = false, ?int $userId = null): array
     {
-        $emailRule = self::EMAIL_RULES;
-
         if ($isUpdate && $userId) {
             $emailRule = [
                 'required',
                 'email',
                 'max:255',
-                \Illuminate\Validation\Rule::unique('users', 'email')->ignore($userId, 'id')
+                Rule::unique('users', 'email')->ignore($userId, 'id'),
             ];
         } else {
-            $emailRule .= '|unique:users,email';
+            $emailRule = self::EMAIL_RULES . '|unique:users,email';
         }
 
         return [
@@ -43,7 +66,7 @@ class ValidationRules
             'last_name' => self::PERSONAL_NAME_RULES,
             'middle_name' => self::OPTIONAL_NAME_RULES,
             'date_of_birth' => self::DATE_RULES,
-            'gender' => 'required|' . \App\Enums\Gender::getValidationRule(),
+            'gender' => self::GENDER_RULES,
             'email' => $emailRule,
             'password' => $isUpdate ? self::OPTIONAL_PASSWORD_RULES : self::PASSWORD_RULES,
             'profile_image' => self::PROFILE_IMAGE_RULES,
@@ -116,9 +139,9 @@ class ValidationRules
             'parent_middle_name' => 'nullable|array',
             'parent_middle_name.*' => 'nullable|max:50',
             'parent_gender' => 'nullable|array',
-            'parent_gender.*' => 'required_with:parent_first_name.*|' . \App\Enums\Gender::getValidationRule(),
+            'parent_gender.*' => 'required_with:parent_first_name.*|' . self::GENDER_RULES,
             'parent_relationship_type' => 'nullable|array',
-            'parent_relationship_type.*' => 'required_with:parent_first_name.*|' . \App\Enums\RelationshipType::getValidationRule(),
+            'parent_relationship_type.*' => 'required_with:parent_first_name.*|' . RelationshipType::getValidationRule(),
             'parent_mobile_phone' => 'nullable|array',
             'parent_mobile_phone.*' => 'required_with:parent_first_name.*|max:15',
             'parent_email' => 'nullable|array',
@@ -133,6 +156,145 @@ class ValidationRules
             'parent_work_phone.*' => 'nullable|max:15',
             'parent_address_line1' => 'nullable|array',
             'parent_address_line1.*' => 'nullable|max:255',
+        ];
+    }
+
+    /**
+     * Get security staff specific validation rules
+     */
+    public static function getSecurityStaffRules(bool $isUpdate = false, ?int $userId = null): array
+    {
+        $rules = self::getPersonRules($isUpdate, $userId);
+
+        return array_merge($rules, [
+            'joining_date' => 'required|date',
+            'employee_id' => 'nullable|max:50',
+            'shift' => self::SHIFT_RULES,
+            'position' => 'required|max:100',
+            'roles' => 'required|array',
+            'roles.*' => 'exists:roles,name',
+        ]);
+    }
+
+    /**
+     * Get parent specific validation rules (single parent)
+     */
+    public static function getParentRules(bool $isUpdate = false, ?int $userId = null): array
+    {
+        $rules = self::getPersonRules($isUpdate, $userId);
+
+        return array_merge($rules, [
+            'relationship_type' => 'required|' . RelationshipType::getValidationRule(),
+            'occupation' => 'nullable|max:100',
+            'workplace' => 'nullable|max:100',
+            'work_phone' => self::PHONE_RULES,
+            'is_emergency_contact' => self::BOOLEAN_RULES,
+            'roles' => 'required|array',
+            'roles.*' => 'exists:roles,name',
+        ]);
+    }
+
+    /**
+     * Get school class validation rules
+     */
+    public static function getSchoolClassRules(): array
+    {
+        return [
+            'class_name' => 'required|max:100|unique:school_classes,class_name',
+            'grade_level' => self::GRADE_LEVEL_RULES,
+            'section' => 'nullable|max:10',
+            'class_teacher_id' => 'nullable|exists:teachers,teacher_id',
+            'room_number' => 'nullable|max:20',
+            'capacity' => 'required|integer|min:1|max:100',
+            'is_active' => self::BOOLEAN_RULES,
+        ];
+    }
+
+    /**
+     * Get subject validation rules
+     */
+    public static function getSubjectRules(): array
+    {
+        return [
+            'subject_name' => 'required|max:100|unique:subjects,subject_name',
+            'subject_code' => 'required|max:20|unique:subjects,subject_code',
+            'grade_level' => self::GRADE_LEVEL_RULES,
+            'description' => 'nullable|max:500',
+            'credits' => 'required|integer|min:1|max:10',
+            'is_core' => self::BOOLEAN_RULES,
+            'is_active' => self::BOOLEAN_RULES,
+        ];
+    }
+
+    /**
+     * Get user management validation rules
+     */
+    public static function getUserRules(bool $isUpdate = false, ?int $userId = null): array
+    {
+        if ($isUpdate && $userId) {
+            $emailRule = [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($userId, 'id'),
+            ];
+        } else {
+            $emailRule = self::EMAIL_RULES . '|unique:users,email';
+        }
+
+        return [
+            'name' => self::PERSONAL_NAME_RULES,
+            'email' => $emailRule,
+            'password' => $isUpdate ? self::OPTIONAL_PASSWORD_RULES : self::PASSWORD_RULES,
+            'usertype' => 'required|in:admin,teacher,student,parent,security',
+            'status' => 'required|in:active,inactive',
+            'roles' => 'required|array',
+            'roles.*' => 'exists:roles,name',
+        ];
+    }
+
+    /**
+     * Get common validation rules for all entities with users
+     */
+    public static function getCommonEntityWithUserRules(bool $isUpdate = false, ?int $userId = null): array
+    {
+        if ($isUpdate && $userId) {
+            $emailRule = [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($userId, 'id'),
+            ];
+        } else {
+            $emailRule = self::EMAIL_RULES . '|unique:users,email';
+        }
+
+        return [
+            'email' => $emailRule,
+            'password' => $isUpdate ? self::OPTIONAL_PASSWORD_RULES : self::PASSWORD_RULES,
+            'roles' => 'required|array',
+            'roles.*' => 'exists:roles,name',
+            'profile_image' => self::PROFILE_IMAGE_RULES,
+        ];
+    }
+
+    /**
+     * Get settings validation rules
+     */
+    public static function getSettingsRules(): array
+    {
+        return [
+            'school_name' => 'required|max:255',
+            'school_address' => 'required|max:500',
+            'school_phone' => self::REQUIRED_PHONE_RULES,
+            'school_email' => self::EMAIL_RULES,
+            'academic_year_start' => 'required|date',
+            'academic_year_end' => 'required|date|after:academic_year_start',
+            'timezone' => 'required|max:100',
+            'date_format' => 'required|in:Y-m-d,d/m/Y,m/d/Y,d-m-Y',
+            'time_format' => 'required|in:H:i,h:i A',
+            'currency' => 'required|max:10',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
 }

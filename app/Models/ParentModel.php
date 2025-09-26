@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ParentModel extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $table = 'parents';
+
     protected $primaryKey = 'parent_id';
 
     protected $fillable = [
@@ -62,12 +63,12 @@ class ParentModel extends Model
     // Accessors
     public function getFullNameAttribute()
     {
-        return trim($this->first_name . ' ' . $this->middle_name . ' ' . $this->last_name);
+        return trim($this->first_name.' '.$this->middle_name.' '.$this->last_name);
     }
 
     public function getFullAddressAttribute()
     {
-        return trim($this->address_line1 . ' ' . $this->address_line2 . ', ' . $this->city . ', ' . $this->state . ' ' . $this->postal_code . ', ' . $this->country);
+        return trim($this->address_line1.' '.$this->address_line2.', '.$this->city.', '.$this->state.' '.$this->postal_code.', '.$this->country);
     }
 
     // Scopes
@@ -90,7 +91,8 @@ class ParentModel extends Model
     public static function generateParentCode()
     {
         $lastParent = self::orderBy('parent_id', 'desc')->first();
-        $sequence = $lastParent ? (int)substr($lastParent->parent_code, 3) + 1 : 1;
-        return 'pa-' . str_pad($sequence, 8, '0', STR_PAD_LEFT);
+        $sequence = $lastParent ? (int) substr($lastParent->parent_code, 3) + 1 : 1;
+
+        return 'pa-'.str_pad($sequence, 8, '0', STR_PAD_LEFT);
     }
 }

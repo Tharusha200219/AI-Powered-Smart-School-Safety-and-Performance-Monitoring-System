@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class SchoolClass extends Model
 {
@@ -21,12 +21,12 @@ class SchoolClass extends Model
         'room_number',
         'capacity',
         'description',
-        'status'
+        'status',
     ];
 
     protected $casts = [
         'capacity' => 'integer',
-        'academic_year' => 'string'
+        'academic_year' => 'string',
     ];
 
     /**
@@ -59,6 +59,6 @@ class SchoolClass extends Model
      */
     public function getFullNameAttribute()
     {
-        return $this->class_name . ($this->section ? ' - ' . $this->section : '');
+        return $this->class_name.($this->section ? ' - '.$this->section : '');
     }
 }

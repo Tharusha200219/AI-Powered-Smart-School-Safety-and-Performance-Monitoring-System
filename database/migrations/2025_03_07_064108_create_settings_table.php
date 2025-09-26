@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('mail_signature')->nullable();
             $table->enum('date_format', DateFormat::values())->default(DateFormat::DMY());
             $table->enum('time_format', TimeFormat::values())->default(TimeFormat::HIS());
-            $table->enum('timezone', array_keys(config('app.timezones')))->default('Asia/Colombo');;
+            $table->enum('timezone', array_keys(config('app.timezones')))->default('Asia/Colombo');
             $table->enum('country', array_keys(config('app.countries')))->default('LK');
             $table->longText('copyright_text')->nullable();
             $table->timestamps();

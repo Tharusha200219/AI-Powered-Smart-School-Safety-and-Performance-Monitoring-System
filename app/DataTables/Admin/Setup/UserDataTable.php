@@ -2,15 +2,14 @@
 
 namespace App\DataTables\Admin\Setup;
 
-use App\Models\User;
-use App\Enums\Status;
 use App\Enums\UserType;
-use Yajra\DataTables\Services\DataTable;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Column;
-use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\Services\DataTable;
 
 class UserDataTable extends DataTable
 {
@@ -25,18 +24,18 @@ class UserDataTable extends DataTable
                 $isAdminUser = $row->hasRole('admin');
 
                 $show = checkPermission('admin.setup.users.show') ? view('admin.layouts.actions.show', [
-                    'url' => route('admin.setup.' . $this->model . '.show', ['id' => $row->id]),
-                    'id' => $row->id
+                    'url' => route('admin.setup.users.show', ['id' => $row->id]),
+                    'id' => $row->id,
                 ])->render() : '';
 
-                $edit = (checkPermission('admin.setup.users.edit') && !$isCurrentUser) ? view('admin.layouts.actions.edit', [
-                    'url' => route('admin.setup.' . $this->model . '.form', ['id' => $row->id]),
-                    'id' => $row->id
+                $edit = (checkPermission('admin.setup.users.edit') && ! $isCurrentUser) ? view('admin.layouts.actions.edit', [
+                    'url' => route('admin.setup.users.form', ['id' => $row->id]),
+                    'id' => $row->id,
                 ])->render() : '';
 
-                $delete = (checkPermission('admin.setup.users.delete') && !$isCurrentUser && !$isAdminUser) ? view('admin.layouts.actions.delete', [
-                    'url' => route('admin.setup.' . $this->model . '.delete', ['id' => $row->id]),
-                    'id' => $row->id
+                $delete = (checkPermission('admin.setup.users.delete') && ! $isCurrentUser && ! $isAdminUser) ? view('admin.layouts.actions.delete', [
+                    'url' => route('admin.setup.users.delete', ['id' => $row->id]),
+                    'id' => $row->id,
                 ])->render() : '';
 
                 $dropdownItems = [];
@@ -68,6 +67,7 @@ class UserDataTable extends DataTable
                         ' . $dropdownContent . '
                     </ul>
                 </div>';
+
                 return $dropdown;
             })
             ->addColumn('name', function ($row) {
@@ -168,7 +168,7 @@ class UserDataTable extends DataTable
                     if (index % 2 === 0) {
                         $(row).css("background-color", "rgba(0, 0, 0, 0.05)");
                     }
-                }'
+                }',
             ]);
     }
 

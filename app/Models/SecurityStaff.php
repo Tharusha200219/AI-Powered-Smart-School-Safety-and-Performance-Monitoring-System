@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SecurityStaff extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $table = 'security_staff';
+
     protected $primaryKey = 'security_id';
 
     protected $fillable = [
@@ -54,12 +55,12 @@ class SecurityStaff extends Model
     // Accessors
     public function getFullNameAttribute()
     {
-        return trim($this->first_name . ' ' . $this->middle_name . ' ' . $this->last_name);
+        return trim($this->first_name.' '.$this->middle_name.' '.$this->last_name);
     }
 
     public function getFullAddressAttribute()
     {
-        return trim($this->address_line1 . ' ' . $this->address_line2 . ', ' . $this->city . ', ' . $this->state . ' ' . $this->postal_code . ', ' . $this->country);
+        return trim($this->address_line1.' '.$this->address_line2.', '.$this->city.', '.$this->state.' '.$this->postal_code.', '.$this->country);
     }
 
     // Scopes
@@ -86,8 +87,8 @@ class SecurityStaff extends Model
             ->orderBy('security_id', 'desc')
             ->first();
 
-        $sequence = $lastSecurity ? (int)substr($lastSecurity->security_code, -4) + 1 : 1;
+        $sequence = $lastSecurity ? (int) substr($lastSecurity->security_code, -4) + 1 : 1;
 
-        return 'SEC' . $year . str_pad($sequence, 4, '0', STR_PAD_LEFT);
+        return 'SEC'.$year.str_pad($sequence, 4, '0', STR_PAD_LEFT);
     }
 }

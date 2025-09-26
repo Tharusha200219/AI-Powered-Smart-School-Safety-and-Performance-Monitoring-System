@@ -35,7 +35,7 @@ return new class extends Migration
                 'date_of_birth',
                 'profile_image',
                 'login_count',
-                'last_login_at'
+                'last_login_at',
             ]);
         });
     }

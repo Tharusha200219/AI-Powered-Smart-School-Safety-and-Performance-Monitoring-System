@@ -4,15 +4,15 @@ namespace App\Enums;
 
 use ArchTech\Enums\InvokableCases;
 use ArchTech\Enums\Names;
-use ArchTech\Enums\Values;
 use ArchTech\Enums\Options;
+use ArchTech\Enums\Values;
 
 enum UserType: int
 {
     use InvokableCases;
-    use Values;
     use Names;
     use Options;
+    use Values;
 
     case ADMIN = 1;
     case TEACHER = 2;

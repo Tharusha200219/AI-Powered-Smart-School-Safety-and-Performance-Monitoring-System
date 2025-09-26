@@ -2,22 +2,23 @@
 
 namespace App\Http\Controllers\Admin\Management;
 
+use App\DataTables\Admin\Management\SubjectDataTable;
 use App\Http\Controllers\Controller;
+use App\Repositories\Interfaces\Admin\Management\SubjectRepositoryInterface;
 use App\Traits\CreatesNotifications;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Validation\Rule;
-use App\DataTables\Admin\Management\SubjectDataTable;
-use App\Repositories\Interfaces\Admin\Management\SubjectRepositoryInterface;
-use App\Enums\Status;
 
 class SubjectController extends Controller
 {
     use CreatesNotifications;
+
     protected SubjectRepositoryInterface $repository;
+
     protected $parentViewPath = 'admin.pages.management.subjects.';
+
     protected $parentRoutePath = 'admin.management.subjects.';
 
     public function __construct(SubjectRepositoryInterface $repository)
@@ -30,31 +31,35 @@ class SubjectController extends Controller
     {
         checkPermissionAndRedirect('admin.management.subjects.index');
         Session::put('title', 'Subject Management');
-        return $datatable->render($this->parentViewPath . 'index');
+
+        return $datatable->render($this->parentViewPath.'index');
     }
 
     public function form($id = null)
     {
-        checkPermissionAndRedirect('admin.management.subjects.' . ($id ? 'edit' : 'form'));
-        Session::put('title', ($id ? 'Update' : 'Create') . ' Subject');
+        checkPermissionAndRedirect('admin.management.subjects.'.($id ? 'edit' : 'form'));
+        Session::put('title', ($id ? 'Update' : 'Create').' Subject');
 
         if ($id) {
             $subject = $this->repository->getWithRelations($id);
-            if (!$subject) {
+            if (! $subject) {
                 flashResponse('Subject not found.', 'danger');
-                return Redirect::route($this->parentRoutePath . 'index');
+
+                return Redirect::route($this->parentRoutePath.'index');
             }
-            return view($this->parentViewPath . 'form', compact('subject', 'id'));
+
+            return view($this->parentViewPath.'form', compact('subject', 'id'));
         }
 
         $subject = null;
-        return view($this->parentViewPath . 'form', compact('id'));
+
+        return view($this->parentViewPath.'form', compact('id'));
     }
 
     public function enroll(Request $request)
     {
         $id = $request->input('id');
-        checkPermissionAndRedirect('admin.management.subjects.' . ($id ? 'edit' : 'form'));
+        checkPermissionAndRedirect('admin.management.subjects.'.($id ? 'edit' : 'form'));
 
         if ($request->has('id') && $request->filled('id')) {
             return $this->update($request);
@@ -87,7 +92,7 @@ class SubjectController extends Controller
             flashResponse('Failed to create Subject. Please try again.', 'danger');
         }
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        return redirect()->route($this->parentRoutePath.'index');
     }
 
     public function show(string $id)
@@ -95,12 +100,13 @@ class SubjectController extends Controller
         checkPermissionAndRedirect('admin.management.subjects.show');
         $subject = $this->repository->getWithRelations($id);
 
-        if (!$subject) {
+        if (! $subject) {
             flashResponse('Subject not found.', 'danger');
+
             return Redirect::back();
         }
 
-        return view($this->parentViewPath . 'view', compact('subject'));
+        return view($this->parentViewPath.'view', compact('subject'));
     }
 
     public function update(Request $request)
@@ -122,9 +128,10 @@ class SubjectController extends Controller
             DB::beginTransaction();
 
             $subject = $this->repository->getById($id);
-            if (!$subject) {
+            if (! $subject) {
                 flashResponse('Subject not found.', 'danger');
-                return Redirect::route($this->parentRoutePath . 'index');
+
+                return Redirect::route($this->parentRoutePath.'index');
             }
 
             $this->repository->update($id, $request->all());
@@ -140,7 +147,7 @@ class SubjectController extends Controller
             flashResponse('Failed to update Subject. Please try again.', 'danger');
         }
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        return redirect()->route($this->parentRoutePath.'index');
     }
 
     public function delete(string $id)
@@ -151,8 +158,9 @@ class SubjectController extends Controller
             DB::beginTransaction();
 
             $subject = $this->repository->getById($id);
-            if (!$subject) {
+            if (! $subject) {
                 flashResponse('Subject not found.', 'danger');
+
                 return Redirect::back();
             }
 
@@ -169,6 +177,6 @@ class SubjectController extends Controller
             flashResponse('Failed to delete Subject. Please try again.', 'danger');
         }
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        return redirect()->route($this->parentRoutePath.'index');
     }
 }
