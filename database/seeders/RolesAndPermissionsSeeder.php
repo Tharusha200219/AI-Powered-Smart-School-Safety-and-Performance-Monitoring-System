@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
@@ -34,11 +34,11 @@ class RolesAndPermissionsSeeder extends Seeder
 
                     $permission = Permission::firstOrCreate([
                         'name' => $mainPermission,
-                        'guard_name' => 'web'
+                        'guard_name' => 'web',
                     ]);
 
                     // Give admin role all permissions
-                    if (!$adminRole->hasPermissionTo($permission)) {
+                    if (! $adminRole->hasPermissionTo($permission)) {
                         $adminRole->givePermissionTo($permission);
                     }
 
@@ -48,10 +48,10 @@ class RolesAndPermissionsSeeder extends Seeder
                             $otherPermission = formatPermissionString($route);
                             $otherPermissionModel = Permission::firstOrCreate([
                                 'name' => $otherPermission,
-                                'guard_name' => 'web'
+                                'guard_name' => 'web',
                             ]);
 
-                            if (!$adminRole->hasPermissionTo($otherPermissionModel)) {
+                            if (! $adminRole->hasPermissionTo($otherPermissionModel)) {
                                 $adminRole->givePermissionTo($otherPermissionModel);
                             }
 
@@ -66,10 +66,10 @@ class RolesAndPermissionsSeeder extends Seeder
                             $additionalPermission = formatPermissionString($route);
                             $additionalPermissionModel = Permission::firstOrCreate([
                                 'name' => $additionalPermission,
-                                'guard_name' => 'web'
+                                'guard_name' => 'web',
                             ]);
 
-                            if (!$adminRole->hasPermissionTo($additionalPermissionModel)) {
+                            if (! $adminRole->hasPermissionTo($additionalPermissionModel)) {
                                 $adminRole->givePermissionTo($additionalPermissionModel);
                             }
 
@@ -85,11 +85,11 @@ class RolesAndPermissionsSeeder extends Seeder
         }
 
         echo "Roles and permissions created successfully!\n";
-        echo "Admin role has " . $adminRole->permissions->count() . " permissions\n";
-        echo "Teacher role has " . $teacherRole->permissions->count() . " permissions\n";
-        echo "Student role has " . $studentRole->permissions->count() . " permissions\n";
-        echo "Parent role has " . $parentRole->permissions->count() . " permissions\n";
-        echo "Security role has " . $securityRole->permissions->count() . " permissions\n";
+        echo 'Admin role has '.$adminRole->permissions->count()." permissions\n";
+        echo 'Teacher role has '.$teacherRole->permissions->count()." permissions\n";
+        echo 'Student role has '.$studentRole->permissions->count()." permissions\n";
+        echo 'Parent role has '.$parentRole->permissions->count()." permissions\n";
+        echo 'Security role has '.$securityRole->permissions->count()." permissions\n";
     }
 
     /**
@@ -101,28 +101,28 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Teacher permissions
         if ($this->isTeacherPermission($permissionName)) {
-            if (!$teacherRole->hasPermissionTo($permission)) {
+            if (! $teacherRole->hasPermissionTo($permission)) {
                 $teacherRole->givePermissionTo($permission);
             }
         }
 
         // Student permissions
         if ($this->isStudentPermission($permissionName)) {
-            if (!$studentRole->hasPermissionTo($permission)) {
+            if (! $studentRole->hasPermissionTo($permission)) {
                 $studentRole->givePermissionTo($permission);
             }
         }
 
         // Parent permissions
         if ($this->isParentPermission($permissionName)) {
-            if (!$parentRole->hasPermissionTo($permission)) {
+            if (! $parentRole->hasPermissionTo($permission)) {
                 $parentRole->givePermissionTo($permission);
             }
         }
 
         // Security permissions
         if ($this->isSecurityPermission($permissionName)) {
-            if (!$securityRole->hasPermissionTo($permission)) {
+            if (! $securityRole->hasPermissionTo($permission)) {
                 $securityRole->givePermissionTo($permission);
             }
         }

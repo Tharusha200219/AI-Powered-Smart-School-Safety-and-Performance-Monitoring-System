@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Traits\CreatesNotifications;
-use App\Services\UserService;
-use App\Services\ImageUploadService;
-use App\Services\DatabaseTransactionService;
-use App\Helpers\ValidationRules;
 use App\Helpers\Constants;
-use Illuminate\Support\Facades\Session;
+use App\Http\Controllers\Controller;
+use App\Services\DatabaseTransactionService;
+use App\Services\ImageUploadService;
+use App\Services\UserService;
+use App\Traits\CreatesNotifications;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 
 abstract class BaseManagementController extends Controller
 {
@@ -27,25 +28,33 @@ abstract class BaseManagementController extends Controller
 
     public function __construct(
         $repository,
-        UserService $userService,
-        ImageUploadService $imageService,
-        DatabaseTransactionService $transactionService
+        UserService $userService = null,
+        ImageUploadService $imageService = null,
+        DatabaseTransactionService $transactionService = null
     ) {
         $this->middleware('auth');
         $this->repository = $repository;
-        $this->userService = $userService;
-        $this->imageService = $imageService;
-        $this->transactionService = $transactionService;
+
+        if ($userService) {
+            $this->userService = $userService;
+        }
+        if ($imageService) {
+            $this->imageService = $imageService;
+        }
+        if ($transactionService) {
+            $this->transactionService = $transactionService;
+        }
     }
 
     /**
-     * Display entity index page
+     * Common index logic that can be called by child controllers
      */
-    public function index($datatable)
+    protected function renderIndex($datatable, string $viewPath)
     {
         checkPermissionAndRedirect($this->getPermissionKey('index'));
         Session::put('title', $this->getPageTitle('Management'));
-        return $datatable->render($this->parentViewPath . 'index');
+
+        return $datatable->render($viewPath . 'index');
     }
 
     /**
@@ -94,9 +103,63 @@ abstract class BaseManagementController extends Controller
     }
 
     /**
+     * Handle entity creation and update
+     */
+    public function enroll(Request $request): RedirectResponse
+    {
+        $id = $request->input('id');
+        checkPermissionAndRedirect($this->getPermissionKey($id ? 'edit' : 'form'));
+
+        if ($request->has('id') && $request->filled('id')) {
+            return $this->update($request);
+        }
+
+        return $this->create($request);
+    }
+
+    /**
+     * Create new entity
+     */
+    protected function create(Request $request): RedirectResponse
+    {
+        $rules = $this->getValidationRules();
+        $request->validate($rules);
+
+        $result = $this->transactionService->executeCreate(
+            function () use ($request) {
+                return $this->performCreate($request);
+            },
+            $this->entityName
+        );
+
+        flashResponse($result['message'], $result['success'] ? Constants::FLASH_SUCCESS : Constants::FLASH_ERROR);
+        return redirect()->route($this->parentRoutePath . 'index');
+    }
+
+    /**
+     * Update existing entity
+     */
+    protected function update(Request $request): RedirectResponse
+    {
+        $id = $request->input('id');
+        $rules = $this->getValidationRules(true, $id);
+        $request->validate($rules);
+
+        $result = $this->transactionService->executeUpdate(
+            function () use ($request, $id) {
+                return $this->performUpdate($request, $id);
+            },
+            $this->entityName
+        );
+
+        flashResponse($result['message'], $result['success'] ? Constants::FLASH_SUCCESS : Constants::FLASH_ERROR);
+        return redirect()->route($this->parentRoutePath . 'index');
+    }
+
+    /**
      * Delete entity
      */
-    public function delete(string $id)
+    public function delete(string $id): RedirectResponse
     {
         checkPermissionAndRedirect($this->getPermissionKey('delete'));
 
@@ -108,31 +171,37 @@ abstract class BaseManagementController extends Controller
 
         $result = $this->transactionService->executeDelete(
             function () use ($entity, $id) {
+                // Create notification before deletion
+                if (method_exists($this, 'notifyDeleted')) {
+                    $this->notifyDeleted($this->entityName, $entity);
+                }
+
                 // Delete user account if exists
                 if (isset($entity->user)) {
                     $entity->user->delete();
                 }
 
-                // Delete entity
-                $this->repository->delete($id);
+                // Delete profile image if exists
+                if (isset($entity->photo_path) && $entity->photo_path && $this->imageService) {
+                    $this->imageService->deleteProfileImage($entity->photo_path);
+                }
 
-                return $entity;
+                // Delete entity
+                return $this->repository->delete($id);
             },
-            $this->entityName,
-            $entity
+            $this->entityName
         );
 
         flashResponse($result['message'], $result['success'] ? Constants::FLASH_SUCCESS : Constants::FLASH_ERROR);
-
         return redirect()->route($this->parentRoutePath . 'index');
     }
 
     /**
      * Handle profile image upload
      */
-    protected function handleProfileImageUpload($request, $entity = null): ?string
+    protected function handleProfileImageUpload(Request $request, $entity = null): ?string
     {
-        if (!$request->hasFile('profile_image')) {
+        if (!$request->hasFile('profile_image') || !$this->imageService) {
             return null;
         }
 
@@ -171,8 +240,9 @@ abstract class BaseManagementController extends Controller
         return strtolower($this->entityType);
     }
 
-    /**
-     * Get form data - to be implemented by child classes
-     */
+    // Abstract methods to be implemented by child classes
     abstract protected function getFormData($id = null): array;
+    abstract protected function getValidationRules(bool $isUpdate = false, $id = null): array;
+    abstract protected function performCreate(Request $request);
+    abstract protected function performUpdate(Request $request, $id);
 }

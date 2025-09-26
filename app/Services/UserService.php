@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
-use App\Models\User;
 use App\Enums\Status;
 use App\Enums\UserType;
-use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
@@ -15,7 +15,7 @@ class UserService
      */
     public function createUserWithRole(array $userData, UserType $userType, array $roles): User
     {
-        return DB::transaction(function () use ($userData, $userType, $roles) {
+        return DB::transaction(function () use ($userData, $userType, $roles): User {
             // Create user account
             $user = User::create([
                 'name' => $this->buildFullName($userData),
@@ -26,7 +26,7 @@ class UserService
             ]);
 
             // Assign roles to user
-            if (!empty($roles)) {
+            if (! empty($roles)) {
                 $user->assignRole($roles);
             }
 
@@ -41,7 +41,7 @@ class UserService
     {
         $email = $parentData['email'] ?? null;
 
-        if (!$email) {
+        if (! $email) {
             return null;
         }
 
@@ -71,7 +71,7 @@ class UserService
         ];
 
         // Only update password if provided
-        if (!empty($userData['password'])) {
+        if (! empty($userData['password'])) {
             $updateData['password'] = Hash::make($userData['password']);
         }
 
@@ -85,7 +85,7 @@ class UserService
      */
     public function updateUserRoles(User $user, array $roles): void
     {
-        if (!empty($roles)) {
+        if (! empty($roles)) {
             $user->syncRoles($roles);
         }
     }

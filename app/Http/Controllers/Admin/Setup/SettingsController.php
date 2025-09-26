@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin\Setup;
 
 use App\Http\Controllers\Controller;
+use App\Models\Setting;
 use App\Repositories\Admin\Setup\SettingsRepository;
 use App\Repositories\Interfaces\Admin\Setup\SettingsRepositoryInterface;
-use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -20,7 +20,8 @@ class SettingsController extends Controller
 
     protected function index(Request $request)
     {
-        $setting = Setting::first() ?? new Setting();
+        $setting = Setting::first() ?? new Setting;
+
         return view('admin.pages.setup.settings.index', compact('setting'));
     }
 
@@ -32,7 +33,7 @@ class SettingsController extends Controller
             'school_type' => 'nullable|in:Primary,Secondary,Combined,International',
             'school_motto' => 'nullable|string|max:500',
             'principal_name' => 'nullable|string|max:255',
-            'established_year' => 'nullable|integer|min:1800|max:' . date('Y'),
+            'established_year' => 'nullable|integer|min:1800|max:'.date('Y'),
             'total_capacity' => 'nullable|integer|min:1',
             'website_url' => 'nullable|url|max:255',
         ]);
@@ -43,7 +44,7 @@ class SettingsController extends Controller
                 ->withInput();
         }
 
-        $setting = Setting::first() ?? new Setting();
+        $setting = Setting::first() ?? new Setting;
 
         $setting->fill([
             'title' => $request->title,
@@ -70,7 +71,7 @@ class SettingsController extends Controller
                 'school_type' => 'nullable|in:Primary,Secondary,Combined,International',
                 'school_motto' => 'nullable|string|max:500',
                 'principal_name' => 'nullable|string|max:255',
-                'established_year' => 'nullable|integer|min:1800|max:' . date('Y'),
+                'established_year' => 'nullable|integer|min:1800|max:'.date('Y'),
                 'total_capacity' => 'nullable|integer|min:1',
                 'website_url' => 'nullable|url|max:255',
             ]);
@@ -79,11 +80,11 @@ class SettingsController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Validation failed',
-                    'errors' => $validator->errors()
+                    'errors' => $validator->errors(),
                 ], 422);
             }
 
-            $setting = Setting::first() ?? new Setting();
+            $setting = Setting::first() ?? new Setting;
 
             $setting->fill([
                 'school_name' => $request->school_name,
@@ -99,12 +100,12 @@ class SettingsController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'School information updated successfully'
+                'message' => 'School information updated successfully',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error updating school information: ' . $e->getMessage()
+                'message' => 'Error updating school information: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -123,11 +124,11 @@ class SettingsController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Validation failed',
-                    'errors' => $validator->errors()
+                    'errors' => $validator->errors(),
                 ], 422);
             }
 
-            $setting = Setting::first() ?? new Setting();
+            $setting = Setting::first() ?? new Setting;
 
             $setting->fill([
                 'primary_color' => $request->primary_color,
@@ -139,12 +140,12 @@ class SettingsController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Theme updated successfully'
+                'message' => 'Theme updated successfully',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error updating theme: ' . $e->getMessage()
+                'message' => 'Error updating theme: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -164,11 +165,11 @@ class SettingsController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Validation failed',
-                    'errors' => $validator->errors()
+                    'errors' => $validator->errors(),
                 ], 422);
             }
 
-            $setting = Setting::first() ?? new Setting();
+            $setting = Setting::first() ?? new Setting;
 
             $setting->fill([
                 'academic_year_start' => $request->academic_year_start,
@@ -181,12 +182,12 @@ class SettingsController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Academic settings updated successfully'
+                'message' => 'Academic settings updated successfully',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error updating academic settings: ' . $e->getMessage()
+                'message' => 'Error updating academic settings: '.$e->getMessage(),
             ], 500);
         }
     }

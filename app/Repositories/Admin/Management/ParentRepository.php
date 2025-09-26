@@ -41,7 +41,7 @@ class ParentRepository implements ParentRepositoryInterface
     public function create(array $data)
     {
         return DB::transaction(function () use ($data) {
-            if (!isset($data['parent_code'])) {
+            if (! isset($data['parent_code'])) {
                 $data['parent_code'] = $this->generateParentCode();
             }
 
@@ -64,7 +64,7 @@ class ParentRepository implements ParentRepositoryInterface
         return DB::transaction(function () use ($id, $data) {
             $parent = $this->model->where('parent_id', $id)->first();
 
-            if (!$parent) {
+            if (! $parent) {
                 return false;
             }
 
@@ -141,7 +141,7 @@ class ParentRepository implements ParentRepositoryInterface
     {
         $parent = $this->model->where('parent_id', $parentId)->first();
 
-        if (!$parent) {
+        if (! $parent) {
             return false;
         }
 

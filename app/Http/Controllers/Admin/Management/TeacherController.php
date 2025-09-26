@@ -2,29 +2,33 @@
 
 namespace App\Http\Controllers\Admin\Management;
 
+use App\DataTables\Admin\Management\TeacherDataTable;
+use App\Enums\Status;
+use App\Enums\UserType;
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Repositories\Interfaces\Admin\Management\SubjectRepositoryInterface;
+use App\Repositories\Interfaces\Admin\Management\TeacherRepositoryInterface;
 use App\Traits\CreatesNotifications;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
-use App\DataTables\Admin\Management\TeacherDataTable;
-use App\Repositories\Interfaces\Admin\Management\TeacherRepositoryInterface;
-use App\Repositories\Interfaces\Admin\Management\SubjectRepositoryInterface;
-use App\Enums\Status;
-use App\Enums\UserType;
-use App\Models\User;
 use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\Hash;
 
 class TeacherController extends Controller
 {
     use CreatesNotifications;
+
     protected TeacherRepositoryInterface $repository;
+
     protected SubjectRepositoryInterface $subjectRepository;
+
     protected $parentViewPath = 'admin.pages.management.teachers.';
+
     protected $parentRoutePath = 'admin.management.teachers.';
 
     public function __construct(
@@ -40,34 +44,38 @@ class TeacherController extends Controller
     {
         checkPermissionAndRedirect('admin.management.teachers.index');
         Session::put('title', 'Teacher Management');
-        return $datatable->render($this->parentViewPath . 'index');
+
+        return $datatable->render($this->parentViewPath.'index');
     }
 
     public function form($id = null)
     {
-        checkPermissionAndRedirect('admin.management.teachers.' . ($id ? 'edit' : 'form'));
-        Session::put('title', ($id ? 'Update' : 'Create') . ' Teacher');
+        checkPermissionAndRedirect('admin.management.teachers.'.($id ? 'edit' : 'form'));
+        Session::put('title', ($id ? 'Update' : 'Create').' Teacher');
 
         $subjects = $this->subjectRepository->getAll();
         $roles = Role::where('name', 'teacher')->get();
 
         if ($id) {
             $teacher = $this->repository->getWithRelations($id);
-            if (!$teacher) {
+            if (! $teacher) {
                 flashResponse('Teacher not found.', 'danger');
-                return Redirect::route($this->parentRoutePath . 'index');
+
+                return Redirect::route($this->parentRoutePath.'index');
             }
-            return view($this->parentViewPath . 'form', compact('teacher', 'id', 'subjects', 'roles'));
+
+            return view($this->parentViewPath.'form', compact('teacher', 'id', 'subjects', 'roles'));
         }
 
         $teacher = null;
-        return view($this->parentViewPath . 'form', compact('id', 'subjects', 'roles'));
+
+        return view($this->parentViewPath.'form', compact('id', 'subjects', 'roles'));
     }
 
     public function enroll(Request $request)
     {
         $id = $request->input('id');
-        checkPermissionAndRedirect('admin.management.teachers.' . ($id ? 'edit' : 'form'));
+        checkPermissionAndRedirect('admin.management.teachers.'.($id ? 'edit' : 'form'));
 
         if ($request->has('id') && $request->filled('id')) {
             return $this->update($request);
@@ -101,7 +109,7 @@ class TeacherController extends Controller
 
             // Create user account
             $user = User::create([
-                'name' => trim($request->first_name . ' ' . $request->last_name),
+                'name' => trim($request->first_name.' '.$request->last_name),
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'usertype' => UserType::TEACHER->value,
@@ -122,7 +130,7 @@ class TeacherController extends Controller
             // Handle profile image upload
             if ($request->hasFile('profile_image')) {
                 $image = $request->file('profile_image');
-                $imageName = 'teacher_' . time() . '_' . $user->id . '.' . $image->getClientOriginalExtension();
+                $imageName = 'teacher_'.time().'_'.$user->id.'.'.$image->getClientOriginalExtension();
                 $imagePath = $image->storeAs('teachers/profiles', $imageName, 'public');
                 $teacherData['photo_path'] = $imagePath;
             }
@@ -138,7 +146,7 @@ class TeacherController extends Controller
             $this->notifyCreated('Teacher', $teacher);
 
             // Assign subjects if provided
-            if ($request->has('subjects') && !empty($request->subjects)) {
+            if ($request->has('subjects') && ! empty($request->subjects)) {
                 $this->repository->assignSubjects($teacher->teacher_id, $request->subjects);
             }
 
@@ -150,7 +158,7 @@ class TeacherController extends Controller
             flashResponse('Failed to create Teacher. Please try again.', 'danger');
         }
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        return redirect()->route($this->parentRoutePath.'index');
     }
 
     public function show(string $id)
@@ -158,12 +166,13 @@ class TeacherController extends Controller
         checkPermissionAndRedirect('admin.management.teachers.show');
         $teacher = $this->repository->getWithRelations($id);
 
-        if (!$teacher) {
+        if (! $teacher) {
             flashResponse('Teacher not found.', 'danger');
+
             return Redirect::back();
         }
 
-        return view($this->parentViewPath . 'view', compact('teacher'));
+        return view($this->parentViewPath.'view', compact('teacher'));
     }
 
     public function update(Request $request)
@@ -197,14 +206,15 @@ class TeacherController extends Controller
             DB::beginTransaction();
 
             $teacher = $this->repository->getById($id);
-            if (!$teacher) {
+            if (! $teacher) {
                 flashResponse('Teacher not found.', 'danger');
-                return Redirect::route($this->parentRoutePath . 'index');
+
+                return Redirect::route($this->parentRoutePath.'index');
             }
 
             // Update user account
             $userData = [
-                'name' => trim($request->first_name . ' ' . $request->last_name),
+                'name' => trim($request->first_name.' '.$request->last_name),
                 'email' => $request->email,
             ];
 
@@ -231,7 +241,7 @@ class TeacherController extends Controller
                 }
 
                 $image = $request->file('profile_image');
-                $imageName = 'teacher_' . time() . '_' . $teacher->user_id . '.' . $image->getClientOriginalExtension();
+                $imageName = 'teacher_'.time().'_'.$teacher->user_id.'.'.$image->getClientOriginalExtension();
                 $imagePath = $image->storeAs('teachers/profiles', $imageName, 'public');
                 $teacherData['photo_path'] = $imagePath;
             }
@@ -254,7 +264,7 @@ class TeacherController extends Controller
             flashResponse('Failed to update Teacher. Please try again.', 'danger');
         }
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        return redirect()->route($this->parentRoutePath.'index');
     }
 
     public function delete(string $id)
@@ -265,8 +275,9 @@ class TeacherController extends Controller
             DB::beginTransaction();
 
             $teacher = $this->repository->getById($id);
-            if (!$teacher) {
+            if (! $teacher) {
                 flashResponse('Teacher not found.', 'danger');
+
                 return Redirect::back();
             }
 
@@ -287,13 +298,13 @@ class TeacherController extends Controller
             flashResponse('Failed to delete Teacher. Please try again.', 'danger');
         }
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        return redirect()->route($this->parentRoutePath.'index');
     }
 
     public function generateCode()
     {
         return response()->json([
-            'code' => \App\Models\Teacher::generateTeacherCode()
+            'code' => \App\Models\Teacher::generateTeacherCode(),
         ]);
     }
 }

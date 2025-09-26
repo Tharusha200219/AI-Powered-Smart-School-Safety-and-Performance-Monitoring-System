@@ -17,7 +17,9 @@ use Spatie\Permission\Models\Role;
 class UserController extends Controller
 {
     protected UserRepositoryInterface $repository;
+
     protected $parentViewPath = 'admin.pages.setup.user.';
+
     protected $parentRoutePath = 'admin.setup.user.';
 
     public function __construct(UserRepositoryInterface $repository)
@@ -30,13 +32,14 @@ class UserController extends Controller
     {
         checkPermissionAndRedirect('admin.setup.users.index');
         Session::put('title', 'User Management');
-        return $datatable->render($this->parentViewPath . 'index');
+
+        return $datatable->render($this->parentViewPath.'index');
     }
 
     public function form($id = null)
     {
-        checkPermissionAndRedirect('admin.setup.users.' . ($id ? 'edit' : 'form'));
-        Session::put('title', ($id ? 'Update' : 'Create') . ' User');
+        checkPermissionAndRedirect('admin.setup.users.'.($id ? 'edit' : 'form'));
+        Session::put('title', ($id ? 'Update' : 'Create').' User');
 
         $usertypes = UserType::options();
         $statuses = Status::options();
@@ -44,23 +47,26 @@ class UserController extends Controller
 
         if ($id) {
             $user = $this->repository->getOne($id);
-            if (!$user) {
+            if (! $user) {
                 flashResponse('User not found.', 'danger');
-                return Redirect::route($this->parentRoutePath . 'index');
+
+                return Redirect::route($this->parentRoutePath.'index');
             }
             $userRoles = $user->roles->pluck('name')->toArray();
-            return view($this->parentViewPath . 'form', compact('user', 'id', 'usertypes', 'statuses', 'roles', 'userRoles'));
+
+            return view($this->parentViewPath.'form', compact('user', 'id', 'usertypes', 'statuses', 'roles', 'userRoles'));
         }
 
         $user = null;
         $userRoles = [];
-        return view($this->parentViewPath . 'form', compact('id', 'usertypes', 'statuses', 'roles', 'userRoles'));
+
+        return view($this->parentViewPath.'form', compact('id', 'usertypes', 'statuses', 'roles', 'userRoles'));
     }
 
     public function enroll(Request $request)
     {
         $id = $request->input('id');
-        checkPermissionAndRedirect('admin.setup.users.' . ($id ? 'edit' : 'form'));
+        checkPermissionAndRedirect('admin.setup.users.'.($id ? 'edit' : 'form'));
 
         if ($request->has('id') && $request->filled('id')) {
             return $this->update($request);
@@ -71,19 +77,19 @@ class UserController extends Controller
                 'required',
                 'min:3',
                 'max:255',
-                'unique:users,name'
+                'unique:users,name',
             ],
             'email' => [
                 'required',
                 'email',
                 'max:255',
-                'unique:users,email'
+                'unique:users,email',
             ],
-            'usertype' => 'required|in:' . implode(',', UserType::values()),
-            'status' => 'sometimes|in:' . implode(',', Status::values()),
+            'usertype' => 'required|in:'.implode(',', UserType::values()),
+            'status' => 'sometimes|in:'.implode(',', Status::values()),
             'password' => 'required|min:8|confirmed',
             'roles' => 'sometimes|array',
-            'roles.*' => 'exists:roles,name'
+            'roles.*' => 'exists:roles,name',
         ];
 
         $request->validate($rules);
@@ -109,18 +115,20 @@ class UserController extends Controller
             flashResponse('Failed to create User. Please try again.', 'danger');
         }
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        return redirect()->route($this->parentRoutePath.'index');
     }
 
     public function show(string $id)
     {
         checkPermissionAndRedirect('admin.setup.users.show');
         $user = $this->repository->getOne($id);
-        if (!$user) {
+        if (! $user) {
             flashResponse('User not found.', 'danger');
+
             return Redirect::back();
         }
-        return view($this->parentViewPath . 'view', compact('user'));
+
+        return view($this->parentViewPath.'view', compact('user'));
     }
 
     public function update(Request $request)
@@ -138,11 +146,11 @@ class UserController extends Controller
                 'max:255',
                 Rule::unique('users')->ignore($request->id),
             ],
-            'usertype' => 'required|in:' . implode(',', UserType::values()),
-            'status' => 'sometimes|in:' . implode(',', Status::values()),
+            'usertype' => 'required|in:'.implode(',', UserType::values()),
+            'status' => 'sometimes|in:'.implode(',', Status::values()),
             'password' => 'nullable|min:8|confirmed',
             'roles' => 'sometimes|array',
-            'roles.*' => 'exists:roles,name'
+            'roles.*' => 'exists:roles,name',
         ];
 
         $request->validate($rules);
@@ -175,7 +183,7 @@ class UserController extends Controller
             flashResponse('Failed to update User. Please try again.', 'danger');
         }
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        return redirect()->route($this->parentRoutePath.'index');
     }
 
     public function delete($id)
@@ -183,14 +191,16 @@ class UserController extends Controller
         checkPermissionAndRedirect('admin.setup.users.delete');
 
         $user = $this->repository->getOne($id);
-        if (!$user) {
+        if (! $user) {
             flashResponse('User not found.', 'danger');
+
             return Redirect::back();
         }
 
         // Prevent deletion of admin user
         if ($user->hasRole('admin')) {
             flashResponse('Cannot delete admin user.', 'danger');
+
             return Redirect::back();
         }
 

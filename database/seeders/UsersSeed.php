@@ -2,14 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use App\Enums\UserType;
 use App\Enums\Status;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Enums\UserType;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class UsersSeed extends Seeder
 {
@@ -21,7 +20,7 @@ class UsersSeed extends Seeder
         // Create or find admin role
         $adminRole = Role::firstOrCreate([
             'name' => 'admin',
-            'guard_name' => 'web'
+            'guard_name' => 'web',
         ]);
 
         // Get all permissions and assign to admin role
@@ -30,7 +29,7 @@ class UsersSeed extends Seeder
 
         // Create admin user
         $adminUser = User::updateOrCreate([
-            'email' => 'admin@gmail.com'
+            'email' => 'admin@gmail.com',
         ], [
             'name' => 'Administrator',
             'email' => 'admin@gmail.com',
@@ -43,6 +42,6 @@ class UsersSeed extends Seeder
         $adminUser->assignRole('admin');
 
         echo "Admin user created/updated: admin@gmail.com / Admin@123\n";
-        echo "Admin role has " . $permissions->count() . " permissions\n";
+        echo 'Admin role has '.$permissions->count()." permissions\n";
     }
 }

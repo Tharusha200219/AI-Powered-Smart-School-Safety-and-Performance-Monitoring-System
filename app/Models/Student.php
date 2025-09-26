@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Enums\Status;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Student extends Model
 {
@@ -48,22 +50,22 @@ class Student extends Model
     ];
 
     // Relationships
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function schoolClass()
+    public function schoolClass(): BelongsTo
     {
         return $this->belongsTo(SchoolClass::class, 'class_id', 'id');
     }
 
-    public function parents()
+    public function parents(): BelongsToMany
     {
         return $this->belongsToMany(ParentModel::class, 'parent_student', 'student_id', 'parent_id');
     }
 
-    public function subjects()
+    public function subjects(): BelongsToMany
     {
         return $this->belongsToMany(Subject::class, 'student_subject', 'student_id', 'subject_id')
             ->withPivot('enrollment_date', 'grade')
@@ -71,48 +73,48 @@ class Student extends Model
     }
 
     // Accessors
-    public function getFullNameAttribute()
+    public function getFullNameAttribute(): string
     {
         return trim($this->first_name . ' ' . $this->middle_name . ' ' . $this->last_name);
     }
 
-    public function getFullAddressAttribute()
+    public function getFullAddressAttribute(): string
     {
         return trim($this->address_line1 . ' ' . $this->address_line2 . ', ' . $this->city . ', ' . $this->state . ' ' . $this->postal_code . ', ' . $this->country);
     }
 
     // Scopes
-    public function scopeActive($query)
+    public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
     }
 
-    public function scopeByGrade($query, $gradeLevel)
+    public function scopeByGrade(Builder $query, int $gradeLevel): Builder
     {
         return $query->where('grade_level', $gradeLevel);
     }
 
-    public function scopeBySection($query, $section)
+    public function scopeBySection(Builder $query, string $section): Builder
     {
         return $query->where('section', $section);
     }
 
     // Static methods
-    public static function generateStudentCode()
+    public static function generateStudentCode(): string
     {
         // Get the latest student with the new 8-digit format (stu-00000xxx)
         $lastStudent = self::where('student_code', 'like', 'stu-0%')
             ->orderBy('student_id', 'desc')
             ->first();
 
-        if (!$lastStudent) {
+        if (! $lastStudent) {
             $sequence = 1;
         } else {
             // Extract 8-digit number from codes like 'stu-00000001'
             $codeWithoutPrefix = substr($lastStudent->student_code, 4); // Remove 'stu-'
-            $sequence = (int)$codeWithoutPrefix + 1;
+            $sequence = (int) $codeWithoutPrefix + 1;
         }
 
-        return 'stu-' . str_pad($sequence, 8, '0', STR_PAD_LEFT);
+        return 'stu-' . str_pad((string) $sequence, 8, '0', STR_PAD_LEFT);
     }
 }

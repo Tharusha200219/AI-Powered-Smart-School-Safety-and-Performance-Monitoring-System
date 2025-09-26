@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Student;
-use App\Models\User;
-use App\Models\SchoolClass;
 use App\Models\ParentModel;
+use App\Models\SchoolClass;
+use App\Models\Student;
 use App\Models\Subject;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -40,7 +40,7 @@ class StudentSeeder extends Seeder
                 'mobile_phone' => '+1-217-555-0102',
                 'email' => 'emma.anderson@student.school.edu',
                 'parent_names' => ['Michael Anderson'],
-                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Physical Education']
+                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Physical Education'],
             ],
             [
                 'first_name' => 'Liam',
@@ -63,7 +63,7 @@ class StudentSeeder extends Seeder
                 'mobile_phone' => '+1-217-555-0202',
                 'email' => 'liam.johnson@student.school.edu',
                 'parent_names' => ['Sarah Johnson'],
-                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Physical Education']
+                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Physical Education'],
             ],
             [
                 'first_name' => 'Olivia',
@@ -86,7 +86,7 @@ class StudentSeeder extends Seeder
                 'mobile_phone' => '+1-217-555-0302',
                 'email' => 'olivia.williams@student.school.edu',
                 'parent_names' => ['David Williams'],
-                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Physical Education']
+                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Physical Education'],
             ],
             [
                 'first_name' => 'Noah',
@@ -110,7 +110,7 @@ class StudentSeeder extends Seeder
                 'mobile_phone' => '+1-217-555-0402',
                 'email' => 'noah.brown@student.school.edu',
                 'parent_names' => ['Jennifer Brown'],
-                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Physical Education']
+                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Physical Education'],
             ],
             [
                 'first_name' => 'Sophia',
@@ -133,7 +133,7 @@ class StudentSeeder extends Seeder
                 'mobile_phone' => '+1-217-555-0502',
                 'email' => 'sophia.davis@student.school.edu',
                 'parent_names' => ['Robert Davis'],
-                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Visual Arts', 'Physical Education']
+                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Visual Arts', 'Physical Education'],
             ],
             [
                 'first_name' => 'Jackson',
@@ -156,7 +156,7 @@ class StudentSeeder extends Seeder
                 'mobile_phone' => '+1-217-555-0602',
                 'email' => 'jackson.miller@student.school.edu',
                 'parent_names' => ['Lisa Miller'],
-                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Music', 'Physical Education']
+                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Music', 'Physical Education'],
             ],
             [
                 'first_name' => 'Ava',
@@ -180,7 +180,7 @@ class StudentSeeder extends Seeder
                 'mobile_phone' => '+1-217-555-0702',
                 'email' => 'ava.wilson@student.school.edu',
                 'parent_names' => ['Christopher Wilson'],
-                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Technology Education', 'Physical Education']
+                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Technology Education', 'Physical Education'],
             ],
             [
                 'first_name' => 'Lucas',
@@ -203,7 +203,7 @@ class StudentSeeder extends Seeder
                 'mobile_phone' => '+1-217-555-0802',
                 'email' => 'lucas.moore@student.school.edu',
                 'parent_names' => ['Amanda Moore'],
-                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Technology Education', 'Physical Education']
+                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Technology Education', 'Physical Education'],
             ],
             [
                 'first_name' => 'Isabella',
@@ -226,7 +226,7 @@ class StudentSeeder extends Seeder
                 'mobile_phone' => '+1-217-555-0902',
                 'email' => 'isabella.taylor@student.school.edu',
                 'parent_names' => ['Kevin Taylor'],
-                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Spanish Language', 'Technology Education', 'Physical Education']
+                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Spanish Language', 'Technology Education', 'Physical Education'],
             ],
             [
                 'first_name' => 'Ethan',
@@ -250,14 +250,14 @@ class StudentSeeder extends Seeder
                 'mobile_phone' => '+1-217-555-1002',
                 'email' => 'ethan.garcia@student.school.edu',
                 'parent_names' => ['Michelle Garcia'],
-                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Spanish Language', 'Technology Education', 'Physical Education']
+                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Spanish Language', 'Technology Education', 'Physical Education'],
             ],
         ];
 
         foreach ($students as $studentData) {
             // Create user account for student
             $user = User::create([
-                'name' => $studentData['first_name'] . ' ' . $studentData['last_name'],
+                'name' => $studentData['first_name'].' '.$studentData['last_name'],
                 'email' => $studentData['email'],
                 'password' => Hash::make('student123'), // Default password
                 'email_verified_at' => now(),
@@ -313,7 +313,7 @@ class StudentSeeder extends Seeder
                     $student->parents()->attach($parent->parent_id, [
                         'is_primary_contact' => true,
                         'created_at' => now(),
-                        'updated_at' => now()
+                        'updated_at' => now(),
                     ]);
                 }
             }
@@ -324,14 +324,14 @@ class StudentSeeder extends Seeder
                 if ($subject) {
                     $student->subjects()->attach($subject->id, [
                         'enrollment_date' => $studentData['enrollment_date'],
-                        'grade' => (int)$studentData['grade_level'], // Add the grade field
+                        'grade' => (int) $studentData['grade_level'], // Add the grade field
                         'created_at' => now(),
-                        'updated_at' => now()
+                        'updated_at' => now(),
                     ]);
                 }
             }
 
-            $this->command->info("Created student: {$student->full_name} ({$student->student_code}) - Grade {$studentData['grade_level']}{$studentData['section']} - Subjects: " . implode(', ', $studentData['subjects']));
+            $this->command->info("Created student: {$student->full_name} ({$student->student_code}) - Grade {$studentData['grade_level']}{$studentData['section']} - Subjects: ".implode(', ', $studentData['subjects']));
         }
     }
 }
