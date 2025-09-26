@@ -141,6 +141,14 @@ class SubjectRepository implements SubjectRepositoryInterface
 
         $sequence = $lastSubject ? (int) substr($lastSubject->subject_code, -4) + 1 : 1;
 
-        return 'SUB'.$year.str_pad($sequence, 4, '0', STR_PAD_LEFT);
+        return 'SUB' . $year . str_pad($sequence, 4, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Check if subject code exists
+     */
+    public function existsByCode(string $code): bool
+    {
+        return $this->model->where('subject_code', $code)->exists();
     }
 }
