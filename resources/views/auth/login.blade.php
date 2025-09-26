@@ -468,15 +468,16 @@
                     @endif
 
                     <div class="form-group">
-                        <input type="email" class="form-input @error('email') is-invalid @enderror" name="email"
-                            value="{{ old('email') }}" placeholder="Enter your email address" required
-                            autocomplete="email" autofocus>
+                        <x-input name="email" type="email" class="form-input @error('email') is-invalid @enderror"
+                            placeholder="Enter your email address" :isRequired="true" attr="autocomplete='email' autofocus"
+                            :value="old('email')" />
                         <i class="fas fa-envelope input-icon"></i>
                     </div>
 
                     <div class="form-group">
-                        <input type="password" class="form-input @error('password') is-invalid @enderror" name="password"
-                            placeholder="Enter your password" required autocomplete="current-password" id="passwordInput">
+                        <x-input name="password" type="password" class="form-input @error('password') is-invalid @enderror"
+                            placeholder="Enter your password" :isRequired="true"
+                            attr="autocomplete='current-password' id='passwordInput'" />
                         <i class="fas fa-lock input-icon"></i>
                         <i class="fas fa-eye password-toggle" id="passwordToggle"></i>
                     </div>
