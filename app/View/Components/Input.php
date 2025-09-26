@@ -23,11 +23,11 @@ class Input extends Component
     public $value;
 
     public $options;
-    
+
     public $accept;
-    
+
     public $showPreview;
-    
+
     public $maxSize;
 
     public function __construct(

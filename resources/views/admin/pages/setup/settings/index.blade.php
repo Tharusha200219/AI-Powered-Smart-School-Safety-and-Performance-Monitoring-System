@@ -102,16 +102,10 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12">
-                                        <x-input 
-                                            name="logo" 
-                                            type="file"
-                                            title="School Logo" 
-                                            :value="$setting->logo ?? ''"
-                                            accept="image/jpeg,image/jpg,image/png,image/gif"
-                                            :showPreview="true"
+                                        <x-input name="logo" type="file" title="School Logo" :value="$setting->logo ?? ''"
+                                            accept="image/jpeg,image/jpg,image/png,image/gif" :showPreview="true"
                                             :maxSize="2048"
-                                            placeholder="Supported formats: JPG, PNG, GIF. Max size: 2MB"
-                                        />
+                                            placeholder="Supported formats: JPG, PNG, GIF. Max size: 2MB" />
                                     </div>
                                 </div>
                                 <div class="text-end">
@@ -533,7 +527,7 @@
                 sidebarLogo.src = dataUrl;
             }
         };
-        
+
         // Theme customization functions
         function updateThemePreview() {
             const primaryColor = document.getElementById("primary_color").value;
@@ -923,7 +917,7 @@
             if (sidebarLogo) {
                 sidebarLogo.src = logoUrl;
             }
-            
+
             // Also update the x-input preview if it exists
             const logoPreview = document.getElementById('logo-preview');
             if (logoPreview && logoPreview.tagName === 'IMG') {
