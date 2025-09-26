@@ -1,20 +1,20 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\NotificationController;
-use App\Http\Controllers\Admin\Management\StudentController;
-use App\Http\Controllers\Admin\Management\TeacherController;
 use App\Http\Controllers\Admin\Management\ParentController;
-use App\Http\Controllers\Admin\Management\SecurityStaffController;
 use App\Http\Controllers\Admin\Management\SchoolClassController;
+use App\Http\Controllers\Admin\Management\SecurityStaffController;
+use App\Http\Controllers\Admin\Management\StudentController;
 use App\Http\Controllers\Admin\Management\SubjectController;
+use App\Http\Controllers\Admin\Management\TeacherController;
+use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\PlaceholderController;
-use App\Http\Controllers\Admin\Setup\SettingsController;
-use App\Http\Controllers\Admin\Setup\RoleController;
+use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\Setup\SettingsController as SetupSettingsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
-
 
 Auth::routes(['register' => true, 'verify' => false]);
 
@@ -26,6 +26,17 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::prefix('dashboard')->name('dashboard.')->controller(DashboardController::class)->group(function () {
             Route::get('/', 'index')->name('index');
+        });
+
+        // Profile Management
+        Route::prefix('profile')->name('profile.')->controller(ProfileController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/edit', 'edit')->name('edit');
+            Route::put('/update', 'update')->name('update');
+            Route::post('/change-password', 'changePassword')->name('change-password');
+            Route::delete('/delete-image', 'deleteProfileImage')->name('delete-image');
+            Route::post('/upload-image', 'update')->name('upload-image');
+            Route::get('/stats', 'getProfileStats')->name('stats');
         });
 
         Route::prefix('management')->name('management.')->group(function () {
@@ -130,10 +141,24 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/enroll', 'enroll')->name('enroll');
             });
 
-            Route::prefix('settings')->name('settings.')->controller(SettingsController::class)->group(function () {
+            Route::prefix('settings')->name('settings.')->controller(SetupSettingsController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::post('/update', 'update')->name('update');
+
+                // AJAX endpoints for settings page
+                Route::post('/school-info', 'updateSchoolInfo')->name('school-info');
+                Route::post('/theme', 'updateTheme')->name('theme');
+                Route::post('/academic', 'updateAcademic')->name('academic');
             });
+        });
+
+        // Dashboard Settings Routes
+        Route::prefix('settings')->name('settings.')->controller(SettingsController::class)->group(function () {
+            Route::post('/update-school-info', 'updateSchoolInfo')->name('update-school-info');
+            Route::post('/update-theme', 'updateTheme')->name('update-theme');
+            Route::post('/update-academic', 'updateAcademic')->name('update-academic');
+            Route::post('/update-social-media', 'updateSocialMedia')->name('update-social-media');
+            Route::get('/theme-colors', 'getThemeColors')->name('theme-colors');
         });
 
         // Notification API routes

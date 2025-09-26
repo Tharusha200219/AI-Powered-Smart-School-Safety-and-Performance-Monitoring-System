@@ -2,69 +2,81 @@
 
 namespace App\Http\Controllers\Admin\Management;
 
+use App\DataTables\Admin\Management\SchoolClassDataTable;
 use App\Http\Controllers\Controller;
+use App\Repositories\Interfaces\Admin\Management\SchoolClassRepositoryInterface;
+use App\Repositories\Interfaces\Admin\Management\SubjectRepositoryInterface;
+use App\Repositories\Interfaces\Admin\Management\TeacherRepositoryInterface;
+use App\Services\DatabaseTransactionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Validation\Rule;
-use App\DataTables\Admin\Management\SchoolClassDataTable;
-use App\Repositories\Interfaces\Admin\Management\SchoolClassRepositoryInterface;
-use App\Repositories\Interfaces\Admin\Management\TeacherRepositoryInterface;
-use App\Repositories\Interfaces\Admin\Management\SubjectRepositoryInterface;
-use App\Enums\Status;
 
 class SchoolClassController extends Controller
 {
     protected SchoolClassRepositoryInterface $repository;
+
     protected TeacherRepositoryInterface $teacherRepository;
+
     protected SubjectRepositoryInterface $subjectRepository;
+
     protected $parentViewPath = 'admin.pages.management.classes.';
+
     protected $parentRoutePath = 'admin.management.classes.';
+
+    protected DatabaseTransactionService $transactionService;
 
     public function __construct(
         SchoolClassRepositoryInterface $repository,
         TeacherRepositoryInterface $teacherRepository,
-        SubjectRepositoryInterface $subjectRepository
+        SubjectRepositoryInterface $subjectRepository,
+        DatabaseTransactionService $transactionService
+
     ) {
         $this->middleware('auth');
         $this->repository = $repository;
         $this->teacherRepository = $teacherRepository;
         $this->subjectRepository = $subjectRepository;
+        $this->transactionService = $transactionService;
     }
 
     public function index(SchoolClassDataTable $datatable)
     {
         checkPermissionAndRedirect('admin.management.classes.index');
         Session::put('title', 'Class Management');
-        return $datatable->render($this->parentViewPath . 'index');
+
+        return $datatable->render($this->parentViewPath.'index');
     }
 
     public function form($id = null)
     {
-        checkPermissionAndRedirect('admin.management.classes.' . ($id ? 'edit' : 'form'));
-        Session::put('title', ($id ? 'Update' : 'Create') . ' Class');
+        checkPermissionAndRedirect('admin.management.classes.'.($id ? 'edit' : 'form'));
+        Session::put('title', ($id ? 'Update' : 'Create').' Class');
 
         $teachers = $this->teacherRepository->getClassTeachers();
         $subjects = $this->subjectRepository->getAll();
 
         if ($id) {
             $class = $this->repository->getWithRelations($id);
-            if (!$class) {
+            if (! $class) {
                 flashResponse('Class not found.', 'danger');
-                return Redirect::route($this->parentRoutePath . 'index');
+
+                return Redirect::route($this->parentRoutePath.'index');
             }
-            return view($this->parentViewPath . 'form', compact('class', 'id', 'teachers', 'subjects'));
+
+            return view($this->parentViewPath.'form', compact('class', 'id', 'teachers', 'subjects'));
         }
 
         $class = null;
-        return view($this->parentViewPath . 'form', compact('id', 'teachers', 'subjects'));
+
+        return view($this->parentViewPath.'form', compact('id', 'teachers', 'subjects'));
     }
 
     public function enroll(Request $request)
     {
         $id = $request->input('id');
-        checkPermissionAndRedirect('admin.management.classes.' . ($id ? 'edit' : 'form'));
+        checkPermissionAndRedirect('admin.management.classes.'.($id ? 'edit' : 'form'));
 
         if ($request->has('id') && $request->filled('id')) {
             return $this->update($request);
@@ -93,7 +105,7 @@ class SchoolClassController extends Controller
             $class = $this->repository->create($classData);
 
             // Assign subjects if provided
-            if ($request->has('subjects') && !empty($request->subjects)) {
+            if ($request->has('subjects') && ! empty($request->subjects)) {
                 $this->repository->assignSubjects($class->id, $request->subjects);
             }
 
@@ -105,7 +117,7 @@ class SchoolClassController extends Controller
             flashResponse('Failed to create Class. Please try again.', 'danger');
         }
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        return redirect()->route($this->parentRoutePath.'index');
     }
 
     public function show(string $id)
@@ -113,12 +125,13 @@ class SchoolClassController extends Controller
         checkPermissionAndRedirect('admin.management.classes.show');
         $class = $this->repository->getWithRelations($id);
 
-        if (!$class) {
+        if (! $class) {
             flashResponse('Class not found.', 'danger');
+
             return Redirect::back();
         }
 
-        return view($this->parentViewPath . 'view', compact('class'));
+        return view($this->parentViewPath.'view', compact('class'));
     }
 
     public function update(Request $request)
@@ -145,9 +158,10 @@ class SchoolClassController extends Controller
             DB::beginTransaction();
 
             $class = $this->repository->getById($id);
-            if (!$class) {
+            if (! $class) {
                 flashResponse('Class not found.', 'danger');
-                return Redirect::route($this->parentRoutePath . 'index');
+
+                return Redirect::route($this->parentRoutePath.'index');
             }
 
             // Update class
@@ -167,7 +181,7 @@ class SchoolClassController extends Controller
             flashResponse('Failed to update Class. Please try again.', 'danger');
         }
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        return redirect()->route($this->parentRoutePath.'index');
     }
 
     public function delete(string $id)
@@ -178,8 +192,9 @@ class SchoolClassController extends Controller
             DB::beginTransaction();
 
             $class = $this->repository->getById($id);
-            if (!$class) {
+            if (! $class) {
                 flashResponse('Class not found.', 'danger');
+
                 return Redirect::back();
             }
 
@@ -194,6 +209,9 @@ class SchoolClassController extends Controller
             flashResponse('Failed to delete Class. Please try again.', 'danger');
         }
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        return redirect()->route($this->parentRoutePath.'index');
     }
 }
+
+
+

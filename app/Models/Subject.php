@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Subject extends Model
 {
@@ -16,11 +16,11 @@ class Subject extends Model
         'description',
         'credits',
         'type',
-        'status'
+        'status',
     ];
 
     protected $casts = [
-        'credits' => 'integer'
+        'credits' => 'integer',
     ];
 
     /**

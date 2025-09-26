@@ -15,10 +15,14 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
+.DS_Store
 /auth.json
 /.fleet
 /.idea
 /.nova
-/.vscode
 /.zed
-node_modules
+.qodo
+clinerules.md
+cline-rules.md
+cursorrules.mdc
+CLAUDE.md

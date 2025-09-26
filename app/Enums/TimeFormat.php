@@ -6,11 +6,11 @@ use ArchTech\Enums\InvokableCases;
 use ArchTech\Enums\Names;
 use ArchTech\Enums\Values;
 
-enum TimeFormat : string
+enum TimeFormat: string
 {
     use InvokableCases;
-    use Values;
     use Names;
+    use Values;
 
-    case HIS = "H:i:s";
+    case HIS = 'H:i:s';
 }

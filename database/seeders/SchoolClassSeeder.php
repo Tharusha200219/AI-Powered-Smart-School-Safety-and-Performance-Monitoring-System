@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\SchoolClass;
-use App\Models\Teacher;
 use Illuminate\Database\Seeder;
 
 class SchoolClassSeeder extends Seeder
@@ -23,7 +22,7 @@ class SchoolClassSeeder extends Seeder
                 'room_number' => '101',
                 'capacity' => 25,
                 'description' => 'First grade class section A with focus on foundational learning',
-                'status' => 'active'
+                'status' => 'active',
             ],
             [
                 'class_code' => 'CL-002',
@@ -34,7 +33,7 @@ class SchoolClassSeeder extends Seeder
                 'room_number' => '102',
                 'capacity' => 25,
                 'description' => 'First grade class section B with emphasis on creative learning',
-                'status' => 'active'
+                'status' => 'active',
             ],
             [
                 'class_code' => 'CL-003',
@@ -45,7 +44,7 @@ class SchoolClassSeeder extends Seeder
                 'room_number' => '201',
                 'capacity' => 28,
                 'description' => 'Second grade class section A with advanced reading programs',
-                'status' => 'active'
+                'status' => 'active',
             ],
             [
                 'class_code' => 'CL-004',
@@ -56,7 +55,7 @@ class SchoolClassSeeder extends Seeder
                 'room_number' => '202',
                 'capacity' => 28,
                 'description' => 'Second grade class section B with STEM focus',
-                'status' => 'active'
+                'status' => 'active',
             ],
             [
                 'class_code' => 'CL-005',
@@ -67,7 +66,7 @@ class SchoolClassSeeder extends Seeder
                 'room_number' => '301',
                 'capacity' => 30,
                 'description' => 'Third grade class section A with comprehensive curriculum',
-                'status' => 'active'
+                'status' => 'active',
             ],
             [
                 'class_code' => 'CL-006',
@@ -78,7 +77,7 @@ class SchoolClassSeeder extends Seeder
                 'room_number' => '302',
                 'capacity' => 30,
                 'description' => 'Third grade class section B with arts integration',
-                'status' => 'active'
+                'status' => 'active',
             ],
             [
                 'class_code' => 'CL-007',
@@ -89,7 +88,7 @@ class SchoolClassSeeder extends Seeder
                 'room_number' => '401',
                 'capacity' => 32,
                 'description' => 'Fourth grade class section A with technology integration',
-                'status' => 'active'
+                'status' => 'active',
             ],
             [
                 'class_code' => 'CL-008',
@@ -100,7 +99,7 @@ class SchoolClassSeeder extends Seeder
                 'room_number' => '402',
                 'capacity' => 32,
                 'description' => 'Fourth grade class section B with project-based learning',
-                'status' => 'active'
+                'status' => 'active',
             ],
             [
                 'class_code' => 'CL-009',
@@ -111,7 +110,7 @@ class SchoolClassSeeder extends Seeder
                 'room_number' => '501',
                 'capacity' => 35,
                 'description' => 'Fifth grade class section A preparing for middle school transition',
-                'status' => 'active'
+                'status' => 'active',
             ],
             [
                 'class_code' => 'CL-010',
@@ -122,7 +121,7 @@ class SchoolClassSeeder extends Seeder
                 'room_number' => '502',
                 'capacity' => 35,
                 'description' => 'Fifth grade class section B with advanced mathematics and science',
-                'status' => 'active'
+                'status' => 'active',
             ],
         ];
 

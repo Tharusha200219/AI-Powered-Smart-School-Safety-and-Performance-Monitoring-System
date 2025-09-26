@@ -7,13 +7,21 @@ use Illuminate\View\Component;
 class Input extends Component
 {
     public $title;
+
     public $name;
+
     public $type;
+
     public $attr;
+
     public $isRequired;
+
     public $placeholder;
+
     public $class;
+
     public $value;
+
     public $options;
 
     public function __construct(

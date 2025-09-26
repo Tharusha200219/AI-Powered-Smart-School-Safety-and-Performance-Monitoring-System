@@ -3,13 +3,11 @@
 namespace App\DataTables\Admin\Management;
 
 use App\Models\SecurityStaff;
-use App\Enums\Status;
-use Yajra\DataTables\Services\DataTable;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Column;
-use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\Services\DataTable;
 
 class SecurityStaffDataTable extends DataTable
 {
@@ -22,17 +20,17 @@ class SecurityStaffDataTable extends DataTable
             ->addColumn('action', function ($row) {
                 $show = checkPermission('admin.management.security.show') ? view('admin.layouts.actions.show', [
                     'url' => route('admin.management.' . $this->model . '.show', ['id' => $row->security_id]),
-                    'id' => $row->security_id
+                    'id' => $row->security_id,
                 ])->render() : '';
 
                 $edit = checkPermission('admin.management.security.edit') ? view('admin.layouts.actions.edit', [
                     'url' => route('admin.management.' . $this->model . '.form', ['id' => $row->security_id]),
-                    'id' => $row->security_id
+                    'id' => $row->security_id,
                 ])->render() : '';
 
                 $delete = checkPermission('admin.management.security.delete') ? view('admin.layouts.actions.delete', [
                     'url' => route('admin.management.' . $this->model . '.delete', ['id' => $row->security_id]),
-                    'id' => $row->security_id
+                    'id' => $row->security_id,
                 ])->render() : '';
 
                 $dropdownItems = [];
@@ -64,6 +62,7 @@ class SecurityStaffDataTable extends DataTable
                         ' . $dropdownContent . '
                     </ul>
                 </div>';
+
                 return $dropdown;
             })
             ->addColumn('name', function ($row) {
@@ -71,7 +70,7 @@ class SecurityStaffDataTable extends DataTable
                     'Morning' => 'bg-gradient-warning',
                     'Afternoon' => 'bg-gradient-info',
                     'Evening' => 'bg-gradient-primary',
-                    'Night' => 'bg-gradient-dark'
+                    'Night' => 'bg-gradient-dark',
                 ];
 
                 $shiftColor = $shiftColors[$row->shift] ?? 'bg-gradient-secondary';
@@ -92,7 +91,7 @@ class SecurityStaffDataTable extends DataTable
                     'Morning' => 'bg-gradient-warning',
                     'Evening' => 'bg-gradient-info',
                     'Night' => 'bg-gradient-dark',
-                    'Rotating' => 'bg-gradient-secondary'
+                    'Rotating' => 'bg-gradient-secondary',
                 ];
 
                 $shiftColor = $shiftColors[$row->shift] ?? 'bg-gradient-primary';
@@ -125,7 +124,7 @@ class SecurityStaffDataTable extends DataTable
                     'Off Duty' => 'secondary',
                     'On Leave' => 'warning',
                     'Emergency' => 'danger',
-                    'Inactive' => 'dark'
+                    'Inactive' => 'dark',
                 ];
 
                 $statusText = $row->is_active ? 'On Duty' : 'Inactive';
@@ -168,14 +167,14 @@ class SecurityStaffDataTable extends DataTable
                 'autoWidth' => false,
                 'drawCallback' => 'function(settings) {
                     // Add horizontal scroll styles
-                    $("#student-table_wrapper .dt-layout-table").css({
+                    $("#security-table_wrapper .dt-layout-table").css({
                         "overflow": "hidden",
                         "overflow-x": "auto"
                     });
                 }',
                 'initComplete' => 'function(settings, json) {
                     // Apply horizontal scroll on initialization
-                    $("#student-table_wrapper .dt-layout-table").css({
+                    $("#security-table_wrapper .dt-layout-table").css({
                         "overflow": "hidden",
                         "overflow-x": "auto"
                     });
@@ -184,7 +183,7 @@ class SecurityStaffDataTable extends DataTable
                     if (index % 2 === 0) {
                         $(row).css("background-color", "rgba(0, 0, 0, 0.05)");
                     }
-                }'
+                }',
             ]);
     }
 

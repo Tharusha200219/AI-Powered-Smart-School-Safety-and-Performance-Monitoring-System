@@ -20,7 +20,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Fundamental mathematics including numbers, basic operations, geometry, and problem solving',
                 'credits' => 5,
                 'type' => 'Core',
-                'status' => 'active'
+                'status' => 'active',
             ],
             [
                 'subject_code' => 'ENG-001',
@@ -29,7 +29,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Reading, writing, speaking, listening, and language skills development',
                 'credits' => 5,
                 'type' => 'Core',
-                'status' => 'active'
+                'status' => 'active',
             ],
             [
                 'subject_code' => 'SCI-001',
@@ -38,7 +38,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Introduction to physical science, life science, earth science, and scientific inquiry',
                 'credits' => 4,
                 'type' => 'Core',
-                'status' => 'active'
+                'status' => 'active',
             ],
             [
                 'subject_code' => 'SOC-001',
@@ -47,7 +47,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'History, geography, civics, and cultural studies',
                 'credits' => 3,
                 'type' => 'Core',
-                'status' => 'active'
+                'status' => 'active',
             ],
             [
                 'subject_code' => 'ART-001',
@@ -56,7 +56,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Drawing, painting, sculpture, and art appreciation',
                 'credits' => 2,
                 'type' => 'Elective',
-                'status' => 'active'
+                'status' => 'active',
             ],
             [
                 'subject_code' => 'MUS-001',
@@ -65,7 +65,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Music theory, singing, instruments, and music appreciation',
                 'credits' => 2,
                 'type' => 'Elective',
-                'status' => 'active'
+                'status' => 'active',
             ],
             [
                 'subject_code' => 'PE-001',
@@ -74,7 +74,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Physical fitness, sports skills, health education, and teamwork',
                 'credits' => 3,
                 'type' => 'Core',
-                'status' => 'active'
+                'status' => 'active',
             ],
             [
                 'subject_code' => 'LIB-001',
@@ -83,7 +83,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Information literacy, research skills, and reading comprehension',
                 'credits' => 1,
                 'type' => 'Core',
-                'status' => 'active'
+                'status' => 'active',
             ],
             [
                 'subject_code' => 'TECH-001',
@@ -92,7 +92,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Basic computer skills, digital citizenship, and educational technology',
                 'credits' => 2,
                 'type' => 'Elective',
-                'status' => 'active'
+                'status' => 'active',
             ],
             [
                 'subject_code' => 'LANG-001',
@@ -101,7 +101,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Introduction to Spanish language and Hispanic culture',
                 'credits' => 2,
                 'type' => 'Elective',
-                'status' => 'active'
+                'status' => 'active',
             ],
         ];
 

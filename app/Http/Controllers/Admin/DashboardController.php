@@ -3,26 +3,27 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Student;
-use App\Models\Teacher;
-use App\Models\SecurityStaff;
 use App\Models\ParentModel;
 use App\Models\SchoolClass;
+use App\Models\SecurityStaff;
+use App\Models\Setting;
+use App\Models\Student;
 use App\Models\Subject;
-use Illuminate\Support\Facades\DB;
+use App\Models\Teacher;
 use Carbon\Carbon;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    protected $directory = 'admin.pages.dashboard.';
+    protected string $directory = 'admin.pages.dashboard.';
 
-    public function index()
+    public function index(): View
     {
-        // Get school statistics
+        // Get school statistics with optimized queries
         $stats = [
             'total_students' => Student::count(),
-            'active_students' => Student::where('is_active', true)->count(),
+            'active_students' => Student::active()->count(),
             'total_teachers' => Teacher::count(),
             'active_teachers' => Teacher::where('is_active', true)->count(),
             'total_security_staff' => SecurityStaff::count(),
@@ -53,12 +54,16 @@ class DashboardController extends Controller
             $query->where('is_active', true);
         }])->orderBy('grade_level')->get();
 
+        // Get settings for theme and school configuration
+        $settings = Setting::first() ?? new Setting;
+
         return view($this->directory . 'index', compact(
             'stats',
             'recent_enrollments',
             'grade_distribution',
             'recent_students',
-            'classes_with_counts'
+            'classes_with_counts',
+            'settings'
         ));
     }
 }

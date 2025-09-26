@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
@@ -45,7 +44,7 @@ class NotificationController extends Controller
         return response()->json([
             'notifications' => $notificationsData,
             'unread_count' => $unreadCount,
-            'total_count' => Notification::count()
+            'total_count' => Notification::count(),
         ]);
     }
 
@@ -62,7 +61,7 @@ class NotificationController extends Controller
 
         return response()->json([
             'message' => 'Notifications marked as read',
-            'updated_count' => $updated
+            'updated_count' => $updated,
         ]);
     }
 
@@ -72,7 +71,7 @@ class NotificationController extends Controller
 
         return response()->json([
             'message' => 'All notifications marked as read',
-            'updated_count' => $updated
+            'updated_count' => $updated,
         ]);
     }
 
@@ -81,7 +80,7 @@ class NotificationController extends Controller
         $unreadCount = Notification::unread()->count();
 
         return response()->json([
-            'unread_count' => $unreadCount
+            'unread_count' => $unreadCount,
         ]);
     }
 
@@ -89,7 +88,7 @@ class NotificationController extends Controller
     {
         $notification = Notification::find($id);
 
-        if (!$notification) {
+        if (! $notification) {
             return response()->json(['message' => 'Notification not found'], 404);
         }
 

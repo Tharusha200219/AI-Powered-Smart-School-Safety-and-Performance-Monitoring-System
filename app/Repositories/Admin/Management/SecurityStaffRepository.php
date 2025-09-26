@@ -41,7 +41,7 @@ class SecurityStaffRepository implements SecurityStaffRepositoryInterface
     public function create(array $data)
     {
         return DB::transaction(function () use ($data) {
-            if (!isset($data['security_code'])) {
+            if (! isset($data['security_code'])) {
                 $data['security_code'] = $this->generateSecurityCode();
             }
 
@@ -56,7 +56,7 @@ class SecurityStaffRepository implements SecurityStaffRepositoryInterface
     {
         $security = $this->model->where('security_id', $id)->first();
 
-        if (!$security) {
+        if (! $security) {
             return false;
         }
 

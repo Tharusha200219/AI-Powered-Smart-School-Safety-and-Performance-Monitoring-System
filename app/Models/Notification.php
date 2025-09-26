@@ -16,14 +16,14 @@ class Notification extends Model
         'user_id',
         'user_name',
         'is_read',
-        'data'
+        'data',
     ];
 
     protected $casts = [
         'is_read' => 'boolean',
         'data' => 'array',
         'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'updated_at' => 'datetime',
     ];
 
     public function user(): BelongsTo

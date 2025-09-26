@@ -41,7 +41,7 @@ class TeacherRepository implements TeacherRepositoryInterface
     public function create(array $data)
     {
         return DB::transaction(function () use ($data) {
-            if (!isset($data['teacher_code'])) {
+            if (! isset($data['teacher_code'])) {
                 $data['teacher_code'] = $this->generateTeacherCode();
             }
 
@@ -64,7 +64,7 @@ class TeacherRepository implements TeacherRepositoryInterface
         return DB::transaction(function () use ($id, $data) {
             $teacher = $this->model->where('teacher_id', $id)->first();
 
-            if (!$teacher) {
+            if (! $teacher) {
                 return false;
             }
 
@@ -141,7 +141,7 @@ class TeacherRepository implements TeacherRepositoryInterface
     {
         $teacher = $this->model->where('teacher_id', $teacherId)->first();
 
-        if (!$teacher) {
+        if (! $teacher) {
             return false;
         }
 

@@ -41,7 +41,7 @@ class SchoolClassRepository implements SchoolClassRepositoryInterface
     public function create(array $data)
     {
         return DB::transaction(function () use ($data) {
-            if (!isset($data['class_code'])) {
+            if (! isset($data['class_code'])) {
                 $data['class_code'] = $this->generateClassCode();
             }
 
@@ -64,7 +64,7 @@ class SchoolClassRepository implements SchoolClassRepositoryInterface
         return DB::transaction(function () use ($id, $data) {
             $class = $this->model->where('id', $id)->first();
 
-            if (!$class) {
+            if (! $class) {
                 return false;
             }
 
@@ -126,7 +126,7 @@ class SchoolClassRepository implements SchoolClassRepositoryInterface
     {
         $class = $this->model->where('id', $classId)->first();
 
-        if (!$class) {
+        if (! $class) {
             return false;
         }
 
@@ -140,7 +140,7 @@ class SchoolClassRepository implements SchoolClassRepositoryInterface
     {
         $class = $this->model->where('id', $classId)->first();
 
-        if (!$class) {
+        if (! $class) {
             return false;
         }
 
@@ -157,8 +157,8 @@ class SchoolClassRepository implements SchoolClassRepositoryInterface
             ->orderBy('id', 'desc')
             ->first();
 
-        $sequence = $lastClass ? (int)substr($lastClass->class_code, -4) + 1 : 1;
+        $sequence = $lastClass ? (int) substr($lastClass->class_code, -4) + 1 : 1;
 
-        return 'CLS' . $year . str_pad($sequence, 4, '0', STR_PAD_LEFT);
+        return 'CLS'.$year.str_pad($sequence, 4, '0', STR_PAD_LEFT);
     }
 }
