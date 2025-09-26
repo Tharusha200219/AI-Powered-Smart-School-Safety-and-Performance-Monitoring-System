@@ -29,11 +29,11 @@
                         <div class="card-header pb-0">
                             <div class="d-flex align-items-center">
                                 <i class="material-symbols-rounded me-2">school</i>
-                                <h6 class="mb-0">School Information</h6>
+                                <h6 class="mb-0">{{ __('settings.school_information') }}</h6>
                             </div>
                         </div>
                         <div class="card-body p-3">
-                            <form id="school-info-form">
+                            <form id="school-info-form" enctype="multipart/form-data">
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-6">
@@ -101,6 +101,12 @@
                                                 placeholder="https://www.example.com">
                                         </div>
                                     </div>
+                                    <div class="col-md-12">
+                                        <x-input name="logo" type="file" title="School Logo" :value="$setting->logo ?? ''"
+                                            accept="image/jpeg,image/jpg,image/png,image/gif" :showPreview="true"
+                                            :maxSize="2048"
+                                            placeholder="Supported formats: JPG, PNG, GIF. Max size: 2MB" />
+                                    </div>
                                 </div>
                                 <div class="text-end">
                                     <button type="submit" class="btn btn-primary">
@@ -119,7 +125,7 @@
                         <div class="card-header pb-0">
                             <div class="d-flex align-items-center">
                                 <i class="material-symbols-rounded me-2">palette</i>
-                                <h6 class="mb-0">Theme Customization</h6>
+                                <h6 class="mb-0">{{ __('settings.theme_customization') }}</h6>
                             </div>
                         </div>
                         <div class="card-body p-3">
@@ -130,8 +136,9 @@
                                         <div class="form-group mb-3">
                                             <label class="form-label">Primary Color</label>
                                             <div class="color-picker-group">
-                                                <input type="color" class="form-control color-picker" id="primary_color"
-                                                    name="primary_color" value="{{ $setting->primary_color ?? '#06C167' }}"
+                                                <input type="color" class="form-control color-picker"
+                                                    id="primary_color" name="primary_color"
+                                                    value="{{ $setting->primary_color ?? '#06C167' }}"
                                                     onchange="updateThemePreview()">
                                                 <input type="text" class="form-control color-text"
                                                     id="primary_color_text" name="primary_color_text"
@@ -399,7 +406,7 @@
                         <div class="card-header pb-0">
                             <div class="d-flex align-items-center">
                                 <i class="material-symbols-rounded me-2">schedule</i>
-                                <h6 class="mb-0">Academic Settings</h6>
+                                <h6 class="mb-0">{{ __('settings.academic_settings') }}</h6>
                             </div>
                         </div>
                         <div class="card-body p-3">
@@ -408,13 +415,13 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="input-group input-group-outline mb-3">
-                                            <label class="form-label">Academic Year Start</label>
+                                            <label class="form-label">{{ __('school.academic_year_starts') }}</label>
                                             <select class="form-control" name="academic_year_start" required>
-                                                <option value="">Select Start Month</option>
+                                                <option value="">{{ __('common.select_option') }}</option>
                                                 @foreach (['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] as $month)
                                                     <option value="{{ $month }}"
                                                         {{ ($setting->academic_year_start ?? 'January') === $month ? 'selected' : '' }}>
-                                                        {{ $month }}
+                                                        {{ __('settings.' . strtolower($month)) }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -422,13 +429,13 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="input-group input-group-outline mb-3">
-                                            <label class="form-label">Academic Year End</label>
+                                            <label class="form-label">{{ __('school.academic_year_ends') }}</label>
                                             <select class="form-control" name="academic_year_end" required>
-                                                <option value="">Select End Month</option>
+                                                <option value="">{{ __('common.select_option') }}</option>
                                                 @foreach (['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] as $month)
                                                     <option value="{{ $month }}"
                                                         {{ ($setting->academic_year_end ?? 'December') === $month ? 'selected' : '' }}>
-                                                        {{ $month }}
+                                                        {{ __('settings.' . strtolower($month)) }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -436,14 +443,14 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="input-group input-group-outline mb-3">
-                                            <label class="form-label">School Start Time</label>
+                                            <label class="form-label">{{ __('school.school_start_time') }}</label>
                                             <input type="time" class="form-control" name="school_start_time" required
                                                 value="{{ $setting->school_start_time ? \Carbon\Carbon::parse($setting->school_start_time)->format('H:i') : '08:00' }}">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="input-group input-group-outline mb-3">
-                                            <label class="form-label">School End Time</label>
+                                            <label class="form-label">{{ __('school.school_end_time') }}</label>
                                             <input type="time" class="form-control" name="school_end_time" required
                                                 value="{{ $setting->school_end_time ? \Carbon\Carbon::parse($setting->school_end_time)->format('H:i') : '15:00' }}">
                                         </div>
@@ -452,7 +459,60 @@
                                 <div class="text-end">
                                     <button type="submit" class="btn btn-primary">
                                         <i class="material-symbols-rounded me-1">save</i>
-                                        Save Academic Settings
+                                        {{ __('school.save_academic_settings') }}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Language Settings -->
+                <div class="col-12">
+                    <div class="card my-4 glassmorphism-card">
+                        <div class="card-header pb-0">
+                            <div class="d-flex align-items-center">
+                                <i class="material-symbols-rounded me-2">language</i>
+                                <h6 class="mb-0">{{ __('settings.language_settings') }}</h6>
+                            </div>
+                        </div>
+                        <div class="card-body p-3">
+                            <form id="language-form">
+                                @csrf
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="input-group input-group-outline mb-3">
+                                            <label class="form-label">{{ __('settings.language') }}</label>
+                                            <select class="form-control" name="language" required
+                                                onchange="previewLanguageChange(this.value)">
+                                                <option value="">{{ __('settings.select_language') }}</option>
+                                                <option value="en"
+                                                    {{ ($setting->language ?? 'en') === 'en' ? 'selected' : '' }}>
+                                                    {{ __('settings.english') }}
+                                                </option>
+                                                <option value="si"
+                                                    {{ ($setting->language ?? 'en') === 'si' ? 'selected' : '' }}>
+                                                    {{ __('settings.sinhala') }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <small class="text-muted">{{ __('common.preview_below') }}</small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="language-preview p-3"
+                                            style="background: #f8f9fa; border-radius: 8px;">
+                                            <h6 class="mb-2" id="preview-title">{{ __('settings.language') }}</h6>
+                                            <p class="mb-1 text-sm" id="preview-dashboard">{{ __('common.dashboard') }}
+                                            </p>
+                                            <p class="mb-1 text-sm" id="preview-settings">{{ __('common.settings') }}</p>
+                                            <p class="mb-0 text-sm" id="preview-save">{{ __('common.save') }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="material-symbols-rounded me-1">save</i>
+                                        {{ __('common.save') }}
                                     </button>
                                 </div>
                             </form>
@@ -512,6 +572,15 @@
     </style>
 
     <script>
+        // Logo preview callback for immediate sidebar update
+        window.onFilePreviewLogo = function(dataUrl, file) {
+            // Update sidebar logo immediately with preview
+            const sidebarLogo = document.querySelector('.sidebar-logo');
+            if (sidebarLogo) {
+                sidebarLogo.src = dataUrl;
+            }
+        };
+
         // Theme customization functions
         function updateThemePreview() {
             const primaryColor = document.getElementById("primary_color").value;
@@ -810,6 +879,12 @@
                 e.preventDefault();
                 submitForm('academic', '{{ route('admin.setup.settings.academic') }}');
             });
+
+            // Language form handler
+            document.getElementById('language-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                submitForm('language', '{{ route('admin.setup.settings.language') }}');
+            });
         });
 
         function submitForm(type, url) {
@@ -834,6 +909,11 @@
                     if (data.success) {
                         showNotification('Settings saved successfully!', 'success');
                         hideColorPreview(); // Hide preview after successful save
+
+                        // If logo was uploaded, update sidebar logo
+                        if (type === 'school-info' && data.logo_url) {
+                            updateSidebarLogo(data.logo_url);
+                        }
                     } else {
                         console.error('Validation errors:', data.errors);
                         let errorMessage = 'Error saving settings';
@@ -888,6 +968,50 @@
                     notification.remove();
                 }
             }, 3000);
+        }
+
+        function updateSidebarLogo(logoUrl) {
+            // Update sidebar logo immediately without page refresh
+            const sidebarLogo = document.querySelector('.sidebar-logo');
+            if (sidebarLogo) {
+                sidebarLogo.src = logoUrl;
+            }
+
+            // Also update the x-input preview if it exists
+            const logoPreview = document.getElementById('logo-preview');
+            if (logoPreview && logoPreview.tagName === 'IMG') {
+                logoPreview.src = logoUrl;
+            }
+        }
+
+        // Language preview functionality
+        const translations = {
+            'en': {
+                'language': 'Language',
+                'dashboard': 'Dashboard',
+                'settings': 'Settings',
+                'save': 'Save'
+            },
+            'si': {
+                'language': 'භාෂාව',
+                'dashboard': 'පාලක පුවරුව',
+                'settings': 'සැකසීම්',
+                'save': 'සුරකින්න'
+            }
+        };
+
+        function previewLanguageChange(lang) {
+            if (lang && translations[lang]) {
+                const previewTitle = document.getElementById('preview-title');
+                const previewDashboard = document.getElementById('preview-dashboard');
+                const previewSettings = document.getElementById('preview-settings');
+                const previewSave = document.getElementById('preview-save');
+
+                if (previewTitle) previewTitle.textContent = translations[lang]['language'];
+                if (previewDashboard) previewDashboard.textContent = translations[lang]['dashboard'];
+                if (previewSettings) previewSettings.textContent = translations[lang]['settings'];
+                if (previewSave) previewSave.textContent = translations[lang]['save'];
+            }
         }
     </script>
 @endsection

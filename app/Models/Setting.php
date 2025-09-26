@@ -19,6 +19,7 @@ class Setting extends Model
         'timezone',
         'country',
         'copyright_text',
+        'language', // Add language field
         // Theme colors
         'primary_color',
         'secondary_color',
@@ -62,6 +63,7 @@ class Setting extends Model
 
     protected $attributes = [
         'working_days' => '["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]',
+        'language' => 'en', // Default language
         'primary_color' => '#06C167',
         'secondary_color' => '#10B981',
         'accent_color' => '#F0FDF4',
@@ -82,13 +84,6 @@ class Setting extends Model
     protected static function active()
     {
         return self::withoutTrashed();
-    }
-
-    protected function logo(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => $value ? asset('storage/uploads/'.$value) : $value,
-        );
     }
 
     // Get theme colors as CSS variables
