@@ -25,7 +25,7 @@
                 @if (@isset($menu['name']))
                     <li class="nav-item mt-3">
                         <h6 class="ps-4 ms-2 text-uppercase text-xs text-dark font-weight-bolder opacity-5">
-                            {{ $menu['name'] }}</h6>
+                            {{ translateSidebarText($menu['name']) }}</h6>
                     </li>
                 @endif
 
@@ -34,7 +34,7 @@
                         <a class="nav-link @if (Route::is($sidebarItem['route'])) active bg-gradient-dark text-white @else nav-link text-dark @endif "
                             href="{{ route($sidebarItem['route']) }}">
                             <i class="material-symbols-outlined opacity-5">{{ $sidebarItem['icon'] }}</i>
-                            <span class="nav-link-text ms-1">{{ $sidebarItem['text'] }}</span>
+                            <span class="nav-link-text ms-1">{{ translateSidebarText($sidebarItem['text']) }}</span>
                         </a>
                     </li>
                 @endforeach
@@ -45,7 +45,7 @@
         <div class="mx-3">
             <form method="POST" action="{{ route('logout') }}" class="w-100">
                 @csrf
-                <button class="btn btn-outline-primary w-100" type="submit">Logout</button>
+                <button class="btn btn-outline-primary w-100" type="submit">{{ __('common.logout') }}</button>
 
             </form>
         </div>

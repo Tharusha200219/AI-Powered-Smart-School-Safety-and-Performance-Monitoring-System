@@ -101,7 +101,8 @@
                                 <div class="col-6 text-end">
                                     <a class="btn btn-outline-dark mb-0 d-flex align-items-center justify-content-center btn-back-auto"
                                         href="{{ route('admin.management.students.index') }}">
-                                        <i class="material-symbols-rounded me-1 icon-size-md">arrow_back</i>Back
+                                        <i
+                                            class="material-symbols-rounded me-1 icon-size-md">arrow_back</i>{{ __('common.back') }}
                                     </a>
                                 </div>
                             </div>
@@ -119,7 +120,7 @@
                                     <div class="card-header bg-gradient-primary">
                                         <h6 class="mb-0 d-flex align-items-center text-white">
                                             <i class="material-symbols-rounded me-2 icon-size-sm">person</i>
-                                            Student Information
+                                            {{ __('school.student_information') }}
                                         </h6>
                                     </div>
                                     <div class="card-body">
@@ -148,20 +149,23 @@
                                                         <input type="file" id="profileImage" name="profile_image"
                                                             accept="image/*" style="display: none;">
                                                     </div>
-                                                    <small class="text-muted">Click the edit icon to upload a photo</small>
+                                                    <small
+                                                        class="text-muted">{{ __('common.click_edit_icon_upload_photo') }}</small>
                                                 </div>
                                             </div>
                                             <div class="col-md-9">
                                                 <div class="row">
                                                     <div class="col-md-4">
-                                                        <x-input name="student_code" title="Student Code" :isRequired="true"
+                                                        <x-input name="student_code" title="{{ __('school.student_code') }}"
+                                                            :isRequired="true"
                                                             attr="maxlength='50' readonly style='background-color: #f8f9fa; cursor: not-allowed;'"
                                                             :value="old(
                                                                 'student_code',
                                                                 $student->student_code ?? '',
                                                             )" />
                                                         @if (!$id)
-                                                            <small class="form-text text-muted">Auto-generated</small>
+                                                            <small
+                                                                class="form-text text-muted">{{ __('common.auto_generated') }}</small>
                                                         @endif
                                                     </div>
                                                     <div class="col-md-4">
