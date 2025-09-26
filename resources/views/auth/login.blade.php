@@ -3,7 +3,7 @@
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-<<<<<<< HEAD
+
     <link rel="stylesheet" href="{{ mix('sass/app.scss') }}">
 @endsection
 
@@ -63,7 +63,7 @@
 
 @section('script')
     <script src="{{ asset('assets/js/custom.js') }}" defer data-deferred="1"></script>
-=======
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -647,5 +647,5 @@
             createFloatingShapes();
         });
     </script>
->>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
+
 @endsection

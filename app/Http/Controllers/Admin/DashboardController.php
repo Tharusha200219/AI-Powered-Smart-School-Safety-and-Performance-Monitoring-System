@@ -10,10 +10,10 @@ use App\Models\SecurityStaff;
 use App\Models\ParentModel;
 use App\Models\SchoolClass;
 use App\Models\Subject;
-<<<<<<< HEAD
-=======
+
+
 use App\Models\Setting;
->>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
+
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -57,23 +57,22 @@ class DashboardController extends Controller
             $query->where('is_active', true);
         }])->orderBy('grade_level')->get();
 
-<<<<<<< HEAD
-=======
+
         // Get settings for theme and school configuration
         $settings = Setting::first() ?? new Setting();
 
->>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
+
         return view($this->directory . 'index', compact(
             'stats',
             'recent_enrollments',
             'grade_distribution',
             'recent_students',
-<<<<<<< HEAD
-            'classes_with_counts'
-=======
+
+            'classes_with_counts',
+
             'classes_with_counts',
             'settings'
->>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
+
         ));
     }
 }

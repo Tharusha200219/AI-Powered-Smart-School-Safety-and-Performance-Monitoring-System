@@ -12,9 +12,9 @@ class Setting extends Model
     use HasFactory;
     use SoftDeletes;
 
-<<<<<<< HEAD
-    protected $fillable = ['title', 'logo', 'company_email', 'container_type', 'company_phone', 'company_address', 'mail_signature', 'date_format', 'timezone',  'country', 'copyright_text'];
-=======
+
+    
+
     protected $fillable = [
         'title',
         'logo',
@@ -81,7 +81,7 @@ class Setting extends Model
         'school_start_time' => '08:00:00',
         'school_end_time' => '15:00:00',
     ];
->>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
+
 
     protected static function active()
     {
@@ -94,8 +94,7 @@ class Setting extends Model
             get: fn($value) => $value ? asset('storage/uploads/' . $value) : $value,
         );
     }
-<<<<<<< HEAD
-=======
+
 
     // Get theme colors as CSS variables
     public function getThemeColorsAttribute()
@@ -146,5 +145,5 @@ class Setting extends Model
         }
         return $css;
     }
->>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
+
 }

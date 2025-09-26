@@ -18,10 +18,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link id="pagestyle" href="{{ asset('assets/css/material-dashboard.css?v=3.2.0') }}" rel="stylesheet" />
     <link href="{{ asset('assets/css/custom-overrides.css') }}" rel="stylesheet" />
-<<<<<<< HEAD
-=======
+
+
     <link href="{{ asset('assets/css/theme-system.css') }}" rel="stylesheet" />
->>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
+
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="//cdn.datatables.net/2.1.6/css/dataTables.dataTables.min.css" rel="stylesheet" />
 
@@ -34,8 +34,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.js"></script>
 
-<<<<<<< HEAD
-=======
+
     <!-- Dynamic Theme Colors -->
     @php
         $settings = \App\Models\Setting::first() ?? new \App\Models\Setting();
@@ -246,6 +245,6 @@
         @endif
     </style>
 
->>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
+
     @yield('css')
 </head>

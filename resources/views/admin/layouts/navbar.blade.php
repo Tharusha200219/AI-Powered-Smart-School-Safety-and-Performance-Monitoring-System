@@ -48,7 +48,7 @@
                     </a>
                 </li>
                 <li class="nav-item dropdown pe-3 d-flex align-items-center d-none d-md-block">
-<<<<<<< HEAD
+
                     <a href="javascript:;" class="nav-link text-body p-0" id="dropdownMenuButton"
                         data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="material-symbols-rounded">notifications</i>
@@ -135,7 +135,7 @@
                     <a href="../pages/sign-in.html" class="nav-link text-body font-weight-bold px-0">
                         <i class="material-symbols-rounded">account_circle</i>
                     </a>
-=======
+
                     <a href="javascript:;" class="nav-link text-body p-0 position-relative" id="dropdownMenuButton"
                         data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="material-symbols-rounded">notifications</i>
@@ -243,7 +243,7 @@
                             </form>
                         </li>
                     </ul>
->>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
+
                 </li>
             </ul>
         </div>

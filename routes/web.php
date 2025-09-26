@@ -1,11 +1,10 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
-<<<<<<< HEAD
-=======
+
 use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\ProfileController;
->>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
+
 use App\Http\Controllers\Admin\Management\StudentController;
 use App\Http\Controllers\Admin\Management\TeacherController;
 use App\Http\Controllers\Admin\Management\ParentController;
@@ -13,12 +12,10 @@ use App\Http\Controllers\Admin\Management\SecurityStaffController;
 use App\Http\Controllers\Admin\Management\SchoolClassController;
 use App\Http\Controllers\Admin\Management\SubjectController;
 use App\Http\Controllers\Admin\PlaceholderController;
-<<<<<<< HEAD
-use App\Http\Controllers\Admin\Setup\SettingsController;
-=======
+use App\Http\Controllers\Admin\SettingsController as AdminSettingsController;
 use App\Http\Controllers\Admin\Setup\SettingsController as SetupSettingsController;
-use App\Http\Controllers\Admin\SettingsController;
->>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
+
+
 use App\Http\Controllers\Admin\Setup\RoleController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -37,8 +34,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/', 'index')->name('index');
         });
 
-<<<<<<< HEAD
-=======
+
         // Profile Management
         Route::prefix('profile')->name('profile.')->controller(ProfileController::class)->group(function () {
             Route::get('/', 'index')->name('index');
@@ -50,7 +46,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/stats', 'getProfileStats')->name('stats');
         });
 
->>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
+
         Route::prefix('management')->name('management.')->group(function () {
             // Students Management
             Route::prefix('students')->name('students.')->controller(StudentController::class)->group(function () {
@@ -153,13 +149,13 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/enroll', 'enroll')->name('enroll');
             });
 
-<<<<<<< HEAD
+
             Route::prefix('settings')->name('settings.')->controller(SettingsController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::post('/update', 'update')->name('update');
             });
         });
-=======
+
             Route::prefix('settings')->name('settings.')->controller(SetupSettingsController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::post('/update', 'update')->name('update');
@@ -188,6 +184,5 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/unread-count', 'getUnreadCount')->name('unread-count');
             Route::delete('/{id}', 'destroy')->name('destroy');
         });
->>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
+
     });
-});

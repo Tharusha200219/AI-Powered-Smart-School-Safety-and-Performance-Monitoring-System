@@ -63,8 +63,7 @@ function checkPermissionAndRedirect($permission)
         abort(403, 'Unauthorized action.');
     }
 }
-<<<<<<< HEAD
-=======
+
 
 function hexToRgb($hex)
 {
@@ -86,4 +85,4 @@ function hexToRgb($hex)
 
     return "$r, $g, $b";
 }
->>>>>>> 4358fa2a22b070c3f048b27b38865b1db4389606
+
