@@ -33,7 +33,7 @@
                             </div>
                         </div>
                         <div class="card-body p-3">
-                            <form id="school-info-form">
+                            <form id="school-info-form" enctype="multipart/form-data">
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-6">
@@ -101,6 +101,18 @@
                                                 placeholder="https://www.example.com">
                                         </div>
                                     </div>
+                                    <div class="col-md-12">
+                                        <x-input 
+                                            name="logo" 
+                                            type="file"
+                                            title="School Logo" 
+                                            :value="$setting->logo ?? ''"
+                                            accept="image/jpeg,image/jpg,image/png,image/gif"
+                                            :showPreview="true"
+                                            :maxSize="2048"
+                                            placeholder="Supported formats: JPG, PNG, GIF. Max size: 2MB"
+                                        />
+                                    </div>
                                 </div>
                                 <div class="text-end">
                                     <button type="submit" class="btn btn-primary">
@@ -130,8 +142,9 @@
                                         <div class="form-group mb-3">
                                             <label class="form-label">Primary Color</label>
                                             <div class="color-picker-group">
-                                                <input type="color" class="form-control color-picker" id="primary_color"
-                                                    name="primary_color" value="{{ $setting->primary_color ?? '#06C167' }}"
+                                                <input type="color" class="form-control color-picker"
+                                                    id="primary_color" name="primary_color"
+                                                    value="{{ $setting->primary_color ?? '#06C167' }}"
                                                     onchange="updateThemePreview()">
                                                 <input type="text" class="form-control color-text"
                                                     id="primary_color_text" name="primary_color_text"
@@ -512,6 +525,15 @@
     </style>
 
     <script>
+        // Logo preview callback for immediate sidebar update
+        window.onFilePreviewLogo = function(dataUrl, file) {
+            // Update sidebar logo immediately with preview
+            const sidebarLogo = document.querySelector('.sidebar-logo');
+            if (sidebarLogo) {
+                sidebarLogo.src = dataUrl;
+            }
+        };
+        
         // Theme customization functions
         function updateThemePreview() {
             const primaryColor = document.getElementById("primary_color").value;
@@ -834,6 +856,11 @@
                     if (data.success) {
                         showNotification('Settings saved successfully!', 'success');
                         hideColorPreview(); // Hide preview after successful save
+
+                        // If logo was uploaded, update sidebar logo
+                        if (type === 'school-info' && data.logo_url) {
+                            updateSidebarLogo(data.logo_url);
+                        }
                     } else {
                         console.error('Validation errors:', data.errors);
                         let errorMessage = 'Error saving settings';
@@ -888,6 +915,20 @@
                     notification.remove();
                 }
             }, 3000);
+        }
+
+        function updateSidebarLogo(logoUrl) {
+            // Update sidebar logo immediately without page refresh
+            const sidebarLogo = document.querySelector('.sidebar-logo');
+            if (sidebarLogo) {
+                sidebarLogo.src = logoUrl;
+            }
+            
+            // Also update the x-input preview if it exists
+            const logoPreview = document.getElementById('logo-preview');
+            if (logoPreview && logoPreview.tagName === 'IMG') {
+                logoPreview.src = logoUrl;
+            }
         }
     </script>
 @endsection

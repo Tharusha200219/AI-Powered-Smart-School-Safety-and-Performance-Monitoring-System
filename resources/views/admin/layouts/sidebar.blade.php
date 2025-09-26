@@ -4,7 +4,17 @@
         <i class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
             aria-hidden="true" id="iconSidenav"></i>
         <a class="navbar-brand px-0 py-3 m-0 text-center" href="{{ route('admin.dashboard.index') }}" target="_blank">
-            <img class="w-75" src="{{ asset('assets/img/logo_text.png') }}">
+            @php
+                $globalSetting = app(\App\Models\Setting::class)->first();
+            @endphp
+            @if ($globalSetting && $globalSetting->logo)
+                <img class="w-75 sidebar-logo" src="{{ asset('storage/' . $globalSetting->logo) }}"
+                    alt="{{ $globalSetting->school_name ?? ($globalSetting->title ?? 'School Logo') }}"
+                    style="max-height: 50px; object-fit: contain;">
+            @else
+                <img class="w-75 sidebar-logo" src="{{ asset('assets/img/logo_text.png') }}"
+                    alt="{{ $globalSetting->school_name ?? ($globalSetting->title ?? 'School') }}">
+            @endif
         </a>
     </div>
     <hr class="horizontal dark mt-0 mb-2">

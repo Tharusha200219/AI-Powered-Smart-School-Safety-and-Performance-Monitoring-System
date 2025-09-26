@@ -79,7 +79,8 @@ class PlaceholderController extends Controller
     // System Setup
     public function schoolInfo()
     {
-        return $this->index('school information');
+        $setting = \App\Models\Setting::first() ?? new \App\Models\Setting();
+        return view('admin.pages.setup.school.index', compact('setting'));
     }
 
     public function gradeLevels()
@@ -89,7 +90,8 @@ class PlaceholderController extends Controller
 
     public function academicYear()
     {
-        return $this->index('academic year');
+        $setting = \App\Models\Setting::first() ?? new \App\Models\Setting();
+        return view('admin.pages.setup.academic-year.index', compact('setting'));
     }
 
     public function roles()

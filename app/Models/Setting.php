@@ -84,13 +84,6 @@ class Setting extends Model
         return self::withoutTrashed();
     }
 
-    protected function logo(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => $value ? asset('storage/uploads/'.$value) : $value,
-        );
-    }
-
     // Get theme colors as CSS variables
     public function getThemeColorsAttribute()
     {
