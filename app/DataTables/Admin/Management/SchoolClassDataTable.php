@@ -18,33 +18,27 @@ class SchoolClassDataTable extends DataTable
         return (new EloquentDataTable($query))
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                $show = checkPermission('admin.management.classes.show') ? view('admin.layouts.actions.show', [
-                    'url' => route('admin.management.'.$this->model.'.show', ['id' => $row->id]),
-                    'id' => $row->id,
-                ])->render() : '';
-
-                $edit = checkPermission('admin.management.classes.edit') ? view('admin.layouts.actions.edit', [
-                    'url' => route('admin.management.'.$this->model.'.form', ['id' => $row->id]),
-                    'id' => $row->id,
-                ])->render() : '';
-
-                $delete = checkPermission('admin.management.classes.delete') ? view('admin.layouts.actions.delete', [
-                    'url' => route('admin.management.'.$this->model.'.delete', ['id' => $row->id]),
-                    'id' => $row->id,
-                ])->render() : '';
-
                 $dropdownItems = [];
 
-                if ($show) {
-                    $dropdownItems[] = $show;
+                if (checkPermission('admin.management.classes.show')) {
+                    $dropdownItems[] = view('admin.layouts.actions.show', [
+                        'url' => route('admin.management.' . $this->model . '.show', ['id' => $row->id]),
+                        'id' => $row->id,
+                    ])->render();
                 }
 
-                if ($edit) {
-                    $dropdownItems[] = $edit;
+                if (checkPermission('admin.management.classes.edit')) {
+                    $dropdownItems[] = view('admin.layouts.actions.edit', [
+                        'url' => route('admin.management.' . $this->model . '.form', ['id' => $row->id]),
+                        'id' => $row->id,
+                    ])->render();
                 }
 
-                if ($delete) {
-                    $dropdownItems[] = $delete;
+                if (checkPermission('admin.management.classes.delete')) {
+                    $dropdownItems[] = view('admin.layouts.actions.delete', [
+                        'url' => route('admin.management.' . $this->model . '.delete', ['id' => $row->id]),
+                        'id' => $row->id,
+                    ])->render();
                 }
 
                 if (empty($dropdownItems)) {
@@ -53,17 +47,15 @@ class SchoolClassDataTable extends DataTable
 
                 $dropdownContent = implode('<li><hr class="dropdown-divider"></li>', $dropdownItems);
 
-                $dropdown = '
+                return '
                 <div class="dropdown text-end">
                     <button class="btn btn-icon border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="material-symbols-outlined text-lg">more_vert</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow rounded-3 p-2 w-100">
-                        '.$dropdownContent.'
+                        ' . $dropdownContent . '
                     </ul>
                 </div>';
-
-                return $dropdown;
             })
             ->addColumn('name', function ($row) {
                 $gradeColors = [
@@ -85,69 +77,53 @@ class SchoolClassDataTable extends DataTable
                 $gradeColor = $gradeColors[$row->grade_level] ?? 'bg-gradient-secondary';
 
                 return '<div class="d-flex align-items-center">
-                    <span class="badge '.$gradeColor.' badge-sm me-2">Grade '.$row->grade_level.'</span>
-                    <span class="fw-bold">'.$row->class_name.'</span>
+                    <span class="badge ' . $gradeColor . ' badge-sm me-2">Grade ' . $row->grade_level . '</span>
+                    <span class="fw-bold">' . $row->class_name . '</span>
                 </div>';
             })
             ->addColumn('class_code', function ($row) {
-                return '<span class="text-secondary fw-bold">'.$row->class_code.'</span>';
+                return '<span class="text-secondary fw-bold">' . $row->class_code . '</span>';
             })
             ->addColumn('class_teacher', function ($row) {
-                if ($row->classTeacher) {
-                    $teacher = $row->classTeacher;
-
-                    return '<div class="d-flex align-items-center">
+                return $row->classTeacher ? 
+                    '<div class="d-flex align-items-center">
                         <span class="badge bg-gradient-success badge-sm me-2">CT</span>
-                        <span>'.$teacher->full_name.'</span>
-                    </div>';
-                }
-
-                return '<span class="text-muted">No class teacher</span>';
+                        <span>' . $row->classTeacher->full_name . '</span>
+                    </div>' : 
+                    '<span class="text-muted">No class teacher</span>';
             })
             ->addColumn('students_count', function ($row) {
                 $count = $row->students->count();
                 $color = $count > 30 ? 'warning' : ($count > 0 ? 'info' : 'secondary');
-
-                return '<span class="badge bg-gradient-'.$color.' badge-sm">'.$count.' student'.($count != 1 ? 's' : '').'</span>';
+                return '<span class="badge bg-gradient-' . $color . ' badge-sm">' . $count . ' student' . ($count != 1 ? 's' : '') . '</span>';
             })
             ->addColumn('subjects_count', function ($row) {
                 $count = $row->subjects->count();
                 $color = $count > 0 ? 'success' : 'secondary';
-
-                return '<span class="badge bg-gradient-'.$color.' badge-sm">'.$count.' subject'.($count != 1 ? 's' : '').'</span>';
+                return '<span class="badge bg-gradient-' . $color . ' badge-sm">' . $count . ' subject' . ($count != 1 ? 's' : '') . '</span>';
             })
             ->addColumn('room_number', function ($row) {
-                return $row->room_number ? '<span class="badge bg-gradient-primary badge-sm">Room '.$row->room_number.'</span>' : '<span class="text-muted">No room</span>';
+                return $row->room_number ? 
+                    '<span class="badge bg-gradient-primary badge-sm">Room ' . $row->room_number . '</span>' : 
+                    '<span class="text-muted">No room</span>';
             })
             ->addColumn('capacity', function ($row) {
-                if (! $row->capacity) {
+                if (!$row->capacity) {
                     return '<span class="text-muted">Not set</span>';
                 }
-
                 $studentsCount = $row->students->count();
                 $percentage = ($studentsCount / $row->capacity) * 100;
-
-                if ($percentage >= 100) {
-                    $color = 'danger';
-                    $text = 'Full';
-                } elseif ($percentage >= 80) {
-                    $color = 'warning';
-                    $text = 'Almost Full';
-                } else {
-                    $color = 'success';
-                    $text = 'Available';
-                }
-
+                $color = $percentage >= 100 ? 'danger' : ($percentage >= 80 ? 'warning' : 'success');
+                $text = $percentage >= 100 ? 'Full' : ($percentage >= 80 ? 'Almost Full' : 'Available');
                 return '<div class="text-center">
-                    <span class="badge bg-gradient-'.$color.' badge-sm">'.$text.'</span>
-                    <small class="d-block text-muted">'.$studentsCount.'/'.$row->capacity.'</small>
+                    <span class="badge bg-gradient-' . $color . ' badge-sm">' . $text . '</span>
+                    <small class="d-block text-muted">' . $studentsCount . '/' . $row->capacity . '</small>
                 </div>';
             })
             ->addColumn('status', function ($row) {
                 $color = $row->is_active ? 'success' : 'danger';
                 $text = $row->is_active ? 'Active' : 'Inactive';
-
-                return '<span class="badge badge-sm bg-gradient-'.$color.' me-1">'.$text.'</span>';
+                return '<span class="badge badge-sm bg-gradient-' . $color . ' me-1">' . $text . '</span>';
             })
             ->addColumn('modified', function ($row) {
                 return $row->updated_at ? $row->updated_at->format('M d, Y') : 'Never';
@@ -161,9 +137,6 @@ class SchoolClassDataTable extends DataTable
             });
     }
 
-    /**
-     * Get query source of dataTable.
-     */
     public function query(SchoolClass $model): QueryBuilder
     {
         return $model->with(['classTeacher', 'students', 'subjects'])
@@ -182,15 +155,13 @@ class SchoolClassDataTable extends DataTable
                 'scrollX' => true,
                 'autoWidth' => false,
                 'drawCallback' => 'function(settings) {
-                    // Add horizontal scroll styles
-                    $("#student-table_wrapper .dt-layout-table").css({
+                    $("#class-table_wrapper .dt-layout-table").css({
                         "overflow": "hidden",
                         "overflow-x": "auto"
                     });
                 }',
                 'initComplete' => 'function(settings, json) {
-                    // Apply horizontal scroll on initialization
-                    $("#student-table_wrapper .dt-layout-table").css({
+                    $("#class-table_wrapper .dt-layout-table").css({
                         "overflow": "hidden",
                         "overflow-x": "auto"
                     });
@@ -214,7 +185,7 @@ class SchoolClassDataTable extends DataTable
             Column::make('subjects_count')->title('SUBJECTS')->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
             Column::make('room_number')->title('ROOM')->addClass('text-center align-middle text-xs')->searchable(true),
             Column::make('capacity')->title('CAPACITY')->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
-            Column::make('status')->title('STATUS')->searchable(false)->orderable(false)->addClass('text-center align-middle text-xs'),
+            Column::make('status')->title('STATUS')->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
             Column::make('modified')->title('MODIFIED')->addClass('text-start align-middle text-xs')->searchable(false),
         ];
 
@@ -232,6 +203,6 @@ class SchoolClassDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'SchoolClass_'.date('YmdHis');
+        return 'SchoolClass_' . date('YmdHis');
     }
 }

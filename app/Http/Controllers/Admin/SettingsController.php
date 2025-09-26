@@ -15,7 +15,7 @@ class SettingsController extends Controller
     {
         $settings = Setting::first() ?? new Setting;
 
-        return view($this->directory.'index', compact('settings'));
+        return view($this->directory . 'index', compact('settings'));
     }
 
     public function updateSchoolInfo(Request $request)
@@ -26,7 +26,7 @@ class SettingsController extends Controller
                 'school_type' => 'nullable|in:Primary,Secondary,Combined,International',
                 'school_motto' => 'nullable|string|max:500',
                 'principal_name' => 'nullable|string|max:255',
-                'established_year' => 'nullable|integer|min:1800|max:'.date('Y'),
+                'established_year' => 'nullable|integer|min:1800|max:' . date('Y'),
                 'total_capacity' => 'nullable|integer|min:1',
                 'website_url' => 'nullable|url|max:255',
             ]);
@@ -58,7 +58,7 @@ class SettingsController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error updating school information: '.$e->getMessage(),
+                'message' => 'Error updating school information: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -99,7 +99,7 @@ class SettingsController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error updating theme: '.$e->getMessage(),
+                'message' => 'Error updating theme: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -138,7 +138,7 @@ class SettingsController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error updating academic settings: '.$e->getMessage(),
+                'message' => 'Error updating academic settings: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -175,7 +175,7 @@ class SettingsController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error updating social media settings: '.$e->getMessage(),
+                'message' => 'Error updating social media settings: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -193,7 +193,44 @@ class SettingsController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error fetching theme colors: '.$e->getMessage(),
+                'message' => 'Error fetching theme colors: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function updateLanguage(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'language' => 'required|string|in:en,si',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $validator->errors(),
+                ], 422);
+            }
+
+            $settings = Setting::first() ?? new Setting;
+
+            $settings->update([
+                'language' => $request->language,
+            ]);
+
+            // Set application locale for immediate effect
+            app()->setLocale($request->language);
+            session(['locale' => $request->language]);
+
+            return response()->json([
+                'success' => true,
+                'message' => __('settings.language_settings_saved'),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update language settings: ' . $e->getMessage(),
             ], 500);
         }
     }

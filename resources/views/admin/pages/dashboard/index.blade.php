@@ -15,10 +15,10 @@
             <div class="row mb-4">
                 <div class="col-12">
                     <div class="ms-3">
-                        <h3 class="mb-0 h4 dashboard-title">School Management Dashboard</h3>
+                        <h3 class="mb-0 h4 dashboard-title">{{ __('school.school_management_dashboard') }}</h3>
                         <p class="mb-4 text-muted">
                             <i class="material-symbols-rounded me-1">school</i>
-                            Monitor your school's performance and manage educational resources.
+                            {{ __('school.monitor_school_performance') }}
                         </p>
                     </div>
                 </div>
@@ -34,10 +34,10 @@
                                     <i class="material-symbols-rounded text-lg">school</i>
                                 </div>
                                 <h4 class="mb-0 stat-number">{{ number_format($stats['total_students']) }}</h4>
-                                <p class="text-sm mb-0 text-capitalize text-muted">Total Students</p>
+                                <p class="text-sm mb-0 text-capitalize text-muted">{{ __('common.total_students') }}</p>
                                 <small class="text-success">
                                     <i class="material-symbols-rounded text-xs">trending_up</i>
-                                    {{ $stats['active_students'] }} Active
+                                    {{ $stats['active_students'] }} {{ __('common.active') }}
                                 </small>
                             </div>
                         </div>
@@ -52,10 +52,10 @@
                                     <i class="material-symbols-rounded text-lg">person</i>
                                 </div>
                                 <h4 class="mb-0 stat-number">{{ number_format($stats['total_teachers']) }}</h4>
-                                <p class="text-sm mb-0 text-capitalize text-muted">Total Teachers</p>
+                                <p class="text-sm mb-0 text-capitalize text-muted">{{ __('common.total_teachers') }}</p>
                                 <small class="text-success">
                                     <i class="material-symbols-rounded text-xs">check_circle</i>
-                                    {{ $stats['active_teachers'] }} Active
+                                    {{ $stats['active_teachers'] }} {{ __('common.active') }}
                                 </small>
                             </div>
                         </div>
@@ -70,10 +70,10 @@
                                     <i class="material-symbols-rounded text-lg">family_restroom</i>
                                 </div>
                                 <h4 class="mb-0 stat-number">{{ number_format($stats['total_parents']) }}</h4>
-                                <p class="text-sm mb-0 text-capitalize text-muted">Total Parents</p>
+                                <p class="text-sm mb-0 text-capitalize text-muted">{{ __('common.total_parents') }}</p>
                                 <small class="text-muted">
                                     <i class="material-symbols-rounded text-xs">people</i>
-                                    Registered
+                                    {{ __('common.registered') }}
                                 </small>
                             </div>
                         </div>
@@ -88,10 +88,10 @@
                                     <i class="material-symbols-rounded text-lg">meeting_room</i>
                                 </div>
                                 <h4 class="mb-0 stat-number">{{ number_format($stats['total_classes']) }}</h4>
-                                <p class="text-sm mb-0 text-capitalize text-muted">Total Classes</p>
+                                <p class="text-sm mb-0 text-capitalize text-muted">{{ __('common.total_classes') }}</p>
                                 <small class="text-info">
                                     <i class="material-symbols-rounded text-xs">book</i>
-                                    {{ $stats['total_subjects'] }} Subjects
+                                    {{ $stats['total_subjects'] }} {{ __('common.subjects') }}
                                 </small>
                             </div>
                         </div>
@@ -109,9 +109,11 @@
                                     <i class="material-symbols-rounded">security</i>
                                 </div>
                                 <div>
-                                    <p class="text-sm mb-0 text-capitalize text-muted">Security Staff</p>
+                                    <p class="text-sm mb-0 text-capitalize text-muted">{{ __('common.security_staff') }}
+                                    </p>
                                     <h4 class="mb-0 stat-number">{{ $stats['total_security_staff'] }}</h4>
-                                    <small class="text-success">{{ $stats['active_security_staff'] }} Active</small>
+                                    <small class="text-success">{{ $stats['active_security_staff'] }}
+                                        {{ __('common.active') }}</small>
                                 </div>
                             </div>
                         </div>
@@ -126,9 +128,10 @@
                                     <i class="material-symbols-rounded">person_add</i>
                                 </div>
                                 <div>
-                                    <p class="text-sm mb-0 text-capitalize text-muted">New Enrollments</p>
+                                    <p class="text-sm mb-0 text-capitalize text-muted">{{ __('school.new_enrollments') }}
+                                    </p>
                                     <h4 class="mb-0 stat-number">{{ $recent_enrollments }}</h4>
-                                    <small class="text-muted">Last 30 days</small>
+                                    <small class="text-muted">{{ __('school.last_30_days') }}</small>
                                 </div>
                             </div>
                         </div>

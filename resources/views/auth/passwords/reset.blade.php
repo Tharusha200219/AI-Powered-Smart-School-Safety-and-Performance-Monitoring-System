@@ -14,58 +14,31 @@
                         <div class="card card-body custom-class-for-Glassmorphism">
                             <img class="w-20 align-self-sm-center" src="{{ asset('assets/img/favicon.ico') }}"
                                 alt="">
-                            <h3 class="text-center text-dark @if (env('DEFAULT_THEME') == 'dark') text-white @endif">{{ __('passwords.reset-password-title') }}</h3>
+                            <h3 class="text-center text-dark @if (env('DEFAULT_THEME') == 'dark') text-white @endif">
+                                {{ __('passwords.reset-password-title') }}</h3>
                             <small class="text-center">{{ __('passwords.reset-password-second-title') }}</small>
                             <div class="card-body ">
                                 <form method="POST" action="{{ route('password.update') }}">
                                     @csrf
                                     <input type="hidden" name="token" value="{{ $token }}">
-                                    <div
-                                        class="input-group input-group-outline my-3">
-                                        <label for="email"
-                                            class="form-label text-dark @if (env('DEFAULT_THEME') == 'dark') text-white @endif">{{ __('Email Address') }}</label>
-
-                                       
-                                            <input id="email" readonly type="email"
-                                                class="text-dark @if (env('DEFAULT_THEME') == 'dark') text-white @endif form-control @error('email') is-invalid @enderror" name="email"
-                                                value="{{ $email ?? old('email') }}" required autocomplete="email"
-                                                autofocus>
-
-                                            @error('email')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
-                                        
+                                    <div class="input-group input-group-outline my-3">
+                                        <x-input name="email" type="email" title="{{ __('Email Address') }}"
+                                            class="text-dark @if (env('DEFAULT_THEME') == 'dark') text-white @endif form-control @error('email') is-invalid @enderror"
+                                            :isRequired="true" attr="autocomplete='email' autofocus readonly id='email'"
+                                            :value="$email ?? old('email')" />
                                     </div>
 
-                                    <div
-                                        class="input-group input-group-outline my-3 ">
-                                        <label for="password"
-                                            class="form-label text-dark @if (env('DEFAULT_THEME') == 'dark') text-white @endif">{{ __(key: 'Password') }}</label>
-
-                                        
-                                            <input id="password" type="password"
-                                                class="text-dark @if (env('DEFAULT_THEME') == 'dark') text-white @endif form-control @error('password') is-invalid @enderror" name="password"
-                                                required autocomplete="new-password">
-
-                                            @error('password')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
-                                       
+                                    <div class="input-group input-group-outline my-3">
+                                        <x-input name="password" type="password" title="{{ __('Password') }}"
+                                            class="text-dark @if (env('DEFAULT_THEME') == 'dark') text-white @endif form-control @error('password') is-invalid @enderror"
+                                            :isRequired="true" attr="autocomplete='new-password' id='password'" />
                                     </div>
 
-                                    <div
-                                        class="input-group input-group-outline my-3">
-                                        <label for="password-confirm"
-                                            class="form-label text-dark @if (env('DEFAULT_THEME') == 'dark') text-white @endif">{{ __('Confirm Password') }}</label>
-
-                                        
-                                            <input id="password-confirm" type="password" class="text-dark @if (env('DEFAULT_THEME') == 'dark') text-white @endif form-control"
-                                                name="password_confirmation" required autocomplete="new-password">
-                                        
+                                    <div class="input-group input-group-outline my-3">
+                                        <x-input name="password_confirmation" type="password"
+                                            title="{{ __('Confirm Password') }}"
+                                            class="text-dark @if (env('DEFAULT_THEME') == 'dark') text-white @endif form-control"
+                                            :isRequired="true" attr="autocomplete='new-password' id='password-confirm'" />
                                     </div>
 
                                     <div class="row mb-0">

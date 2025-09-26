@@ -101,7 +101,8 @@
                                 <div class="col-6 text-end">
                                     <a class="btn btn-outline-dark mb-0 d-flex align-items-center justify-content-center btn-back-auto"
                                         href="{{ route('admin.management.students.index') }}">
-                                        <i class="material-symbols-rounded me-1 icon-size-md">arrow_back</i>Back
+                                        <i
+                                            class="material-symbols-rounded me-1 icon-size-md">arrow_back</i>{{ __('common.back') }}
                                     </a>
                                 </div>
                             </div>
@@ -119,7 +120,7 @@
                                     <div class="card-header bg-gradient-primary">
                                         <h6 class="mb-0 d-flex align-items-center text-white">
                                             <i class="material-symbols-rounded me-2 icon-size-sm">person</i>
-                                            Student Information
+                                            {{ __('school.student_information') }}
                                         </h6>
                                     </div>
                                     <div class="card-body">
@@ -148,41 +149,32 @@
                                                         <input type="file" id="profileImage" name="profile_image"
                                                             accept="image/*" style="display: none;">
                                                     </div>
-                                                    <small class="text-muted">Click the edit icon to upload a photo</small>
+                                                    <small
+                                                        class="text-muted">{{ __('common.click_edit_icon_upload_photo') }}</small>
                                                 </div>
                                             </div>
                                             <div class="col-md-9">
                                                 <div class="row">
                                                     <div class="col-md-4">
-                                                        <div
-                                                            class="input-group input-group-outline mb-3 {{ old('student_code', $student->student_code ?? '') ? 'is-filled' : '' }}">
-                                                            <label class="form-label">Student Code *</label>
-                                                            <input type="text" name="student_code" class="form-control"
-                                                                value="{{ old('student_code', $student->student_code ?? '') }}"
-                                                                maxlength="50" required readonly
-                                                                style="background-color: #f8f9fa; cursor: not-allowed;">
-                                                        </div>
+                                                        <x-input name="student_code" title="{{ __('school.student_code') }}"
+                                                            :isRequired="true"
+                                                            attr="maxlength='50' readonly style='background-color: #f8f9fa; cursor: not-allowed;'"
+                                                            :value="old(
+                                                                'student_code',
+                                                                $student->student_code ?? '',
+                                                            )" />
                                                         @if (!$id)
-                                                            <small class="form-text text-muted">Auto-generated</small>
+                                                            <small
+                                                                class="form-text text-muted">{{ __('common.auto_generated') }}</small>
                                                         @endif
                                                     </div>
                                                     <div class="col-md-4">
-                                                        <div
-                                                            class="input-group input-group-outline mb-3 {{ old('first_name', $student->first_name ?? '') ? 'is-filled' : '' }}">
-                                                            <label class="form-label">First Name *</label>
-                                                            <input type="text" name="first_name" class="form-control"
-                                                                value="{{ old('first_name', $student->first_name ?? '') }}"
-                                                                maxlength="50" required>
-                                                        </div>
+                                                        <x-input name="first_name" title="First Name" :isRequired="true"
+                                                            attr="maxlength='50'" :value="old('first_name', $student->first_name ?? '')" />
                                                     </div>
                                                     <div class="col-md-4">
-                                                        <div
-                                                            class="input-group input-group-outline mb-3 {{ old('middle_name', $student->middle_name ?? '') ? 'is-filled' : '' }}">
-                                                            <label class="form-label">Middle Name</label>
-                                                            <input type="text" name="middle_name" class="form-control"
-                                                                value="{{ old('middle_name', $student->middle_name ?? '') }}"
-                                                                maxlength="50">
-                                                        </div>
+                                                        <x-input name="middle_name" title="Middle Name"
+                                                            attr="maxlength='50'" :value="old('middle_name', $student->middle_name ?? '')" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -190,87 +182,40 @@
 
                                         <div class="row">
                                             <div class="col-md-3">
-                                                <div
-                                                    class="input-group input-group-outline mb-3 {{ old('last_name', $student->last_name ?? '') ? 'is-filled' : '' }}">
-                                                    <label class="form-label">Last Name *</label>
-                                                    <input type="text" name="last_name" class="form-control"
-                                                        value="{{ old('last_name', $student->last_name ?? '') }}"
-                                                        maxlength="50" required>
-                                                </div>
+                                                <x-input name="last_name" title="Last Name" :isRequired="true"
+                                                    attr="maxlength='50'" :value="old('last_name', $student->last_name ?? '')" />
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-3">
-                                                <div
-                                                    class="input-group input-group-outline mb-3 {{ old('date_of_birth', $student->date_of_birth ?? '') ? 'is-filled' : '' }}">
-                                                    <label class="form-label">Date of Birth *</label>
-                                                    <input type="date" name="date_of_birth" class="form-control"
-                                                        value="{{ old('date_of_birth', $student->date_of_birth ?? '') }}"
-                                                        required>
-                                                </div>
+                                                <x-input name="date_of_birth" type="date" title="Date of Birth"
+                                                    :isRequired="true" :value="old('date_of_birth', $student->date_of_birth ?? '')" />
                                             </div>
                                             <div class="col-md-3">
-                                                <div class="input-group input-group-outline mb-3">
-                                                    <select name="gender" class="form-control" required>
-                                                        <option value="">Select Gender</option>
-                                                        <option value="M"
-                                                            {{ old('gender', $student->gender ?? '') == 'M' ? 'selected' : '' }}>
-                                                            Male</option>
-                                                        <option value="F"
-                                                            {{ old('gender', $student->gender ?? '') == 'F' ? 'selected' : '' }}>
-                                                            Female</option>
-                                                        <option value="Other"
-                                                            {{ old('gender', $student->gender ?? '') == 'Other' ? 'selected' : '' }}>
-                                                            Other</option>
-                                                    </select>
-                                                </div>
+                                                <x-input name="gender" type="select" title="Gender" :isRequired="true"
+                                                    placeholder="Select Gender" :options="['M' => 'Male', 'F' => 'Female', 'Other' => 'Other']" :value="old('gender', $student->gender ?? '')" />
                                             </div>
                                             <div class="col-md-3">
-                                                <div
-                                                    class="input-group input-group-outline mb-3 {{ old('nationality', $student->nationality ?? '') ? 'is-filled' : '' }}">
-                                                    <label class="form-label">Nationality</label>
-                                                    <input type="text" name="nationality" class="form-control"
-                                                        value="{{ old('nationality', $student->nationality ?? '') }}"
-                                                        maxlength="50">
-                                                </div>
+                                                <x-input name="nationality" title="Nationality" attr="maxlength='50'"
+                                                    :value="old('nationality', $student->nationality ?? '')" />
                                             </div>
                                             <div class="col-md-3">
-                                                <div
-                                                    class="input-group input-group-outline mb-3 {{ old('religion', $student->religion ?? '') ? 'is-filled' : '' }}">
-                                                    <label class="form-label">Religion</label>
-                                                    <input type="text" name="religion" class="form-control"
-                                                        value="{{ old('religion', $student->religion ?? '') }}"
-                                                        maxlength="50">
-                                                </div>
+                                                <x-input name="religion" title="Religion" attr="maxlength='50'"
+                                                    :value="old('religion', $student->religion ?? '')" />
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-4">
-                                                <div
-                                                    class="input-group input-group-outline mb-3 {{ old('home_language', $student->home_language ?? '') ? 'is-filled' : '' }}">
-                                                    <label class="form-label">Home Language</label>
-                                                    <input type="text" name="home_language" class="form-control"
-                                                        value="{{ old('home_language', $student->home_language ?? '') }}"
-                                                        maxlength="50">
-                                                </div>
+                                                <x-input name="home_language" title="Home Language" attr="maxlength='50'"
+                                                    :value="old('home_language', $student->home_language ?? '')" />
                                             </div>
                                             <div class="col-md-4">
-                                                <div
-                                                    class="input-group input-group-outline mb-3 {{ old('mobile_phone', $student->mobile_phone ?? '') ? 'is-filled' : '' }}">
-                                                    <label class="form-label">Mobile Phone</label>
-                                                    <input type="text" name="mobile_phone" class="form-control"
-                                                        value="{{ old('mobile_phone', $student->mobile_phone ?? '') }}"
-                                                        maxlength="15">
-                                                </div>
+                                                <x-input name="mobile_phone" title="Mobile Phone" attr="maxlength='15'"
+                                                    :value="old('mobile_phone', $student->mobile_phone ?? '')" />
                                             </div>
                                             <div class="col-md-4">
-                                                <div
-                                                    class="input-group input-group-outline mb-3 {{ old('email', $student->email ?? '') ? 'is-filled' : '' }}">
-                                                    <label class="form-label">Email Address</label>
-                                                    <input type="email" name="email" class="form-control"
-                                                        value="{{ old('email', $student->email ?? '') }}"
-                                                        maxlength="100">
-                                                </div>
+                                                <x-input name="email" type="email" title="Email Address"
+                                                    attr="maxlength='100'" :value="old('email', $student->email ?? '')" />
                                             </div>
                                         </div>
                                     </div>
@@ -287,59 +232,30 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <div
-                                                    class="input-group input-group-outline mb-3 {{ old('address_line1', $student->address_line1 ?? '') ? 'is-filled' : '' }}">
-                                                    <label class="form-label">Address Line 1</label>
-                                                    <input type="text" name="address_line1" class="form-control"
-                                                        value="{{ old('address_line1', $student->address_line1 ?? '') }}"
-                                                        maxlength="255">
-                                                </div>
+                                                <x-input name="address_line1" title="Address Line 1"
+                                                    attr="maxlength='255'" :value="old('address_line1', $student->address_line1 ?? '')" />
                                             </div>
                                             <div class="col-md-6">
-                                                <div
-                                                    class="input-group input-group-outline mb-3 {{ old('address_line2', $student->address_line2 ?? '') ? 'is-filled' : '' }}">
-                                                    <label class="form-label">Address Line 2</label>
-                                                    <input type="text" name="address_line2" class="form-control"
-                                                        value="{{ old('address_line2', $student->address_line2 ?? '') }}"
-                                                        maxlength="255">
-                                                </div>
+                                                <x-input name="address_line2" title="Address Line 2"
+                                                    attr="maxlength='255'" :value="old('address_line2', $student->address_line2 ?? '')" />
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-3">
-                                                <div
-                                                    class="input-group input-group-outline mb-3 {{ old('city', $student->city ?? '') ? 'is-filled' : '' }}">
-                                                    <label class="form-label">City</label>
-                                                    <input type="text" name="city" class="form-control"
-                                                        value="{{ old('city', $student->city ?? '') }}" maxlength="100">
-                                                </div>
+                                                <x-input name="city" title="City" attr="maxlength='100'"
+                                                    :value="old('city', $student->city ?? '')" />
                                             </div>
                                             <div class="col-md-3">
-                                                <div
-                                                    class="input-group input-group-outline mb-3 {{ old('state', $student->state ?? '') ? 'is-filled' : '' }}">
-                                                    <label class="form-label">State/Province</label>
-                                                    <input type="text" name="state" class="form-control"
-                                                        value="{{ old('state', $student->state ?? '') }}"
-                                                        maxlength="100">
-                                                </div>
+                                                <x-input name="state" title="State/Province" attr="maxlength='100'"
+                                                    :value="old('state', $student->state ?? '')" />
                                             </div>
                                             <div class="col-md-3">
-                                                <div
-                                                    class="input-group input-group-outline mb-3 {{ old('postal_code', $student->postal_code ?? '') ? 'is-filled' : '' }}">
-                                                    <label class="form-label">Postal Code</label>
-                                                    <input type="text" name="postal_code" class="form-control"
-                                                        value="{{ old('postal_code', $student->postal_code ?? '') }}"
-                                                        maxlength="20">
-                                                </div>
+                                                <x-input name="postal_code" title="Postal Code" attr="maxlength='20'"
+                                                    :value="old('postal_code', $student->postal_code ?? '')" />
                                             </div>
                                             <div class="col-md-3">
-                                                <div
-                                                    class="input-group input-group-outline mb-3 {{ old('country', $student->country ?? '') ? 'is-filled' : '' }}">
-                                                    <label class="form-label">Country</label>
-                                                    <input type="text" name="country" class="form-control"
-                                                        value="{{ old('country', $student->country ?? '') }}"
-                                                        maxlength="100">
-                                                </div>
+                                                <x-input name="country" title="Country" attr="maxlength='100'"
+                                                    :value="old('country', $student->country ?? '')" />
                                             </div>
                                         </div>
                                     </div>
@@ -356,17 +272,23 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-md-4">
-                                                <div class="input-group input-group-outline mb-3">
-                                                    <select name="grade_level" class="form-control" required>
-                                                        <option value="">Select Grade Level</option>
-                                                        @for ($i = 1; $i <= 13; $i++)
-                                                            <option value="{{ $i }}"
-                                                                {{ old('grade_level', $student->grade_level ?? '') == $i ? 'selected' : '' }}>
-                                                                Grade {{ $i }}
-                                                            </option>
-                                                        @endfor
-                                                    </select>
-                                                </div>
+                                                <x-input name="grade_level" type="select" title="Grade Level"
+                                                    :isRequired="true" placeholder="Select Grade Level" :options="[
+                                                        '1' => 'Grade 1',
+                                                        '2' => 'Grade 2',
+                                                        '3' => 'Grade 3',
+                                                        '4' => 'Grade 4',
+                                                        '5' => 'Grade 5',
+                                                        '6' => 'Grade 6',
+                                                        '7' => 'Grade 7',
+                                                        '8' => 'Grade 8',
+                                                        '9' => 'Grade 9',
+                                                        '10' => 'Grade 10',
+                                                        '11' => 'Grade 11',
+                                                        '12' => 'Grade 12',
+                                                        '13' => 'Grade 13',
+                                                    ]"
+                                                    :value="old('grade_level', $student->grade_level ?? '')" />
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="input-group input-group-outline mb-3">
@@ -382,33 +304,23 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
-                                                <div
-                                                    class="input-group input-group-outline mb-3 {{ old('section', $student->section ?? '') ? 'is-filled' : '' }}">
-                                                    <label class="form-label">Section</label>
-                                                    <input type="text" name="section" class="form-control"
-                                                        value="{{ old('section', $student->section ?? '') }}"
-                                                        maxlength="10">
-                                                </div>
+                                                <x-input name="section" title="Section" attr="maxlength='10'"
+                                                    :value="old('section', $student->section ?? '')" />
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <div
-                                                    class="input-group input-group-outline mb-3 {{ old('enrollment_date', $student->enrollment_date ?? '') ? 'is-filled' : '' }}">
-                                                    <label class="form-label">Enrollment Date *</label>
-                                                    <input type="date" name="enrollment_date" class="form-control"
-                                                        value="{{ old('enrollment_date', $student->enrollment_date ?? date('Y-m-d')) }}"
-                                                        required>
-                                                </div>
+                                                <x-input name="enrollment_date" type="date" title="Enrollment Date"
+                                                    :isRequired="true" :value="old(
+                                                        'enrollment_date',
+                                                        $student->enrollment_date ?? date('Y-m-d'),
+                                                    )" />
                                             </div>
                                             <div class="col-md-6">
-                                                <div class="form-check form-switch pt-3">
-                                                    <input class="form-check-input" type="checkbox" name="is_active"
-                                                        value="1" id="isActiveSwitch"
-                                                        {{ old('is_active', $student->is_active ?? true) ? 'checked' : '' }}>
-                                                    <label class="form-check-label" for="isActiveSwitch">Active
-                                                        Status</label>
-                                                </div>
+                                                <x-input name="is_active" type="checkbox" title="Active Status"
+                                                    :value="old('is_active', $student->is_active ?? true)
+                                                        ? '1'
+                                                        : '0'" attr="id='isActiveSwitch'" />
                                             </div>
                                         </div>
                                     </div>
@@ -426,18 +338,14 @@
                                         <div class="row">
                                             @if (!$id)
                                                 <div class="col-md-6">
-                                                    <div class="input-group input-group-outline mb-3">
-                                                        <label class="form-label">Password *</label>
-                                                        <input type="password" name="password" class="form-control"
-                                                            minlength="8" required>
-                                                    </div>
+                                                    <x-input name="password" type="password" title="Password"
+                                                        :isRequired="true" attr="minlength='8'"
+                                                        placeholder="Enter password (min 8 characters)" />
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <div class="input-group input-group-outline mb-3">
-                                                        <label class="form-label">Confirm Password *</label>
-                                                        <input type="password" name="password_confirmation"
-                                                            class="form-control" minlength="8" required>
-                                                    </div>
+                                                    <x-input name="password_confirmation" type="password"
+                                                        title="Confirm Password" :isRequired="true" attr="minlength='8'"
+                                                        placeholder="Confirm your password" />
                                                 </div>
                                             @endif
                                         </div>
