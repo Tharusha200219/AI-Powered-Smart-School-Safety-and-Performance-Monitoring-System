@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Repositories\Interfaces\Admin\Management\SchoolClassRepositoryInterface;
 use App\Repositories\Interfaces\Admin\Management\SubjectRepositoryInterface;
 use App\Repositories\Interfaces\Admin\Management\TeacherRepositoryInterface;
+use App\Services\DatabaseTransactionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -24,15 +25,20 @@ class SchoolClassController extends Controller
 
     protected $parentRoutePath = 'admin.management.classes.';
 
+    protected DatabaseTransactionService $transactionService;
+
     public function __construct(
         SchoolClassRepositoryInterface $repository,
         TeacherRepositoryInterface $teacherRepository,
-        SubjectRepositoryInterface $subjectRepository
+        SubjectRepositoryInterface $subjectRepository,
+        DatabaseTransactionService $transactionService
+
     ) {
         $this->middleware('auth');
         $this->repository = $repository;
         $this->teacherRepository = $teacherRepository;
         $this->subjectRepository = $subjectRepository;
+        $this->transactionService = $transactionService;
     }
 
     public function index(SchoolClassDataTable $datatable)
@@ -206,3 +212,6 @@ class SchoolClassController extends Controller
         return redirect()->route($this->parentRoutePath.'index');
     }
 }
+
+
+

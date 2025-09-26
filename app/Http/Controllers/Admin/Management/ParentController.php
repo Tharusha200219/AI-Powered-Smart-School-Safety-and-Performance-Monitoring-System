@@ -3,44 +3,52 @@
 namespace App\Http\Controllers\Admin\Management;
 
 use App\DataTables\Admin\Management\ParentDataTable;
-use App\Http\Controllers\Controller;
+use App\Helpers\ValidationRules;
+use App\Http\Controllers\Admin\BaseManagementController;
 use App\Repositories\Interfaces\Admin\Management\ParentRepositoryInterface;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Http\Request;
 
-class ParentController extends Controller
+class ParentController extends BaseManagementController
 {
-    protected ParentRepositoryInterface $repository;
-
-    protected $parentViewPath = 'admin.pages.management.parents.';
-
-    protected $parentRoutePath = 'admin.management.parents.';
+    protected string $parentViewPath = 'admin.pages.management.parents.';
+    protected string $parentRoutePath = 'admin.management.parents.';
+    protected string $entityName = 'Parent';
+    protected string $entityType = 'parent';
 
     public function __construct(ParentRepositoryInterface $repository)
     {
-        $this->middleware('auth');
-        $this->repository = $repository;
+        parent::__construct($repository);
     }
 
+    /**
+     * Display entity index page with DataTable
+     */
     public function index(ParentDataTable $datatable)
     {
-        checkPermissionAndRedirect('admin.management.parents.index');
-        Session::put('title', 'Parent Management');
-
-        return $datatable->render($this->parentViewPath.'index');
+        return $this->renderIndex($datatable, $this->parentViewPath);
     }
 
-    public function show(string $id)
+    protected function getFormData($id = null): array
     {
-        checkPermissionAndRedirect('admin.management.parents.show');
-        $parent = $this->repository->getWithRelations($id);
+        return [];
+    }
 
-        if (! $parent) {
-            flashResponse('Parent not found.', 'danger');
+    protected function getValidationRules(bool $isUpdate = false, $id = null): array
+    {
+        return ValidationRules::getParentRules($isUpdate, $id);
+    }
 
-            return Redirect::back();
-        }
+    protected function performCreate(Request $request)
+    {
+        // For ParentController, we only show existing parents
+        // Creation is typically handled through StudentController
+        throw new \Exception('Parent creation not supported directly.');
+    }
 
-        return view($this->parentViewPath.'view', compact('parent'));
+    protected function performUpdate(Request $request, $id)
+    {
+        // For ParentController, we only show existing parents
+        // Updates are typically handled through StudentController
+        throw new \Exception('Parent updates not supported directly.');
     }
 }

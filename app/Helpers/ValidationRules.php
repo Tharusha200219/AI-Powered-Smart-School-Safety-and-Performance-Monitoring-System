@@ -37,6 +37,14 @@ class ValidationRules
 
     public const ADDRESS_RULES = 'nullable|max:255';
 
+    public const GENDER_RULES = 'required|in:' . Constants::GENDER_MALE . ',' . Constants::GENDER_FEMALE . ',' . Constants::GENDER_OTHER;
+
+    public const SHIFT_RULES = 'required|in:' . Constants::SHIFT_MORNING . ',' . Constants::SHIFT_AFTERNOON . ',' . Constants::SHIFT_NIGHT;
+
+    public const SUBJECT_TYPE_RULES = 'required|in:' . Constants::SUBJECT_TYPE_CORE . ',' . Constants::SUBJECT_TYPE_ELECTIVE . ',' . Constants::SUBJECT_TYPE_OPTIONAL;
+
+    public const STATUS_RULES = 'required|in:' . Constants::STATUS_ACTIVE . ',' . Constants::STATUS_INACTIVE;
+
     /**
      * Get common person validation rules
      */
@@ -58,7 +66,7 @@ class ValidationRules
             'last_name' => self::PERSONAL_NAME_RULES,
             'middle_name' => self::OPTIONAL_NAME_RULES,
             'date_of_birth' => self::DATE_RULES,
-            'gender' => 'required|' . Gender::getValidationRule(),
+            'gender' => self::GENDER_RULES,
             'email' => $emailRule,
             'password' => $isUpdate ? self::OPTIONAL_PASSWORD_RULES : self::PASSWORD_RULES,
             'profile_image' => self::PROFILE_IMAGE_RULES,
@@ -131,7 +139,7 @@ class ValidationRules
             'parent_middle_name' => 'nullable|array',
             'parent_middle_name.*' => 'nullable|max:50',
             'parent_gender' => 'nullable|array',
-            'parent_gender.*' => 'required_with:parent_first_name.*|' . Gender::getValidationRule(),
+            'parent_gender.*' => 'required_with:parent_first_name.*|' . self::GENDER_RULES,
             'parent_relationship_type' => 'nullable|array',
             'parent_relationship_type.*' => 'required_with:parent_first_name.*|' . RelationshipType::getValidationRule(),
             'parent_mobile_phone' => 'nullable|array',
@@ -161,7 +169,7 @@ class ValidationRules
         return array_merge($rules, [
             'joining_date' => 'required|date',
             'employee_id' => 'nullable|max:50',
-            'shift' => 'required|in:Morning,Afternoon,Night',
+            'shift' => self::SHIFT_RULES,
             'position' => 'required|max:100',
             'roles' => 'required|array',
             'roles.*' => 'exists:roles,name',
@@ -242,6 +250,31 @@ class ValidationRules
             'status' => 'required|in:active,inactive',
             'roles' => 'required|array',
             'roles.*' => 'exists:roles,name',
+        ];
+    }
+
+    /**
+     * Get common validation rules for all entities with users
+     */
+    public static function getCommonEntityWithUserRules(bool $isUpdate = false, ?int $userId = null): array
+    {
+        if ($isUpdate && $userId) {
+            $emailRule = [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($userId, 'id'),
+            ];
+        } else {
+            $emailRule = self::EMAIL_RULES . '|unique:users,email';
+        }
+
+        return [
+            'email' => $emailRule,
+            'password' => $isUpdate ? self::OPTIONAL_PASSWORD_RULES : self::PASSWORD_RULES,
+            'roles' => 'required|array',
+            'roles.*' => 'exists:roles,name',
+            'profile_image' => self::PROFILE_IMAGE_RULES,
         ];
     }
 

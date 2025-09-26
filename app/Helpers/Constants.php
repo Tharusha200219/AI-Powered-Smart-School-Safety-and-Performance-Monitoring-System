@@ -62,6 +62,101 @@ class Constants
 
     const MSG_UNAUTHORIZED = 'Unauthorized action. You do not have permission to access this resource.';
 
+    // User Types
+    const USER_TYPE_ADMIN = 'admin';
+    const USER_TYPE_TEACHER = 'teacher';
+    const USER_TYPE_STUDENT = 'student';
+    const USER_TYPE_PARENT = 'parent';
+    const USER_TYPE_SECURITY = 'security';
+
+    // Gender Options
+    const GENDER_MALE = 'M';
+    const GENDER_FEMALE = 'F';
+    const GENDER_OTHER = 'Other';
+
+    // Status Options
+    const STATUS_ACTIVE = 'active';
+    const STATUS_INACTIVE = 'inactive';
+
+    // Subject Types
+    const SUBJECT_TYPE_CORE = 'Core';
+    const SUBJECT_TYPE_ELECTIVE = 'Elective';
+    const SUBJECT_TYPE_OPTIONAL = 'Optional';
+
+    // Shifts for Security Staff
+    const SHIFT_MORNING = 'Morning';
+    const SHIFT_AFTERNOON = 'Afternoon';
+    const SHIFT_NIGHT = 'Night';
+
+    // Relationship Types
+    const RELATIONSHIP_FATHER = 'Father';
+    const RELATIONSHIP_MOTHER = 'Mother';
+    const RELATIONSHIP_GUARDIAN = 'Guardian';
+    const RELATIONSHIP_OTHER = 'Other';
+
+    /**
+     * Get all gender options
+     */
+    public static function getGenderOptions(): array
+    {
+        return [
+            self::GENDER_MALE => 'Male',
+            self::GENDER_FEMALE => 'Female',
+            self::GENDER_OTHER => 'Other',
+        ];
+    }
+
+    /**
+     * Get all user type options
+     */
+    public static function getUserTypeOptions(): array
+    {
+        return [
+            self::USER_TYPE_ADMIN => 'Admin',
+            self::USER_TYPE_TEACHER => 'Teacher',
+            self::USER_TYPE_STUDENT => 'Student',
+            self::USER_TYPE_PARENT => 'Parent',
+            self::USER_TYPE_SECURITY => 'Security',
+        ];
+    }
+
+    /**
+     * Get all shift options
+     */
+    public static function getShiftOptions(): array
+    {
+        return [
+            self::SHIFT_MORNING => 'Morning',
+            self::SHIFT_AFTERNOON => 'Afternoon',
+            self::SHIFT_NIGHT => 'Night',
+        ];
+    }
+
+    /**
+     * Get all subject type options
+     */
+    public static function getSubjectTypeOptions(): array
+    {
+        return [
+            self::SUBJECT_TYPE_CORE => 'Core',
+            self::SUBJECT_TYPE_ELECTIVE => 'Elective',
+            self::SUBJECT_TYPE_OPTIONAL => 'Optional',
+        ];
+    }
+
+    /**
+     * Get all relationship type options
+     */
+    public static function getRelationshipTypeOptions(): array
+    {
+        return [
+            self::RELATIONSHIP_FATHER => 'Father',
+            self::RELATIONSHIP_MOTHER => 'Mother',
+            self::RELATIONSHIP_GUARDIAN => 'Guardian',
+            self::RELATIONSHIP_OTHER => 'Other',
+        ];
+    }
+
     /**
      * Get formatted success message
      */
