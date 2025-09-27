@@ -143,4 +143,12 @@ class SubjectRepository implements SubjectRepositoryInterface
 
         return 'SUB'.$year.str_pad($sequence, 4, '0', STR_PAD_LEFT);
     }
+
+    /**
+     * Check if subject code exists
+     */
+    public function existsByCode(string $code): bool
+    {
+        return $this->model->where('subject_code', $code)->exists();
+    }
 }

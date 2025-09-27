@@ -149,6 +149,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/school-info', 'updateSchoolInfo')->name('school-info');
                 Route::post('/theme', 'updateTheme')->name('theme');
                 Route::post('/academic', 'updateAcademic')->name('academic');
+                Route::post('/language', [SettingsController::class, 'updateLanguage'])->name('language');
             });
         });
 

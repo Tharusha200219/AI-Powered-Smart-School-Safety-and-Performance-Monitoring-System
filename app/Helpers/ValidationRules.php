@@ -195,35 +195,38 @@ class ValidationRules
     }
 
     /**
-     * Get school class validation rules
-     */
-    public static function getSchoolClassRules(): array
-    {
-        return [
-            'class_name' => 'required|max:100|unique:school_classes,class_name',
-            'grade_level' => self::GRADE_LEVEL_RULES,
-            'section' => 'nullable|max:10',
-            'class_teacher_id' => 'nullable|exists:teachers,teacher_id',
-            'room_number' => 'nullable|max:20',
-            'capacity' => 'required|integer|min:1|max:100',
-            'is_active' => self::BOOLEAN_RULES,
-        ];
-    }
-
-    /**
      * Get subject validation rules
      */
-    public static function getSubjectRules(): array
+    public static function getSubjectRules(bool $isUpdate = false, ?int $id = null): array
     {
-        return [
-            'subject_name' => 'required|max:100|unique:subjects,subject_name',
-            'subject_code' => 'required|max:20|unique:subjects,subject_code',
+        $rules = [
+            'subject_name' => 'required|min:2|max:100',
+            'subject_code' => 'required|max:20',
             'grade_level' => self::GRADE_LEVEL_RULES,
-            'description' => 'nullable|max:500',
+            'description' => 'nullable|max:1000',
             'credits' => 'required|integer|min:1|max:10',
-            'is_core' => self::BOOLEAN_RULES,
+            'type' => 'required|in:Core,Elective,Optional',
             'is_active' => self::BOOLEAN_RULES,
         ];
+
+        if ($isUpdate && $id) {
+            $rules['subject_name'] = [
+                'required',
+                'min:2',
+                'max:100',
+                Rule::unique('subjects', 'subject_name')->ignore($id, 'id'),
+            ];
+            $rules['subject_code'] = [
+                'required',
+                'max:20',
+                Rule::unique('subjects', 'subject_code')->ignore($id, 'id'),
+            ];
+        } else {
+            $rules['subject_name'] .= '|unique:subjects,subject_name';
+            $rules['subject_code'] .= '|unique:subjects,subject_code';
+        }
+
+        return $rules;
     }
 
     /**
@@ -296,5 +299,35 @@ class ValidationRules
             'currency' => 'required|max:10',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
+    }
+
+    public static function getSchoolClassRules(bool $isUpdate = false, ?int $id = null): array
+    {
+        $rules = [
+            'class_name' => 'required|min:2|max:100',
+            'grade_level' => self::GRADE_LEVEL_RULES,
+            'academic_year' => 'required|max:10',
+            'section' => 'nullable|max:10',
+            'class_teacher_id' => 'nullable|exists:teachers,teacher_id',
+            'room_number' => 'nullable|max:20',
+            'capacity' => 'required|integer|min:1|max:200',
+            'description' => 'nullable|max:1000',
+            'is_active' => self::BOOLEAN_RULES,
+            'subjects' => 'nullable|array',
+            'subjects.*' => 'exists:subjects,id',
+        ];
+
+        if ($isUpdate && $id) {
+            $rules['class_name'] = [
+                'required',
+                'min:2',
+                'max:100',
+                Rule::unique('school_classes', 'class_name')->ignore($id, 'id'),
+            ];
+        } else {
+            $rules['class_name'] .= '|unique:school_classes,class_name';
+        }
+
+        return $rules;
     }
 }

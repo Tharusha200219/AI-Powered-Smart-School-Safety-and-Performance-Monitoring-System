@@ -19,17 +19,17 @@ class StudentDataTable extends DataTable
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
                 $show = checkPermission('admin.management.students.show') ? view('admin.layouts.actions.show', [
-                    'url' => route('admin.management.'.$this->model.'.show', ['id' => $row->student_id]),
+                    'url' => route('admin.management.' . $this->model . '.show', ['id' => $row->student_id]),
                     'id' => $row->student_id,
                 ])->render() : '';
 
                 $edit = checkPermission('admin.management.students.edit') ? view('admin.layouts.actions.edit', [
-                    'url' => route('admin.management.'.$this->model.'.form', ['id' => $row->student_id]),
+                    'url' => route('admin.management.' . $this->model . '.form', ['id' => $row->student_id]),
                     'id' => $row->student_id,
                 ])->render() : '';
 
                 $delete = checkPermission('admin.management.students.delete') ? view('admin.layouts.actions.delete', [
-                    'url' => route('admin.management.'.$this->model.'.delete', ['id' => $row->student_id]),
+                    'url' => route('admin.management.' . $this->model . '.delete', ['id' => $row->student_id]),
                     'id' => $row->student_id,
                 ])->render() : '';
 
@@ -48,7 +48,7 @@ class StudentDataTable extends DataTable
                 }
 
                 if (empty($dropdownItems)) {
-                    return '<span class="text-muted">No actions</span>';
+                    return '<span class="text-muted">' . __('common.no_actions') . '</span>';
                 }
 
                 $dropdownContent = implode('<li><hr class="dropdown-divider"></li>', $dropdownItems);
@@ -75,40 +75,40 @@ class StudentDataTable extends DataTable
                 return '<span class="text-secondary">'.$row->student_code.'</span>';
             })
             ->addColumn('grade_level', function ($row) {
-                return '<span class="badge bg-gradient-primary badge-sm">Grade '.$row->grade_level.'</span>';
+                return '<span class="badge bg-gradient-primary badge-sm">' . __('common.grade') . ' ' . $row->grade_level . '</span>';
             })
             ->addColumn('class', function ($row) {
                 if ($row->schoolClass) {
                     return '<span class="text-primary fw-medium">'.$row->schoolClass->full_name.'</span>';
                 }
 
-                return '<span class="text-muted">No class assigned</span>';
+                return '<span class="text-muted">' . __('common.no_class_assigned') . '</span>';
             })
             ->addColumn('email', function ($row) {
-                return $row->user ? $row->user->email : '<span class="text-muted">No email</span>';
+                return $row->user ? $row->user->email : '<span class="text-muted">' . __('common.no_email') . '</span>';
             })
             ->addColumn('parents', function ($row) {
                 if ($row->parents->count() === 0) {
-                    return '<span class="text-muted">No parents</span>';
+                    return '<span class="text-muted">' . __('common.no_parents') . '</span>';
                 }
 
                 $parentNames = $row->parents->take(2)->pluck('full_name')->toArray();
                 $display = implode(', ', $parentNames);
 
                 if ($row->parents->count() > 2) {
-                    $display .= ' <span class="text-primary">+'.($row->parents->count() - 2).' more</span>';
+                    $display .= ' <span class="text-primary">+' . ($row->parents->count() - 2) . ' ' . __('common.more') . '</span>';
                 }
 
                 return $display;
             })
             ->addColumn('status', function ($row) {
                 $color = $row->is_active ? 'success' : 'danger';
-                $text = $row->is_active ? 'Active' : 'Inactive';
+                $text = $row->is_active ? __('common.active') : __('common.inactive');
 
-                return '<span class="badge badge-sm bg-gradient-'.$color.' me-1">'.$text.'</span>';
+                return '<span class="badge badge-sm bg-gradient-' . $color . ' me-1">' . $text . '</span>';
             })
             ->addColumn('modified', function ($row) {
-                return $row->updated_at ? $row->updated_at->format('M d, Y') : 'Never';
+                return $row->updated_at ? $row->updated_at->format('M d, Y') : __('common.never');
             })
             ->rawColumns(['action', 'name', 'student_code', 'grade_level', 'class', 'email', 'parents', 'status', 'modified'])
             ->orderColumn('name', function ($query, $order) {
@@ -162,15 +162,15 @@ class StudentDataTable extends DataTable
     protected function getColumns(): array
     {
         $columns = [
-            Column::make('student_id')->title('#')->addClass('text-start align-middle text-xs'),
-            Column::make('student_code')->title('CODE')->addClass('align-middle text-xs')->searchable(true),
-            Column::make('name')->title('NAME')->addClass('align-middle text-xs')->searchable(true),
-            Column::make('grade_level')->title('GRADE')->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
-            Column::make('class')->title('CLASS')->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
-            Column::make('email')->title('EMAIL')->addClass('text-start align-middle text-xs')->searchable(true),
-            Column::make('parents')->title('PARENTS')->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
-            Column::make('status')->title('STATUS')->searchable(false)->orderable(false)->addClass('text-center align-middle text-xs'),
-            Column::make('modified')->title('MODIFIED')->addClass('text-start align-middle text-xs')->searchable(false),
+            Column::make('student_id')->title(__('common.id'))->addClass('text-start align-middle text-xs'),
+            Column::make('student_code')->title(__('common.code'))->addClass('align-middle text-xs')->searchable(true),
+            Column::make('name')->title(__('common.name'))->addClass('align-middle text-xs')->searchable(true),
+            Column::make('grade_level')->title(__('common.grade'))->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
+            Column::make('class')->title(__('common.class'))->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
+            Column::make('email')->title(__('common.email'))->addClass('text-start align-middle text-xs')->searchable(true),
+            Column::make('parents')->title(__('common.parents'))->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
+            Column::make('status')->title(__('common.status'))->searchable(false)->orderable(false)->addClass('text-center align-middle text-xs'),
+            Column::make('modified')->title(__('common.modified'))->addClass('text-start align-middle text-xs')->searchable(false),
         ];
 
         if (
@@ -179,7 +179,7 @@ class StudentDataTable extends DataTable
             checkPermission('admin.management.students.edit') ||
             checkPermission('admin.management.students.delete')
         ) {
-            $columns[] = Column::computed('action')->title('ACTIONS')->addClass('text-end align-middle pt-3 pb-0 text-xs')->exportable(false)->printable(false)->orderable(false)->searchable(false);
+            $columns[] = Column::computed('action')->title(__('common.actions'))->addClass('text-end align-middle pt-3 pb-0 text-xs')->exportable(false)->printable(false)->orderable(false)->searchable(false);
         }
 
         return $columns;

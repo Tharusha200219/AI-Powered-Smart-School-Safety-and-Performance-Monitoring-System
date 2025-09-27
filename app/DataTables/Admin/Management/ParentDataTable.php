@@ -19,7 +19,7 @@ class ParentDataTable extends DataTable
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
                 $show = checkPermission('admin.management.parents.show') ? view('admin.layouts.actions.show', [
-                    'url' => route('admin.management.'.$this->model.'.show', ['id' => $row->parent_id]),
+                    'url' => route('admin.management.' . $this->model . '.show', ['id' => $row->parent_id]),
                     'id' => $row->parent_id,
                 ])->render() : '';
 
@@ -33,7 +33,7 @@ class ParentDataTable extends DataTable
                     </div>';
                 }
 
-                return '<span class="text-muted">No actions</span>';
+                return '<span class="text-muted">' . __('common.no_actions') . '</span>';
             })
             ->addColumn('name', function ($row) {
                 $avatar = '<div class="avatar avatar-sm rounded-circle bg-gradient-primary me-2">
@@ -50,7 +50,7 @@ class ParentDataTable extends DataTable
             })
             ->addColumn('students', function ($row) {
                 if ($row->students->count() === 0) {
-                    return '<span class="text-muted">No students</span>';
+                    return '<span class="text-muted">' . __('common.no_students') . '</span>';
                 }
 
                 $studentNames = $row->students->take(2)->map(function ($student) {
@@ -60,7 +60,7 @@ class ParentDataTable extends DataTable
                 $display = implode(' ', $studentNames);
 
                 if ($row->students->count() > 2) {
-                    $display .= ' <span class="text-primary">+'.($row->students->count() - 2).' more</span>';
+                    $display .= ' <span class="text-primary">+' . ($row->students->count() - 2) . ' ' . __('common.more') . '</span>';
                 }
 
                 return $display;
@@ -74,29 +74,29 @@ class ParentDataTable extends DataTable
                     $contact[] = '<span class="badge bg-gradient-secondary badge-sm">✉️ '.$row->email.'</span>';
                 }
 
-                return $contact ? implode('<br>', $contact) : '<span class="text-muted">No contact</span>';
+                return $contact ? implode('<br>', $contact) : '<span class="text-muted">' . __('common.no_contact') . '</span>';
             })
             ->addColumn('relationship', function ($row) {
-                return $row->relationship_type ? '<span class="badge bg-gradient-warning badge-sm">'.$row->relationship_type.'</span>' : '<span class="text-muted">Not specified</span>';
+                return $row->relationship_type ? '<span class="badge bg-gradient-warning badge-sm">' . $row->relationship_type . '</span>' : '<span class="text-muted">' . __('common.not_specified') . '</span>';
             })
             ->addColumn('occupation', function ($row) {
-                return $row->occupation ? '<span class="text-primary">'.$row->occupation.'</span>' : '<span class="text-muted">Not specified</span>';
+                return $row->occupation ? '<span class="text-primary">' . $row->occupation . '</span>' : '<span class="text-muted">' . __('common.not_specified') . '</span>';
             })
             ->addColumn('emergency', function ($row) {
                 if ($row->is_emergency_contact) {
-                    return '<span class="badge bg-gradient-danger badge-sm">Emergency Contact</span>';
+                    return '<span class="badge bg-gradient-danger badge-sm">' . __('common.emergency_contact') . '</span>';
                 }
 
-                return '<span class="text-muted">No</span>';
+                return '<span class="text-muted">' . __('common.no') . '</span>';
             })
             ->addColumn('status', function ($row) {
                 $color = $row->is_active ? 'success' : 'danger';
-                $text = $row->is_active ? 'Active' : 'Inactive';
+                $text = $row->is_active ? __('common.active') : __('common.inactive');
 
-                return '<span class="badge badge-sm bg-gradient-'.$color.'">'.$text.'</span>';
+                return '<span class="badge badge-sm bg-gradient-' . $color . '">' . $text . '</span>';
             })
             ->addColumn('modified', function ($row) {
-                return $row->updated_at ? $row->updated_at->format('M d, Y') : 'Never';
+                return $row->updated_at ? $row->updated_at->format('M d, Y') : __('common.never');
             })
             ->rawColumns(['action', 'name', 'parent_code', 'students', 'contact', 'relationship', 'occupation', 'emergency', 'status', 'modified'])
             ->orderColumn('name', function ($query, $order) {
@@ -151,20 +151,20 @@ class ParentDataTable extends DataTable
     protected function getColumns(): array
     {
         $columns = [
-            Column::make('parent_id')->title('#')->addClass('text-start align-middle text-xs'),
-            Column::make('parent_code')->title('CODE')->addClass('align-middle text-xs')->searchable(true),
-            Column::make('name')->title('NAME')->addClass('align-middle text-xs')->searchable(true),
-            Column::make('relationship')->title('RELATIONSHIP')->addClass('text-center align-middle text-xs')->searchable(true),
-            Column::make('students')->title('STUDENTS')->addClass('text-start align-middle text-xs')->searchable(false)->orderable(false),
-            Column::make('contact')->title('CONTACT')->addClass('text-center align-middle text-xs')->searchable(true),
-            Column::make('occupation')->title('OCCUPATION')->addClass('text-center align-middle text-xs')->searchable(true),
-            Column::make('emergency')->title('EMERGENCY')->addClass('text-center align-middle text-xs')->searchable(false),
-            Column::make('status')->title('STATUS')->searchable(false)->orderable(false)->addClass('text-center align-middle text-xs'),
-            Column::make('modified')->title('MODIFIED')->addClass('text-start align-middle text-xs')->searchable(false),
+            Column::make('parent_id')->title(__('common.id'))->addClass('text-start align-middle text-xs'),
+            Column::make('parent_code')->title(__('common.code'))->addClass('align-middle text-xs')->searchable(true),
+            Column::make('name')->title(__('common.name'))->addClass('align-middle text-xs')->searchable(true),
+            Column::make('relationship')->title(__('common.relationship'))->addClass('text-center align-middle text-xs')->searchable(true),
+            Column::make('students')->title(__('common.students'))->addClass('text-start align-middle text-xs')->searchable(false)->orderable(false),
+            Column::make('contact')->title(__('common.contact'))->addClass('text-center align-middle text-xs')->searchable(true),
+            Column::make('occupation')->title(__('common.occupation'))->addClass('text-center align-middle text-xs')->searchable(true),
+            Column::make('emergency')->title(__('common.emergency'))->addClass('text-center align-middle text-xs')->searchable(false),
+            Column::make('status')->title(__('common.status'))->searchable(false)->orderable(false)->addClass('text-center align-middle text-xs'),
+            Column::make('modified')->title(__('common.modified'))->addClass('text-start align-middle text-xs')->searchable(false),
         ];
 
         if (checkPermission('admin.management.parents.show')) {
-            $columns[] = Column::computed('action')->title('ACTIONS')->addClass('text-center align-middle pt-3 pb-0 text-xs')->exportable(false)->printable(false)->orderable(false)->searchable(false);
+            $columns[] = Column::computed('action')->title(__('common.actions'))->addClass('text-center align-middle pt-3 pb-0 text-xs')->exportable(false)->printable(false)->orderable(false)->searchable(false);
         }
 
         return $columns;

@@ -140,98 +140,45 @@
 
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Security Code *</label>
-                                                <input type="text" name="security_code" class="form-control"
-                                                    value="{{ old('security_code', $security->security_code ?? '') }}"
-                                                    required>
-                                            </div>
-                                            @error('security_code')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="security_code" title="Security Code" :isRequired="true"
+                                                :value="old('security_code', $security->security_code ?? '')" />
                                         </div>
 
                                         <div class="col-md-6">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Employee ID</label>
-                                                <input type="text" name="employee_id" class="form-control"
-                                                    value="{{ old('employee_id', $security->employee_id ?? '') }}">
-                                            </div>
-                                            @error('employee_id')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="employee_id" title="Employee ID" :value="old('employee_id', $security->employee_id ?? '')" />
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">First Name *</label>
-                                                <input type="text" name="first_name" class="form-control"
-                                                    value="{{ old('first_name', $security->first_name ?? '') }}" required>
-                                            </div>
-                                            @error('first_name')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="first_name" title="First Name" :isRequired="true"
+                                                :value="old('first_name', $security->first_name ?? '')" />
                                         </div>
 
                                         <div class="col-md-4">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Middle Name</label>
-                                                <input type="text" name="middle_name" class="form-control"
-                                                    value="{{ old('middle_name', $security->middle_name ?? '') }}">
-                                            </div>
-                                            @error('middle_name')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="middle_name" title="Middle Name" :value="old('middle_name', $security->middle_name ?? '')" />
                                         </div>
 
                                         <div class="col-md-4">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Last Name *</label>
-                                                <input type="text" name="last_name" class="form-control"
-                                                    value="{{ old('last_name', $security->last_name ?? '') }}" required>
-                                            </div>
-                                            @error('last_name')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="last_name" title="Last Name" :isRequired="true"
+                                                :value="old('last_name', $security->last_name ?? '')" />
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Date of Birth</label>
-                                                <input type="date" name="date_of_birth" class="form-control"
-                                                    value="{{ old('date_of_birth', isset($security) && $security->date_of_birth ? $security->date_of_birth->format('Y-m-d') : '') }}">
-                                            </div>
-                                            @error('date_of_birth')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="date_of_birth" type="date" title="Date of Birth"
+                                                :value="old(
+                                                    'date_of_birth',
+                                                    isset($security) && $security->date_of_birth
+                                                        ? $security->date_of_birth->format('Y-m-d')
+                                                        : '',
+                                                )" />
                                         </div>
 
                                         <div class="col-md-6">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Gender</label>
-                                                <select name="gender" class="form-control">
-                                                    <option value="">Select Gender</option>
-                                                    <option value="Male"
-                                                        {{ old('gender', $security->gender ?? '') == 'Male' ? 'selected' : '' }}>
-                                                        Male
-                                                    </option>
-                                                    <option value="Female"
-                                                        {{ old('gender', $security->gender ?? '') == 'Female' ? 'selected' : '' }}>
-                                                        Female
-                                                    </option>
-                                                    <option value="Other"
-                                                        {{ old('gender', $security->gender ?? '') == 'Other' ? 'selected' : '' }}>
-                                                        Other
-                                                    </option>
-                                                </select>
-                                            </div>
-                                            @error('gender')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="gender" type="select" title="Gender"
+                                                placeholder="Select Gender" :options="['Male' => 'Male', 'Female' => 'Female', 'Other' => 'Other']" :value="old('gender', $security->gender ?? '')" />
                                         </div>
                                     </div>
 
@@ -248,14 +195,8 @@
                                         </div>
 
                                         <div class="col-md-6">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Email</label>
-                                                <input type="email" name="email" class="form-control"
-                                                    value="{{ old('email', $security->email ?? '') }}">
-                                            </div>
-                                            @error('email')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="email" type="email" title="Email" :value="old('email', $security->email ?? '')"
+                                                placeholder="Enter email address" />
                                         </div>
                                     </div>
                                 </div>
@@ -269,95 +210,43 @@
 
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Joining Date</label>
-                                                <input type="date" name="joining_date" class="form-control"
-                                                    value="{{ old('joining_date', isset($security) && $security->joining_date ? $security->joining_date->format('Y-m-d') : '') }}">
-                                            </div>
-                                            @error('joining_date')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="joining_date" type="date" title="Joining Date"
+                                                :value="old(
+                                                    'joining_date',
+                                                    isset($security) && $security->joining_date
+                                                        ? $security->joining_date->format('Y-m-d')
+                                                        : '',
+                                                )" placeholder="Select joining date" />
                                         </div>
 
                                         <div class="col-md-6">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Position</label>
-                                                <select name="position" class="form-control">
-                                                    <option value="">Select Position</option>
-                                                    <option value="Security Guard"
-                                                        {{ old('position', $security->position ?? '') == 'Security Guard' ? 'selected' : '' }}>
-                                                        Security Guard
-                                                    </option>
-                                                    <option value="Security Supervisor"
-                                                        {{ old('position', $security->position ?? '') == 'Security Supervisor' ? 'selected' : '' }}>
-                                                        Security Supervisor
-                                                    </option>
-                                                    <option value="Security Manager"
-                                                        {{ old('position', $security->position ?? '') == 'Security Manager' ? 'selected' : '' }}>
-                                                        Security Manager
-                                                    </option>
-                                                    <option value="Gate Keeper"
-                                                        {{ old('position', $security->position ?? '') == 'Gate Keeper' ? 'selected' : '' }}>
-                                                        Gate Keeper
-                                                    </option>
-                                                    <option value="Campus Security"
-                                                        {{ old('position', $security->position ?? '') == 'Campus Security' ? 'selected' : '' }}>
-                                                        Campus Security
-                                                    </option>
-                                                </select>
-                                            </div>
-                                            @error('position')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="position" type="select" title="Position" :value="old('position', $security->position ?? '')"
+                                                placeholder="Select Position" :options="[
+                                                    'Security Guard' => 'Security Guard',
+                                                    'Security Supervisor' => 'Security Supervisor',
+                                                    'Security Manager' => 'Security Manager',
+                                                    'Gate Keeper' => 'Gate Keeper',
+                                                    'Campus Security' => 'Campus Security',
+                                                ]" />
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Shift</label>
-                                                <select name="shift" class="form-control">
-                                                    <option value="">Select Shift</option>
-                                                    <option value="Morning"
-                                                        {{ old('shift', $security->shift ?? '') == 'Morning' ? 'selected' : '' }}>
-                                                        Morning (6:00 AM - 2:00 PM)
-                                                    </option>
-                                                    <option value="Evening"
-                                                        {{ old('shift', $security->shift ?? '') == 'Evening' ? 'selected' : '' }}>
-                                                        Evening (2:00 PM - 10:00 PM)
-                                                    </option>
-                                                    <option value="Night"
-                                                        {{ old('shift', $security->shift ?? '') == 'Night' ? 'selected' : '' }}>
-                                                        Night (10:00 PM - 6:00 AM)
-                                                    </option>
-                                                    <option value="Rotating"
-                                                        {{ old('shift', $security->shift ?? '') == 'Rotating' ? 'selected' : '' }}>
-                                                        Rotating Shifts
-                                                    </option>
-                                                </select>
-                                            </div>
-                                            @error('shift')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="shift" type="select" title="Shift" :value="old('shift', $security->shift ?? '')"
+                                                placeholder="Select Shift" :options="[
+                                                    'Morning' => 'Morning (6:00 AM - 2:00 PM)',
+                                                    'Afternoon' => 'Afternoon (2:00 PM - 10:00 PM)',
+                                                    'Night' => 'Night (10:00 PM - 6:00 AM)',
+                                                    'Rotating' => 'Rotating Shifts',
+                                                ]" />
                                         </div>
-
                                         <div class="col-md-6">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Status</label>
-                                                <select name="is_active" class="form-control">
-                                                    <option value="1"
-                                                        {{ old('is_active', $security->is_active ?? '1') == '1' ? 'selected' : '' }}>
-                                                        Active
-                                                    </option>
-                                                    <option value="0"
-                                                        {{ old('is_active', $security->is_active ?? '1') == '0' ? 'selected' : '' }}>
-                                                        Inactive
-                                                    </option>
-                                                </select>
-                                            </div>
-                                            @error('is_active')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="is_active" type="select" title="Status" :value="old('is_active', $security->is_active ?? '1')"
+                                                placeholder="Select Status" :options="[
+                                                    '1' => 'Active',
+                                                    '0' => 'Inactive',
+                                                ]" />
                                         </div>
                                     </div>
                                 </div>
@@ -371,95 +260,47 @@
 
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Mobile Phone</label>
-                                                <input type="tel" name="mobile_phone" class="form-control"
-                                                    value="{{ old('mobile_phone', $security->mobile_phone ?? '') }}">
-                                            </div>
-                                            @error('mobile_phone')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="mobile_phone" type="text" title="Mobile Phone"
+                                                :value="old('mobile_phone', $security->mobile_phone ?? '')" placeholder="Enter mobile phone number" />
                                         </div>
 
                                         <div class="col-md-6">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Home Phone</label>
-                                                <input type="tel" name="home_phone" class="form-control"
-                                                    value="{{ old('home_phone', $security->home_phone ?? '') }}">
-                                            </div>
-                                            @error('home_phone')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="home_phone" type="text" title="Home Phone"
+                                                :value="old('home_phone', $security->home_phone ?? '')" placeholder="Enter home phone number" />
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Address Line 1</label>
-                                                <input type="text" name="address_line1" class="form-control"
-                                                    value="{{ old('address_line1', $security->address_line1 ?? '') }}">
-                                            </div>
-                                            @error('address_line1')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="address_line1" type="text" title="Address Line 1"
+                                                :value="old('address_line1', $security->address_line1 ?? '')" placeholder="Enter address line 1" />
                                         </div>
 
                                         <div class="col-md-6">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Address Line 2</label>
-                                                <input type="text" name="address_line2" class="form-control"
-                                                    value="{{ old('address_line2', $security->address_line2 ?? '') }}">
-                                            </div>
-                                            @error('address_line2')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="address_line2" type="text" title="Address Line 2"
+                                                :value="old('address_line2', $security->address_line2 ?? '')" placeholder="Enter address line 2 (optional)" />
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-3">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">City</label>
-                                                <input type="text" name="city" class="form-control"
-                                                    value="{{ old('city', $security->city ?? '') }}">
-                                            </div>
-                                            @error('city')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="city" type="text" title="City" :value="old('city', $security->city ?? '')"
+                                                placeholder="Enter city" />
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">State</label>
-                                                <input type="text" name="state" class="form-control"
-                                                    value="{{ old('state', $security->state ?? '') }}">
-                                            </div>
-                                            @error('state')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="state" type="text" title="State" :value="old('state', $security->state ?? '')"
+                                                placeholder="Enter state" />
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Postal Code</label>
-                                                <input type="text" name="postal_code" class="form-control"
-                                                    value="{{ old('postal_code', $security->postal_code ?? '') }}">
-                                            </div>
-                                            @error('postal_code')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="postal_code" type="text" title="Postal Code"
+                                                :value="old('postal_code', $security->postal_code ?? '')" placeholder="Enter postal code" />
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Country</label>
-                                                <input type="text" name="country" class="form-control"
-                                                    value="{{ old('country', $security->country ?? '') }}">
-                                            </div>
-                                            @error('country')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="country" type="text" title="Country" :value="old('country', $security->country ?? '')"
+                                                placeholder="Enter country" />
                                         </div>
                                     </div>
                                 </div>
