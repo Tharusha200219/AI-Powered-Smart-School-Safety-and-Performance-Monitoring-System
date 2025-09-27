@@ -58,4 +58,9 @@ interface SubjectRepositoryInterface
      * Generate subject code
      */
     public function generateSubjectCode();
+
+    /**
+     * Check if subject code exists
+     */
+    public function existsByCode(string $code): bool;
 }

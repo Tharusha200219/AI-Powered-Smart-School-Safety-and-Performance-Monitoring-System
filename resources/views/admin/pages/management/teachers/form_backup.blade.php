@@ -72,49 +72,78 @@
                                             <div class="col-md-9">
                                                 <div class="row">
                                                     <div class="col-md-4">
-                                                        <x-input name="teacher_code" title="Teacher Code" :isRequired="true"
-                                                            attr="maxlength='50'" :value="old(
-                                                                'teacher_code',
-                                                                $teacher->teacher_code ?? '',
-                                                            )" />
+                                                        <div class="input-group input-group-outline mb-3">
+                                                            <label class="form-label">Teacher Code *</label>
+                                                            <input type="text" name="teacher_code" class="form-control"
+                                                                value="{{ old('teacher_code', $teacher->teacher_code ?? '') }}"
+                                                                maxlength="50" required>
+                                                        </div>
                                                     </div>
                                                     <div class="col-md-4">
-                                                        <x-input name="first_name" title="First Name" :isRequired="true"
-                                                            attr="maxlength='100'" :value="old('first_name', $teacher->first_name ?? '')" />
+                                                        <div class="input-group input-group-outline mb-3">
+                                                            <label class="form-label">First Name *</label>
+                                                            <input type="text" name="first_name" class="form-control"
+                                                                value="{{ old('first_name', $teacher->first_name ?? '') }}"
+                                                                maxlength="100" required>
+                                                        </div>
                                                     </div>
                                                     <div class="col-md-4">
-                                                        <x-input name="last_name" title="Last Name" :isRequired="true"
-                                                            attr="maxlength='100'" :value="old('last_name', $teacher->last_name ?? '')" />
+                                                        <div class="input-group input-group-outline mb-3">
+                                                            <label class="form-label">Last Name *</label>
+                                                            <input type="text" name="last_name" class="form-control"
+                                                                value="{{ old('last_name', $teacher->last_name ?? '') }}"
+                                                                maxlength="100" required>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-4">
-                                                <x-input name="date_of_birth" type="date" title="Date of Birth"
-                                                    :value="old('date_of_birth', $teacher->date_of_birth ?? '')" />
+                                                <div class="input-group input-group-outline mb-3">
+                                                    <label class="form-label">Date of Birth</label>
+                                                    <input type="date" name="date_of_birth" class="form-control"
+                                                        value="{{ old('date_of_birth', $teacher->date_of_birth ?? '') }}">
+                                                </div>
                                             </div>
                                             <div class="col-md-4">
-                                                <x-input name="gender" type="select" title="Gender"
-                                                    placeholder="Select Gender" :options="[
-                                                        'Male' => 'Male',
-                                                        'Female' => 'Female',
-                                                        'Other' => 'Other',
-                                                    ]" :value="old('gender', $teacher->gender ?? '')" />
+                                                <div class="input-group input-group-outline mb-3">
+                                                    <select name="gender" class="form-control">
+                                                        <option value="">Select Gender</option>
+                                                        <option value="Male"
+                                                            {{ old('gender', $teacher->gender ?? '') == 'Male' ? 'selected' : '' }}>
+                                                            Male</option>
+                                                        <option value="Female"
+                                                            {{ old('gender', $teacher->gender ?? '') == 'Female' ? 'selected' : '' }}>
+                                                            Female</option>
+                                                        <option value="Other"
+                                                            {{ old('gender', $teacher->gender ?? '') == 'Other' ? 'selected' : '' }}>
+                                                            Other</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                             <div class="col-md-4">
-                                                <x-input name="nic_number" title="NIC Number" attr="maxlength='20'"
-                                                    :value="old('nic_number', $teacher->nic_number ?? '')" />
+                                                <div class="input-group input-group-outline mb-3">
+                                                    <label class="form-label">NIC Number</label>
+                                                    <input type="text" name="nic_number" class="form-control"
+                                                        value="{{ old('nic_number', $teacher->nic_number ?? '') }}"
+                                                        maxlength="20">
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <x-input name="phone" title="Phone Number" attr="maxlength='15'"
-                                                    :value="old('phone', $teacher->phone ?? '')" />
+                                                <div class="input-group input-group-outline mb-3">
+                                                    <label class="form-label">Phone Number</label>
+                                                    <input type="text" name="phone" class="form-control"
+                                                        value="{{ old('phone', $teacher->phone ?? '') }}" maxlength="15">
+                                                </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <x-input name="address" type="textarea" title="Address" attr="rows='3'"
-                                                    :value="old('address', $teacher->address ?? '')" />
+                                                <div class="input-group input-group-outline mb-3">
+                                                    <label class="form-label">Address</label>
+                                                    <textarea name="address" class="form-control" rows="3">{{ old('address', $teacher->address ?? '') }}</textarea>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -130,37 +159,44 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-md-4">
-                                                <x-input name="specialization" title="Specialization" attr="maxlength='255'"
-                                                    :value="old('specialization', $teacher->specialization ?? '')" />
+                                                <div class="input-group input-group-outline mb-3">
+                                                    <label class="form-label">Specialization</label>
+                                                    <input type="text" name="specialization" class="form-control"
+                                                        value="{{ old('specialization', $teacher->specialization ?? '') }}"
+                                                        maxlength="255">
+                                                </div>
                                             </div>
                                             <div class="col-md-4">
-                                                <x-input name="experience_years" type="number" title="Experience (Years)"
-                                                    attr="min='0' max='50'" :value="old(
-                                                        'experience_years',
-                                                        $teacher->experience_years ?? '',
-                                                    )" />
+                                                <div class="input-group input-group-outline mb-3">
+                                                    <label class="form-label">Experience (Years)</label>
+                                                    <input type="number" name="experience_years" class="form-control"
+                                                        min="0" max="50"
+                                                        value="{{ old('experience_years', $teacher->experience_years ?? '') }}">
+                                                </div>
                                             </div>
                                             <div class="col-md-4">
-                                                <x-input name="hire_date" type="date" title="Hire Date"
-                                                    :value="old('hire_date', $teacher->hire_date ?? '')" />
+                                                <div class="input-group input-group-outline mb-3">
+                                                    <label class="form-label">Hire Date</label>
+                                                    <input type="date" name="hire_date" class="form-control"
+                                                        value="{{ old('hire_date', $teacher->hire_date ?? '') }}">
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <x-input name="is_class_teacher" type="checkbox" title="Is Class Teacher"
-                                                    :value="old(
-                                                        'is_class_teacher',
-                                                        $teacher->is_class_teacher ?? false,
-                                                    )
-                                                        ? '1'
-                                                        : ''" />
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        name="is_class_teacher" value="1"
+                                                        {{ old('is_class_teacher', $teacher->is_class_teacher ?? false) ? 'checked' : '' }}>
+                                                    <label class="form-check-label">Is Class Teacher</label>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <x-input name="qualifications" type="textarea" title="Qualifications"
-                                                    placeholder="Enter qualifications and certifications" attr="rows='3'"
-                                                    :value="old('qualifications', $teacher->qualifications ?? '')" />
+                                                <label class="form-label">Qualifications</label>
+                                                <textarea name="qualifications" class="form-control" rows="3"
+                                                    placeholder="Enter qualifications and certifications">{{ old('qualifications', $teacher->qualifications ?? '') }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -205,21 +241,32 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <x-input name="email" type="email" title="Email Address"
-                                                    :value="old('email', $teacher->user->email ?? '')" />
+                                                <div class="input-group input-group-outline mb-3">
+                                                    <label class="form-label">Email Address</label>
+                                                    <input type="email" name="email" class="form-control"
+                                                        value="{{ old('email', $teacher->user->email ?? '') }}">
+                                                </div>
                                             </div>
                                             @if (!$id)
                                                 <div class="col-md-6">
-                                                    <x-input name="password" type="password" title="Password"
-                                                        attr="minlength='8'"
-                                                        placeholder="Leave empty to auto-generate password" />
+                                                    <div class="input-group input-group-outline mb-3">
+                                                        <label class="form-label">Password</label>
+                                                        <input type="password" name="password" class="form-control"
+                                                            minlength="8">
+                                                        <small class="form-text text-muted">Leave empty to auto-generate
+                                                            password</small>
+                                                    </div>
                                                 </div>
                                             @endif
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <x-input name="is_active" type="checkbox" title="Active Status"
-                                                    :value="old('is_active', $teacher->is_active ?? true) ? '1' : ''" />
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" name="is_active"
+                                                        value="1"
+                                                        {{ old('is_active', $teacher->is_active ?? true) ? 'checked' : '' }}>
+                                                    <label class="form-check-label">Active Status</label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
