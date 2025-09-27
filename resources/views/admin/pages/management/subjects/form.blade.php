@@ -120,79 +120,33 @@
 
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Subject Code *</label>
-                                                <input type="text" name="subject_code" class="form-control"
-                                                    value="{{ old('subject_code', $subject->subject_code ?? '') }}"
-                                                    required>
-                                            </div>
-                                            @error('subject_code')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="subject_code" title="Subject Code" :isRequired="true"
+                                                :value="old('subject_code', $subject->subject_code ?? '')" />
                                         </div>
 
                                         <div class="col-md-6">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Subject Name *</label>
-                                                <input type="text" name="subject_name" class="form-control"
-                                                    value="{{ old('subject_name', $subject->subject_name ?? '') }}"
-                                                    required>
-                                            </div>
-                                            @error('subject_name')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="subject_name" title="Subject Name" :isRequired="true"
+                                                :value="old('subject_name', $subject->subject_name ?? '')" />
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Grade Level</label>
-                                                <select name="grade_level" class="form-control">
-                                                    <option value="">Select Grade Level</option>
-                                                    @for ($i = 1; $i <= 12; $i++)
-                                                        <option value="Grade {{ $i }}"
-                                                            {{ old('grade_level', $subject->grade_level ?? '') == "Grade $i" ? 'selected' : '' }}>
-                                                            Grade {{ $i }}
-                                                        </option>
-                                                    @endfor
-                                                    <option value="All Grades"
-                                                        {{ old('grade_level', $subject->grade_level ?? '') == 'All Grades' ? 'selected' : '' }}>
-                                                        All Grades
-                                                    </option>
-                                                </select>
-                                            </div>
-                                            @error('grade_level')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="grade_level" type="select" title="Grade Level"
+                                                placeholder="Select Grade Level" :options="collect(range(1, 12))
+                                                    ->mapWithKeys(fn($i) => ['Grade ' . $i => 'Grade ' . $i])
+                                                    ->put('All Grades', 'All Grades')
+                                                    ->toArray()" :value="old('grade_level', $subject->grade_level ?? '')" />
                                         </div>
 
                                         <div class="col-md-6">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Subject Type</label>
-                                                <select name="type" class="form-control">
-                                                    <option value="">Select Type</option>
-                                                    <option value="Core"
-                                                        {{ old('type', $subject->type ?? '') == 'Core' ? 'selected' : '' }}>
-                                                        Core
-                                                    </option>
-                                                    <option value="Elective"
-                                                        {{ old('type', $subject->type ?? '') == 'Elective' ? 'selected' : '' }}>
-                                                        Elective
-                                                    </option>
-                                                    <option value="Optional"
-                                                        {{ old('type', $subject->type ?? '') == 'Optional' ? 'selected' : '' }}>
-                                                        Optional
-                                                    </option>
-                                                    <option value="Extra-curricular"
-                                                        {{ old('type', $subject->type ?? '') == 'Extra-curricular' ? 'selected' : '' }}>
-                                                        Extra-curricular
-                                                    </option>
-                                                </select>
-                                            </div>
-                                            @error('type')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="type" type="select" title="Subject Type"
+                                                placeholder="Select Type" :options="[
+                                                    'Core' => 'Core',
+                                                    'Elective' => 'Elective',
+                                                    'Optional' => 'Optional',
+                                                    'Extra-curricular' => 'Extra-curricular',
+                                                ]" :value="old('type', $subject->type ?? '')" />
                                         </div>
                                     </div>
                                 </div>
@@ -206,47 +160,21 @@
 
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Credits</label>
-                                                <input type="number" name="credits" class="form-control"
-                                                    value="{{ old('credits', $subject->credits ?? '') }}" min="1"
-                                                    max="10" placeholder="Subject credits">
-                                            </div>
-                                            @error('credits')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="credits" type="number" title="Credits"
+                                                placeholder="Subject credits" attr="min='1' max='10'" :value="old('credits', $subject->credits ?? '')" />
                                         </div>
 
                                         <div class="col-md-6">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Status</label>
-                                                <select name="status" class="form-control">
-                                                    <option value="1"
-                                                        {{ old('status', $subject->status ?? '1') == '1' ? 'selected' : '' }}>
-                                                        Active
-                                                    </option>
-                                                    <option value="0"
-                                                        {{ old('status', $subject->status ?? '1') == '0' ? 'selected' : '' }}>
-                                                        Inactive
-                                                    </option>
-                                                </select>
-                                            </div>
-                                            @error('status')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="status" type="select" title="Status" :options="['1' => 'Active', '0' => 'Inactive']"
+                                                :value="old('status', $subject->status ?? '1')" />
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-12">
-                                            <div class="input-group input-group-outline">
-                                                <label class="form-label">Description</label>
-                                                <textarea name="description" class="form-control" rows="4"
-                                                    placeholder="Subject description, curriculum details, learning objectives...">{{ old('description', $subject->description ?? '') }}</textarea>
-                                            </div>
-                                            @error('description')
-                                                <div class="text-danger small">{{ $message }}</div>
-                                            @enderror
+                                            <x-input name="description" type="textarea" title="Description"
+                                                placeholder="Subject description, curriculum details, learning objectives..."
+                                                attr="rows='4'" :value="old('description', $subject->description ?? '')" />
                                         </div>
                                     </div>
                                 </div>

@@ -3,13 +3,11 @@
 namespace App\DataTables\Admin\Management;
 
 use App\Models\Teacher;
-use App\Enums\Status;
-use Yajra\DataTables\Services\DataTable;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Column;
-use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\Services\DataTable;
 
 class TeacherDataTable extends DataTable
 {
@@ -20,22 +18,23 @@ class TeacherDataTable extends DataTable
         return (new EloquentDataTable($query))
             ->addColumn('DT_RowIndex', function ($row) {
                 static $index = 0;
+
                 return ++$index;
             })
             ->addColumn('action', function ($row) {
                 $show = checkPermission('admin.management.teachers.show') ? view('admin.layouts.actions.show', [
                     'url' => route('admin.management.' . $this->model . '.show', ['id' => $row->teacher_id]),
-                    'id' => $row->teacher_id
+                    'id' => $row->teacher_id,
                 ])->render() : '';
 
                 $edit = checkPermission('admin.management.teachers.edit') ? view('admin.layouts.actions.edit', [
                     'url' => route('admin.management.' . $this->model . '.form', ['id' => $row->teacher_id]),
-                    'id' => $row->teacher_id
+                    'id' => $row->teacher_id,
                 ])->render() : '';
 
                 $delete = checkPermission('admin.management.teachers.delete') ? view('admin.layouts.actions.delete', [
                     'url' => route('admin.management.' . $this->model . '.delete', ['id' => $row->teacher_id]),
-                    'id' => $row->teacher_id
+                    'id' => $row->teacher_id,
                 ])->render() : '';
 
                 $dropdownItems = [];
@@ -53,7 +52,7 @@ class TeacherDataTable extends DataTable
                 }
 
                 if (empty($dropdownItems)) {
-                    return '<span class="text-muted">No actions</span>';
+                    return '<span class="text-muted">' . __('common.no_actions') . '</span>';
                 }
 
                 $dropdownContent = implode('<li><hr class="dropdown-divider"></li>', $dropdownItems);
@@ -67,11 +66,13 @@ class TeacherDataTable extends DataTable
                         ' . $dropdownContent . '
                     </ul>
                 </div>';
+
                 return $dropdown;
             })
             ->addColumn('name', function ($row) {
                 $teacherType = $row->is_class_teacher ? 'CT' : 'TEA';
                 $badgeClass = $row->is_class_teacher ? 'bg-gradient-primary' : 'bg-gradient-info';
+
                 return '<div class="d-flex align-items-center">
                     <span class="badge ' . $badgeClass . ' badge-sm me-2">' . $teacherType . '</span>
                     <span class="fw-bold">' . $row->full_name . '</span>
@@ -81,18 +82,18 @@ class TeacherDataTable extends DataTable
                 return '<span class="text-secondary">' . $row->teacher_code . '</span>';
             })
             ->addColumn('specialization', function ($row) {
-                return $row->specialization ? '<span class="text-primary">' . $row->specialization . '</span>' : '<span class="text-muted">Not specified</span>';
+                return $row->specialization ? '<span class="text-primary">' . $row->specialization . '</span>' : '<span class="text-muted">' . __('common.not_specified') . '</span>';
             })
             ->addColumn('subjects', function ($row) {
                 if ($row->subjects->count() === 0) {
-                    return '<span class="text-muted">No subjects</span>';
+                    return '<span class="text-muted">' . __('common.no_subjects') . '</span>';
                 }
 
                 $subjectNames = $row->subjects->take(3)->pluck('subject_name')->toArray();
                 $display = implode(', ', $subjectNames);
 
                 if ($row->subjects->count() > 3) {
-                    $display .= ' <span class="text-primary">+' . ($row->subjects->count() - 3) . ' more</span>';
+                    $display .= ' <span class="text-primary">+' . ($row->subjects->count() - 3) . ' ' . __('common.more') . '</span>';
                 }
 
                 return $display;
@@ -100,20 +101,23 @@ class TeacherDataTable extends DataTable
             ->addColumn('experience', function ($row) {
                 if ($row->experience_years) {
                     $years = floor($row->experience_years);
-                    return '<span class="badge bg-gradient-warning badge-sm">' . $years . ' year' . ($years != 1 ? 's' : '') . '</span>';
+
+                    return '<span class="badge bg-gradient-warning badge-sm">' . $years . ' ' . __('common.year') . ($years != 1 ? 's' : '') . '</span>';
                 }
-                return '<span class="text-muted">Not specified</span>';
+
+                return '<span class="text-muted">' . __('common.not_specified') . '</span>';
             })
             ->addColumn('email', function ($row) {
-                return $row->user ? $row->user->email : '<span class="text-muted">No email</span>';
+                return $row->user ? $row->user->email : '<span class="text-muted">' . __('common.no_email') . '</span>';
             })
             ->addColumn('status', function ($row) {
                 $color = $row->is_active ? 'success' : 'danger';
-                $text = $row->is_active ? 'Active' : 'Inactive';
+                $text = $row->is_active ? __('common.active') : __('common.inactive');
+
                 return '<span class="badge badge-sm bg-gradient-' . $color . ' me-1">' . $text . '</span>';
             })
             ->addColumn('modified', function ($row) {
-                return $row->updated_at ? $row->updated_at->format('M d, Y') : 'Never';
+                return $row->updated_at ? $row->updated_at->format('M d, Y') : __('common.never');
             })
             ->rawColumns(['action', 'name', 'teacher_code', 'specialization', 'subjects', 'experience', 'email', 'status', 'modified'])
             ->orderColumn('name', function ($query, $order) {
@@ -160,22 +164,22 @@ class TeacherDataTable extends DataTable
                     if (index % 2 === 0) {
                         $(row).css("background-color", "rgba(0, 0, 0, 0.05)");
                     }
-                }'
+                }',
             ]);
     }
 
     protected function getColumns(): array
     {
         $columns = [
-            Column::make('DT_RowIndex')->title('#')->addClass('text-start align-middle text-xs')->searchable(false)->orderable(false),
-            Column::make('teacher_code')->title('CODE')->addClass('align-middle text-xs')->searchable(true),
-            Column::make('name')->title('NAME')->addClass('align-middle text-xs')->searchable(true),
-            Column::make('specialization')->title('SPECIALIZATION')->addClass('text-center align-middle text-xs')->searchable(true),
-            Column::make('subjects')->title('SUBJECTS')->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
-            Column::make('experience')->title('EXPERIENCE')->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
-            Column::make('email')->title('EMAIL')->addClass('text-start align-middle text-xs')->searchable(true),
-            Column::make('status')->title('STATUS')->searchable(false)->orderable(false)->addClass('text-center align-middle text-xs'),
-            Column::make('modified')->title('MODIFIED')->addClass('text-start align-middle text-xs')->searchable(false),
+            Column::make('DT_RowIndex')->title(__('common.id'))->addClass('text-start align-middle text-xs')->searchable(false)->orderable(false),
+            Column::make('teacher_code')->title(__('common.code'))->addClass('align-middle text-xs')->searchable(true),
+            Column::make('name')->title(__('common.name'))->addClass('align-middle text-xs')->searchable(true),
+            Column::make('specialization')->title(__('common.specialization'))->addClass('text-center align-middle text-xs')->searchable(true),
+            Column::make('subjects')->title(__('common.subjects'))->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
+            Column::make('experience')->title(__('common.experience'))->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
+            Column::make('email')->title(__('common.email'))->addClass('text-start align-middle text-xs')->searchable(true),
+            Column::make('status')->title(__('common.status'))->searchable(false)->orderable(false)->addClass('text-center align-middle text-xs'),
+            Column::make('modified')->title(__('common.modified'))->addClass('text-start align-middle text-xs')->searchable(false),
         ];
 
         if (
@@ -184,7 +188,7 @@ class TeacherDataTable extends DataTable
             checkPermission('admin.management.teachers.edit') ||
             checkPermission('admin.management.teachers.delete')
         ) {
-            $columns[] = Column::computed('action')->title('ACTIONS')->addClass('text-end align-middle pt-3 pb-0 text-xs')->exportable(false)->printable(false)->orderable(false)->searchable(false);
+            $columns[] = Column::computed('action')->title(__('common.actions'))->addClass('text-end align-middle pt-3 pb-0 text-xs')->exportable(false)->printable(false)->orderable(false)->searchable(false);
         }
 
         return $columns;

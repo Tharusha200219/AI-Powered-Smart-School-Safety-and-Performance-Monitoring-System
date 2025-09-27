@@ -43,33 +43,19 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-md-4">
-                                                <div class="input-group input-group-outline mb-3">
-                                                    <label class="form-label">Role Name *</label>
-                                                    <input type="text" name="name" class="form-control"
-                                                        value="{{ old('name', $role->name ?? '') }}" maxlength="255"
-                                                        required>
-                                                </div>
+                                                <x-input name="name" title="Role Name" :isRequired="true"
+                                                    attr="maxlength='255'" :value="old('name', $role->name ?? '')" />
                                             </div>
                                             <div class="col-md-4">
-                                                <div class="input-group input-group-outline mb-3">
-                                                    <label class="form-label">Description</label>
-                                                    <input type="text" name="description" class="form-control"
-                                                        value="{{ old('description', $role->description ?? '') }}"
-                                                        maxlength="500">
-                                                </div>
+                                                <x-input name="description" title="Description" attr="maxlength='500'"
+                                                    :value="old('description', $role->description ?? '')" />
                                             </div>
                                             <div class="col-md-4">
-                                                <div class="input-group input-group-outline mb-3">
-                                                    <select name="status" class="form-control">
-                                                        <option value="">Select Status</option>
-                                                        @foreach (App\Enums\Status::options() as $key => $value)
-                                                            <option value="{{ $value }}"
-                                                                {{ old('status', $role->status ?? App\Enums\Status::ACTIVE->value) == $value ? 'selected' : '' }}>
-                                                                {{ $key }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
+                                                <x-input name="status" type="select" title="Status"
+                                                    placeholder="Select Status" :options="App\Enums\Status::options()" :value="old(
+                                                        'status',
+                                                        $role->status ?? App\Enums\Status::ACTIVE->value,
+                                                    )" />
                                             </div>
                                         </div>
                                     </div>

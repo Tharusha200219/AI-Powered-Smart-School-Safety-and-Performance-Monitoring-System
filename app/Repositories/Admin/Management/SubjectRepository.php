@@ -41,7 +41,7 @@ class SubjectRepository implements SubjectRepositoryInterface
     public function create(array $data)
     {
         return DB::transaction(function () use ($data) {
-            if (!isset($data['subject_code'])) {
+            if (! isset($data['subject_code'])) {
                 $data['subject_code'] = $this->generateSubjectCode();
             }
 
@@ -56,7 +56,7 @@ class SubjectRepository implements SubjectRepositoryInterface
     {
         $subject = $this->model->where('id', $id)->first();
 
-        if (!$subject) {
+        if (! $subject) {
             return false;
         }
 
@@ -139,8 +139,16 @@ class SubjectRepository implements SubjectRepositoryInterface
             ->orderBy('id', 'desc')
             ->first();
 
-        $sequence = $lastSubject ? (int)substr($lastSubject->subject_code, -4) + 1 : 1;
+        $sequence = $lastSubject ? (int) substr($lastSubject->subject_code, -4) + 1 : 1;
 
         return 'SUB' . $year . str_pad($sequence, 4, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Check if subject code exists
+     */
+    public function existsByCode(string $code): bool
+    {
+        return $this->model->where('subject_code', $code)->exists();
     }
 }

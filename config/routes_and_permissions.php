@@ -1,4 +1,5 @@
 <?php
+
 return [
     [
         'items' => [
@@ -9,10 +10,10 @@ return [
                 [],
                 [],
                 additional_permissions: [
-                    'admin.dashboard.view.school-statistics'
+                    'admin.dashboard.view.school-statistics',
                 ]
             ),
-        ]
+        ],
     ],
 
     [
@@ -27,12 +28,12 @@ return [
                     'admin.management.students.form',
                     'admin.management.students.show',
                     'admin.management.students.delete',
-                    'admin.management.students.enroll'
+                    'admin.management.students.enroll',
                 ],
                 additional_permissions: [
                     'admin.management.students.edit',
                     'admin.management.students.promote',
-                    'admin.management.students.transfer'
+                    'admin.management.students.transfer',
                 ]
             ),
             getSideBarElement(
@@ -44,11 +45,11 @@ return [
                     'admin.management.teachers.form',
                     'admin.management.teachers.show',
                     'admin.management.teachers.delete',
-                    'admin.management.teachers.enroll'
+                    'admin.management.teachers.enroll',
                 ],
                 additional_permissions: [
                     'admin.management.teachers.edit',
-                    'admin.management.teachers.assign-class'
+                    'admin.management.teachers.assign-class',
                 ]
             ),
             getSideBarElement(
@@ -60,11 +61,11 @@ return [
                     'admin.management.parents.form',
                     'admin.management.parents.show',
                     'admin.management.parents.delete',
-                    'admin.management.parents.enroll'
+                    'admin.management.parents.enroll',
                 ],
                 additional_permissions: [
                     'admin.management.parents.edit',
-                    'admin.management.parents.link-student'
+                    'admin.management.parents.link-student',
                 ]
             ),
             getSideBarElement(
@@ -76,12 +77,12 @@ return [
                     'admin.management.classes.form',
                     'admin.management.classes.show',
                     'admin.management.classes.delete',
-                    'admin.management.classes.enroll'
+                    'admin.management.classes.enroll',
                 ],
                 additional_permissions: [
                     'admin.management.classes.edit',
                     'admin.management.classes.assign-teacher',
-                    'admin.management.classes.manage-students'
+                    'admin.management.classes.manage-students',
                 ]
             ),
             getSideBarElement(
@@ -93,10 +94,10 @@ return [
                     'admin.management.subjects.form',
                     'admin.management.subjects.show',
                     'admin.management.subjects.delete',
-                    'admin.management.subjects.enroll'
+                    'admin.management.subjects.enroll',
                 ],
                 additional_permissions: [
-                    'admin.management.subjects.edit'
+                    'admin.management.subjects.edit',
                 ]
             ),
             getSideBarElement(
@@ -108,13 +109,13 @@ return [
                     'admin.management.security.form',
                     'admin.management.security.show',
                     'admin.management.security.delete',
-                    'admin.management.security.enroll'
+                    'admin.management.security.enroll',
                 ],
                 additional_permissions: [
-                    'admin.management.security.edit'
+                    'admin.management.security.edit',
                 ]
             ),
-        ]
+        ],
     ],
 
     [
@@ -129,11 +130,11 @@ return [
                     'admin.assignments.form',
                     'admin.assignments.show',
                     'admin.assignments.delete',
-                    'admin.assignments.enroll'
+                    'admin.assignments.enroll',
                 ],
                 additional_permissions: [
                     'admin.assignments.edit',
-                    'admin.assignments.grade'
+                    'admin.assignments.grade',
                 ]
             ),
             getSideBarElement(
@@ -145,11 +146,11 @@ return [
                     'admin.grades.form',
                     'admin.grades.show',
                     'admin.grades.delete',
-                    'admin.grades.enroll'
+                    'admin.grades.enroll',
                 ],
                 additional_permissions: [
                     'admin.grades.edit',
-                    'admin.grades.report-card'
+                    'admin.grades.report-card',
                 ]
             ),
             getSideBarElement(
@@ -160,11 +161,11 @@ return [
                 [
                     'admin.attendance.form',
                     'admin.attendance.show',
-                    'admin.attendance.mark'
+                    'admin.attendance.mark',
                 ],
                 additional_permissions: [
                     'admin.attendance.edit',
-                    'admin.attendance.reports'
+                    'admin.attendance.reports',
                 ]
             ),
             getSideBarElement(
@@ -176,13 +177,13 @@ return [
                     'admin.timetable.form',
                     'admin.timetable.show',
                     'admin.timetable.delete',
-                    'admin.timetable.enroll'
+                    'admin.timetable.enroll',
                 ],
                 additional_permissions: [
-                    'admin.timetable.edit'
+                    'admin.timetable.edit',
                 ]
             ),
-        ]
+        ],
     ],
 
     [
@@ -195,7 +196,7 @@ return [
                 [],
                 [
                     'admin.reports.students.generate',
-                    'admin.reports.students.export'
+                    'admin.reports.students.export',
                 ]
             ),
             getSideBarElement(
@@ -205,7 +206,7 @@ return [
                 [],
                 [
                     'admin.reports.academic.generate',
-                    'admin.reports.academic.export'
+                    'admin.reports.academic.export',
                 ]
             ),
             getSideBarElement(
@@ -215,10 +216,10 @@ return [
                 [],
                 [
                     'admin.reports.attendance.generate',
-                    'admin.reports.attendance.export'
+                    'admin.reports.attendance.export',
                 ]
             ),
-        ]
+        ],
     ],
 
     [
@@ -233,12 +234,12 @@ return [
                     'admin.security.visitors.form',
                     'admin.security.visitors.show',
                     'admin.security.visitors.delete',
-                    'admin.security.visitors.enroll'
+                    'admin.security.visitors.enroll',
                 ],
                 additional_permissions: [
                     'admin.security.visitors.edit',
                     'admin.security.visitors.check-in',
-                    'admin.security.visitors.check-out'
+                    'admin.security.visitors.check-out',
                 ]
             ),
             getSideBarElement(
@@ -250,13 +251,13 @@ return [
                     'admin.security.incidents.form',
                     'admin.security.incidents.show',
                     'admin.security.incidents.delete',
-                    'admin.security.incidents.enroll'
+                    'admin.security.incidents.enroll',
                 ],
                 additional_permissions: [
-                    'admin.security.incidents.edit'
+                    'admin.security.incidents.edit',
                 ]
             ),
-        ]
+        ],
     ],
 
     [
@@ -271,10 +272,10 @@ return [
                     'admin.communication.announcements.form',
                     'admin.communication.announcements.show',
                     'admin.communication.announcements.delete',
-                    'admin.communication.announcements.enroll'
+                    'admin.communication.announcements.enroll',
                 ],
                 additional_permissions: [
-                    'admin.communication.announcements.edit'
+                    'admin.communication.announcements.edit',
                 ]
             ),
             getSideBarElement(
@@ -286,13 +287,13 @@ return [
                     'admin.communication.messages.form',
                     'admin.communication.messages.show',
                     'admin.communication.messages.delete',
-                    'admin.communication.messages.send'
+                    'admin.communication.messages.send',
                 ],
                 additional_permissions: [
-                    'admin.communication.messages.edit'
+                    'admin.communication.messages.edit',
                 ]
             ),
-        ]
+        ],
     ],
 
     [
@@ -306,10 +307,10 @@ return [
                 [
                     'admin.setup.school.form',
                     'admin.setup.school.show',
-                    'admin.setup.school.enroll'
+                    'admin.setup.school.enroll',
                 ],
                 additional_permissions: [
-                    'admin.setup.school.edit'
+                    'admin.setup.school.edit',
                 ]
             ),
             getSideBarElement(
@@ -321,10 +322,10 @@ return [
                     'admin.setup.grade-levels.form',
                     'admin.setup.grade-levels.show',
                     'admin.setup.grade-levels.delete',
-                    'admin.setup.grade-levels.enroll'
+                    'admin.setup.grade-levels.enroll',
                 ],
                 additional_permissions: [
-                    'admin.setup.grade-levels.edit'
+                    'admin.setup.grade-levels.edit',
                 ]
             ),
             getSideBarElement(
@@ -336,10 +337,10 @@ return [
                     'admin.setup.academic-year.form',
                     'admin.setup.academic-year.show',
                     'admin.setup.academic-year.delete',
-                    'admin.setup.academic-year.enroll'
+                    'admin.setup.academic-year.enroll',
                 ],
                 additional_permissions: [
-                    'admin.setup.academic-year.edit'
+                    'admin.setup.academic-year.edit',
                 ]
             ),
             getSideBarElement(
@@ -351,10 +352,10 @@ return [
                     'admin.setup.role.form',
                     'admin.setup.role.show',
                     'admin.setup.role.delete',
-                    'admin.setup.role.enroll'
+                    'admin.setup.role.enroll',
                 ],
                 additional_permissions: [
-                    'admin.setup.role.edit'
+                    'admin.setup.role.edit',
                 ]
             ),
             getSideBarElement(
@@ -366,10 +367,10 @@ return [
                     'admin.setup.users.form',
                     'admin.setup.users.show',
                     'admin.setup.users.delete',
-                    'admin.setup.users.enroll'
+                    'admin.setup.users.enroll',
                 ],
                 additional_permissions: [
-                    'admin.setup.users.edit'
+                    'admin.setup.users.edit',
                 ]
             ),
             getSideBarElement(
@@ -378,14 +379,14 @@ return [
                 'admin.setup.settings.index',
                 [],
                 [
-                    'admin.setup.settings.update'
+                    'admin.setup.settings.update',
                 ],
                 additional_permissions: [
                     'admin.setup.settings.general',
                     'admin.setup.settings.academic',
-                    'admin.setup.settings.security'
+                    'admin.setup.settings.security',
                 ]
             ),
-        ]
-    ]
+        ],
+    ],
 ];

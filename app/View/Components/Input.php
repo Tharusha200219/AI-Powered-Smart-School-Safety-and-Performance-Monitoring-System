@@ -7,14 +7,28 @@ use Illuminate\View\Component;
 class Input extends Component
 {
     public $title;
+
     public $name;
+
     public $type;
+
     public $attr;
+
     public $isRequired;
+
     public $placeholder;
+
     public $class;
+
     public $value;
+
     public $options;
+
+    public $accept;
+
+    public $showPreview;
+
+    public $maxSize;
 
     public function __construct(
         string $name,
@@ -25,7 +39,10 @@ class Input extends Component
         ?string $class = null,
         ?string $title = '',
         ?string $value = '',
-        ?array $options = []
+        ?array $options = [],
+        ?string $accept = null,
+        bool $showPreview = false,
+        int $maxSize = 2048
     ) {
         $this->title = $title ?? $placeholder;
         $this->name = $name;
@@ -36,6 +53,9 @@ class Input extends Component
         $this->class = $class;
         $this->value = $value;
         $this->options = $options;
+        $this->accept = $accept;
+        $this->showPreview = $showPreview;
+        $this->maxSize = $maxSize;
     }
 
     public function render()

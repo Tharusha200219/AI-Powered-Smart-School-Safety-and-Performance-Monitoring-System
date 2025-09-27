@@ -3,18 +3,18 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use App\Enums\Status;
 use App\Enums\UserType;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, SoftDeletes, HasRoles;
+    use HasFactory, HasRoles, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -25,8 +25,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'status',
         'usertype',
+        'status',
         'phone',
         'address',
         'bio',
@@ -34,6 +34,7 @@ class User extends Authenticatable
         'profile_image',
         'login_count',
         'last_login_at',
+        'email_verified_at',
     ];
 
     /**
@@ -126,6 +127,7 @@ class User extends Authenticatable
         } elseif ($this->isSecurity()) {
             return $this->securityStaff;
         }
+
         return null;
     }
 
@@ -140,6 +142,7 @@ class User extends Authenticatable
         } elseif ($this->isSecurity()) {
             return 'security';
         }
+
         return 'user';
     }
 

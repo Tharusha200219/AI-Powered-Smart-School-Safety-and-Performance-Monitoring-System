@@ -374,22 +374,18 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">Full Name *</label>
-                                    <input type="text" class="form-control @error('name') is-invalid @enderror"
-                                        name="name" value="{{ old('name', $user->name) }}" required>
-                                    @error('name')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <x-input name="name" type="text"
+                                        class="form-control @error('name') is-invalid @enderror" :isRequired="true"
+                                        :value="old('name', $user->name)" />
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">Email Address *</label>
-                                    <input type="email" class="form-control @error('email') is-invalid @enderror"
-                                        name="email" value="{{ old('email', $user->email) }}" required>
-                                    @error('email')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <x-input name="email" type="email"
+                                        class="form-control @error('email') is-invalid @enderror" :isRequired="true"
+                                        :value="old('email', $user->email)" />
                                 </div>
                             </div>
                         </div>
@@ -398,43 +394,32 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">Phone Number</label>
-                                    <input type="tel" class="form-control @error('phone') is-invalid @enderror"
-                                        name="phone" value="{{ old('phone', $user->phone) }}">
-                                    @error('phone')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <x-input name="phone" type="tel"
+                                        class="form-control @error('phone') is-invalid @enderror" :value="old('phone', $user->phone)" />
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">Date of Birth</label>
-                                    <input type="date" class="form-control @error('date_of_birth') is-invalid @enderror"
-                                        name="date_of_birth"
-                                        value="{{ old('date_of_birth', $user->date_of_birth?->format('Y-m-d')) }}">
-                                    @error('date_of_birth')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <x-input name="date_of_birth" type="date"
+                                        class="form-control @error('date_of_birth') is-invalid @enderror"
+                                        :value="old('date_of_birth', $user->date_of_birth?->format('Y-m-d'))" />
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Address</label>
-                            <textarea class="form-control @error('address') is-invalid @enderror" name="address" rows="3"
-                                placeholder="Enter your full address">{{ old('address', $user->address) }}</textarea>
-                            @error('address')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <x-input name="address" type="textarea"
+                                class="form-control @error('address') is-invalid @enderror"
+                                placeholder="Enter your full address" attr="rows='3'" :value="old('address', $user->address)" />
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Bio</label>
-                            <textarea class="form-control @error('bio') is-invalid @enderror" name="bio" rows="4"
-                                placeholder="Tell us something about yourself...">{{ old('bio', $user->bio) }}</textarea>
-                            @error('bio')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <x-input name="bio" type="textarea" class="form-control @error('bio') is-invalid @enderror"
+                                placeholder="Tell us something about yourself..." attr="rows='4'" :value="old('bio', $user->bio)" />
                         </div>
                     </div>
 

@@ -2,12 +2,12 @@
 
 namespace App\DataTables\Admin\Setup;
 
-use Spatie\Permission\Models\Role;
-use Yajra\DataTables\Services\DataTable;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Spatie\Permission\Models\Role;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Column;
+use Yajra\DataTables\Services\DataTable;
 
 class RoleDataTable extends DataTable
 {
@@ -21,18 +21,18 @@ class RoleDataTable extends DataTable
                 $isAdminRole = $row->name === 'admin';
 
                 $show = checkPermission('admin.setup.role.show') ? view('admin.layouts.actions.show', [
-                    'url' => route('admin.setup.' . $this->model . '.show', ['id' => $row->id]),
-                    'id' => $row->id
+                    'url' => route('admin.setup.'.$this->model.'.show', ['id' => $row->id]),
+                    'id' => $row->id,
                 ])->render() : '';
 
-                $edit = (checkPermission('admin.setup.role.edit') && !$isAdminRole) ? view('admin.layouts.actions.edit', [
-                    'url' => route('admin.setup.' . $this->model . '.form', ['id' => $row->id]),
-                    'id' => $row->id
+                $edit = (checkPermission('admin.setup.role.edit') && ! $isAdminRole) ? view('admin.layouts.actions.edit', [
+                    'url' => route('admin.setup.'.$this->model.'.form', ['id' => $row->id]),
+                    'id' => $row->id,
                 ])->render() : '';
 
-                $delete = (checkPermission('admin.setup.role.delete') && !$isAdminRole) ? view('admin.layouts.actions.delete', [
-                    'url' => route('admin.setup.' . $this->model . '.delete', ['id' => $row->id]),
-                    'id' => $row->id
+                $delete = (checkPermission('admin.setup.role.delete') && ! $isAdminRole) ? view('admin.layouts.actions.delete', [
+                    'url' => route('admin.setup.'.$this->model.'.delete', ['id' => $row->id]),
+                    'id' => $row->id,
                 ])->render() : '';
 
                 $dropdownItems = [];
@@ -61,9 +61,10 @@ class RoleDataTable extends DataTable
                         <span class="material-symbols-outlined text-lg">more_vert</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow rounded-3 p-2 w-100">
-                        ' . $dropdownContent . '
+                        '.$dropdownContent.'
                     </ul>
                 </div>';
+
                 return $dropdown;
             })
             ->addColumn('name', function ($row) {
@@ -77,18 +78,20 @@ class RoleDataTable extends DataTable
                 };
 
                 return '<div class="d-flex align-items-center">
-                    <span class="badge ' . $badgeClass . ' me-2">' . strtoupper(substr($row->name, 0, 3)) . '</span>
-                    <span class="fw-bold">' . ucfirst($row->name) . '</span>
+                    <span class="badge '.$badgeClass.' me-2">'.strtoupper(substr($row->name, 0, 3)).'</span>
+                    <span class="fw-bold">'.ucfirst($row->name).'</span>
                 </div>';
             })
             ->addColumn('permissions_count', function ($row) {
                 $count = $row->permissions()->count();
-                return '<span class="badge bg-gradient-info">' . $count . ' permissions</span>';
+
+                return '<span class="badge bg-gradient-info">'.$count.' permissions</span>';
             })
             ->addColumn('users_count', function ($row) {
                 $count = $row->users()->count();
                 $badgeClass = $count > 0 ? 'bg-gradient-success' : 'bg-gradient-secondary';
-                return '<span class="badge ' . $badgeClass . '">' . $count . ' users</span>';
+
+                return '<span class="badge '.$badgeClass.'">'.$count.' users</span>';
             })
             ->addColumn('description', function ($row) {
                 return $row->description ?? '<span class="text-muted">No description</span>';
@@ -117,7 +120,7 @@ class RoleDataTable extends DataTable
                     if (index % 2 === 0) {
                         $(row).css("background-color", "rgba(0, 0, 0, 0.05)");
                     }
-                }'
+                }',
             ]);
     }
 
@@ -146,6 +149,6 @@ class RoleDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'Roles_' . date('YmdHis');
+        return 'Roles_'.date('YmdHis');
     }
 }

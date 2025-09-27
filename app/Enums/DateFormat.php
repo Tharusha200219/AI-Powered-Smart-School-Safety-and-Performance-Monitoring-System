@@ -6,12 +6,12 @@ use ArchTech\Enums\InvokableCases;
 use ArchTech\Enums\Names;
 use ArchTech\Enums\Values;
 
-enum DateFormat : string
+enum DateFormat: string
 {
     use InvokableCases;
-    use Values;
     use Names;
+    use Values;
 
-    case DMY = "d-m-Y";
-    case YMD = "Y-m-d";
+    case DMY = 'd-m-Y';
+    case YMD = 'Y-m-d';
 }

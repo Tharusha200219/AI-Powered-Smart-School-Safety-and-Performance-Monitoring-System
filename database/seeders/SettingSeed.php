@@ -3,9 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Setting;
-use App\Enums\DateFormat;
-use App\Enums\TimeFormat;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class SettingSeed extends Seeder
@@ -24,8 +21,8 @@ class SettingSeed extends Seeder
                 'company_phone' => '+1234567890',
                 'company_address' => '123 Education Street, Learning City',
                 'mail_signature' => 'Best Regards,\nSmart School Management Team',
-                'date_format' => DateFormat::DMY->value, // Use enum value: 'd-m-Y'
-                'time_format' => TimeFormat::HIS->value, // Use enum value: 'H:i:s'
+                'date_format' => 'd-m-Y',
+                'time_format' => 'H:i:s',
                 'timezone' => 'Asia/Colombo',
                 'country' => 'LK',
                 'copyright_text' => '© 2025 Smart School Management System. All rights reserved.',

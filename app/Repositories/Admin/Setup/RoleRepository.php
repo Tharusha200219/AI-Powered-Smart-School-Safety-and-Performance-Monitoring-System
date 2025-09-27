@@ -2,8 +2,8 @@
 
 namespace App\Repositories\Admin\Setup;
 
-use Spatie\Permission\Models\Role;
 use App\Repositories\Interfaces\Admin\Setup\RoleRepositoryInterface;
+use Spatie\Permission\Models\Role;
 
 class RoleRepository implements RoleRepositoryInterface
 {
@@ -23,6 +23,7 @@ class RoleRepository implements RoleRepositoryInterface
     {
         $role = $this->model->findOrFail($id);
         $role->update($data);
+
         return $role;
     }
 
@@ -60,12 +61,14 @@ class RoleRepository implements RoleRepositoryInterface
     {
         $role = $this->model->findOrFail($roleId);
         $role->syncPermissions($permissions);
+
         return $role;
     }
 
     public function getRolePermissions($roleId)
     {
         $role = $this->model->with('permissions')->find($roleId);
+
         return $role ? $role->permissions->pluck('name')->toArray() : [];
     }
 }

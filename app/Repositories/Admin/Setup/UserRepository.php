@@ -4,9 +4,9 @@ namespace App\Repositories\Admin\Setup;
 
 use App\Models\User;
 use App\Repositories\Interfaces\Admin\Setup\UserRepositoryInterface;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Database\QueryException;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -16,10 +16,12 @@ class UserRepository implements UserRepositoryInterface
             DB::beginTransaction();
             $user = User::create($data);
             DB::commit();
+
             return $user;
         } catch (QueryException $e) {
-            Log::error('Failed to create user: ' . $e->getMessage());
+            Log::error('Failed to create user: '.$e->getMessage());
             DB::rollBack();
+
             return null;
         }
     }
@@ -31,10 +33,12 @@ class UserRepository implements UserRepositoryInterface
             $user = User::findOrFail($id);
             $user->update($data);
             DB::commit();
+
             return $user;
         } catch (QueryException $e) {
-            Log::error('Failed to update user: ' . $e->getMessage());
+            Log::error('Failed to update user: '.$e->getMessage());
             DB::rollBack();
+
             return null;
         }
     }
@@ -44,7 +48,8 @@ class UserRepository implements UserRepositoryInterface
         try {
             return User::with(['roles', 'permissions'])->find($id); // Returns null if not found
         } catch (QueryException $e) {
-            Log::error('Failed to fetch user: ' . $e->getMessage());
+            Log::error('Failed to fetch user: '.$e->getMessage());
+
             return null;
         }
     }
@@ -54,9 +59,11 @@ class UserRepository implements UserRepositoryInterface
         try {
             $user = User::findOrFail($id);
             $user->delete();
+
             return true;
         } catch (QueryException $e) {
-            Log::error('Failed to delete user: ' . $e->getMessage());
+            Log::error('Failed to delete user: '.$e->getMessage());
+
             return false;
         }
     }
@@ -66,7 +73,8 @@ class UserRepository implements UserRepositoryInterface
         try {
             return User::all(); // Replace `available()` with actual logic if needed
         } catch (QueryException $e) {
-            Log::error('Failed to fetch users: ' . $e->getMessage());
+            Log::error('Failed to fetch users: '.$e->getMessage());
+
             return collect(); // Empty collection as fallback
         }
     }

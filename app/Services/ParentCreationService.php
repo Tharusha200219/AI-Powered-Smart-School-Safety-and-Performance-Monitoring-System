@@ -3,9 +3,7 @@
 namespace App\Services;
 
 use App\Models\ParentModel;
-use App\Services\UserService;
-use App\Enums\UserType;
-use App\Helpers\Constants;
+use App\Models\User;
 
 class ParentCreationService
 {
@@ -23,7 +21,7 @@ class ParentCreationService
     {
         $parentIds = [];
 
-        if (!isset($requestData['parent_first_name']) || !is_array($requestData['parent_first_name'])) {
+        if (! isset($requestData['parent_first_name']) || ! is_array($requestData['parent_first_name'])) {
             return $parentIds;
         }
 
@@ -100,6 +98,6 @@ class ParentCreationService
     private function isEmergencyContact(array $requestData, int $index): bool
     {
         return isset($requestData['parent_is_emergency_contact']) &&
-            in_array($index + 1, (array)$requestData['parent_is_emergency_contact']);
+            in_array($index + 1, (array) $requestData['parent_is_emergency_contact']);
     }
 }

@@ -8,25 +8,26 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\DB;
-
+use App\Models\User;
 class ProfileController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
+        $user = User::find(Auth::id());
+
         return view('admin.pages.profile.index', compact('user'));
     }
 
     public function edit()
     {
         $user = Auth::user();
+
         return view('admin.pages.profile.edit', compact('user'));
     }
 
     public function update(Request $request)
     {
-        $user = Auth::user();
+        $user = User::find(Auth::id());
 
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
@@ -68,15 +69,14 @@ class ProfileController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $user = Auth::user();
+        $user = User::find(Auth::id());
 
-        if (!Hash::check($request->current_password, $user->password)) {
+        if (! Hash::check($request->current_password, $user->password)) {
             return back()->withErrors(['current_password' => 'The current password is incorrect.']);
         }
 
-        $user->update([
-            'password' => Hash::make($request->password),
-        ]);
+        $user->password = Hash::make($request->password);
+        $user->save();
 
         return redirect()->route('admin.profile.index')
             ->with('success', 'Password changed successfully!');
@@ -90,7 +90,10 @@ class ProfileController extends Controller
             Storage::disk('public')->delete($user->profile_image);
         }
 
-        $user->update(['profile_image' => null]);
+        $user->profile_image = null;
+        if ($user instanceof \App\Models\User) {
+            $user->save();
+        }
 
         return response()->json(['success' => true, 'message' => 'Profile image deleted successfully!']);
     }
@@ -116,7 +119,7 @@ class ProfileController extends Controller
         $completedFields = 0;
 
         foreach ($fields as $field) {
-            if (!empty($user->$field)) {
+            if (! empty($user->$field)) {
                 $completedFields++;
             }
         }

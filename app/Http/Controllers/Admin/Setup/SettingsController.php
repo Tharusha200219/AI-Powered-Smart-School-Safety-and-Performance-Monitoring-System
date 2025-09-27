@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Admin\Setup;
 
 use App\Http\Controllers\Controller;
+use App\Models\Setting;
 use App\Repositories\Admin\Setup\SettingsRepository;
 use App\Repositories\Interfaces\Admin\Setup\SettingsRepositoryInterface;
-use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class SettingsController extends Controller
@@ -20,7 +21,8 @@ class SettingsController extends Controller
 
     protected function index(Request $request)
     {
-        $setting = Setting::first() ?? new Setting();
+        $setting = Setting::first() ?? new Setting;
+
         return view('admin.pages.setup.settings.index', compact('setting'));
     }
 
@@ -43,7 +45,7 @@ class SettingsController extends Controller
                 ->withInput();
         }
 
-        $setting = Setting::first() ?? new Setting();
+        $setting = Setting::first() ?? new Setting;
 
         $setting->fill([
             'title' => $request->title,
@@ -73,19 +75,20 @@ class SettingsController extends Controller
                 'established_year' => 'nullable|integer|min:1800|max:' . date('Y'),
                 'total_capacity' => 'nullable|integer|min:1',
                 'website_url' => 'nullable|url|max:255',
+                'logo' => 'nullable|image|mimes:jpeg,jpg,png,gif|max:2048',
             ]);
 
             if ($validator->fails()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Validation failed',
-                    'errors' => $validator->errors()
+                    'errors' => $validator->errors(),
                 ], 422);
             }
 
-            $setting = Setting::first() ?? new Setting();
+            $setting = Setting::first() ?? new Setting;
 
-            $setting->fill([
+            $data = [
                 'school_name' => $request->school_name,
                 'school_type' => $request->school_type,
                 'school_motto' => $request->school_motto,
@@ -93,18 +96,32 @@ class SettingsController extends Controller
                 'established_year' => $request->established_year,
                 'total_capacity' => $request->total_capacity,
                 'website_url' => $request->website_url,
-            ]);
+            ];
 
+            // Handle logo upload
+            if ($request->hasFile('logo')) {
+                // Delete old logo if exists
+                if ($setting->logo && Storage::disk('public')->exists($setting->logo)) {
+                    Storage::disk('public')->delete($setting->logo);
+                }
+
+                // Store new logo
+                $logoPath = $request->file('logo')->store('logos', 'public');
+                $data['logo'] = $logoPath;
+            }
+
+            $setting->fill($data);
             $setting->save();
 
             return response()->json([
                 'success' => true,
-                'message' => 'School information updated successfully'
+                'message' => 'School information updated successfully',
+                'logo_url' => $setting->logo ? asset('storage/' . $setting->logo) : null,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error updating school information: ' . $e->getMessage()
+                'message' => 'Error updating school information: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -123,11 +140,11 @@ class SettingsController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Validation failed',
-                    'errors' => $validator->errors()
+                    'errors' => $validator->errors(),
                 ], 422);
             }
 
-            $setting = Setting::first() ?? new Setting();
+            $setting = Setting::first() ?? new Setting;
 
             $setting->fill([
                 'primary_color' => $request->primary_color,
@@ -139,12 +156,12 @@ class SettingsController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Theme updated successfully'
+                'message' => 'Theme updated successfully',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error updating theme: ' . $e->getMessage()
+                'message' => 'Error updating theme: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -164,11 +181,11 @@ class SettingsController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Validation failed',
-                    'errors' => $validator->errors()
+                    'errors' => $validator->errors(),
                 ], 422);
             }
 
-            $setting = Setting::first() ?? new Setting();
+            $setting = Setting::first() ?? new Setting;
 
             $setting->fill([
                 'academic_year_start' => $request->academic_year_start,
@@ -181,12 +198,12 @@ class SettingsController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Academic settings updated successfully'
+                'message' => 'Academic settings updated successfully',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error updating academic settings: ' . $e->getMessage()
+                'message' => 'Error updating academic settings: ' . $e->getMessage(),
             ], 500);
         }
     }

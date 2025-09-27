@@ -2,92 +2,82 @@
 
 namespace App\Http\Controllers\Admin\Management;
 
-use App\Http\Controllers\Controller;
-use App\Traits\CreatesNotifications;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Validation\Rule;
 use App\DataTables\Admin\Management\SubjectDataTable;
+use App\Helpers\ValidationRules;
+use App\Http\Controllers\Admin\BaseManagementController;
 use App\Repositories\Interfaces\Admin\Management\SubjectRepositoryInterface;
-use App\Enums\Status;
+use App\Services\DatabaseTransactionService;
+use App\Services\ImageUploadService;
+use App\Services\UserService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
-class SubjectController extends Controller
+class SubjectController extends BaseManagementController
 {
-    use CreatesNotifications;
-    protected SubjectRepositoryInterface $repository;
-    protected $parentViewPath = 'admin.pages.management.subjects.';
-    protected $parentRoutePath = 'admin.management.subjects.';
+    protected string $parentViewPath = 'admin.pages.management.subjects.';
+    protected string $parentRoutePath = 'admin.management.subjects.';
+    protected string $entityName = 'Subject';
+    protected string $entityType = 'subject';
 
-    public function __construct(SubjectRepositoryInterface $repository)
-    {
-        $this->middleware('auth');
-        $this->repository = $repository;
+    public function __construct(
+        SubjectRepositoryInterface $repository,
+        UserService $userService,
+        ImageUploadService $imageService,
+        DatabaseTransactionService $transactionService
+    ) {
+        parent::__construct($repository, $userService, $imageService, $transactionService);
     }
 
     public function index(SubjectDataTable $datatable)
     {
-        checkPermissionAndRedirect('admin.management.subjects.index');
-        Session::put('title', 'Subject Management');
-        return $datatable->render($this->parentViewPath . 'index');
+        return $this->renderIndex($datatable, $this->parentViewPath);
     }
 
-    public function form($id = null)
+    protected function getFormData($id = null): array
     {
-        checkPermissionAndRedirect('admin.management.subjects.' . ($id ? 'edit' : 'form'));
-        Session::put('title', ($id ? 'Update' : 'Create') . ' Subject');
-
-        if ($id) {
-            $subject = $this->repository->getWithRelations($id);
-            if (!$subject) {
-                flashResponse('Subject not found.', 'danger');
-                return Redirect::route($this->parentRoutePath . 'index');
-            }
-            return view($this->parentViewPath . 'form', compact('subject', 'id'));
-        }
-
-        $subject = null;
-        return view($this->parentViewPath . 'form', compact('id'));
+        // No additional form data needed for subjects
+        return [];
     }
 
-    public function enroll(Request $request)
+    protected function getValidationRules(bool $isUpdate = false, $id = null): array
     {
-        $id = $request->input('id');
-        checkPermissionAndRedirect('admin.management.subjects.' . ($id ? 'edit' : 'form'));
+        return ValidationRules::getSubjectRules($isUpdate, $id);
+    }
 
-        if ($request->has('id') && $request->filled('id')) {
-            return $this->update($request);
+    protected function performCreate(Request $request)
+    {
+        $subjectData = $request->all();
+        $subjectData['is_active'] = $request->input('is_active', true);
+        
+        // Generate subject code if not provided
+        if (empty($subjectData['subject_code'])) {
+            $subjectData['subject_code'] = $this->generateSubjectCode($subjectData['subject_name']);
         }
 
-        $rules = [
-            'subject_name' => 'required|min:2|max:100',
-            'grade_level' => 'required|integer|min:1|max:13',
-            'description' => 'nullable|max:1000',
-            'credits' => 'required|integer|min:1|max:10',
-            'type' => 'required|in:Core,Elective,Optional',
-            'status' => 'required|in:1,2,3',
-        ];
+        $subject = $this->repository->create($subjectData);
+        $this->notifyCreated($this->entityName, $subject);
+        
+        return $subject;
+    }
 
-        $request->validate($rules);
-
-        try {
-            DB::beginTransaction();
-
-            $subject = $this->repository->create($request->all());
-
-            // Create notification for subject creation
-            $this->notifyCreated('Subject', $subject);
-
-            DB::commit();
-
-            flashResponse('Subject created successfully.', 'success');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            flashResponse('Failed to create Subject. Please try again.', 'danger');
+    protected function performUpdate(Request $request, $id)
+    {
+        $subject = $this->repository->getById($id);
+        if (!$subject) {
+            throw new \Exception('Subject not found.');
         }
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        $subjectData = $request->all();
+        
+        // Update subject code if subject name changed
+        if ($request->subject_name !== $subject->subject_name && empty($request->subject_code)) {
+            $subjectData['subject_code'] = $this->generateSubjectCode($request->subject_name);
+        }
+
+        $this->repository->update($id, $subjectData);
+        $this->notifyUpdated($this->entityName, $subject);
+        
+        return $subject;
     }
 
     public function show(string $id)
@@ -103,72 +93,36 @@ class SubjectController extends Controller
         return view($this->parentViewPath . 'view', compact('subject'));
     }
 
-    public function update(Request $request)
+    /**
+     * Generate subject code from subject name
+     */
+    private function generateSubjectCode(string $subjectName): string
     {
-        $id = $request->input('id');
-
-        $rules = [
-            'subject_name' => 'required|min:2|max:100',
-            'grade_level' => 'required|integer|min:1|max:13',
-            'description' => 'nullable|max:1000',
-            'credits' => 'required|integer|min:1|max:10',
-            'type' => 'required|in:Core,Elective,Optional',
-            'status' => 'required|in:1,2,3',
-        ];
-
-        $request->validate($rules);
-
-        try {
-            DB::beginTransaction();
-
-            $subject = $this->repository->getById($id);
-            if (!$subject) {
-                flashResponse('Subject not found.', 'danger');
-                return Redirect::route($this->parentRoutePath . 'index');
-            }
-
-            $this->repository->update($id, $request->all());
-
-            // Create notification for subject update
-            $this->notifyUpdated('Subject', $subject);
-
-            DB::commit();
-
-            flashResponse('Subject updated successfully.', 'success');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            flashResponse('Failed to update Subject. Please try again.', 'danger');
+        // Convert subject name to uppercase and take first 3 letters
+        $code = strtoupper(substr(preg_replace('/[^A-Za-z]/', '', $subjectName), 0, 3));
+        
+        // Add sequential number if needed to make it unique
+        $counter = 1;
+        $originalCode = $code;
+        
+        while ($this->repository->existsByCode($code)) {
+            $code = $originalCode . str_pad($counter, 2, '0', STR_PAD_LEFT);
+            $counter++;
         }
-
-        return redirect()->route($this->parentRoutePath . 'index');
+        
+        return $code;
     }
 
-    public function delete(string $id)
+    protected function performDelete($id)
     {
-        checkPermissionAndRedirect('admin.management.subjects.delete');
-
-        try {
-            DB::beginTransaction();
-
-            $subject = $this->repository->getById($id);
-            if (!$subject) {
-                flashResponse('Subject not found.', 'danger');
-                return Redirect::back();
-            }
-
-            // Create notification for subject deletion (before deletion)
-            $this->notifyDeleted('Subject', $subject);
-
-            $this->repository->delete($id);
-
-            DB::commit();
-
-            flashResponse('Subject deleted successfully.', 'success');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            flashResponse('Failed to delete Subject. Please try again.', 'danger');
+        $subject = $this->repository->getById($id);
+        if (!$subject) {
+            throw new \Exception('Subject not found.');
         }
 
-        return redirect()->route($this->parentRoutePath . 'index');
+        // Create notification before deletion
+        $this->notifyDeleted($this->entityName, $subject);
+        
+        return $this->repository->delete($id);
     }
 }

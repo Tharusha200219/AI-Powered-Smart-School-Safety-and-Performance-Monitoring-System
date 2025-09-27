@@ -229,7 +229,7 @@ class ParentSeeder extends Seeder
         foreach ($parents as $parentData) {
             // Create user account for parent
             $user = User::create([
-                'name' => $parentData['first_name'] . ' ' . $parentData['last_name'],
+                'name' => $parentData['first_name'].' '.$parentData['last_name'],
                 'email' => $parentData['email'],
                 'password' => Hash::make('password123'), // Default password
                 'email_verified_at' => now(),
