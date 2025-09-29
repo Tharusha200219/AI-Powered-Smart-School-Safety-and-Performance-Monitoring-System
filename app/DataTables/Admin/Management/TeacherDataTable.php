@@ -188,7 +188,7 @@ class TeacherDataTable extends DataTable
             checkPermission('admin.management.teachers.edit') ||
             checkPermission('admin.management.teachers.delete')
         ) {
-            $columns[] = Column::computed('action')->title(__('common.actions'))->addClass('text-end align-middle pt-3 pb-0 text-xs')->exportable(false)->printable(false)->orderable(false)->searchable(false);
+            $columns[] = Column::computed('action')->title(__('common.actions'))->addClass('text-start align-middle text-xs')->exportable(false)->printable(false)->orderable(false)->searchable(false);
         }
 
         return $columns;
