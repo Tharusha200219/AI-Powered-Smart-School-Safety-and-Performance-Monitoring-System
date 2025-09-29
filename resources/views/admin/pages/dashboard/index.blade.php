@@ -71,7 +71,7 @@
                                 </div>
                                 <h4 class="mb-0 stat-number">{{ number_format($stats['total_parents']) }}</h4>
                                 <p class="text-sm mb-0 text-capitalize text-muted">{{ __('common.total_parents') }}</p>
-                                <small class="text-muted">
+                                <small class="text-success">
                                     <i class="material-symbols-rounded text-xs">people</i>
                                     {{ __('common.registered') }}
                                 </small>
@@ -89,7 +89,7 @@
                                 </div>
                                 <h4 class="mb-0 stat-number">{{ number_format($stats['total_classes']) }}</h4>
                                 <p class="text-sm mb-0 text-capitalize text-muted">{{ __('common.total_classes') }}</p>
-                                <small class="text-info">
+                                <small class="text-success">
                                     <i class="material-symbols-rounded text-xs">book</i>
                                     {{ $stats['total_subjects'] }} {{ __('common.subjects') }}
                                 </small>
