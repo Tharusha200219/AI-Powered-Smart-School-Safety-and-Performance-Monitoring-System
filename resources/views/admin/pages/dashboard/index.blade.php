@@ -131,7 +131,7 @@
                                     <p class="text-sm mb-0 text-capitalize text-muted">{{ __('school.new_enrollments') }}
                                     </p>
                                     <h4 class="mb-0 stat-number">{{ $recent_enrollments }}</h4>
-                                    <small class="text-muted">{{ __('school.last_30_days') }}</small>
+                                    <small class="text-success">{{ __('school.last_30_days') }}</small>
                                 </div>
                             </div>
                         </div>
