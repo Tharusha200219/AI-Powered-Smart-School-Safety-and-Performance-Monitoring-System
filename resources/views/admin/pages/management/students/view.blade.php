@@ -19,7 +19,7 @@
                                     <h6 class="mb-0">{{ pageTitle() }}</h6>
                                 </div>
                                 <div class="col-6 text-end">
-                                    <a class="btn btn-outline-dark mb-0 d-flex align-items-center justify-content-center btn-back-auto"
+                                    <a class="btn btn-outline-dark mb-0 btn-back-auto"
                                         href="{{ route('admin.management.students.index') }}">
                                         <i class="material-symbols-rounded me-1 icon-size-md">arrow_back</i>Back
                                     </a>
