@@ -15,8 +15,8 @@
                         $breadcrumb = $breadcrumbs[count($breadcrumbs) - 2];
                     @endphp
                     <h3 class="mb-0 h4 font-weight-bolder">{{ ucfirst($breadcrumb) }}</h3>
-                    <p class="mb-4">
-                        <i class="material-symbols-rounded opacity-5">settings</i>
+                    <p class="mb-4 d-flex align-items-center">
+                        <i class="material-symbols-rounded opacity-5 me-2">settings</i>
                         Configure your school settings and customize themes
                     </p>
                 </div>
@@ -102,10 +102,89 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12">
-                                        <x-input name="logo" type="file" title="School Logo" :value="$setting->logo ?? ''"
-                                            accept="image/jpeg,image/jpg,image/png,image/gif" :showPreview="true"
-                                            :maxSize="2048"
-                                            placeholder="Supported formats: JPG, PNG, GIF. Max size: 2MB" />
+                                        <div class="school-logo-upload-section">
+                                            <div class="upload-header mb-3">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="upload-icon-circle me-3">
+                                                        <i class="material-symbols-rounded">school</i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-1 upload-title">School Logo</h6>
+                                                        <small class="text-muted">Upload your school's official logo</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="logo-upload-container">
+                                                <div class="row align-items-center">
+                                                    <div class="col-md-4">
+                                                        <div class="logo-preview-card">
+                                                            <div class="logo-preview-wrapper" id="logo-preview-wrapper">
+                                                                @if ($setting->logo ?? '')
+                                                                    <img id="logo-preview"
+                                                                        src="{{ asset('storage/' . $setting->logo) }}"
+                                                                        alt="School Logo Preview"
+                                                                        class="logo-preview-image">
+                                                                    <div class="logo-overlay">
+                                                                        <i class="material-symbols-rounded">edit</i>
+                                                                    </div>
+                                                                @else
+                                                                    <div class="logo-placeholder" id="logo-placeholder">
+                                                                        <i
+                                                                            class="material-symbols-rounded logo-placeholder-icon">add_photo_alternate</i>
+                                                                        <p class="logo-placeholder-text">Click to upload
+                                                                            logo</p>
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <div class="upload-controls">
+                                                            <input type="file" name="logo" id="logo"
+                                                                class="d-none"
+                                                                accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                                                                onchange="handleLogoUpload(event)">
+
+                                                            <div class="upload-actions mb-3">
+                                                                <button type="button" class="btn btn-primary btn-upload"
+                                                                    onclick="document.getElementById('logo').click()">
+                                                                    <i
+                                                                        class="material-symbols-rounded me-2">cloud_upload</i>
+                                                                    Choose Logo
+                                                                </button>
+                                                                @if ($setting->logo ?? '')
+                                                                    <button type="button"
+                                                                        class="btn btn-outline-danger ms-2"
+                                                                        onclick="removeLogo()">
+                                                                        <i class="material-symbols-rounded me-1">delete</i>
+                                                                        Remove
+                                                                    </button>
+                                                                @endif
+                                                            </div>
+
+                                                            <div class="upload-requirements">
+                                                                <div class="requirement-item">
+                                                                    <i
+                                                                        class="material-symbols-rounded text-success">check_circle</i>
+                                                                    <span>Formats: JPG, PNG, GIF, WebP</span>
+                                                                </div>
+                                                                <div class="requirement-item">
+                                                                    <i
+                                                                        class="material-symbols-rounded text-success">check_circle</i>
+                                                                    <span>Max size: 2MB</span>
+                                                                </div>
+                                                                <div class="requirement-item">
+                                                                    <i
+                                                                        class="material-symbols-rounded text-success">check_circle</i>
+                                                                    <span>Recommended: 200x200px (square)</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="text-end">
@@ -121,279 +200,455 @@
 
                 <!-- Theme Customization -->
                 <div class="col-12">
-                    <div class="card my-4 glassmorphism-card">
-                        <div class="card-header pb-0">
-                            <div class="d-flex align-items-center">
-                                <i class="material-symbols-rounded me-2">palette</i>
-                                <h6 class="mb-0">{{ __('settings.theme_customization') }}</h6>
+                    <div class="card my-4 glassmorphism-card theme-customization-card">
+                        <div class="card-header pb-0 position-relative">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-circle-gradient me-3">
+                                        <i class="material-symbols-rounded">palette</i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">{{ __('settings.theme_customization') }}</h6>
+                                        <small class="text-muted">Customize your brand colors and visual identity</small>
+                                    </div>
+                                </div>
+                                <div class="theme-preview-toggle">
+                                    <button type="button" class="btn btn-sm btn-outline-primary"
+                                        onclick="toggleLivePreview()">
+                                        <i class="material-symbols-rounded me-1">visibility</i>
+                                        <span id="preview-toggle-text">Live Preview</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                        <div class="card-body p-3">
+                        <div class="card-body p-4">
                             <form id="theme-form">
                                 @csrf
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group mb-3">
-                                            <label class="form-label">Primary Color</label>
-                                            <div class="color-picker-group">
-                                                <input type="color" class="form-control color-picker"
-                                                    id="primary_color" name="primary_color"
-                                                    value="{{ $setting->primary_color ?? '#06C167' }}"
-                                                    onchange="updateThemePreview()">
-                                                <input type="text" class="form-control color-text"
-                                                    id="primary_color_text" name="primary_color_text"
-                                                    value="{{ $setting->primary_color ?? '#06C167' }}"
-                                                    onchange="updateColorFromText('primary_color')" placeholder="#06C167">
+
+                                <!-- Quick Color Presets -->
+                                <div class="theme-section mb-5">
+                                    <div class="section-header mb-4">
+                                        <h6 class="section-title">
+                                            <i class="material-symbols-rounded me-2">auto_awesome</i>
+                                            Quick Theme Presets
+                                        </h6>
+                                        <p class="section-subtitle">Choose from pre-designed color schemes</p>
+                                    </div>
+                                    <div class="preset-grid">
+                                        <div class="preset-card"
+                                            onclick="applyColorPreset('#06C167', '#10B981', '#F0FDF4')">
+                                            <div class="preset-preview">
+                                                <div class="color-strip" style="background: #06C167;"></div>
+                                                <div class="color-strip" style="background: #10B981;"></div>
+                                                <div class="color-strip" style="background: #F0FDF4;"></div>
                                             </div>
+                                            <span class="preset-name">Nature Green</span>
+                                        </div>
+                                        <div class="preset-card"
+                                            onclick="applyColorPreset('#3B82F6', '#1D4ED8', '#EFF6FF')">
+                                            <div class="preset-preview">
+                                                <div class="color-strip" style="background: #3B82F6;"></div>
+                                                <div class="color-strip" style="background: #1D4ED8;"></div>
+                                                <div class="color-strip" style="background: #EFF6FF;"></div>
+                                            </div>
+                                            <span class="preset-name">Ocean Blue</span>
+                                        </div>
+                                        <div class="preset-card"
+                                            onclick="applyColorPreset('#8B5CF6', '#7C3AED', '#F3E8FF')">
+                                            <div class="preset-preview">
+                                                <div class="color-strip" style="background: #8B5CF6;"></div>
+                                                <div class="color-strip" style="background: #7C3AED;"></div>
+                                                <div class="color-strip" style="background: #F3E8FF;"></div>
+                                            </div>
+                                            <span class="preset-name">Purple Dream</span>
+                                        </div>
+                                        <div class="preset-card"
+                                            onclick="applyColorPreset('#F59E0B', '#D97706', '#FEF3C7')">
+                                            <div class="preset-preview">
+                                                <div class="color-strip" style="background: #F59E0B;"></div>
+                                                <div class="color-strip" style="background: #D97706;"></div>
+                                                <div class="color-strip" style="background: #FEF3C7;"></div>
+                                            </div>
+                                            <span class="preset-name">Golden Sun</span>
+                                        </div>
+                                        <div class="preset-card"
+                                            onclick="applyColorPreset('#EF4444', '#DC2626', '#FEF2F2')">
+                                            <div class="preset-preview">
+                                                <div class="color-strip" style="background: #EF4444;"></div>
+                                                <div class="color-strip" style="background: #DC2626;"></div>
+                                                <div class="color-strip" style="background: #FEF2F2;"></div>
+                                            </div>
+                                            <span class="preset-name">Vibrant Red</span>
+                                        </div>
+                                        <div class="preset-card"
+                                            onclick="applyColorPreset('#059669', '#047857', '#ECFDF5')">
+                                            <div class="preset-preview">
+                                                <div class="color-strip" style="background: #059669;"></div>
+                                                <div class="color-strip" style="background: #047857;"></div>
+                                                <div class="color-strip" style="background: #ECFDF5;"></div>
+                                            </div>
+                                            <span class="preset-name">Forest Green</span>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group mb-3">
-                                            <label class="form-label">Secondary Color</label>
-                                            <div class="color-picker-group">
-                                                <input type="color" class="form-control color-picker"
-                                                    id="secondary_color" name="secondary_color"
-                                                    value="{{ $setting->secondary_color ?? '#10B981' }}"
-                                                    onchange="updateThemePreview()">
-                                                <input type="text" class="form-control color-text"
-                                                    id="secondary_color_text" name="secondary_color_text"
-                                                    value="{{ $setting->secondary_color ?? '#10B981' }}"
-                                                    onchange="updateColorFromText('secondary_color')"
-                                                    placeholder="#10B981">
+                                </div>
+
+                                <!-- Primary Brand Colors -->
+                                <div class="theme-section mb-5">
+                                    <div class="section-header mb-4">
+                                        <h6 class="section-title">
+                                            <i class="material-symbols-rounded me-2">brand_awareness</i>
+                                            Primary Brand Colors
+                                        </h6>
+                                        <p class="section-subtitle">Define your main brand identity colors</p>
+                                    </div>
+                                    <div class="row g-4">
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="color-input-card">
+                                                <label class="color-label">
+                                                    <i class="material-symbols-rounded me-2">palette</i>
+                                                    Primary Color
+                                                </label>
+                                                <div class="color-picker-enhanced">
+                                                    <div class="color-preview-circle"
+                                                        style="background: {{ $setting->primary_color ?? '#06C167' }};"
+                                                        onclick="document.getElementById('primary_color').click()"></div>
+                                                    <div class="color-inputs">
+                                                        <input type="color" class="color-input-hidden"
+                                                            id="primary_color" name="primary_color"
+                                                            value="{{ $setting->primary_color ?? '#06C167' }}"
+                                                            onchange="updateThemePreview()">
+                                                        <input type="text" class="form-control color-hex-input"
+                                                            id="primary_color_text" name="primary_color_text"
+                                                            value="{{ $setting->primary_color ?? '#06C167' }}"
+                                                            onchange="updateColorFromText('primary_color')"
+                                                            placeholder="#06C167">
+                                                    </div>
+                                                </div>
+                                                <small class="color-description">Main brand color for buttons and
+                                                    highlights</small>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group mb-3">
-                                            <label class="form-label">Accent Color</label>
-                                            <div class="color-picker-group">
-                                                <input type="color" class="form-control color-picker" id="accent_color"
-                                                    name="accent_color" value="{{ $setting->accent_color ?? '#F0FDF4' }}"
-                                                    onchange="updateThemePreview()">
-                                                <input type="text" class="form-control color-text"
-                                                    id="accent_color_text" name="accent_color_text"
-                                                    value="{{ $setting->accent_color ?? '#F0FDF4' }}"
-                                                    onchange="updateColorFromText('accent_color')" placeholder="#F0FDF4">
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="color-input-card">
+                                                <label class="color-label">
+                                                    <i class="material-symbols-rounded me-2">gradient</i>
+                                                    Secondary Color
+                                                </label>
+                                                <div class="color-picker-enhanced">
+                                                    <div class="color-preview-circle"
+                                                        style="background: {{ $setting->secondary_color ?? '#10B981' }};"
+                                                        onclick="document.getElementById('secondary_color').click()"></div>
+                                                    <div class="color-inputs">
+                                                        <input type="color" class="color-input-hidden"
+                                                            id="secondary_color" name="secondary_color"
+                                                            value="{{ $setting->secondary_color ?? '#10B981' }}"
+                                                            onchange="updateThemePreview()">
+                                                        <input type="text" class="form-control color-hex-input"
+                                                            id="secondary_color_text" name="secondary_color_text"
+                                                            value="{{ $setting->secondary_color ?? '#10B981' }}"
+                                                            onchange="updateColorFromText('secondary_color')"
+                                                            placeholder="#10B981">
+                                                    </div>
+                                                </div>
+                                                <small class="color-description">Supporting color for accents and
+                                                    variations</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="color-input-card">
+                                                <label class="color-label">
+                                                    <i class="material-symbols-rounded me-2">brightness_5</i>
+                                                    Accent Color
+                                                </label>
+                                                <div class="color-picker-enhanced">
+                                                    <div class="color-preview-circle"
+                                                        style="background: {{ $setting->accent_color ?? '#F0FDF4' }};"
+                                                        onclick="document.getElementById('accent_color').click()"></div>
+                                                    <div class="color-inputs">
+                                                        <input type="color" class="color-input-hidden"
+                                                            id="accent_color" name="accent_color"
+                                                            value="{{ $setting->accent_color ?? '#F0FDF4' }}"
+                                                            onchange="updateThemePreview()">
+                                                        <input type="text" class="form-control color-hex-input"
+                                                            id="accent_color_text" name="accent_color_text"
+                                                            value="{{ $setting->accent_color ?? '#F0FDF4' }}"
+                                                            onchange="updateColorFromText('accent_color')"
+                                                            placeholder="#F0FDF4">
+                                                    </div>
+                                                </div>
+                                                <small class="color-description">Light background and subtle
+                                                    accents</small>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Status Colors Section -->
-                                <div class="color-section mb-4">
-                                    <h6 class="mb-3 text-success">Status & Alert Colors</h6>
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group mb-3">
-                                                <label class="form-label text-success">Success Color</label>
-                                                <div class="color-picker-group">
-                                                    <input type="color" class="form-control color-picker"
-                                                        id="success-color" name="success_color"
-                                                        value="{{ $setting->success_color ?? '#10B981' }}"
-                                                        onchange="updateThemePreview()">
-                                                    <input type="text" class="form-control color-text"
-                                                        id="success-color-text" name="success_color_text"
-                                                        value="{{ $setting->success_color ?? '#10B981' }}"
-                                                        onchange="updateColorFromText('success-color')"
-                                                        placeholder="#10B981">
+                                <!-- Status & Alert Colors -->
+                                <div class="theme-section mb-5">
+                                    <div class="section-header mb-4">
+                                        <h6 class="section-title">
+                                            <i class="material-symbols-rounded me-2">notification_important</i>
+                                            Status & Alert Colors
+                                        </h6>
+                                        <p class="section-subtitle">Colors for notifications, alerts, and status indicators
+                                        </p>
+                                    </div>
+                                    <div class="row g-3">
+                                        <div class="col-lg-3 col-md-6">
+                                            <div class="status-color-card success-theme">
+                                                <div class="status-header">
+                                                    <i class="material-symbols-rounded">check_circle</i>
+                                                    <span>Success</span>
+                                                </div>
+                                                <div class="color-picker-enhanced mini">
+                                                    <div class="color-preview-circle"
+                                                        style="background: {{ $setting->success_color ?? '#10B981' }};"
+                                                        onclick="document.getElementById('success-color').click()"></div>
+                                                    <div class="color-inputs">
+                                                        <input type="color" class="color-input-hidden"
+                                                            id="success-color" name="success_color"
+                                                            value="{{ $setting->success_color ?? '#10B981' }}"
+                                                            onchange="updateThemePreview()">
+                                                        <input type="text" class="form-control color-hex-input"
+                                                            id="success-color-text" name="success_color_text"
+                                                            value="{{ $setting->success_color ?? '#10B981' }}"
+                                                            onchange="updateColorFromText('success-color')"
+                                                            placeholder="#10B981">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group mb-3">
-                                                <label class="form-label text-info">Info Color</label>
-                                                <div class="color-picker-group">
-                                                    <input type="color" class="form-control color-picker"
-                                                        id="info-color" name="info_color"
-                                                        value="{{ $setting->info_color ?? '#3B82F6' }}"
-                                                        onchange="updateThemePreview()">
-                                                    <input type="text" class="form-control color-text"
-                                                        id="info-color-text" name="info_color_text"
-                                                        value="{{ $setting->info_color ?? '#3B82F6' }}"
-                                                        onchange="updateColorFromText('info-color')"
-                                                        placeholder="#3B82F6">
+                                        <div class="col-lg-3 col-md-6">
+                                            <div class="status-color-card info-theme">
+                                                <div class="status-header">
+                                                    <i class="material-symbols-rounded">info</i>
+                                                    <span>Info</span>
+                                                </div>
+                                                <div class="color-picker-enhanced mini">
+                                                    <div class="color-preview-circle"
+                                                        style="background: {{ $setting->info_color ?? '#3B82F6' }};"
+                                                        onclick="document.getElementById('info-color').click()"></div>
+                                                    <div class="color-inputs">
+                                                        <input type="color" class="color-input-hidden" id="info-color"
+                                                            name="info_color"
+                                                            value="{{ $setting->info_color ?? '#3B82F6' }}"
+                                                            onchange="updateThemePreview()">
+                                                        <input type="text" class="form-control color-hex-input"
+                                                            id="info-color-text" name="info_color_text"
+                                                            value="{{ $setting->info_color ?? '#3B82F6' }}"
+                                                            onchange="updateColorFromText('info-color')"
+                                                            placeholder="#3B82F6">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group mb-3">
-                                                <label class="form-label text-warning">Warning Color</label>
-                                                <div class="color-picker-group">
-                                                    <input type="color" class="form-control color-picker"
-                                                        id="warning-color" name="warning_color"
-                                                        value="{{ $setting->warning_color ?? '#F59E0B' }}"
-                                                        onchange="updateThemePreview()">
-                                                    <input type="text" class="form-control color-text"
-                                                        id="warning-color-text" name="warning_color_text"
-                                                        value="{{ $setting->warning_color ?? '#F59E0B' }}"
-                                                        onchange="updateColorFromText('warning-color')"
-                                                        placeholder="#F59E0B">
+                                        <div class="col-lg-3 col-md-6">
+                                            <div class="status-color-card warning-theme">
+                                                <div class="status-header">
+                                                    <i class="material-symbols-rounded">warning</i>
+                                                    <span>Warning</span>
+                                                </div>
+                                                <div class="color-picker-enhanced mini">
+                                                    <div class="color-preview-circle"
+                                                        style="background: {{ $setting->warning_color ?? '#F59E0B' }};"
+                                                        onclick="document.getElementById('warning-color').click()"></div>
+                                                    <div class="color-inputs">
+                                                        <input type="color" class="color-input-hidden"
+                                                            id="warning-color" name="warning_color"
+                                                            value="{{ $setting->warning_color ?? '#F59E0B' }}"
+                                                            onchange="updateThemePreview()">
+                                                        <input type="text" class="form-control color-hex-input"
+                                                            id="warning-color-text" name="warning_color_text"
+                                                            value="{{ $setting->warning_color ?? '#F59E0B' }}"
+                                                            onchange="updateColorFromText('warning-color')"
+                                                            placeholder="#F59E0B">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group mb-3">
-                                                <label class="form-label text-danger">Danger Color</label>
-                                                <div class="color-picker-group">
-                                                    <input type="color" class="form-control color-picker"
-                                                        id="danger-color" name="danger_color"
-                                                        value="{{ $setting->danger_color ?? '#EF4444' }}"
-                                                        onchange="updateThemePreview()">
-                                                    <input type="text" class="form-control color-text"
-                                                        id="danger-color-text" name="danger_color_text"
-                                                        value="{{ $setting->danger_color ?? '#EF4444' }}"
-                                                        onchange="updateColorFromText('danger-color')"
-                                                        placeholder="#EF4444">
+                                        <div class="col-lg-3 col-md-6">
+                                            <div class="status-color-card danger-theme">
+                                                <div class="status-header">
+                                                    <i class="material-symbols-rounded">error</i>
+                                                    <span>Danger</span>
+                                                </div>
+                                                <div class="color-picker-enhanced mini">
+                                                    <div class="color-preview-circle"
+                                                        style="background: {{ $setting->danger_color ?? '#EF4444' }};"
+                                                        onclick="document.getElementById('danger-color').click()"></div>
+                                                    <div class="color-inputs">
+                                                        <input type="color" class="color-input-hidden"
+                                                            id="danger-color" name="danger_color"
+                                                            value="{{ $setting->danger_color ?? '#EF4444' }}"
+                                                            onchange="updateThemePreview()">
+                                                        <input type="text" class="form-control color-hex-input"
+                                                            id="danger-color-text" name="danger_color_text"
+                                                            value="{{ $setting->danger_color ?? '#EF4444' }}"
+                                                            onchange="updateColorFromText('danger-color')"
+                                                            placeholder="#EF4444">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Gradient Color Pairs Section -->
-                                <div class="color-section mb-4">
-                                    <h6 class="mb-3"
-                                        style="background: linear-gradient(45deg, #6366F1, #8B5CF6); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
-                                        Gradient Color Pairs</h6>
-                                    <div class="row">
+                                <!-- Gradient Configurations -->
+                                <div class="theme-section mb-4">
+                                    <div class="section-header mb-4">
+                                        <h6 class="section-title">
+                                            <i class="material-symbols-rounded me-2">gradient</i>
+                                            Gradient Configurations
+                                        </h6>
+                                        <p class="section-subtitle">Create beautiful gradient combinations for enhanced
+                                            visual appeal</p>
+                                    </div>
+                                    <div class="row g-4">
                                         <div class="col-md-6">
-                                            <label class="form-label">Primary Gradient</label>
-                                            <div class="gradient-pair mb-3">
-                                                <div class="row">
-                                                    <div class="col-6">
-                                                        <div class="form-group">
-                                                            <small class="text-muted">Start Color</small>
-                                                            <div class="color-picker-group">
-                                                                <input type="color" class="form-control color-picker"
-                                                                    id="primary-gradient-start"
-                                                                    name="primary_gradient_start"
-                                                                    value="{{ $setting->primary_gradient_start ?? '#06C167' }}"
-                                                                    onchange="updateGradientPreview('primary')">
-                                                                <input type="text" class="form-control color-text"
-                                                                    id="primary-gradient-start-text"
-                                                                    name="primary_gradient_start_text"
-                                                                    value="{{ $setting->primary_gradient_start ?? '#06C167' }}"
-                                                                    onchange="updateColorFromText('primary-gradient-start')"
-                                                                    placeholder="#06C167">
+                                            <div class="gradient-config-card">
+                                                <div class="gradient-header">
+                                                    <h6 class="gradient-title">Primary Gradient</h6>
+                                                    <small class="text-muted">Used for buttons and key elements</small>
+                                                </div>
+                                                <div class="gradient-controls">
+                                                    <div class="row g-3">
+                                                        <div class="col-6">
+                                                            <label class="gradient-label">Start Color</label>
+                                                            <div class="color-picker-enhanced mini">
+                                                                <div class="color-preview-circle"
+                                                                    style="background: {{ $setting->primary_gradient_start ?? '#06C167' }};"
+                                                                    onclick="document.getElementById('primary-gradient-start').click()">
+                                                                </div>
+                                                                <div class="color-inputs">
+                                                                    <input type="color" class="color-input-hidden"
+                                                                        id="primary-gradient-start"
+                                                                        name="primary_gradient_start"
+                                                                        value="{{ $setting->primary_gradient_start ?? '#06C167' }}"
+                                                                        onchange="updateGradientPreview('primary')">
+                                                                    <input type="text"
+                                                                        class="form-control color-hex-input"
+                                                                        id="primary-gradient-start-text"
+                                                                        name="primary_gradient_start_text"
+                                                                        value="{{ $setting->primary_gradient_start ?? '#06C167' }}"
+                                                                        onchange="updateColorFromText('primary-gradient-start')"
+                                                                        placeholder="#06C167">
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div class="form-group">
-                                                            <small class="text-muted">End Color</small>
-                                                            <div class="color-picker-group">
-                                                                <input type="color" class="form-control color-picker"
-                                                                    id="primary-gradient-end" name="primary_gradient_end"
-                                                                    value="{{ $setting->primary_gradient_end ?? '#10B981' }}"
-                                                                    onchange="updateGradientPreview('primary')">
-                                                                <input type="text" class="form-control color-text"
-                                                                    id="primary-gradient-end-text"
-                                                                    name="primary_gradient_end_text"
-                                                                    value="{{ $setting->primary_gradient_end ?? '#10B981' }}"
-                                                                    onchange="updateColorFromText('primary-gradient-end')"
-                                                                    placeholder="#10B981">
+                                                        <div class="col-6">
+                                                            <label class="gradient-label">End Color</label>
+                                                            <div class="color-picker-enhanced mini">
+                                                                <div class="color-preview-circle"
+                                                                    style="background: {{ $setting->primary_gradient_end ?? '#10B981' }};"
+                                                                    onclick="document.getElementById('primary-gradient-end').click()">
+                                                                </div>
+                                                                <div class="color-inputs">
+                                                                    <input type="color" class="color-input-hidden"
+                                                                        id="primary-gradient-end"
+                                                                        name="primary_gradient_end"
+                                                                        value="{{ $setting->primary_gradient_end ?? '#10B981' }}"
+                                                                        onchange="updateGradientPreview('primary')">
+                                                                    <input type="text"
+                                                                        class="form-control color-hex-input"
+                                                                        id="primary-gradient-end-text"
+                                                                        name="primary_gradient_end_text"
+                                                                        value="{{ $setting->primary_gradient_end ?? '#10B981' }}"
+                                                                        onchange="updateColorFromText('primary-gradient-end')"
+                                                                        placeholder="#10B981">
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="gradient-preview mt-2" id="primary-gradient-preview"
-                                                    style="height: 40px; border-radius: 8px; background: linear-gradient(135deg, {{ $setting->primary_gradient_start ?? '#06C167' }}, {{ $setting->primary_gradient_end ?? '#10B981' }}); box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                                <div class="gradient-preview-enhanced" id="primary-gradient-preview"
+                                                    style="background: linear-gradient(135deg, {{ $setting->primary_gradient_start ?? '#06C167' }}, {{ $setting->primary_gradient_end ?? '#10B981' }});">
+                                                    <span class="gradient-preview-text">Primary Gradient Preview</span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label">Secondary Gradient</label>
-                                            <div class="gradient-pair mb-3">
-                                                <div class="row">
-                                                    <div class="col-6">
-                                                        <div class="form-group">
-                                                            <small class="text-muted">Start Color</small>
-                                                            <div class="color-picker-group">
-                                                                <input type="color" class="form-control color-picker"
-                                                                    id="secondary-gradient-start"
-                                                                    name="secondary_gradient_start"
-                                                                    value="{{ $setting->secondary_gradient_start ?? '#8B5CF6' }}"
-                                                                    onchange="updateGradientPreview('secondary')">
-                                                                <input type="text" class="form-control color-text"
-                                                                    id="secondary-gradient-start-text"
-                                                                    name="secondary_gradient_start_text"
-                                                                    value="{{ $setting->secondary_gradient_start ?? '#8B5CF6' }}"
-                                                                    onchange="updateColorFromText('secondary-gradient-start')"
-                                                                    placeholder="#8B5CF6">
+                                            <div class="gradient-config-card">
+                                                <div class="gradient-header">
+                                                    <h6 class="gradient-title">Secondary Gradient</h6>
+                                                    <small class="text-muted">Used for backgrounds and secondary
+                                                        elements</small>
+                                                </div>
+                                                <div class="gradient-controls">
+                                                    <div class="row g-3">
+                                                        <div class="col-6">
+                                                            <label class="gradient-label">Start Color</label>
+                                                            <div class="color-picker-enhanced mini">
+                                                                <div class="color-preview-circle"
+                                                                    style="background: {{ $setting->secondary_gradient_start ?? '#8B5CF6' }};"
+                                                                    onclick="document.getElementById('secondary-gradient-start').click()">
+                                                                </div>
+                                                                <div class="color-inputs">
+                                                                    <input type="color" class="color-input-hidden"
+                                                                        id="secondary-gradient-start"
+                                                                        name="secondary_gradient_start"
+                                                                        value="{{ $setting->secondary_gradient_start ?? '#8B5CF6' }}"
+                                                                        onchange="updateGradientPreview('secondary')">
+                                                                    <input type="text"
+                                                                        class="form-control color-hex-input"
+                                                                        id="secondary-gradient-start-text"
+                                                                        name="secondary_gradient_start_text"
+                                                                        value="{{ $setting->secondary_gradient_start ?? '#8B5CF6' }}"
+                                                                        onchange="updateColorFromText('secondary-gradient-start')"
+                                                                        placeholder="#8B5CF6">
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div class="form-group">
-                                                            <small class="text-muted">End Color</small>
-                                                            <div class="color-picker-group">
-                                                                <input type="color" class="form-control color-picker"
-                                                                    id="secondary-gradient-end"
-                                                                    name="secondary_gradient_end"
-                                                                    value="{{ $setting->secondary_gradient_end ?? '#EC4899' }}"
-                                                                    onchange="updateGradientPreview('secondary')">
-                                                                <input type="text" class="form-control color-text"
-                                                                    id="secondary-gradient-end-text"
-                                                                    name="secondary_gradient_end_text"
-                                                                    value="{{ $setting->secondary_gradient_end ?? '#EC4899' }}"
-                                                                    onchange="updateColorFromText('secondary-gradient-end')"
-                                                                    placeholder="#EC4899">
+                                                        <div class="col-6">
+                                                            <label class="gradient-label">End Color</label>
+                                                            <div class="color-picker-enhanced mini">
+                                                                <div class="color-preview-circle"
+                                                                    style="background: {{ $setting->secondary_gradient_end ?? '#EC4899' }};"
+                                                                    onclick="document.getElementById('secondary-gradient-end').click()">
+                                                                </div>
+                                                                <div class="color-inputs">
+                                                                    <input type="color" class="color-input-hidden"
+                                                                        id="secondary-gradient-end"
+                                                                        name="secondary_gradient_end"
+                                                                        value="{{ $setting->secondary_gradient_end ?? '#EC4899' }}"
+                                                                        onchange="updateGradientPreview('secondary')">
+                                                                    <input type="text"
+                                                                        class="form-control color-hex-input"
+                                                                        id="secondary-gradient-end-text"
+                                                                        name="secondary_gradient_end_text"
+                                                                        value="{{ $setting->secondary_gradient_end ?? '#EC4899' }}"
+                                                                        onchange="updateColorFromText('secondary-gradient-end')"
+                                                                        placeholder="#EC4899">
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="gradient-preview mt-2" id="secondary-gradient-preview"
-                                                    style="height: 40px; border-radius: 8px; background: linear-gradient(135deg, {{ $setting->secondary_gradient_start ?? '#8B5CF6' }}, {{ $setting->secondary_gradient_end ?? '#EC4899' }}); box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                                <div class="gradient-preview-enhanced" id="secondary-gradient-preview"
+                                                    style="background: linear-gradient(135deg, {{ $setting->secondary_gradient_start ?? '#8B5CF6' }}, {{ $setting->secondary_gradient_end ?? '#EC4899' }});">
+                                                    <span class="gradient-preview-text">Secondary Gradient Preview</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Color Presets -->
-                                <div class="row mt-3">
-                                    <div class="col-12">
-                                        <label class="form-label">Color Presets</label>
-                                        <div class="color-presets d-flex gap-2 flex-wrap">
-                                            <button type="button" class="btn btn-sm color-preset"
-                                                onclick="applyColorPreset('#06C167', '#10B981', '#F0FDF4')"
-                                                style="background: linear-gradient(45deg, #06C167, #10B981, #F0FDF4);">
-                                                Default Green
-                                            </button>
-                                            <button type="button" class="btn btn-sm color-preset"
-                                                onclick="applyColorPreset('#3B82F6', '#1D4ED8', '#EFF6FF')"
-                                                style="background: linear-gradient(45deg, #3B82F6, #1D4ED8, #EFF6FF);">
-                                                Blue Ocean
-                                            </button>
-                                            <button type="button" class="btn btn-sm color-preset"
-                                                onclick="applyColorPreset('#8B5CF6', '#7C3AED', '#F3E8FF')"
-                                                style="background: linear-gradient(45deg, #8B5CF6, #7C3AED, #F3E8FF);">
-                                                Purple Dream
-                                            </button>
-                                            <button type="button" class="btn btn-sm color-preset"
-                                                onclick="applyColorPreset('#F59E0B', '#D97706', '#FEF3C7')"
-                                                style="background: linear-gradient(45deg, #F59E0B, #D97706, #FEF3C7);">
-                                                Golden Sun
-                                            </button>
-                                            <button type="button" class="btn btn-sm color-preset"
-                                                onclick="applyColorPreset('#EF4444', '#DC2626', '#FEF2F2')"
-                                                style="background: linear-gradient(45deg, #EF4444, #DC2626, #FEF2F2);">
-                                                Red Energy
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="text-end mt-3">
-                                    <button type="button" class="btn btn-outline-secondary me-2"
-                                        onclick="resetToDefault()">
-                                        <i class="material-symbols-rounded me-1">refresh</i>
+                                <!-- Action Buttons -->
+                                <div class="d-flex justify-content-between align-items-center mt-4 pt-3"
+                                    style="border-top: 1px solid rgba(0,0,0,0.1);">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="resetToDefault()">
+                                        <i class="material-symbols-rounded me-2">refresh</i>
                                         Reset to Default
                                     </button>
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="material-symbols-rounded me-1">save</i>
-                                        Save Theme
-                                    </button>
+                                    <div class="d-flex gap-2">
+                                        <button type="button" class="btn btn-outline-primary" onclick="exportTheme()">
+                                            <i class="material-symbols-rounded me-2">file_download</i>
+                                            Export Theme
+                                        </button>
+                                        <button type="submit" class="btn btn-primary btn-gradient">
+                                            <i class="material-symbols-rounded me-2">save</i>
+                                            Save Theme Settings
+                                        </button>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -414,31 +669,41 @@
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <div class="input-group input-group-outline mb-3">
-                                            <label class="form-label">{{ __('school.academic_year_starts') }}</label>
-                                            <select class="form-control" name="academic_year_start" required>
-                                                <option value="">{{ __('common.select_option') }}</option>
-                                                @foreach (['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] as $month)
-                                                    <option value="{{ $month }}"
-                                                        {{ ($setting->academic_year_start ?? 'January') === $month ? 'selected' : '' }}>
-                                                        {{ __('settings.' . strtolower($month)) }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
+                                        <div class="mb-3">
+                                            <label for="academic_year_start"
+                                                class="form-label">{{ __('school.academic_year_starts') }}</label>
+                                            <div class="input-group input-group-outline">
+                                                <select class="form-control" name="academic_year_start"
+                                                    id="academic_year_start" required>
+                                                    <option value="" disabled selected>
+                                                        {{ __('school.academic_year_starts') }}</option>
+                                                    @foreach (['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] as $month)
+                                                        <option value="{{ $month }}"
+                                                            {{ ($setting->academic_year_start ?? 'January') === $month ? 'selected' : '' }}>
+                                                            {{ __('settings.' . strtolower($month)) }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="input-group input-group-outline mb-3">
-                                            <label class="form-label">{{ __('school.academic_year_ends') }}</label>
-                                            <select class="form-control" name="academic_year_end" required>
-                                                <option value="">{{ __('common.select_option') }}</option>
-                                                @foreach (['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] as $month)
-                                                    <option value="{{ $month }}"
-                                                        {{ ($setting->academic_year_end ?? 'December') === $month ? 'selected' : '' }}>
-                                                        {{ __('settings.' . strtolower($month)) }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
+                                        <div class="mb-3">
+                                            <label for="academic_year_end"
+                                                class="form-label">{{ __('school.academic_year_ends') }}</label>
+                                            <div class="input-group input-group-outline">
+                                                <select class="form-control" name="academic_year_end"
+                                                    id="academic_year_end" required>
+                                                    <option value="" disabled selected>
+                                                        {{ __('school.academic_year_ends') }}</option>
+                                                    @foreach (['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] as $month)
+                                                        <option value="{{ $month }}"
+                                                            {{ ($setting->academic_year_end ?? 'December') === $month ? 'selected' : '' }}>
+                                                            {{ __('settings.' . strtolower($month)) }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -524,6 +789,320 @@
     </main>
 
     <style>
+        /* Enhanced Theme Customization Styles */
+        .theme-customization-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .icon-circle-gradient {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #06C167, #10B981);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .theme-section {
+            position: relative;
+            padding: 24px;
+            background: rgba(248, 250, 252, 0.6);
+            border-radius: 12px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .section-subtitle {
+            color: #64748b;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        /* Preset Grid */
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+        }
+
+        .preset-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .preset-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+            border-color: #06C167;
+        }
+
+        .preset-preview {
+            display: flex;
+            height: 40px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .color-strip {
+            flex: 1;
+            transition: transform 0.3s ease;
+        }
+
+        .preset-card:hover .color-strip {
+            transform: scale(1.05);
+        }
+
+        .preset-name {
+            font-weight: 500;
+            color: #374151;
+            font-size: 14px;
+            text-align: center;
+            display: block;
+        }
+
+        /* Enhanced Color Inputs */
+        .color-input-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .color-input-card:hover {
+            border-color: #06C167;
+            box-shadow: 0 8px 24px rgba(6, 193, 103, 0.12);
+        }
+
+        .color-label {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .color-picker-enhanced {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .color-picker-enhanced.mini {
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .color-preview-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .color-picker-enhanced.mini .color-preview-circle {
+            width: 36px;
+            height: 36px;
+        }
+
+        .color-preview-circle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+        }
+
+        .color-input-hidden {
+            display: none;
+        }
+
+        .color-inputs {
+            flex: 1;
+        }
+
+        .color-hex-input {
+            font-family: 'JetBrains Mono', 'Monaco', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: 500;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .color-hex-input:focus {
+            border-color: #06C167;
+            box-shadow: 0 0 0 3px rgba(6, 193, 103, 0.1);
+            background: white;
+        }
+
+        .color-description {
+            color: #64748b;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        /* Status Color Cards */
+        .status-color-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .status-color-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .status-color-card.success-theme:hover {
+            border-color: #10B981;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+        }
+
+        .status-color-card.info-theme:hover {
+            border-color: #3B82F6;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15);
+        }
+
+        .status-color-card.warning-theme:hover {
+            border-color: #F59E0B;
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.15);
+        }
+
+        .status-color-card.danger-theme:hover {
+            border-color: #EF4444;
+            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.15);
+        }
+
+        .status-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        /* Gradient Configuration Cards */
+        .gradient-config-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .gradient-config-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            border-color: #06C167;
+        }
+
+        .gradient-header {
+            margin-bottom: 20px;
+        }
+
+        .gradient-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .gradient-controls {
+            margin-bottom: 20px;
+        }
+
+        .gradient-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: #64748b;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .gradient-preview-enhanced {
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gradient-preview-enhanced:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .gradient-preview-text {
+            font-size: 14px;
+            z-index: 2;
+            position: relative;
+        }
+
+        /* Enhanced Buttons */
+        .btn-gradient {
+            background: linear-gradient(135deg, #06C167, #10B981);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(6, 193, 103, 0.3);
+            background: linear-gradient(135deg, #059669, #047857);
+        }
+
+        /* Legacy color picker styles */
         .color-picker-group {
             display: flex;
             gap: 8px;
@@ -569,6 +1148,267 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .preset-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .color-preview-circle {
+                width: 40px;
+                height: 40px;
+            }
+
+            .color-picker-enhanced.mini .color-preview-circle {
+                width: 32px;
+                height: 32px;
+            }
+
+            .theme-section {
+                padding: 16px;
+            }
+        }
+
+        /* Animation for smooth transitions */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .theme-section {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* School Logo Upload Styles */
+        .school-logo-upload-section {
+            background: linear-gradient(145deg, #ffffff, #f8fffe);
+            border: 2px dashed #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .school-logo-upload-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(6, 193, 103, 0.02), rgba(16, 185, 129, 0.02));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .school-logo-upload-section:hover {
+            border-color: #06C167;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(6, 193, 103, 0.15);
+        }
+
+        .school-logo-upload-section:hover::before {
+            opacity: 1;
+        }
+
+        .upload-icon-circle {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #06C167, #10B981);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(6, 193, 103, 0.3);
+        }
+
+        .upload-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .logo-upload-container {
+            margin-top: 16px;
+        }
+
+        .logo-preview-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 2px solid #f1f5f9;
+            transition: all 0.3s ease;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-preview-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            border-color: #06C167;
+        }
+
+        .logo-preview-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .logo-preview-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-preview-wrapper:hover .logo-preview-image {
+            transform: scale(1.05);
+        }
+
+        .logo-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 8px;
+            color: white;
+            font-size: 24px;
+        }
+
+        .logo-preview-wrapper:hover .logo-overlay {
+            opacity: 1;
+        }
+
+        .logo-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .logo-placeholder:hover {
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            border-color: #06C167;
+            color: #06C167;
+        }
+
+        .logo-placeholder-icon {
+            font-size: 3rem;
+            margin-bottom: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-placeholder:hover .logo-placeholder-icon {
+            transform: scale(1.1);
+        }
+
+        .logo-placeholder-text {
+            font-size: 14px;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .upload-controls {
+            padding-left: 20px;
+        }
+
+        .btn-upload {
+            background: linear-gradient(135deg, #06C167, #10B981);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 24px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(6, 193, 103, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-upload:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(6, 193, 103, 0.4);
+            background: linear-gradient(135deg, #059b5a, #0d9b6b);
+        }
+
+        .upload-requirements {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 16px;
+            border-left: 4px solid #06C167;
+        }
+
+        .requirement-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #475569;
+        }
+
+        .requirement-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .requirement-item i {
+            font-size: 16px;
+            margin-right: 8px;
+        }
+
+        /* Upload animations */
+        @keyframes uploadSuccess {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .upload-success {
+            animation: uploadSuccess 0.5s ease-out;
+        }
     </style>
 
     <script>
@@ -580,6 +1420,115 @@
                 sidebarLogo.src = dataUrl;
             }
         };
+
+        // Beautiful logo upload handler
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            const previewWrapper = document.getElementById('logo-preview-wrapper');
+            const maxSize = 2048 * 1024; // 2MB in bytes
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+
+            if (!file) return;
+
+            // Validate file size
+            if (file.size > maxSize) {
+                showNotification('File size must be less than 2MB', 'error');
+                event.target.value = '';
+                return;
+            }
+
+            // Validate file type
+            if (!allowedTypes.includes(file.type)) {
+                showNotification('Please select a valid image file (JPG, PNG, GIF, WebP)', 'error');
+                event.target.value = '';
+                return;
+            }
+
+            // Show loading state
+            previewWrapper.innerHTML = `
+                <div class="logo-placeholder">
+                    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="logo-placeholder-text mt-2">Uploading...</p>
+                </div>
+            `;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // Create new preview with image
+                previewWrapper.innerHTML = `
+                    <img id="logo-preview" src="${e.target.result}" 
+                         alt="School Logo Preview" class="logo-preview-image upload-success">
+                    <div class="logo-overlay">
+                        <i class="material-symbols-rounded">edit</i>
+                    </div>
+                `;
+
+                // Add click handler to preview for re-upload
+                previewWrapper.onclick = function() {
+                    document.getElementById('logo').click();
+                };
+
+                // Update sidebar logo immediately
+                const sidebarLogo = document.querySelector('.sidebar-logo');
+                if (sidebarLogo) {
+                    sidebarLogo.src = e.target.result;
+                }
+
+                // Show success notification
+                showNotification('Logo uploaded successfully!', 'success');
+            };
+
+            reader.onerror = function() {
+                showNotification('Error reading file', 'error');
+                resetLogoPlaceholder();
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        // Remove logo function
+        function removeLogo() {
+            if (confirm('Are you sure you want to remove the school logo?')) {
+                document.getElementById('logo').value = '';
+                resetLogoPlaceholder();
+
+                // Reset sidebar logo to default
+                const sidebarLogo = document.querySelector('.sidebar-logo');
+                if (sidebarLogo) {
+                    sidebarLogo.src = '{{ asset('assets/img/default-logo.png') }}'; // Add your default logo path
+                }
+
+                showNotification('Logo removed successfully!', 'success');
+            }
+        }
+
+        // Reset logo placeholder
+        function resetLogoPlaceholder() {
+            const previewWrapper = document.getElementById('logo-preview-wrapper');
+            previewWrapper.innerHTML = `
+                <div class="logo-placeholder" id="logo-placeholder">
+                    <i class="material-symbols-rounded logo-placeholder-icon">add_photo_alternate</i>
+                    <p class="logo-placeholder-text">Click to upload logo</p>
+                </div>
+            `;
+
+            // Add click handler to placeholder
+            previewWrapper.onclick = function() {
+                document.getElementById('logo').click();
+            };
+        }
+
+        // Add click handler to logo preview wrapper on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const previewWrapper = document.getElementById('logo-preview-wrapper');
+            if (previewWrapper) {
+                previewWrapper.onclick = function() {
+                    document.getElementById('logo').click();
+                };
+            }
+        });
 
         // Theme customization functions
         function updateThemePreview() {
@@ -675,6 +1624,14 @@
                 if (startText) startText.value = startColor;
                 if (endText) endText.value = endColor;
 
+                // Update color preview circles
+                const startCircle = document.querySelector(`#${type}-gradient-start`).parentElement.querySelector(
+                    '.color-preview-circle');
+                const endCircle = document.querySelector(`#${type}-gradient-end`).parentElement.querySelector(
+                    '.color-preview-circle');
+                if (startCircle) startCircle.style.background = startColor;
+                if (endCircle) endCircle.style.background = endColor;
+
                 // Apply gradient to theme system
                 const root = document.documentElement;
                 if (type === 'primary') {
@@ -687,20 +1644,222 @@
             }
         }
 
+        // Enhanced color update function
         function updateColorFromText(colorType) {
-            const textInput = document.getElementById(colorType + "_text");
-            const colorInput = document.getElementById(colorType);
+            const textInput = document.getElementById(colorType.replace('-', '_') + "_text") || document.getElementById(
+                colorType + "-text");
+            const colorInput = document.getElementById(colorType.replace('_', '-'));
+            const colorCircle = colorInput?.parentElement.querySelector('.color-preview-circle');
 
-            if (isValidHexColor(textInput.value)) {
-                colorInput.value = textInput.value;
-                updateThemePreview();
-            } else {
+            if (textInput && isValidHexColor(textInput.value)) {
+                if (colorInput) {
+                    colorInput.value = textInput.value;
+                }
+                if (colorCircle) {
+                    colorCircle.style.background = textInput.value;
+                }
+
+                // Update theme preview or gradient preview
+                if (colorType.includes('gradient')) {
+                    const gradientType = colorType.includes('primary') ? 'primary' : 'secondary';
+                    updateGradientPreview(gradientType);
+                } else {
+                    updateThemePreview();
+                }
+            } else if (textInput) {
                 // Show error for invalid color
                 textInput.style.borderColor = '#EF4444';
                 setTimeout(() => {
                     textInput.style.borderColor = '';
                 }, 2000);
             }
+        }
+
+        // Enhanced theme preview with color circle updates
+        function updateThemePreview() {
+            const primaryColor = document.getElementById("primary_color").value;
+            const secondaryColor = document.getElementById("secondary_color").value;
+            const accentColor = document.getElementById("accent_color").value;
+
+            // Update text inputs for primary colors
+            document.getElementById("primary_color_text").value = primaryColor;
+            document.getElementById("secondary_color_text").value = secondaryColor;
+            document.getElementById("accent_color_text").value = accentColor;
+
+            // Update color preview circles
+            const primaryCircle = document.querySelector('#primary_color').parentElement.querySelector(
+                '.color-preview-circle');
+            const secondaryCircle = document.querySelector('#secondary_color').parentElement.querySelector(
+                '.color-preview-circle');
+            const accentCircle = document.querySelector('#accent_color').parentElement.querySelector(
+                '.color-preview-circle');
+
+            if (primaryCircle) primaryCircle.style.background = primaryColor;
+            if (secondaryCircle) secondaryCircle.style.background = secondaryColor;
+            if (accentCircle) accentCircle.style.background = accentColor;
+
+            // Get status colors if they exist
+            const successColor = document.getElementById("success-color")?.value || '#10B981';
+            const infoColor = document.getElementById("info-color")?.value || '#3B82F6';
+            const warningColor = document.getElementById("warning-color")?.value || '#F59E0B';
+            const dangerColor = document.getElementById("danger-color")?.value || '#EF4444';
+
+            // Update status color text inputs and circles
+            const statusColors = [{
+                    id: 'success-color',
+                    color: successColor
+                },
+                {
+                    id: 'info-color',
+                    color: infoColor
+                },
+                {
+                    id: 'warning-color',
+                    color: warningColor
+                },
+                {
+                    id: 'danger-color',
+                    color: dangerColor
+                }
+            ];
+
+            statusColors.forEach(({
+                id,
+                color
+            }) => {
+                const textInput = document.getElementById(id + "-text");
+                const circle = document.querySelector(`#${id}`).parentElement.querySelector(
+                    '.color-preview-circle');
+
+                if (textInput) textInput.value = color;
+                if (circle) circle.style.background = color;
+            });
+
+            // Apply comprehensive theme colors
+            const root = document.documentElement;
+            root.style.setProperty('--primary-green', primaryColor);
+            root.style.setProperty('--light-green', secondaryColor);
+            root.style.setProperty('--dark-green', secondaryColor);
+            root.style.setProperty('--accent-green', accentColor);
+            root.style.setProperty('--success-green', successColor);
+            root.style.setProperty('--info-blue', infoColor);
+            root.style.setProperty('--warning-orange', warningColor);
+            root.style.setProperty('--danger-red', dangerColor);
+
+            // Convert colors to RGB for rgba usage
+            const primaryRgb = hexToRgb(primaryColor);
+            const secondaryRgb = hexToRgb(secondaryColor);
+            const accentRgb = hexToRgb(accentColor);
+
+            if (primaryRgb) {
+                root.style.setProperty('--primary-rgb', `${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}`);
+            }
+            if (secondaryRgb) {
+                root.style.setProperty('--secondary-rgb', `${secondaryRgb.r}, ${secondaryRgb.g}, ${secondaryRgb.b}`);
+            }
+            if (accentRgb) {
+                root.style.setProperty('--accent-rgb', `${accentRgb.r}, ${accentRgb.g}, ${accentRgb.b}`);
+            }
+
+            // Apply colors immediately for preview
+            applyThemeColors(primaryColor, secondaryColor, accentColor);
+
+            // Update gradient previews
+            updateGradientPreview('primary');
+            updateGradientPreview('secondary');
+
+            // Show preview badge
+            showColorPreview(primaryColor, secondaryColor, accentColor);
+
+            console.log('Comprehensive theme colors applied:', {
+                primaryColor,
+                secondaryColor,
+                accentColor,
+                successColor,
+                infoColor,
+                warningColor,
+                dangerColor
+            });
+        }
+
+        // Enhanced apply color preset function
+        function applyColorPreset(primary, secondary, accent) {
+            // Update primary colors
+            document.getElementById('primary_color').value = primary;
+            document.getElementById('secondary_color').value = secondary;
+            document.getElementById('accent_color').value = accent;
+
+            // Update text inputs
+            document.getElementById('primary_color_text').value = primary;
+            document.getElementById('secondary_color_text').value = secondary;
+            document.getElementById('accent_color_text').value = accent;
+
+            // Update color circles
+            const primaryCircle = document.querySelector('#primary_color').parentElement.querySelector(
+                '.color-preview-circle');
+            const secondaryCircle = document.querySelector('#secondary_color').parentElement.querySelector(
+                '.color-preview-circle');
+            const accentCircle = document.querySelector('#accent_color').parentElement.querySelector(
+                '.color-preview-circle');
+
+            if (primaryCircle) primaryCircle.style.background = primary;
+            if (secondaryCircle) secondaryCircle.style.background = secondary;
+            if (accentCircle) accentCircle.style.background = accent;
+
+            // Update gradients to match
+            if (document.getElementById('primary-gradient-start')) {
+                document.getElementById('primary-gradient-start').value = primary;
+                document.getElementById('primary-gradient-end').value = secondary;
+                updateGradientPreview('primary');
+            }
+
+            updateThemePreview();
+
+            // Add visual feedback
+            showNotification('Color preset applied successfully!', 'success');
+        }
+
+        // New functions for enhanced features
+        function toggleLivePreview() {
+            const toggleBtn = document.getElementById('preview-toggle-text');
+            const isActive = toggleBtn.textContent === 'Stop Preview';
+
+            if (isActive) {
+                toggleBtn.textContent = 'Live Preview';
+                hideColorPreview();
+            } else {
+                toggleBtn.textContent = 'Stop Preview';
+                updateThemePreview();
+            }
+        }
+
+        function exportTheme() {
+            const themeData = {
+                primary_color: document.getElementById('primary_color').value,
+                secondary_color: document.getElementById('secondary_color').value,
+                accent_color: document.getElementById('accent_color').value,
+                success_color: document.getElementById('success-color').value,
+                info_color: document.getElementById('info-color').value,
+                warning_color: document.getElementById('warning-color').value,
+                danger_color: document.getElementById('danger-color').value,
+                primary_gradient_start: document.getElementById('primary-gradient-start').value,
+                primary_gradient_end: document.getElementById('primary-gradient-end').value,
+                secondary_gradient_start: document.getElementById('secondary-gradient-start').value,
+                secondary_gradient_end: document.getElementById('secondary-gradient-end').value,
+                exported_at: new Date().toISOString()
+            };
+
+            const dataStr = JSON.stringify(themeData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
+            const exportFileDefaultName = 'school-theme-export.json';
+
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+
+            showNotification('Theme exported successfully!', 'success');
         }
 
         function isValidHexColor(hex) {
@@ -931,17 +2090,41 @@
         }
 
         function applyColorPreset(primary, secondary, accent) {
+            // Update primary colors
             document.getElementById('primary_color').value = primary;
             document.getElementById('secondary_color').value = secondary;
             document.getElementById('accent_color').value = accent;
+
+            // Update text inputs
             document.getElementById('primary_color_text').value = primary;
             document.getElementById('secondary_color_text').value = secondary;
             document.getElementById('accent_color_text').value = accent;
+
+            // Update color circles
+            const primaryCircle = document.querySelector('#primary_color').parentElement.querySelector(
+                '.color-preview-circle');
+            const secondaryCircle = document.querySelector('#secondary_color').parentElement.querySelector(
+                '.color-preview-circle');
+            const accentCircle = document.querySelector('#accent_color').parentElement.querySelector(
+                '.color-preview-circle');
+
+            if (primaryCircle) primaryCircle.style.background = primary;
+            if (secondaryCircle) secondaryCircle.style.background = secondary;
+            if (accentCircle) accentCircle.style.background = accent;
+
+            // Update gradients to match
+            if (document.getElementById('primary-gradient-start')) {
+                document.getElementById('primary-gradient-start').value = primary;
+                document.getElementById('primary-gradient-end').value = secondary;
+                updateGradientPreview('primary');
+            }
+
             updateThemePreview();
         }
 
         function resetToDefault() {
             applyColorPreset('#06C167', '#10B981', '#F0FDF4');
+            showNotification('Theme reset to default colors!', 'success');
         }
 
         function showNotification(message, type) {
