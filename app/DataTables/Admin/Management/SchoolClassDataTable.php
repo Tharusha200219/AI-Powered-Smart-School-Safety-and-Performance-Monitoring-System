@@ -52,7 +52,7 @@ class SchoolClassDataTable extends DataTable
                     <button class="btn btn-icon border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="material-symbols-outlined text-lg">more_vert</span>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow rounded-3 p-2 w-100">
+                    <ul class="dropdown-menu dropdown-menu-end shadow rounded-3 p-2 w-100 ">
                         '.$dropdownContent.'
                     </ul>
                 </div>';

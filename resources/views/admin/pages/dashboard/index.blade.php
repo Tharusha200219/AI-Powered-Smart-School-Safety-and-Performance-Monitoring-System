@@ -146,7 +146,7 @@
                 <div class="col-xl-6 col-sm-12">
                     <div class="card stat-card" style="--index: 6;">
                         <div class="card-body p-3">
-                            <h6 class="quick-action-btn btn btn-sm" style="color: var(--primary-green); font-weight: 600;">Quick Actions</h6>
+                            <h6 class="quick-action-btn">Quick Actions</h6>
                             <div class="d-flex gap-3 flex-wrap">
                                 <a href="{{ route('admin.management.students.form') }}" class="quick-action-btn btn btn-sm"
                                     style="--index: 0; flex: 1; min-width: 120px;">
@@ -156,10 +156,13 @@
                                     style="--index: 1; flex: 1; min-width: 120px;">
                                     <i class="material-symbols-rounded me-1">school</i>Add Teacher
                                 </a>
-                                <a href="#" class="btn btn-sm btn-outline-warning">
+                                <a href="#" class="quick-action-btn btn btn-sm"
+                                 style="--index: 1; flex: 1; min-width: 120px;">
+                                    
                                     <i class="material-symbols-rounded me-1">class</i>Manage Classes
                                 </a>
-                                <a href="#" class="btn btn-sm btn-outline-info">
+                                <a href="#" class="quick-action-btn btn btn-sm" style="--index: 1; flex: 1; min-width: 120px;"
+                                >
                                     <i class="material-symbols-rounded me-1">book</i>View Reports
                                 </a>
                             </div>

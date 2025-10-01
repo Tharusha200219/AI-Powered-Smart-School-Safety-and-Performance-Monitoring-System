@@ -107,18 +107,20 @@
                                         <i class="material-symbols-rounded me-1">edit</i>
                                         Edit in Settings
                                     </a>
-                                    <a class="btn btn-outline-dark mb-0 d-flex align-items-center justify-content-center btn-back-auto"
-                                        href="{{ route('admin.dashboard.index') }}">
-                                        <i class="material-symbols-rounded me-1 icon-size-md">arrow_back</i>Back to
-                                        Dashboard
+                                    <br><br>
+                                   <a class="btn btn-outline-dark mb-0 d-inline-flex align-items-center justify-content-center btn-back-auto px-3"
+                                     href="{{ route('admin.dashboard.index') }}">
+                                     <i class="material-symbols-rounded me-1 icon-size-md">arrow_back</i>
+                                      Back to Dashboard
                                     </a>
+
                                 </div>
                             </div>
                         </div>
                         <div class="card-body">
                             <!-- Current Academic Year -->
                             <div class="info-section">
-                                <h6>
+                                <h6 class="section-title d-flex align-items-center">
                                     <i class="material-symbols-rounded me-2" style="color: #5e72e4;">calendar_today</i>
                                     Current Academic Year
                                 </h6>
@@ -155,7 +157,7 @@
 
                             <!-- Academic Calendar -->
                             <div class="info-section">
-                                <h6>
+                                <h6 class="section-title d-flex align-items-center">
                                     <i class="material-symbols-rounded me-2" style="color: #5e72e4;">event_note</i>
                                     Academic Calendar
                                 </h6>
@@ -233,7 +235,7 @@
 
                             <!-- School Hours -->
                             <div class="info-section">
-                                <h6>
+                                <h6 class="section-title d-flex align-items-center">
                                     <i class="material-symbols-rounded me-2" style="color: #5e72e4;">schedule</i>
                                     School Hours
                                 </h6>
@@ -292,7 +294,7 @@
 
                             <!-- Academic Year Timeline -->
                             <div class="info-section">
-                                <h6>
+                                <h6 class="section-title d-flex align-items-center">
                                     <i class="material-symbols-rounded me-2" style="color: #5e72e4;">timeline</i>
                                     Academic Timeline
                                 </h6>
