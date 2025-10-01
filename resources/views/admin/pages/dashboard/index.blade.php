@@ -143,10 +143,10 @@
                     </div>
                 </div>
 
-                <div class="col-xl-6 col-sm-12">
+                 <div class="col-xl-6 col-sm-12">
                     <div class="card stat-card" style="--index: 6;">
                         <div class="card-body p-3">
-                            <h6 class="quick-action-btn">Quick Actions</h6>
+                            <h6 class="quick-action">Quick Actions</h6>
                             <div class="d-flex gap-3 flex-wrap">
                                 <a href="{{ route('admin.management.students.form') }}" class="quick-action-btn btn btn-sm"
                                     style="--index: 0; flex: 1; min-width: 120px;">
