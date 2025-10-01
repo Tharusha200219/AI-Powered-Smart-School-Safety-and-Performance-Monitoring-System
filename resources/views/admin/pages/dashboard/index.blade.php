@@ -152,7 +152,7 @@
                                     style="--index: 0; flex: 1; min-width: 120px;">
                                     <i class="material-symbols-rounded me-1">person_add</i>Add Student
                                 </a>
-                                <a href="#" class="quick-action-btn btn btn-sm"
+                                <a href="{{ route('admin.management.teachers.form') }}" class="quick-action-btn btn btn-sm"
                                     style="--index: 1; flex: 1; min-width: 120px;">
                                     <i class="material-symbols-rounded me-1">school</i>Add Teacher
                                 </a>

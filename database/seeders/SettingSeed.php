@@ -15,7 +15,7 @@ class SettingSeed extends Seeder
         // Check if settings already exist
         if (Setting::count() === 0) {
             Setting::create([
-                'title' => env('APP_NAME') ?? 'Smart School Management System',
+                'title' => env('APP_NAME', 'Laravel'),
                 'logo' => null,
                 'company_email' => 'info@smartschool.edu',
                 'company_phone' => '+1234567890',
@@ -37,7 +37,7 @@ class SettingSeed extends Seeder
                 'info_color' => '#3B82F6',
 
                 // School specific settings
-                'school_name' => env('APP_NAME') ?? 'Smart School Management System',
+                'school_name' => env('APP_NAME', 'Laravel'),
                 'school_motto' => 'Excellence in Education',
                 'school_type' => 'Combined',
                 'established_year' => 2020,
@@ -62,6 +62,10 @@ class SettingSeed extends Seeder
                 'sidebar_style' => 'modern',
                 'navbar_style' => 'glass',
             ]);
+
+            echo "Settings seeded successfully!\n";
+        } else {
+            echo "Settings already exist, skipping seeder.\n";
         }
     }
 }

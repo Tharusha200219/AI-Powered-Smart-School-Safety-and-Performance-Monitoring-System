@@ -72,20 +72,22 @@
                                                 <div class="col-sm-6">
                                                     <div class="mb-3">
                                                         <label class="form-label">Full Name:</label>
-                                                        <p class="text-dark font-weight-bold">{{ $teacher->full_name }}</p>
+                                                        <p class="text-dark font-weight-bold" style="padding-left: 8px;">
+                                                            {{ $teacher->full_name }}</p>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-6">
                                                     <div class="mb-3">
                                                         <label class="form-label">Teacher Code:</label>
-                                                        <p class="text-dark font-weight-bold">{{ $teacher->teacher_code }}
+                                                        <p class="text-dark font-weight-bold" style="padding-left: 8px;">
+                                                            {{ $teacher->teacher_code }}
                                                         </p>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-6">
                                                     <div class="mb-3">
                                                         <label class="form-label">Date of Birth:</label>
-                                                        <p class="text-dark font-weight-bold">
+                                                        <p class="text-dark font-weight-bold" style="padding-left: 8px;">
                                                             {{ $teacher->date_of_birth ? $teacher->date_of_birth->format('M d, Y') : 'Not provided' }}
                                                         </p>
                                                     </div>
@@ -93,35 +95,35 @@
                                                 <div class="col-sm-6">
                                                     <div class="mb-3">
                                                         <label class="form-label">Gender:</label>
-                                                        <p class="text-dark font-weight-bold">
+                                                        <p class="text-dark font-weight-bold" style="padding-left: 8px;">
                                                             {{ $teacher->gender ?? 'Not specified' }}</p>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-6">
                                                     <div class="mb-3">
                                                         <label class="form-label">Phone:</label>
-                                                        <p class="text-dark font-weight-bold">
+                                                        <p class="text-dark font-weight-bold" style="padding-left: 8px;">
                                                             {{ $teacher->phone ?? 'Not provided' }}</p>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-6">
                                                     <div class="mb-3">
                                                         <label class="form-label">Email:</label>
-                                                        <p class="text-dark font-weight-bold">
+                                                        <p class="text-dark font-weight-bold" style="padding-left: 8px;">
                                                             {{ $teacher->user->email ?? 'Not provided' }}</p>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-6">
                                                     <div class="mb-3">
                                                         <label class="form-label">NIC Number:</label>
-                                                        <p class="text-dark font-weight-bold">
+                                                        <p class="text-dark font-weight-bold" style="padding-left: 8px;">
                                                             {{ $teacher->nic_number ?? 'Not provided' }}</p>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-6">
                                                     <div class="mb-3">
                                                         <label class="form-label">Hire Date:</label>
-                                                        <p class="text-dark font-weight-bold">
+                                                        <p class="text-dark font-weight-bold" style="padding-left: 8px;">
                                                             {{ $teacher->hire_date ? $teacher->hire_date->format('M d, Y') : 'Not provided' }}
                                                         </p>
                                                     </div>
@@ -129,7 +131,7 @@
                                                 <div class="col-sm-12">
                                                     <div class="mb-3">
                                                         <label class="form-label">Address:</label>
-                                                        <p class="text-dark font-weight-bold">
+                                                        <p class="text-dark font-weight-bold" style="padding-left: 8px;">
                                                             {{ $teacher->address ?? 'Not provided' }}</p>
                                                     </div>
                                                 </div>
@@ -149,14 +151,14 @@
                                                 <div class="col-sm-6">
                                                     <div class="mb-3">
                                                         <label class="form-label">Specialization:</label>
-                                                        <p class="text-dark font-weight-bold">
+                                                        <p class="text-dark font-weight-bold" style="padding-left: 8px;">
                                                             {{ $teacher->specialization ?? 'Not specified' }}</p>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-6">
                                                     <div class="mb-3">
                                                         <label class="form-label">Experience:</label>
-                                                        <p class="text-dark font-weight-bold">
+                                                        <p class="text-dark font-weight-bold" style="padding-left: 8px;">
                                                             @if ($teacher->experience_years)
                                                                 <span
                                                                     class="badge bg-gradient-warning badge-sm">{{ floor($teacher->experience_years) }}
@@ -170,7 +172,7 @@
                                                 <div class="col-sm-12">
                                                     <div class="mb-3">
                                                         <label class="form-label">Qualifications:</label>
-                                                        <p class="text-dark font-weight-bold">
+                                                        <p class="text-dark font-weight-bold" style="padding-left: 8px;">
                                                             {{ $teacher->qualifications ?? 'Not provided' }}</p>
                                                     </div>
                                                 </div>
@@ -190,17 +192,22 @@
                                                 <div class="row">
                                                     @foreach ($teacher->subjects as $subject)
                                                         <div class="col-md-4 mb-3">
-                                                            <div class="border rounded p-3 text-center">
-                                                                <h6 class="mb-2">{{ $subject->subject_name }}</h6>
-                                                                <p class="mb-1"><strong>Code:</strong>
+                                                            <div class="border rounded p-3 text-center d-flex flex-column"
+                                                                style="height: 180px; min-height: 180px;">
+                                                                <h6 class="mb-2 text-truncate"
+                                                                    title="{{ $subject->subject_name }}">
+                                                                    {{ $subject->subject_name }}</h6>
+                                                                <p class="mb-2"><strong>Code:</strong>
                                                                     {{ $subject->subject_code }}</p>
-                                                                <span
-                                                                    class="badge bg-gradient-success badge-sm">{{ $subject->category }}</span>
-                                                                @if ($subject->credits)
-                                                                    <br><small
-                                                                        class="text-secondary">{{ $subject->credits }}
-                                                                        Credits</small>
-                                                                @endif
+                                                                <div class="mt-auto">
+                                                                    <span
+                                                                        class="badge bg-gradient-success badge-sm mb-2">{{ $subject->category }}</span>
+                                                                    @if ($subject->credits)
+                                                                        <br><small
+                                                                            class="text-secondary">{{ $subject->credits }}
+                                                                            Credits</small>
+                                                                    @endif
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     @endforeach
