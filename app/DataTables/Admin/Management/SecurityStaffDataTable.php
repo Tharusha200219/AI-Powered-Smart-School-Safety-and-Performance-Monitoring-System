@@ -107,7 +107,7 @@ class SecurityStaffDataTable extends DataTable
                     $contact[] = '<span class="badge bg-gradient-secondary badge-sm">🏠 ' . $row->home_phone . '</span>';
                 }
 
-                return $contact ? implode('<br>', $contact) : '<span class="text-muted">No contact</span>';
+                return $contact ? implode('<br> <br>', $contact) : '<span class="text-muted">No contact</span>';
             })
             ->addColumn('joining_date', function ($row) {
                 return $row->joining_date ? '<span class="badge bg-gradient-success badge-sm">' . $row->joining_date->format('M d, Y') . '</span>' : '<span class="text-muted">Not set</span>';
