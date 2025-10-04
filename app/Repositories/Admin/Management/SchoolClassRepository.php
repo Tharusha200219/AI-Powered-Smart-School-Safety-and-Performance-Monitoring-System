@@ -31,7 +31,7 @@ class SchoolClassRepository implements SchoolClassRepositoryInterface
     public function create(array $data)
     {
         return DB::transaction(function () use ($data) {
-            if (!isset($data['class_code'])) {
+            if (! isset($data['class_code'])) {
                 $data['class_code'] = $this->generateClassCode();
             }
             return $this->model->create($data);

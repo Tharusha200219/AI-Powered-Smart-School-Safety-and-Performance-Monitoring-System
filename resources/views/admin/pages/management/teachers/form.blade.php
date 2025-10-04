@@ -50,13 +50,12 @@
                                                             <img id="profilePreview"
                                                                 src="{{ asset('storage/' . $teacher->photo_path) }}"
                                                                 alt="Teacher Photo"
-                                                                class="w-100 border-radius-lg shadow-sm">
+                                                                class="w-100 rounded-circle shadow-sm">
                                                         @else
                                                             <div id="profilePreview"
-                                                                class="w-100 border-radius-lg shadow-sm bg-gradient-primary d-flex align-items-center justify-content-center"
-                                                                style="height: 120px;">
-                                                                <i
-                                                                    class="material-symbols-rounded text-white text-lg">person</i>
+                                                                class="w-100 rounded-circle shadow-sm bg-gradient-primary d-flex align-items-center justify-content-center"
+                                                                style="height: 70px; width: 70px;">
+                                                                <i class="material-symbols-rounded text-white text-lg">person</i>
                                                             </div>
                                                         @endif
                                                         <label for="profileImage"

@@ -85,12 +85,13 @@ class SubjectController extends BaseManagementController
         checkPermissionAndRedirect('admin.management.subjects.show');
         $subject = $this->repository->getWithRelations($id);
 
-        if (!$subject) {
+        if (! $subject) {
             flashResponse('Subject not found.', 'danger');
+
             return Redirect::back();
         }
 
-        return view($this->parentViewPath . 'view', compact('subject'));
+        return view($this->parentViewPath.'view', compact('subject'));
     }
 
     /**

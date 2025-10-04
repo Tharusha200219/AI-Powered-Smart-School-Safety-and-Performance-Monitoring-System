@@ -53,12 +53,7 @@
                                                         Contact</span>
                                                 @endif
                                             </div>
-                                            <div class="alert alert-info">
-                                                <small>
-                                                    <i class="material-symbols-rounded text-sm me-1">info</i>
-                                                    This parent was created through <strong>Student Registration</strong>
-                                                </small>
-                                            </div>
+                                          
                                         </div>
                                     </div>
                                 </div>

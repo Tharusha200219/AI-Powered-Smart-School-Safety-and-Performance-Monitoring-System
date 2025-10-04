@@ -30,7 +30,9 @@ class StudentController extends BaseManagementController
     protected string $entityType = 'student';
 
     protected SchoolClassRepositoryInterface $classRepository;
+
     protected SubjectRepositoryInterface $subjectRepository;
+
     protected ParentRepositoryInterface $parentRepository;
     protected ParentCreationService $parentCreationService;
 
@@ -214,12 +216,13 @@ class StudentController extends BaseManagementController
         checkPermissionAndRedirect('admin.management.students.show');
         $student = $this->repository->getWithRelations($id);
 
-        if (!$student) {
+        if (! $student) {
             flashResponse('Student not found.', 'danger');
+
             return Redirect::back();
         }
 
-        return view($this->parentViewPath . 'view', compact('student'));
+        return view($this->parentViewPath.'view', compact('student'));
     }
 
     public function generateCode()

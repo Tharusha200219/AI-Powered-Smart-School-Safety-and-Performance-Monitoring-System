@@ -34,7 +34,7 @@ class SettingsController extends Controller
             'school_type' => 'nullable|in:Primary,Secondary,Combined,International',
             'school_motto' => 'nullable|string|max:500',
             'principal_name' => 'nullable|string|max:255',
-            'established_year' => 'nullable|integer|min:1800|max:' . date('Y'),
+            'established_year' => 'nullable|integer|min:1800|max:'.date('Y'),
             'total_capacity' => 'nullable|integer|min:1',
             'website_url' => 'nullable|url|max:255',
         ]);
@@ -72,7 +72,7 @@ class SettingsController extends Controller
                 'school_type' => 'nullable|in:Primary,Secondary,Combined,International',
                 'school_motto' => 'nullable|string|max:500',
                 'principal_name' => 'nullable|string|max:255',
-                'established_year' => 'nullable|integer|min:1800|max:' . date('Y'),
+                'established_year' => 'nullable|integer|min:1800|max:'.date('Y'),
                 'total_capacity' => 'nullable|integer|min:1',
                 'website_url' => 'nullable|url|max:255',
                 'logo' => 'nullable|image|mimes:jpeg,jpg,png,gif|max:2048',

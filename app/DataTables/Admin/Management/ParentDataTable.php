@@ -26,7 +26,7 @@ class ParentDataTable extends DataTable
                 if ($show) {
                     return '
                     <div class="text-center">
-                        <a href="' . route('admin.management.' . $this->model . '.show', ['id' => $row->parent_id]) . '"
+                        <a href="'.route('admin.management.'.$this->model.'.show', ['id' => $row->parent_id]).'"
                            class="btn btn-sm btn-outline-primary" title="View Parent Details">
                             <i class="material-symbols-rounded text-sm">visibility</i>
                         </a>
@@ -37,16 +37,16 @@ class ParentDataTable extends DataTable
             })
             ->addColumn('name', function ($row) {
                 $avatar = '<div class="avatar avatar-sm rounded-circle bg-gradient-primary me-2">
-                    <span class="text-white text-xs">' . strtoupper(substr($row->first_name, 0, 1)) . '</span>
+                    <span class="text-white text-xs">'.strtoupper(substr($row->first_name, 0, 1)).'</span>
                 </div>';
 
                 return '<div class="d-flex align-items-center">
-                    ' . $avatar . '
-                    <span class="fw-bold">' . $row->full_name . '</span>
+                    '.$avatar.'
+                    <span class="fw-bold">'.$row->full_name.'</span>
                 </div>';
             })
             ->addColumn('parent_code', function ($row) {
-                return '<span class="text-secondary">' . $row->parent_code . '</span>';
+                return '<span class="text-secondary">'.$row->parent_code.'</span>';
             })
             ->addColumn('students', function ($row) {
                 if ($row->students->count() === 0) {
@@ -54,7 +54,7 @@ class ParentDataTable extends DataTable
                 }
 
                 $studentNames = $row->students->take(2)->map(function ($student) {
-                    return '<span class="badge bg-gradient-success badge-sm me-1">' . $student->full_name . '</span>';
+                    return '<span class="badge bg-gradient-success badge-sm me-1">'.$student->full_name.'</span>';
                 })->toArray();
 
                 $display = implode(' ', $studentNames);
@@ -68,10 +68,10 @@ class ParentDataTable extends DataTable
             ->addColumn('contact', function ($row) {
                 $contact = [];
                 if ($row->mobile_phone) {
-                    $contact[] = '<span class="badge bg-gradient-info badge-sm me-1 ">📞 ' . $row->mobile_phone . '</span>';
+                    $contact[] = '<span class="badge bg-gradient-info badge-sm me-1">📞 '.$row->mobile_phone.'</span>';
                 }
                 if ($row->email) {
-                    $contact[] = '<span class="badge bg-gradient-secondary badge-sm">✉️ ' . $row->email . '</span>';
+                    $contact[] = '<span class="badge bg-gradient-secondary badge-sm">✉️ '.$row->email.'</span>';
                 }
 
                 return $contact ? implode('<br>', $contact) : '<span class="text-muted">' . __('common.no_contact') . '</span>';
@@ -172,6 +172,6 @@ class ParentDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'Parent_' . date('YmdHis');
+        return 'Parent_'.date('YmdHis');
     }
 }

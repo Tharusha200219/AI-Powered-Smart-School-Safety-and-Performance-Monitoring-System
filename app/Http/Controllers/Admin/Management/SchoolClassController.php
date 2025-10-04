@@ -24,6 +24,7 @@ class SchoolClassController extends BaseManagementController
     protected string $entityType = 'class';
 
     protected TeacherRepositoryInterface $teacherRepository;
+
     protected SubjectRepositoryInterface $subjectRepository;
 
     public function __construct(
@@ -37,6 +38,7 @@ class SchoolClassController extends BaseManagementController
         parent::__construct($repository, $userService, $imageService, $transactionService);
         $this->teacherRepository = $teacherRepository;
         $this->subjectRepository = $subjectRepository;
+        $this->transactionService = $transactionService;
     }
 
     public function index(SchoolClassDataTable $datatable)
@@ -100,11 +102,15 @@ class SchoolClassController extends BaseManagementController
         checkPermissionAndRedirect('admin.management.classes.show');
         $class = $this->repository->getWithRelations($id);
 
-        if (!$class) {
+        if (! $class) {
             flashResponse('Class not found.', 'danger');
+
             return Redirect::back();
         }
 
-        return view($this->parentViewPath . 'view', compact('class'));
+        return view($this->parentViewPath.'view', compact('class'));
     }
 }
+
+
+
