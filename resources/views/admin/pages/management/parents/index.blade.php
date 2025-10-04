@@ -19,6 +19,7 @@
                             <div class="row">
                                 <div class="col-8 d-flex align-items-center">
                                     <h6 class="mb-0">{{ pageTitle() }}</h6>
+                                    {{--
                                     <div class="ms-3">
                                         <small class="text-muted">
                                             <i class="material-symbols-rounded text-sm me-1">info</i>
@@ -26,7 +27,7 @@
                                                 href="{{ route('admin.management.students.form') }}"
                                                 class="text-decoration-none">Student Registration</a>
                                         </small>
-                                    </div>
+                                    </div> --}}
                                 </div>
                                 <div class="col-4 text-end">
                                     <a class="btn bg-gradient-primary mb-0"

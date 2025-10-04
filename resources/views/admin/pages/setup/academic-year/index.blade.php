@@ -364,7 +364,7 @@
 
                             <!-- Action Buttons -->
                             <div class="row mt-4">
-                                <div class="col-12 text-center">
+                                <div class=" d-flex col-12 text-center">
                                     <a href="{{ route('admin.setup.settings.index') }}" class="btn-edit-settings">
                                         <i class="material-symbols-rounded me-1">edit</i>
                                         Configure Academic Year

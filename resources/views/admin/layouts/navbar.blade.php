@@ -44,13 +44,13 @@
                 </li>
                 <li class="nav-item px-3 d-flex align-items-center d-none d-md-block">
                     <a href="{{ route('admin.setup.settings.index') }}" class="nav-link text-body p-0">
-                        <i class="material-symbols-rounded fixed-plugin-button-nav">settings</i>
+                        <i class="d-flex material-symbols-rounded fixed-plugin-button-nav">settings</i>
                     </a>
                 </li>
                 <li class="nav-item dropdown pe-3 d-flex align-items-center d-none d-md-block">
                     <a href="javascript:;" class="nav-link text-body p-0 position-relative" id="dropdownMenuButton"
                         data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="material-symbols-rounded">notifications</i>
+                        <i class="d-flex material-symbols-rounded">notifications</i>
                         <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill"
                             id="notification-badge" style="display: none;">
                             <span id="notification-count">0</span>
@@ -83,7 +83,7 @@
                     </ul>
                 </li>
                 <li class="nav-item dropdown d-flex align-items-center d-none d-md-block">
-                    <a href="javascript:;" class="nav-link text-body font-weight-bold px-0 position-relative"
+                    <a href="javascript:;" class="d-flex gap-3 nav-link text-body font-weight-bold px-0 position-relative"
                         id="profileDropdownButton" data-bs-toggle="dropdown" aria-expanded="false">
                         @if (Auth::user()->profile_image)
                             <img src="{{ Storage::url(Auth::user()->profile_image) }}" alt="Profile"
@@ -92,7 +92,7 @@
                             <i class="material-symbols-rounded">account_circle</i>
                         @endif
                         <span class="d-none d-lg-inline">{{ Auth::user()->name }}</span>
-                        <i class="material-symbols-rounded ms-1" style="font-size: 16px;">keyboard_arrow_down</i>
+                        <i class="d-flex align-items-center material-symbols-rounded ms-1" style="font-size: 16px;">keyboard_arrow_down</i>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end px-2 py-3 me-sm-n4"
                         aria-labelledby="profileDropdownButton" style="min-width: 220px;">
@@ -124,19 +124,19 @@
                             <hr class="dropdown-divider">
                         </li>
                         <li>
-                            <a class="dropdown-item border-radius-md" href="{{ route('admin.profile.index') }}">
+                            <a class="d-flex dropdown-item border-radius-md" href="{{ route('admin.profile.index') }}">
                                 <i class="material-symbols-rounded me-2">person</i>
                                 <span class="text-sm">My Profile</span>
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item border-radius-md" href="{{ route('admin.profile.edit') }}">
+                            <a class="d-flex dropdown-item border-radius-md" href="{{ route('admin.profile.edit') }}">
                                 <i class="material-symbols-rounded me-2">edit</i>
                                 <span class="text-sm">Edit Profile</span>
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item border-radius-md" href="{{ route('admin.setup.settings.index') }}">
+                            <a class="d-flex dropdown-item border-radius-md" href="{{ route('admin.setup.settings.index') }}">
                                 <i class="material-symbols-rounded me-2">settings</i>
                                 <span class="text-sm">Settings</span>
                             </a>
@@ -145,7 +145,7 @@
                             <hr class="dropdown-divider">
                         </li>
                         <li>
-                            <a class="dropdown-item border-radius-md text-danger" href="{{ route('logout') }}"
+                            <a class="d-flex dropdown-item border-radius-md text-danger" href="{{ route('logout') }}"
                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 <i class="material-symbols-rounded me-2">logout</i>
                                 <span class="text-sm">Sign Out</span>
