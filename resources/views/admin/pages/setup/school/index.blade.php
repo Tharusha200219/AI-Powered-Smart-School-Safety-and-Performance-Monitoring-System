@@ -101,8 +101,8 @@
                                 <div class="col-6 d-flex align-items-center">
                                     <h6 class="mb-0">School Information</h6>
                                 </div>
-                                <div class="col-6 text-end">
-                                    <a href="{{ route('admin.setup.settings.index') }}" class="btn-edit-settings me-2">
+                                <div class="d-flex flex-column align-items-end col-6 text-end">
+                                    <a href="{{ route('admin.setup.settings.index') }}" class="mb-2 btn-edit-settings ">
                                         <i class="material-symbols-rounded me-1">edit</i>
                                         Edit in Settings
                                     </a>
@@ -117,7 +117,7 @@
                         <div class="card-body">
                             <!-- Basic School Information -->
                             <div class="info-section">
-                                <h6>
+                                <h6 class="d-flex align-items-center">
                                     <i class="material-symbols-rounded me-2" style="color: #5e72e4;">school</i>
                                     Basic School Information
                                 </h6>
@@ -194,7 +194,7 @@
 
                             <!-- Contact Information -->
                             <div class="info-section">
-                                <h6>
+                                <h6 class="d-flex align-items-center">
                                     <i class="material-symbols-rounded me-2" style="color: #5e72e4;">contact_phone</i>
                                     Contact Information
                                 </h6>
@@ -239,7 +239,7 @@
 
                             <!-- Address Information -->
                             <div class="info-section">
-                                <h6>
+                                <h6 class="d-flex align-items-center">
                                     <i class="material-symbols-rounded me-2" style="color: #5e72e4;">location_on</i>
                                     Address Information
                                 </h6>
@@ -258,7 +258,7 @@
 
                             <!-- Action Buttons -->
                             <div class="row mt-4">
-                                <div class="col-12 text-center">
+                                <div class="d-flex col-12 text-center">
                                     <a href="{{ route('admin.setup.settings.index') }}" class="btn-edit-settings">
                                         <i class="material-symbols-rounded me-1">edit</i>
                                         Edit School Information

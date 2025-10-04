@@ -468,6 +468,7 @@
                     @endif
 
                     <div class="form-group">
+                        
                         <x-input name="email" type="email" class="form-input @error('email') is-invalid @enderror"
                             placeholder="Enter your email address" :isRequired="true" attr="autocomplete='email' autofocus"
                             :value="old('email')" />
