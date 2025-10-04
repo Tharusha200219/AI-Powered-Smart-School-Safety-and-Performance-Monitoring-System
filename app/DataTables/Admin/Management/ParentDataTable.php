@@ -68,7 +68,7 @@ class ParentDataTable extends DataTable
             ->addColumn('contact', function ($row) {
                 $contact = [];
                 if ($row->mobile_phone) {
-                    $contact[] = '<span class="badge bg-gradient-info badge-sm me-1">📞 ' . $row->mobile_phone . '</span>';
+                    $contact[] = '<span class="badge bg-gradient-info badge-sm me-1 ">📞 ' . $row->mobile_phone . '</span>';
                 }
                 if ($row->email) {
                     $contact[] = '<span class="badge bg-gradient-secondary badge-sm">✉️ ' . $row->email . '</span>';
@@ -152,19 +152,19 @@ class ParentDataTable extends DataTable
     {
         $columns = [
             Column::make('parent_id')->title(__('common.id'))->addClass('text-start align-middle text-xs'),
-            Column::make('parent_code')->title(__('common.code'))->addClass('align-middle text-xs')->searchable(true),
-            Column::make('name')->title(__('common.name'))->addClass('align-middle text-xs')->searchable(true),
-            Column::make('relationship')->title(__('common.relationship'))->addClass('text-center align-middle text-xs')->searchable(true),
+            Column::make('parent_code')->title(__('common.code'))->addClass('text-center align-middle text-xs')->searchable(true),
+            Column::make('name')->title(__('common.name'))->addClass('text-center align-middle text-xs')->searchable(true),
+            Column::make('relationship')->title(__('common.relationship'))->addClass('text-start align-middle text-xs')->searchable(true),
             Column::make('students')->title(__('common.students'))->addClass('text-start align-middle text-xs')->searchable(false)->orderable(false),
             Column::make('contact')->title(__('common.contact'))->addClass('text-center align-middle text-xs')->searchable(true),
-            Column::make('occupation')->title(__('common.occupation'))->addClass('text-center align-middle text-xs')->searchable(true),
+            Column::make('occupation')->title(__('common.occupation'))->addClass('text-star align-middle text-xs')->searchable(true),
             Column::make('emergency')->title(__('common.emergency'))->addClass('text-center align-middle text-xs')->searchable(false),
             Column::make('status')->title(__('common.status'))->searchable(false)->orderable(false)->addClass('text-center align-middle text-xs'),
             Column::make('modified')->title(__('common.modified'))->addClass('text-start align-middle text-xs')->searchable(false),
         ];
 
         if (checkPermission('admin.management.parents.show')) {
-            $columns[] = Column::computed('action')->title(__('common.actions'))->addClass('text-center align-middle pt-3 pb-0 text-xs')->exportable(false)->printable(false)->orderable(false)->searchable(false);
+            $columns[] = Column::computed('action')->title(__('common.actions'))->addClass('text-center align-middle py-2  text-xs')->exportable(false)->printable(false)->orderable(false)->searchable(false);
         }
 
         return $columns;

@@ -174,14 +174,14 @@ class SubjectDataTable extends DataTable
     {
         $columns = [
             Column::make('id')->title('#')->addClass('text-start align-middle text-xs'),
-            Column::make('subject_code')->title('CODE')->addClass('align-middle text-xs')->searchable(true),
-            Column::make('name')->title('SUBJECT')->addClass('align-middle text-xs')->searchable(true),
-            Column::make('grade_levels')->title('GRADE LEVELS')->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
-            Column::make('teachers_count')->title('TEACHERS')->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
-            Column::make('classes_count')->title('CLASSES')->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
-            Column::make('students_count')->title('STUDENTS')->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
-            Column::make('credits')->title('CREDITS')->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
-            Column::make('status')->title('STATUS')->searchable(false)->orderable(false)->addClass('text-center align-middle text-xs'),
+            Column::make('subject_code')->title('CODE')->addClass('text-start align-middle text-xs')->searchable(true),
+            Column::make('name')->title('SUBJECT')->addClass('text-start align-middle text-xs')->searchable(true),
+            Column::make('grade_levels')->title('GRADE LEVELS')->addClass('text-start align-middle text-xs')->searchable(false)->orderable(false),
+            Column::make('teachers_count')->title('TEACHERS')->addClass('text-start align-middle text-xs')->searchable(false)->orderable(false),
+            Column::make('classes_count')->title('CLASSES')->addClass('text-start align-middle text-xs')->searchable(false)->orderable(false),
+            Column::make('students_count')->title('STUDENTS')->addClass('text-start align-middle text-xs')->searchable(false)->orderable(false),
+            Column::make('credits')->title('CREDITS')->addClass('text-start align-middle text-xs')->searchable(false)->orderable(false),
+            Column::make('status')->title('STATUS')->searchable(false)->orderable(false)->addClass('text-start align-middle text-xs'),
             Column::make('modified')->title('MODIFIED')->addClass('text-start align-middle text-xs')->searchable(false),
         ];
 
@@ -191,7 +191,7 @@ class SubjectDataTable extends DataTable
             checkPermission('admin.management.subjects.edit') ||
             checkPermission('admin.management.subjects.delete')
         ) {
-            $columns[] = Column::computed('action')->title('ACTIONS')->addClass('text-end align-middle pt-3 pb-0 text-xs')->exportable(false)->printable(false)->orderable(false)->searchable(false);
+            $columns[] = Column::computed('action')->title('ACTIONS')->addClass('text-end align-middle py=2 text-xs')->exportable(false)->printable(false)->orderable(false)->searchable(false);
         }
 
         return $columns;
