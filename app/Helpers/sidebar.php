@@ -43,6 +43,7 @@ function translateSidebarText($text)
         'Grades' => __('common.grades'),
         'Attendance' => __('common.attendance'),
         'Timetable' => __('common.timetable'),
+        'Timetable Viewer' => __('common.timetable_viewer'),
         'Visitors' => __('common.visitors'),
         'Incidents' => __('common.incidents'),
         'Student Reports' => __('common.student_reports'),
