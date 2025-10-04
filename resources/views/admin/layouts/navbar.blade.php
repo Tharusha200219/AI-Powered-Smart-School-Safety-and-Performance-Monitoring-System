@@ -28,7 +28,7 @@
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
             <div class="ms-md-auto pe-md-3 d-flex align-items-center d-none d-md-block">
                 <div class="input-group input-group-outline">
-                    <label class="form-label">Type here...</label>
+                    <label class="form-label">Search here...</label>
                     <input type="text" class="form-control">
                 </div>
             </div>
@@ -57,8 +57,8 @@
                         </span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton"
-                        style="max-width: 350px; max-height: 300px; width:350px;">
-                        <li class="d-flex justify-content-between align-items-center mb-2">
+                        style="max-width: 350px; max-height: 400px; overflow-y: auto;">
+                        <li class="text-center mb-3">
                             <h6 class="mb-0">Notifications</h6>
                             <button type="button" class="btn btn-sm btn-outline-primary" id="mark-all-read">
                                 Mark all as read

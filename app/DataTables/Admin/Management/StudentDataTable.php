@@ -168,7 +168,7 @@ class StudentDataTable extends DataTable
             Column::make('grade_level')->title(__('common.grade'))->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
             Column::make('class')->title(__('common.class'))->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
             Column::make('email')->title(__('common.email'))->addClass('text-start align-middle text-xs')->searchable(true),
-            Column::make('parents')->title(__('common.parents'))->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
+            Column::make('parents')->title(__('common.parents'))->addClass('text-start align-middle text-xs text-truncate')->width(150)->searchable(false)->orderable(false),
             Column::make('status')->title(__('common.status'))->searchable(false)->orderable(false)->addClass('text-center align-middle text-xs'),
             Column::make('modified')->title(__('common.modified'))->addClass('text-start align-middle text-xs')->searchable(false),
         ];
