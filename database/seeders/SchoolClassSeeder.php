@@ -12,126 +12,103 @@ class SchoolClassSeeder extends Seeder
      */
     public function run(): void
     {
-        $classes = [
-            [
-                'class_code' => 'CL-001',
-                'class_name' => 'Grade 1A',
-                'grade_level' => '1',
-                'academic_year' => '2024-2025',
-                'section' => 'A',
-                'room_number' => '101',
-                'capacity' => 25,
-                'description' => 'First grade class section A with focus on foundational learning',
-                'status' => 'active',
-            ],
-            [
-                'class_code' => 'CL-002',
-                'class_name' => 'Grade 1B',
-                'grade_level' => '1',
-                'academic_year' => '2024-2025',
-                'section' => 'B',
-                'room_number' => '102',
-                'capacity' => 25,
-                'description' => 'First grade class section B with emphasis on creative learning',
-                'status' => 'active',
-            ],
-            [
-                'class_code' => 'CL-003',
-                'class_name' => 'Grade 2A',
-                'grade_level' => '2',
-                'academic_year' => '2024-2025',
-                'section' => 'A',
-                'room_number' => '201',
-                'capacity' => 28,
-                'description' => 'Second grade class section A with advanced reading programs',
-                'status' => 'active',
-            ],
-            [
-                'class_code' => 'CL-004',
-                'class_name' => 'Grade 2B',
-                'grade_level' => '2',
-                'academic_year' => '2024-2025',
-                'section' => 'B',
-                'room_number' => '202',
-                'capacity' => 28,
-                'description' => 'Second grade class section B with STEM focus',
-                'status' => 'active',
-            ],
-            [
-                'class_code' => 'CL-005',
-                'class_name' => 'Grade 3A',
-                'grade_level' => '3',
-                'academic_year' => '2024-2025',
-                'section' => 'A',
-                'room_number' => '301',
-                'capacity' => 30,
-                'description' => 'Third grade class section A with comprehensive curriculum',
-                'status' => 'active',
-            ],
-            [
-                'class_code' => 'CL-006',
-                'class_name' => 'Grade 3B',
-                'grade_level' => '3',
-                'academic_year' => '2024-2025',
-                'section' => 'B',
-                'room_number' => '302',
-                'capacity' => 30,
-                'description' => 'Third grade class section B with arts integration',
-                'status' => 'active',
-            ],
-            [
-                'class_code' => 'CL-007',
-                'class_name' => 'Grade 4A',
-                'grade_level' => '4',
-                'academic_year' => '2024-2025',
-                'section' => 'A',
-                'room_number' => '401',
-                'capacity' => 32,
-                'description' => 'Fourth grade class section A with technology integration',
-                'status' => 'active',
-            ],
-            [
-                'class_code' => 'CL-008',
-                'class_name' => 'Grade 4B',
-                'grade_level' => '4',
-                'academic_year' => '2024-2025',
-                'section' => 'B',
-                'room_number' => '402',
-                'capacity' => 32,
-                'description' => 'Fourth grade class section B with project-based learning',
-                'status' => 'active',
-            ],
-            [
-                'class_code' => 'CL-009',
-                'class_name' => 'Grade 5A',
-                'grade_level' => '5',
-                'academic_year' => '2024-2025',
-                'section' => 'A',
-                'room_number' => '501',
-                'capacity' => 35,
-                'description' => 'Fifth grade class section A preparing for middle school transition',
-                'status' => 'active',
-            ],
-            [
-                'class_code' => 'CL-010',
-                'class_name' => 'Grade 5B',
-                'grade_level' => '5',
-                'academic_year' => '2024-2025',
-                'section' => 'B',
-                'room_number' => '502',
-                'capacity' => 35,
-                'description' => 'Fifth grade class section B with advanced mathematics and science',
-                'status' => 'active',
-            ],
-        ];
+        $this->command->info('Creating school classes for grades 1-13 with sections A, B, C...');
 
-        foreach ($classes as $classData) {
-            $schoolClass = SchoolClass::create($classData);
-            $this->command->info("Created class: {$schoolClass->class_name} ({$schoolClass->class_code})");
+        $sections = ['A', 'B', 'C'];
+        $academicYear = '2024-2025';
+        $classCounter = 1;
+
+        // Create classes for grades 1-13
+        for ($grade = 1; $grade <= 13; $grade++) {
+            foreach ($sections as $section) {
+                $classCode = 'CL-' . str_pad($classCounter, 3, '0', STR_PAD_LEFT);
+                $className = "Grade {$grade}{$section}";
+
+                // Determine capacity based on grade level
+                $capacity = $this->getCapacityByGrade($grade);
+
+                // Determine room number
+                $roomNumber = $this->getRoomNumber($grade, $section);
+
+                // Create class description
+                $description = $this->getClassDescription($grade, $section);
+
+                $classData = [
+                    'class_code' => $classCode,
+                    'class_name' => $className,
+                    'grade_level' => $grade,
+                    'academic_year' => $academicYear,
+                    'section' => $section,
+                    'room_number' => $roomNumber,
+                    'capacity' => $capacity,
+                    'description' => $description,
+                    'status' => 'active',
+                ];
+
+                $schoolClass = SchoolClass::create($classData);
+                $this->command->info("Created class: {$schoolClass->class_name} ({$schoolClass->class_code})");
+
+                $classCounter++;
+            }
         }
 
         // After all teachers are created, assign class teachers
         $this->assignClassTeachers();
+    }
+
+    /**
+     * Get capacity based on grade level
+     */
+    private function getCapacityByGrade(int $grade): int
+    {
+        if ($grade <= 2) {
+            return 25; // Smaller classes for younger students
+        } elseif ($grade <= 5) {
+            return 30; // Standard elementary capacity
+        } elseif ($grade <= 8) {
+            return 32; // Middle school capacity
+        } else {
+            return 35; // High school capacity
+        }
+    }
+
+    /**
+     * Get room number based on grade and section
+     */
+    private function getRoomNumber(int $grade, string $section): string
+    {
+        $sectionNumber = ord($section) - ord('A') + 1; // A=1, B=2, C=3
+        return $grade . str_pad($sectionNumber, 2, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Get class description based on grade and section
+     */
+    private function getClassDescription(int $grade, string $section): string
+    {
+        $descriptions = [
+            'A' => 'Section A with focus on comprehensive curriculum and academic excellence',
+            'B' => 'Section B with emphasis on creative learning and practical applications',
+            'C' => 'Section C with integration of technology and project-based learning'
+        ];
+
+        $gradeLevel = $this->getGradeLevelName($grade);
+
+        return "{$gradeLevel} class section {$section}. " . $descriptions[$section];
+    }
+
+    /**
+     * Get grade level descriptive name
+     */
+    private function getGradeLevelName(int $grade): string
+    {
+        if ($grade <= 5) {
+            return "Elementary grade {$grade}";
+        } elseif ($grade <= 8) {
+            return "Middle school grade {$grade}";
+        } else {
+            return "High school grade {$grade}";
+        }
     }
 
     /**

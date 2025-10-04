@@ -55,10 +55,18 @@ class SchoolClass extends Model
     }
 
     /**
+     * Get timetables for this class
+     */
+    public function timetables()
+    {
+        return $this->hasMany(Timetable::class, 'school_class_id');
+    }
+
+    /**
      * Get full class name with section
      */
     public function getFullNameAttribute()
     {
-        return $this->class_name.($this->section ? ' - '.$this->section : '');
+        return $this->class_name . ($this->section ? ' - ' . $this->section : '');
     }
 }

@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
 
         // Basic data seeding (order matters due to relationships)
         $this->call(SubjectSeeder::class);
+        $this->call(TimeSlotsSeeder::class); // Create time slots before classes
         $this->call(SchoolClassSeeder::class);
         $this->call(ParentSeeder::class);
         $this->call(TeacherSeeder::class);
@@ -27,5 +28,6 @@ class DatabaseSeeder extends Seeder
 
         // Final assignments (after all entities are created)
         $this->call(ClassTeacherAssignmentSeeder::class);
+        $this->call(TimetableSeeder::class); // Create timetables last
     }
 }

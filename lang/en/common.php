@@ -19,6 +19,7 @@ return [
     'grades' => 'Grades',
     'attendance' => 'Attendance',
     'timetable' => 'Timetable',
+    'timetable_viewer' => 'Timetable Viewer',
     'visitors' => 'Visitors',
     'incidents' => 'Incidents',
     'reports' => 'Reports',
