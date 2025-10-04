@@ -19,7 +19,7 @@
                                     <h6 class="mb-0">{{ pageTitle() }}</h6>
                                 </div>
                                 <div class="col-6 text-end">
-                                    <a class="btn btn-outline-dark mb-0 d-flex align-items-center justify-content-center btn-back-auto"
+                                    <a class="btn btn-outline-dark mb-0 btn-back-auto"
                                         href="{{ route('admin.management.teachers.index') }}">
                                         <i class="material-symbols-rounded me-1 icon-size-md">arrow_back</i>Back
                                     </a>
@@ -50,23 +50,22 @@
                                                             <img id="profilePreview"
                                                                 src="{{ asset('storage/' . $teacher->photo_path) }}"
                                                                 alt="Teacher Photo"
-                                                                class="w-100 border-radius-lg shadow-sm">
+                                                                class="w-100 rounded-circle shadow-sm">
                                                         @else
                                                             <div id="profilePreview"
-                                                                class="w-100 border-radius-lg shadow-sm bg-gradient-primary d-flex align-items-center justify-content-center"
-                                                                style="height: 120px;">
-                                                                <i
-                                                                    class="material-symbols-rounded text-white text-lg">person</i>
+                                                                class="w-100 rounded-circle shadow-sm bg-gradient-primary d-flex align-items-center justify-content-center"
+                                                                style="height: 70px; width: 70px;">
+                                                                <i class="material-symbols-rounded text-white text-lg">person</i>
                                                             </div>
                                                         @endif
                                                         <label for="profileImage"
-                                                            class="btn btn-sm btn-icon-only bg-gradient-light position-absolute bottom-0 end-0 mb-n2 me-n2 cursor-pointer">
+                                                            class="btn btn-sm btn-icon-only bg-gradient-light position-absolute bottom-20 end-0 mb-n2 me-n2 cursor-pointer">
                                                             <i class="material-symbols-rounded text-xs">edit</i>
                                                         </label>
                                                         <input type="file" id="profileImage" name="profile_image"
                                                             accept="image/*" style="display: none;">
                                                     </div>
-                                                    <small class="text-muted">Click the edit icon to upload a photo</small>
+                                                    <small class="text-muted" style="margin-left: 8px">Click the edit icon to upload a photo</small>
                                                 </div>
                                             </div>
                                             <div class="col-md-9">

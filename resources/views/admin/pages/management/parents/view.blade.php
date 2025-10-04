@@ -19,7 +19,7 @@
                                     <h6 class="mb-0">{{ pageTitle() }}</h6>
                                 </div>
                                 <div class="col-6 text-end">
-                                    <a class="btn btn-outline-dark mb-0 d-flex align-items-center justify-content-center btn-back-auto"
+                                    <a class="btn btn-outline-dark mb-0 btn-back-auto"
                                         href="{{ route('admin.management.parents.index') }}">
                                         <i class="material-symbols-rounded me-1 icon-size-md">arrow_back</i>Back
                                     </a>
@@ -53,12 +53,7 @@
                                                         Contact</span>
                                                 @endif
                                             </div>
-                                            <div class="alert alert-info">
-                                                <small>
-                                                    <i class="material-symbols-rounded text-sm me-1">info</i>
-                                                    This parent was created through <strong>Student Registration</strong>
-                                                </small>
-                                            </div>
+                                          
                                         </div>
                                     </div>
                                 </div>

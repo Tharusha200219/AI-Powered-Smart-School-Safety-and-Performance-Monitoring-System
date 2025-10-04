@@ -79,6 +79,11 @@
             justify-content: center;
             margin-right: 12px;
         }
+
+        /* Reduce vertical spacing for password fields */
+        .password-field .input-group-outline {
+            margin-bottom: 0.75rem !important;
+        }
     </style>
 @endsection
 
@@ -99,7 +104,7 @@
                                     <h6 class="mb-0">{{ pageTitle() }}</h6>
                                 </div>
                                 <div class="col-6 text-end">
-                                    <a class="btn btn-outline-dark mb-0 d-flex align-items-center justify-content-center btn-back-auto"
+                                    <a class="btn btn-outline-dark mb-0 btn-back-auto"
                                         href="{{ route('admin.management.students.index') }}">
                                         <i
                                             class="material-symbols-rounded me-1 icon-size-md">arrow_back</i>{{ __('common.back') }}
@@ -128,34 +133,36 @@
                                         <div class="row mb-4">
                                             <div class="col-md-3">
                                                 <div class="text-center">
-                                                    <div class="avatar avatar-xl position-relative mb-3">
+                                                    <div class="avatar avatar-xl position-relative mb-1">
                                                         @if (isset($student) && $student->photo_path)
                                                             <img id="profilePreview"
                                                                 src="{{ asset('storage/' . $student->photo_path) }}"
                                                                 alt="Student Photo"
-                                                                class="w-100 border-radius-lg shadow-sm">
+                                                                class="w-100 h-100 border-radius-lg shadow-sm object-fit-cover"
+                                                                style="border-radius: 50%;">
                                                         @else
                                                             <div id="profilePreview"
-                                                                class="w-100 border-radius-lg shadow-sm bg-gradient-primary d-flex align-items-center justify-content-center"
-                                                                style="height: 120px;">
+                                                                class="w-100 h-100 border-radius-lg shadow-sm bg-gradient-primary d-flex align-items-center justify-content-center"
+                                                                style="border-radius: 50%;">
                                                                 <i
                                                                     class="material-symbols-rounded text-white text-lg">person</i>
                                                             </div>
                                                         @endif
                                                         <label for="profileImage"
-                                                            class="btn btn-sm btn-icon-only bg-gradient-light position-absolute bottom-0 end-0 mb-n2 me-n2 cursor-pointer">
+                                                            class="btn btn-sm btn-icon-only bg-gradient-light position-absolute bottom-20 end-0 mb-n2 me-n2 cursor-pointer">
                                                             <i class="material-symbols-rounded text-xs">edit</i>
                                                         </label>
                                                         <input type="file" id="profileImage" name="profile_image"
                                                             accept="image/*" style="display: none;">
                                                     </div>
-                                                    <small
-                                                        class="text-muted">{{ __('common.click_edit_icon_upload_photo') }}</small>
+                                                    <small class="text-muted" style="margin-left: 8px">Click the edit icon
+                                                        to upload a photo</small>
                                                 </div>
                                             </div>
                                             <div class="col-md-9">
+                                                <!-- 4-column layout for first row -->
                                                 <div class="row">
-                                                    <div class="col-md-4">
+                                                    <div class="col-md-3">
                                                         <x-input name="student_code" title="{{ __('school.student_code') }}"
                                                             :isRequired="true"
                                                             attr="maxlength='50' readonly style='background-color: #f8f9fa; cursor: not-allowed;'"
@@ -168,54 +175,69 @@
                                                                 class="form-text text-muted">{{ __('common.auto_generated') }}</small>
                                                         @endif
                                                     </div>
-                                                    <div class="col-md-4">
+                                                    <div class="col-md-3">
                                                         <x-input name="first_name" title="First Name" :isRequired="true"
                                                             attr="maxlength='50'" :value="old('first_name', $student->first_name ?? '')" />
                                                     </div>
-                                                    <div class="col-md-4">
+                                                    <div class="col-md-3">
                                                         <x-input name="middle_name" title="Middle Name"
                                                             attr="maxlength='50'" :value="old('middle_name', $student->middle_name ?? '')" />
                                                     </div>
+                                                    <div class="col-md-3">
+                                                        <x-input name="last_name" title="Last Name" :isRequired="true"
+                                                            attr="maxlength='50'" :value="old('last_name', $student->last_name ?? '')" />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
 
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <x-input name="last_name" title="Last Name" :isRequired="true"
-                                                    attr="maxlength='50'" :value="old('last_name', $student->last_name ?? '')" />
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <x-input name="date_of_birth" type="date" title="Date of Birth"
-                                                    :isRequired="true" :value="old('date_of_birth', $student->date_of_birth ?? '')" />
-                                            </div>
-                                            <div class="col-md-3">
-                                                <x-input name="gender" type="select" title="Gender" :isRequired="true"
-                                                    placeholder="Select Gender" :options="['M' => 'Male', 'F' => 'Female', 'Other' => 'Other']" :value="old('gender', $student->gender ?? '')" />
-                                            </div>
-                                            <div class="col-md-3">
-                                                <x-input name="nationality" title="Nationality" attr="maxlength='50'"
-                                                    :value="old('nationality', $student->nationality ?? '')" />
-                                            </div>
-                                            <div class="col-md-3">
-                                                <x-input name="religion" title="Religion" attr="maxlength='50'"
-                                                    :value="old('religion', $student->religion ?? '')" />
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <x-input name="home_language" title="Home Language" attr="maxlength='50'"
-                                                    :value="old('home_language', $student->home_language ?? '')" />
-                                            </div>
-                                            <div class="col-md-4">
-                                                <x-input name="mobile_phone" title="Mobile Phone" attr="maxlength='15'"
-                                                    :value="old('mobile_phone', $student->mobile_phone ?? '')" />
-                                            </div>
-                                            <div class="col-md-4">
-                                                <x-input name="email" type="email" title="Email Address"
-                                                    attr="maxlength='100'" :value="old('email', $student->email ?? '')" />
+                                                <!--  4-column layout for second row -->
+                                                <div class="row">
+                                                    <div class="col-md-3">
+                                                        <x-input name="date_of_birth" type="date" title="Date of Birth"
+                                                            :isRequired="true" :value="old(
+                                                                'date_of_birth',
+                                                                $student->date_of_birth ?? '',
+                                                            )" />
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <x-input name="gender" type="select" title="Gender"
+                                                            :isRequired="true" placeholder="Select Gender" :options="[
+                                                                'M' => 'Male',
+                                                                'F' => 'Female',
+                                                                'Other' => 'Other',
+                                                            ]"
+                                                            :value="old('gender', $student->gender ?? '')" />
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <x-input name="nationality" title="Nationality"
+                                                            attr="maxlength='50'" :value="old('nationality', $student->nationality ?? '')" />
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <x-input name="religion" title="Religion" attr="maxlength='50'"
+                                                            :value="old('religion', $student->religion ?? '')" />
+                                                    </div>
+                                                </div>
+
+                                                <!-- Updated: 4-column layout for third row  -->
+                                                <div class="row">
+                                                    <div class="col-md-3">
+                                                        <x-input name="home_language" title="Home Language"
+                                                            attr="maxlength='50'" :value="old(
+                                                                'home_language',
+                                                                $student->home_language ?? '',
+                                                            )" />
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <x-input name="mobile_phone" title="Mobile Phone"
+                                                            attr="maxlength='15'" :value="old(
+                                                                'mobile_phone',
+                                                                $student->mobile_phone ?? '',
+                                                            )" />
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <x-input name="email" type="email" title="Email Address"
+                                                            attr="maxlength='100'" :value="old('email', $student->email ?? '')" />
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -290,7 +312,7 @@
                                                     ]"
                                                     :value="old('grade_level', $student->grade_level ?? '')" />
                                             </div>
-                                            <div class="col-md-4">
+                                            {{-- <div class="col-md-4">
                                                 <div class="input-group input-group-outline mb-3">
                                                     <select name="class_id" class="form-control">
                                                         <option value="">Select Class</option>
@@ -302,7 +324,23 @@
                                                         @endforeach
                                                     </select>
                                                 </div>
+                                            </div> --}}
+
+                                            <div class="col-md-4">
+                                                <x-input name="class_id" type="select" title="Class" :isRequired="true"
+                                                    placeholder="Select Class" :options="$classes
+                                                        ->mapWithKeys(function ($class) {
+                                                            return [
+                                                                $class->id =>
+                                                                    $class->class_name .
+                                                                    ' (Grade ' .
+                                                                    $class->grade_level .
+                                                                    ')',
+                                                            ];
+                                                        })
+                                                        ->toArray()" :value="old('class_id', $student->class_id ?? '')" />
                                             </div>
+
                                             <div class="col-md-4">
                                                 <x-input name="section" title="Section" attr="maxlength='10'"
                                                     :value="old('section', $student->section ?? '')" />
@@ -316,11 +354,10 @@
                                                         $student->enrollment_date ?? date('Y-m-d'),
                                                     )" />
                                             </div>
+
                                             <div class="col-md-6">
-                                                <x-input name="is_active" type="checkbox" title="Active Status"
-                                                    :value="old('is_active', $student->is_active ?? true)
-                                                        ? '1'
-                                                        : '0'" attr="id='isActiveSwitch'" />
+                                                <x-input name="is_active" type="select" title="Active Status"
+                                                    :isRequired="true" :options="['1' => 'Yes', '0' => 'No']" :value="old('is_active', $student->is_active ?? '1')" />
                                             </div>
                                         </div>
                                     </div>
@@ -337,18 +374,19 @@
                                     <div class="card-body">
                                         <div class="row">
                                             @if (!$id)
-                                                <div class="col-md-6">
+                                                <div class="col-md-6 password-field">
                                                     <x-input name="password" type="password" title="Password"
                                                         :isRequired="true" attr="minlength='8'"
                                                         placeholder="Enter password (min 8 characters)" />
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-6 password-field">
                                                     <x-input name="password_confirmation" type="password"
-                                                        title="Confirm Password" :isRequired="true" attr="minlength='8'"
-                                                        placeholder="Confirm your password" />
+                                                        title="Confirm Password" :isRequired="true"
+                                                        placeholder="Confirm your password" attr="minlength='8'" />
                                                 </div>
                                             @endif
                                         </div>
+
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="input-group input-group-outline mb-3">
@@ -360,9 +398,9 @@
                                                             </option>
                                                         @endforeach
                                                     </select>
-                                                    <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple
-                                                        roles</small>
                                                 </div>
+                                                <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple
+                                                    roles</small>
                                             </div>
                                         </div>
                                     </div>
@@ -420,7 +458,7 @@
                                             <!-- Existing Parent Details Display -->
                                             @if (isset($student) && $student->parents && $student->parents->count() > 0)
                                                 <div class="mb-4">
-                                                    <h6 class="text-primary mb-3">
+                                                    <h6 class="text-primary mb-3 d-flex align-items-center">
                                                         <i class="material-symbols-rounded me-2">people</i>
                                                         Current Parents ({{ $student->parents->count() }})
                                                     </h6>
@@ -572,7 +610,7 @@
                                 @endif
 
                                 <!-- Submit Buttons -->
-                                <div class="card shadow-sm">
+                                <div class="card">
                                     <div class="card-body">
                                         <div class="col-12 text-end">
                                             <a href="{{ route('admin.management.students.index') }}"

@@ -63,7 +63,7 @@ class TeacherDataTable extends DataTable
                         <span class="material-symbols-outlined text-lg">more_vert</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow rounded-3 p-2 w-100">
-                        ' . $dropdownContent . '
+                        '.$dropdownContent.'
                     </ul>
                 </div>';
 
@@ -74,12 +74,12 @@ class TeacherDataTable extends DataTable
                 $badgeClass = $row->is_class_teacher ? 'bg-gradient-primary' : 'bg-gradient-info';
 
                 return '<div class="d-flex align-items-center">
-                    <span class="badge ' . $badgeClass . ' badge-sm me-2">' . $teacherType . '</span>
-                    <span class="fw-bold">' . $row->full_name . '</span>
+                    <span class="badge '.$badgeClass.' badge-sm me-2">'.$teacherType.'</span>
+                    <span class="fw-bold">'.$row->full_name.'</span>
                 </div>';
             })
             ->addColumn('teacher_code', function ($row) {
-                return '<span class="text-secondary">' . $row->teacher_code . '</span>';
+                return '<span class="text-secondary">'.$row->teacher_code.'</span>';
             })
             ->addColumn('specialization', function ($row) {
                 return $row->specialization ? '<span class="text-primary">' . $row->specialization . '</span>' : '<span class="text-muted">' . __('common.not_specified') . '</span>';
@@ -171,15 +171,15 @@ class TeacherDataTable extends DataTable
     protected function getColumns(): array
     {
         $columns = [
-            Column::make('DT_RowIndex')->title(__('common.id'))->addClass('text-start align-middle text-xs')->searchable(false)->orderable(false),
-            Column::make('teacher_code')->title(__('common.code'))->addClass('align-middle text-xs')->searchable(true),
-            Column::make('name')->title(__('common.name'))->addClass('align-middle text-xs')->searchable(true),
+            Column::make('DT_RowIndex')->title(__('common.id'))->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
+            Column::make('teacher_code')->title(__('common.code'))->addClass('text-center align-middle text-xs')->searchable(true),
+            Column::make('name')->title(__('common.name'))->addClass('text-center align-middle text-xs')->searchable(true),
             Column::make('specialization')->title(__('common.specialization'))->addClass('text-center align-middle text-xs')->searchable(true),
             Column::make('subjects')->title(__('common.subjects'))->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
             Column::make('experience')->title(__('common.experience'))->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
-            Column::make('email')->title(__('common.email'))->addClass('text-start align-middle text-xs')->searchable(true),
+            Column::make('email')->title(__('common.email'))->addClass('text-center align-middle text-xs')->searchable(true),
             Column::make('status')->title(__('common.status'))->searchable(false)->orderable(false)->addClass('text-center align-middle text-xs'),
-            Column::make('modified')->title(__('common.modified'))->addClass('text-start align-middle text-xs')->searchable(false),
+            Column::make('modified')->title(__('common.modified'))->addClass('text-center align-middle text-xs')->searchable(false),
         ];
 
         if (
@@ -188,7 +188,7 @@ class TeacherDataTable extends DataTable
             checkPermission('admin.management.teachers.edit') ||
             checkPermission('admin.management.teachers.delete')
         ) {
-            $columns[] = Column::computed('action')->title(__('common.actions'))->addClass('text-end align-middle pt-3 pb-0 text-xs')->exportable(false)->printable(false)->orderable(false)->searchable(false);
+            $columns[] = Column::computed('action')->title(__('common.actions'))->addClass('text-center align-middle text-xs ')->exportable(false)->printable(false)->orderable(false)->searchable(false);
         }
 
         return $columns;
@@ -196,6 +196,6 @@ class TeacherDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'Teacher_' . date('YmdHis');
+        return 'Teacher_'.date('YmdHis');
     }
 }

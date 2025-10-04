@@ -207,6 +207,7 @@
         .input-icon {
             position: absolute;
             left: 18px;
+            bottom: 0%;
             top: 50%;
             transform: translateY(-50%);
             color: #999;
@@ -221,6 +222,7 @@
         .password-toggle {
             position: absolute;
             right: 18px;
+            bottom: 0%;
             top: 50%;
             transform: translateY(-50%);
             color: #999;

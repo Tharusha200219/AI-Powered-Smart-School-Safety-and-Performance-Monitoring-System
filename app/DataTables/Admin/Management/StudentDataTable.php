@@ -58,8 +58,8 @@ class StudentDataTable extends DataTable
                     <button class="btn btn-icon border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="material-symbols-outlined text-lg">more_vert</span>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow rounded-3 p-2 w-100">
-                        ' . $dropdownContent . '
+                    <ul class="dropdown-menu dropdown-menu-end shadow rounded-3 p-2 w-100 text-center">
+                        '.$dropdownContent.'
                     </ul>
                 </div>';
 
@@ -68,18 +68,18 @@ class StudentDataTable extends DataTable
             ->addColumn('name', function ($row) {
                 return '<div class="d-flex align-items-center">
                     <span class="badge bg-gradient-success badge-sm me-2">STU</span>
-                    <span class="fw-bold">' . $row->full_name . '</span>
+                    <span class="fw-bold">'.$row->full_name.'</span>
                 </div>';
             })
             ->addColumn('student_code', function ($row) {
-                return '<span class="text-secondary">' . $row->student_code . '</span>';
+                return '<span class="text-secondary">'.$row->student_code.'</span>';
             })
             ->addColumn('grade_level', function ($row) {
                 return '<span class="badge bg-gradient-primary badge-sm">' . __('common.grade') . ' ' . $row->grade_level . '</span>';
             })
             ->addColumn('class', function ($row) {
                 if ($row->schoolClass) {
-                    return '<span class="text-primary fw-medium">' . $row->schoolClass->full_name . '</span>';
+                    return '<span class="text-primary fw-medium">'.$row->schoolClass->full_name.'</span>';
                 }
 
                 return '<span class="text-muted">' . __('common.no_class_assigned') . '</span>';
@@ -168,7 +168,7 @@ class StudentDataTable extends DataTable
             Column::make('grade_level')->title(__('common.grade'))->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
             Column::make('class')->title(__('common.class'))->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
             Column::make('email')->title(__('common.email'))->addClass('text-start align-middle text-xs')->searchable(true),
-            Column::make('parents')->title(__('common.parents'))->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
+            Column::make('parents')->title(__('common.parents'))->addClass('text-start align-middle text-xs')->searchable(false)->orderable(false),
             Column::make('status')->title(__('common.status'))->searchable(false)->orderable(false)->addClass('text-center align-middle text-xs'),
             Column::make('modified')->title(__('common.modified'))->addClass('text-start align-middle text-xs')->searchable(false),
         ];
@@ -179,7 +179,7 @@ class StudentDataTable extends DataTable
             checkPermission('admin.management.students.edit') ||
             checkPermission('admin.management.students.delete')
         ) {
-            $columns[] = Column::computed('action')->title(__('common.actions'))->addClass('text-end align-middle pt-3 pb-0 text-xs')->exportable(false)->printable(false)->orderable(false)->searchable(false);
+            $columns[] = Column::computed('action')->title(__('common.actions'))->addClass('text-start align-middle text-xs')->exportable(false)->printable(false)->orderable(false)->searchable(false);
         }
 
         return $columns;
@@ -187,6 +187,6 @@ class StudentDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'Student_' . date('YmdHis');
+        return 'Student_'.date('YmdHis');
     }
 }

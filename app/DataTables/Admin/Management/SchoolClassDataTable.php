@@ -52,8 +52,8 @@ class SchoolClassDataTable extends DataTable
                     <button class="btn btn-icon border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="material-symbols-outlined text-lg">more_vert</span>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow rounded-3 p-2 w-100">
-                        ' . $dropdownContent . '
+                    <ul class="dropdown-menu dropdown-menu-end shadow rounded-3 p-2 w-100 ">
+                        '.$dropdownContent.'
                     </ul>
                 </div>';
             })
@@ -77,12 +77,12 @@ class SchoolClassDataTable extends DataTable
                 $gradeColor = $gradeColors[$row->grade_level] ?? 'bg-gradient-secondary';
 
                 return '<div class="d-flex align-items-center">
-                    <span class="badge ' . $gradeColor . ' badge-sm me-2">Grade ' . $row->grade_level . '</span>
-                    <span class="fw-bold">' . $row->class_name . '</span>
+                    <span class="badge '.$gradeColor.' badge-sm me-2">Grade '.$row->grade_level.'</span>
+                    <span class="fw-bold">'.$row->class_name.'</span>
                 </div>';
             })
             ->addColumn('class_code', function ($row) {
-                return '<span class="text-secondary fw-bold">' . $row->class_code . '</span>';
+                return '<span class="text-secondary fw-bold">'.$row->class_code.'</span>';
             })
             ->addColumn('class_teacher', function ($row) {
                 return $row->classTeacher ? 
@@ -95,12 +95,14 @@ class SchoolClassDataTable extends DataTable
             ->addColumn('students_count', function ($row) {
                 $count = $row->students->count();
                 $color = $count > 30 ? 'warning' : ($count > 0 ? 'info' : 'secondary');
-                return '<span class="badge bg-gradient-' . $color . ' badge-sm">' . $count . ' student' . ($count != 1 ? 's' : '') . '</span>';
+
+                return '<span class="badge bg-gradient-'.$color.' badge-sm">'.$count.' student'.($count != 1 ? 's' : '').'</span>';
             })
             ->addColumn('subjects_count', function ($row) {
                 $count = $row->subjects->count();
                 $color = $count > 0 ? 'success' : 'secondary';
-                return '<span class="badge bg-gradient-' . $color . ' badge-sm">' . $count . ' subject' . ($count != 1 ? 's' : '') . '</span>';
+
+                return '<span class="badge bg-gradient-'.$color.' badge-sm">'.$count.' subject'.($count != 1 ? 's' : '').'</span>';
             })
             ->addColumn('room_number', function ($row) {
                 return $row->room_number ? 
@@ -108,7 +110,7 @@ class SchoolClassDataTable extends DataTable
                     '<span class="text-muted">No room</span>';
             })
             ->addColumn('capacity', function ($row) {
-                if (!$row->capacity) {
+                if (! $row->capacity) {
                     return '<span class="text-muted">Not set</span>';
                 }
                 $studentsCount = $row->students->count();
@@ -116,14 +118,15 @@ class SchoolClassDataTable extends DataTable
                 $color = $percentage >= 100 ? 'danger' : ($percentage >= 80 ? 'warning' : 'success');
                 $text = $percentage >= 100 ? 'Full' : ($percentage >= 80 ? 'Almost Full' : 'Available');
                 return '<div class="text-center">
-                    <span class="badge bg-gradient-' . $color . ' badge-sm">' . $text . '</span>
-                    <small class="d-block text-muted">' . $studentsCount . '/' . $row->capacity . '</small>
+                    <span class="badge bg-gradient-'.$color.' badge-sm">'.$text.'</span>
+                    <small class="d-block text-muted">'.$studentsCount.'/'.$row->capacity.'</small>
                 </div>';
             })
             ->addColumn('status', function ($row) {
                 $color = $row->is_active ? 'success' : 'danger';
                 $text = $row->is_active ? 'Active' : 'Inactive';
-                return '<span class="badge badge-sm bg-gradient-' . $color . ' me-1">' . $text . '</span>';
+
+                return '<span class="badge badge-sm bg-gradient-'.$color.' me-1">'.$text.'</span>';
             })
             ->addColumn('modified', function ($row) {
                 return $row->updated_at ? $row->updated_at->format('M d, Y') : 'Never';
@@ -203,6 +206,6 @@ class SchoolClassDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'SchoolClass_' . date('YmdHis');
+        return 'SchoolClass_'.date('YmdHis');
     }
 }
