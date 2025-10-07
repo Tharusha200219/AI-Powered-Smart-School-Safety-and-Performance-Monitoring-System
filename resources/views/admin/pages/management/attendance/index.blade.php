@@ -80,11 +80,13 @@
                                         </div>
                                         <div class="col-md-3">
                                             <button type="submit" class="btn bg-gradient-dark mb-0 me-2">
-                                                <i class="material-symbols-rounded text-sm me-1">search</i>{{ __('Filter') }}
+                                                <i
+                                                    class="material-symbols-rounded text-sm me-1">search</i>{{ __('Filter') }}
                                             </button>
                                             <a href="{{ route('admin.management.attendance.index') }}"
                                                 class="btn btn-outline-secondary mb-0">
-                                                <i class="material-symbols-rounded text-sm me-1">clear</i>{{ __('Clear') }}
+                                                <i
+                                                    class="material-symbols-rounded text-sm me-1">clear</i>{{ __('Clear') }}
                                             </a>
                                         </div>
                                     </div>
