@@ -1,18 +1,20 @@
 // Student Form JavaScript
 let parentCount = 0;
+let studentFormData = null;
+let nfcModalInstance = null;
 
 // Global function declarations - accessible from onclick handlers
 window.addParentForm = function () {
-  parentCount++;
-  const container = document.getElementById("parentContainer");
+    parentCount++;
+    const container = document.getElementById("parentContainer");
 
-  if (!container) {
-    console.error("Parent container not found");
-    alert("Error: Parent container not found");
-    return;
-  }
+    if (!container) {
+        console.error("Parent container not found");
+        alert("Error: Parent container not found");
+        return;
+    }
 
-  const parentForm = `
+    const parentForm = `
         <div class="card border mb-3 parent-form-border" id="parentForm${parentCount}">
             <div class="card-header bg-light">
                 <div class="d-flex justify-content-between align-items-center">
@@ -128,190 +130,357 @@ window.addParentForm = function () {
         </div>
     `;
 
-  container.insertAdjacentHTML("beforeend", parentForm);
+    container.insertAdjacentHTML("beforeend", parentForm);
 
-  // Add animation to newly added form
-  const newForm = document.getElementById(`parentForm${parentCount}`);
-  if (newForm) {
-    newForm.style.opacity = "0";
-    newForm.style.transform = "translateY(20px)";
-    setTimeout(() => {
-      newForm.style.transition = "all 0.3s ease";
-      newForm.style.opacity = "1";
-      newForm.style.transform = "translateY(0)";
-    }, 10);
-  }
+    // Add animation to newly added form
+    const newForm = document.getElementById(`parentForm${parentCount}`);
+    if (newForm) {
+        newForm.style.opacity = "0";
+        newForm.style.transform = "translateY(20px)";
+        setTimeout(() => {
+            newForm.style.transition = "all 0.3s ease";
+            newForm.style.opacity = "1";
+            newForm.style.transform = "translateY(0)";
+        }, 10);
+    }
 };
 
 window.removeParentForm = function (parentId) {
-  const parentForm = document.getElementById(`parentForm${parentId}`);
-  if (!parentForm) {
-    console.error("Parent form not found for removal");
-    return;
-  }
+    const parentForm = document.getElementById(`parentForm${parentId}`);
+    if (!parentForm) {
+        console.error("Parent form not found for removal");
+        return;
+    }
 
-  // Add fade out animation
-  parentForm.style.transition = "all 0.3s ease";
-  parentForm.style.opacity = "0";
-  parentForm.style.transform = "translateY(-20px)";
+    // Add fade out animation
+    parentForm.style.transition = "all 0.3s ease";
+    parentForm.style.opacity = "0";
+    parentForm.style.transform = "translateY(-20px)";
 
-  setTimeout(() => {
-    parentForm.remove();
-  }, 300);
+    setTimeout(() => {
+        parentForm.remove();
+    }, 300);
 };
 
 window.unlinkParent = function (parentId) {
-  if (
-    confirm("Are you sure you want to unlink this parent from the student?")
-  ) {
-    const parentElement = document.getElementById(`existingParent${parentId}`);
-    if (parentElement) {
-      // Add fade out animation
-      parentElement.style.transition = "all 0.3s ease";
-      parentElement.style.opacity = "0";
-      parentElement.style.transform = "translateY(-20px)";
-
-      setTimeout(() => {
-        parentElement.remove();
-
-        // Remove from existing_parents input array
-        const existingParentsInputs = document.querySelectorAll(
-          'input[name="existing_parents[]"]'
+    if (
+        confirm("Are you sure you want to unlink this parent from the student?")
+    ) {
+        const parentElement = document.getElementById(
+            `existingParent${parentId}`
         );
-        existingParentsInputs.forEach((input) => {
-          if (input.value == parentId) {
-            input.remove();
-          }
-        });
-      }, 300);
+        if (parentElement) {
+            // Add fade out animation
+            parentElement.style.transition = "all 0.3s ease";
+            parentElement.style.opacity = "0";
+            parentElement.style.transform = "translateY(-20px)";
+
+            setTimeout(() => {
+                parentElement.remove();
+
+                // Remove from existing_parents input array
+                const existingParentsInputs = document.querySelectorAll(
+                    'input[name="existing_parents[]"]'
+                );
+                existingParentsInputs.forEach((input) => {
+                    if (input.value == parentId) {
+                        input.remove();
+                    }
+                });
+            }, 300);
+        }
     }
-  }
 };
 
 window.toggleParentSelector = function () {
-  const selector = document.getElementById("parentSelector");
-  if (selector) {
-    if (selector.style.display === "none") {
-      selector.style.display = "block";
-      selector.style.opacity = "0";
-      setTimeout(() => {
-        selector.style.transition = "all 0.3s ease";
-        selector.style.opacity = "1";
-      }, 10);
-    } else {
-      selector.style.transition = "all 0.3s ease";
-      selector.style.opacity = "0";
-      setTimeout(() => {
-        selector.style.display = "none";
-      }, 300);
+    const selector = document.getElementById("parentSelector");
+    if (selector) {
+        if (selector.style.display === "none") {
+            selector.style.display = "block";
+            selector.style.opacity = "0";
+            setTimeout(() => {
+                selector.style.transition = "all 0.3s ease";
+                selector.style.opacity = "1";
+            }, 10);
+        } else {
+            selector.style.transition = "all 0.3s ease";
+            selector.style.opacity = "0";
+            setTimeout(() => {
+                selector.style.display = "none";
+            }, 300);
+        }
     }
-  }
 };
 
 window.generateStudentCode = function () {
-  const studentCodeInput = document.querySelector('input[name="student_code"]');
+    const studentCodeInput = document.querySelector(
+        'input[name="student_code"]'
+    );
 
-  // This will be set by the blade template
-  const generateCodeUrl =
-    window.generateCodeUrl || "/admin/management/students/generate-code";
+    // This will be set by the blade template
+    const generateCodeUrl =
+        window.generateCodeUrl || "/admin/management/students/generate-code";
 
-  fetch(generateCodeUrl)
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.code) {
-        studentCodeInput.value = data.code;
-        // Mark field as filled for Material Design
-        studentCodeInput.closest(".input-group").classList.add("is-filled");
-      }
-    })
-    .catch((error) => {
-      console.error("Error fetching code:", error);
-      // Fallback: generate a temporary code
-      const timestamp = Date.now();
-      studentCodeInput.value =
-        "stu-" + String(timestamp).slice(-8).padStart(8, "0");
-      studentCodeInput.closest(".input-group").classList.add("is-filled");
-    });
+    fetch(generateCodeUrl)
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.code) {
+                studentCodeInput.value = data.code;
+                // Mark field as filled for Material Design
+                studentCodeInput
+                    .closest(".input-group")
+                    .classList.add("is-filled");
+            }
+        })
+        .catch((error) => {
+            console.error("Error fetching code:", error);
+            // Fallback: generate a temporary code
+            const timestamp = Date.now();
+            studentCodeInput.value =
+                "stu-" + String(timestamp).slice(-8).padStart(8, "0");
+            studentCodeInput.closest(".input-group").classList.add("is-filled");
+        });
 };
 
 window.resetForm = function () {
-  // Reset parent forms
-  document.getElementById("parentContainer").innerHTML = "";
-  parentCount = 0;
+    // Reset parent forms
+    document.getElementById("parentContainer").innerHTML = "";
+    parentCount = 0;
 
-  // Add one parent form back
-  const isEditMode = window.isEditMode || false;
-  if (!isEditMode) {
-    window.addParentForm();
-    window.generateStudentCode();
-  }
+    // Add one parent form back
+    const isEditMode = window.isEditMode || false;
+    if (!isEditMode) {
+        window.addParentForm();
+        window.generateStudentCode();
+    }
 
-  // Reset Material Design form states
-  document.querySelectorAll(".input-group-outline").forEach((group) => {
-    group.classList.remove("is-filled", "is-focused");
-  });
+    // Reset Material Design form states
+    document.querySelectorAll(".input-group-outline").forEach((group) => {
+        group.classList.remove("is-filled", "is-focused");
+    });
 };
+
+// NFC Modal functions
+function showNFCModal() {
+    const modal = document.getElementById("nfcModal");
+    if (!modal) return;
+
+    // Reset modal state
+    document.getElementById("nfcWaiting").style.display = "block";
+    document.getElementById("nfcSuccess").style.display = "none";
+    document.getElementById("nfcError").style.display = "none";
+    document.getElementById("nfcSkipBtn").style.display = "inline-block";
+    document.getElementById("nfcCancelBtn").style.display = "inline-block";
+    document.getElementById("nfcContinueBtn").style.display = "none";
+
+    // Initialize Bootstrap modal if not already done
+    if (!nfcModalInstance) {
+        nfcModalInstance = new bootstrap.Modal(modal);
+    }
+
+    nfcModalInstance.show();
+
+    // Start NFC writing process
+    writeToNFC();
+}
+
+function hideNFCModal() {
+    if (nfcModalInstance) {
+        nfcModalInstance.hide();
+    }
+}
+
+async function writeToNFC() {
+    try {
+        // Prepare student data to send to backend
+        const studentData = {
+            student_code:
+                document.querySelector('input[name="student_code"]')?.value ||
+                "",
+            first_name:
+                document.querySelector('input[name="first_name"]')?.value || "",
+            last_name:
+                document.querySelector('input[name="last_name"]')?.value || "",
+            grade_level:
+                document.querySelector('select[name="grade_level"]')?.value ||
+                "",
+            class_id:
+                document.querySelector('select[name="class_id"]')?.value || "",
+            enrollment_date:
+                document.querySelector('input[name="enrollment_date"]')
+                    ?.value || "",
+        };
+
+        // Get CSRF token
+        const csrfToken =
+            document
+                .querySelector('meta[name="csrf-token"]')
+                ?.getAttribute("content") ||
+            document.querySelector('input[name="_token"]')?.value;
+
+        // Send AJAX request to backend to write NFC via Arduino
+        const response = await fetch("/admin/management/students/write-nfc", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": csrfToken,
+                Accept: "application/json",
+            },
+            body: JSON.stringify(studentData),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            showNFCSuccess();
+        } else {
+            showNFCError(result.message || "Failed to write data to NFC tag.");
+        }
+    } catch (error) {
+        console.error("NFC Write Error:", error);
+        showNFCError(
+            `Error communicating with server: ${error.message}. Please ensure the Arduino is connected.`
+        );
+    }
+}
+
+function showNFCSuccess() {
+    document.getElementById("nfcWaiting").style.display = "none";
+    document.getElementById("nfcSuccess").style.display = "block";
+    document.getElementById("nfcError").style.display = "none";
+    document.getElementById("nfcSkipBtn").style.display = "none";
+    document.getElementById("nfcCancelBtn").style.display = "none";
+    document.getElementById("nfcContinueBtn").style.display = "inline-block";
+}
+
+function showNFCError(message) {
+    document.getElementById("nfcWaiting").style.display = "none";
+    document.getElementById("nfcSuccess").style.display = "none";
+    document.getElementById("nfcError").style.display = "block";
+    document.getElementById("nfcErrorMessage").textContent = message;
+    document.getElementById("nfcSkipBtn").style.display = "inline-block";
+    document.getElementById("nfcCancelBtn").style.display = "inline-block";
+}
+
+function submitStudentFormDirectly() {
+    const form = document.getElementById("studentForm");
+    if (form) {
+        // Remove the submit event listener temporarily to avoid loop
+        form.removeEventListener("submit", handleFormSubmit);
+        form.submit();
+    }
+}
+
+function handleFormSubmit(event) {
+    event.preventDefault();
+
+    // Store the form for later submission
+    studentFormData = event.target;
+
+    // Validate form before showing modal
+    if (!studentFormData.checkValidity()) {
+        studentFormData.reportValidity();
+        return;
+    }
+
+    // Show NFC modal
+    showNFCModal();
+}
 
 // DOM Content Loaded event
 document.addEventListener("DOMContentLoaded", function () {
-  // Auto-generate student code if creating new student
-  const studentCodeInput = document.querySelector('input[name="student_code"]');
-  const isEditMode = window.isEditMode || false;
+    // Auto-generate student code if creating new student
+    const studentCodeInput = document.querySelector(
+        'input[name="student_code"]'
+    );
+    const isEditMode = window.isEditMode || false;
 
-  if (!isEditMode && studentCodeInput && !studentCodeInput.value) {
-    // Generate student code
-    window.generateStudentCode();
-  }
+    if (!isEditMode && studentCodeInput && !studentCodeInput.value) {
+        // Generate student code
+        window.generateStudentCode();
+    }
 
-  // Add first parent form by default for new students
-  if (!isEditMode) {
-    window.addParentForm();
-  }
+    // Add first parent form by default for new students
+    if (!isEditMode) {
+        window.addParentForm();
+    }
 
-  // Material Design form field handlers
-  document.addEventListener(
-    "focus",
-    function (e) {
-      if (e.target.matches(".form-control")) {
-        e.target.closest(".input-group-outline")?.classList.add("is-focused");
-      }
-    },
-    true
-  );
+    // Material Design form field handlers
+    document.addEventListener(
+        "focus",
+        function (e) {
+            if (e.target.matches(".form-control")) {
+                e.target
+                    .closest(".input-group-outline")
+                    ?.classList.add("is-focused");
+            }
+        },
+        true
+    );
 
-  document.addEventListener(
-    "blur",
-    function (e) {
-      if (e.target.matches(".form-control")) {
-        const group = e.target.closest(".input-group-outline");
-        if (group) {
-          group.classList.remove("is-focused");
-          if (e.target.value) {
-            group.classList.add("is-filled");
-          } else {
-            group.classList.remove("is-filled");
-          }
-        }
-      }
-    },
-    true
-  );
+    document.addEventListener(
+        "blur",
+        function (e) {
+            if (e.target.matches(".form-control")) {
+                const group = e.target.closest(".input-group-outline");
+                if (group) {
+                    group.classList.remove("is-focused");
+                    if (e.target.value) {
+                        group.classList.add("is-filled");
+                    } else {
+                        group.classList.remove("is-filled");
+                    }
+                }
+            }
+        },
+        true
+    );
 
-  // Profile Image Preview
-  const profileImageInput = document.getElementById("profileImage");
-  if (profileImageInput) {
-    profileImageInput.addEventListener("change", function (e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          const preview = document.getElementById("profilePreview");
-          if (preview) {
-            preview.innerHTML = `<img src="${e.target.result}" alt="Student Photo" class="w-100 border-radius-lg shadow-sm" style="height: 120px; object-fit: cover;">`;
-          }
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-  }
+    // Profile Image Preview
+    const profileImageInput = document.getElementById("profileImage");
+    if (profileImageInput) {
+        profileImageInput.addEventListener("change", function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const preview = document.getElementById("profilePreview");
+                    if (preview) {
+                        preview.innerHTML = `<img src="${e.target.result}" alt="Student Photo" class="w-100 border-radius-lg shadow-sm" style="height: 120px; object-fit: cover;">`;
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // Handle form submission - intercept to show NFC modal
+    const studentForm = document.getElementById("studentForm");
+    if (studentForm) {
+        studentForm.addEventListener("submit", handleFormSubmit);
+    }
+
+    // NFC Modal button handlers
+    const nfcSkipBtn = document.getElementById("nfcSkipBtn");
+    if (nfcSkipBtn) {
+        nfcSkipBtn.addEventListener("click", function () {
+            hideNFCModal();
+            submitStudentFormDirectly();
+        });
+    }
+
+    const nfcCancelBtn = document.getElementById("nfcCancelBtn");
+    if (nfcCancelBtn) {
+        nfcCancelBtn.addEventListener("click", function () {
+            hideNFCModal();
+        });
+    }
+
+    const nfcContinueBtn = document.getElementById("nfcContinueBtn");
+    if (nfcContinueBtn) {
+        nfcContinueBtn.addEventListener("click", function () {
+            hideNFCModal();
+            submitStudentFormDirectly();
+        });
+    }
 });

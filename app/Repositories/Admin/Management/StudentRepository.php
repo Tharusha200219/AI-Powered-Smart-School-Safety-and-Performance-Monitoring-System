@@ -186,4 +186,14 @@ class StudentRepository implements StudentRepositoryInterface
     {
         return Student::generateStudentCode();
     }
+
+    /**
+     * Find student by student code
+     */
+    public function findByCode(string $studentCode): ?Student
+    {
+        return $this->model->with(['user', 'schoolClass', 'parents'])
+            ->where('student_code', $studentCode)
+            ->first();
+    }
 }

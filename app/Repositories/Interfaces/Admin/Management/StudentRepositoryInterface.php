@@ -61,4 +61,9 @@ interface StudentRepositoryInterface
      * Generate student code
      */
     public function generateStudentCode(): string;
+
+    /**
+     * Find student by student code
+     */
+    public function findByCode(string $studentCode): ?Student;
 }

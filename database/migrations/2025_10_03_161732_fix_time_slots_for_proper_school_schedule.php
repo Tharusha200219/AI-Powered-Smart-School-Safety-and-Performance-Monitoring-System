@@ -37,12 +37,23 @@ return new class extends Migration
             }
         });
 
-        // Add indexes for better performance
-        Schema::table('time_slots', function (Blueprint $table) {
-            $table->index(['start_time', 'end_time']);
-            $table->index('slot_type');
-            $table->index('day_of_week');
-            $table->index(['slot_type', 'status']);
+        // Add indexes for better performance (check if they don't exist)
+        $indexes = DB::select("SHOW INDEX FROM time_slots");
+        $existingIndexes = array_column($indexes, 'Key_name');
+
+        Schema::table('time_slots', function (Blueprint $table) use ($existingIndexes) {
+            if (!in_array('time_slots_start_time_end_time_index', $existingIndexes)) {
+                $table->index(['start_time', 'end_time']);
+            }
+            if (!in_array('time_slots_slot_type_index', $existingIndexes)) {
+                $table->index('slot_type');
+            }
+            if (!in_array('time_slots_day_of_week_index', $existingIndexes)) {
+                $table->index('day_of_week');
+            }
+            if (!in_array('time_slots_slot_type_status_index', $existingIndexes)) {
+                $table->index(['slot_type', 'status']);
+            }
         });
     }
 

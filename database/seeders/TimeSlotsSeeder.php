@@ -61,27 +61,27 @@ class TimeSlotsSeeder extends Seeder
             $isBreak = $slot['type'] === 'break';
 
             if ($isBreak) {
-                $label = 'Break';
+                $slotName = 'Break';
+                $slotCode = 'BREAK-1';
                 $description = '30-minute break after 4 periods - Fixed preset time';
             } else {
-                $label = "Period {$slot['period']}";
+                $slotName = "Period {$slot['period']}";
+                $slotCode = "PERIOD-{$slot['period']}";
                 $description = "Teaching period {$slot['period']} - Fixed preset time (Admin can assign Teacher & Subject only)";
             }
 
             TimeSlot::create([
+                'slot_code' => $slotCode,
                 'start_time' => $slot['start'],
                 'end_time' => $slot['end'],
-                'label' => $label,
-                'is_break' => $isBreak ? 1 : 0,
-                'slot_number' => $slotCounter,
+                'slot_name' => $slotName,
                 'slot_type' => $slot['type'],
-                'day_of_week' => null, // NULL means applies to all weekdays
-                'period_number' => $slot['period'],
+                'duration_minutes' => $this->calculateDuration($slot['start'], $slot['end']),
                 'description' => $description,
                 'status' => 'active'
             ]);
 
-            $this->command->info("Created: {$label} ({$slot['start']} - {$slot['end']})");
+            $this->command->info("Created: {$slotName} ({$slot['start']} - {$slot['end']})");
             $slotCounter++;
         }
     }
@@ -95,30 +95,25 @@ class TimeSlotsSeeder extends Seeder
         $this->command->info('Creating sample additional time slots (after 1:30 PM - admin can add more)...');
 
         $additionalSlots = [
-            ['start' => '13:30', 'end' => '14:15', 'name' => 'Extra Period 1', 'description' => 'Additional period (admin can add after 1:30 PM)'],
-            ['start' => '14:15', 'end' => '15:00', 'name' => 'Extra Period 2', 'description' => 'Additional period (admin can add after 1:30 PM)'],
-            ['start' => '15:00', 'end' => '15:45', 'name' => 'Study Hall', 'description' => 'Study time (admin can add after 1:30 PM)'],
-            ['start' => '15:45', 'end' => '16:30', 'name' => 'Sports/Activities', 'description' => 'Sports or activities (admin can add after 1:30 PM)'],
+            ['start' => '13:30', 'end' => '14:15', 'name' => 'Extra Period 1', 'code' => 'EXTRA-1', 'description' => 'Additional period (admin can add after 1:30 PM)'],
+            ['start' => '14:15', 'end' => '15:00', 'name' => 'Extra Period 2', 'code' => 'EXTRA-2', 'description' => 'Additional period (admin can add after 1:30 PM)'],
+            ['start' => '15:00', 'end' => '15:45', 'name' => 'Study Hall', 'code' => 'STUDY-1', 'description' => 'Study time (admin can add after 1:30 PM)'],
+            ['start' => '15:45', 'end' => '16:30', 'name' => 'Sports/Activities', 'code' => 'SPORTS-1', 'description' => 'Sports or activities (admin can add after 1:30 PM)'],
         ];
-
-        $slotCounter = TimeSlot::count() + 1;
 
         foreach ($additionalSlots as $slot) {
             TimeSlot::create([
+                'slot_code' => $slot['code'],
                 'start_time' => $slot['start'],
                 'end_time' => $slot['end'],
-                'label' => $slot['name'],
-                'is_break' => 0,
-                'slot_number' => $slotCounter,
+                'slot_name' => $slot['name'],
                 'slot_type' => 'additional',
-                'day_of_week' => null, // NULL means available for all weekdays
-                'period_number' => null, // Not regular periods
+                'duration_minutes' => $this->calculateDuration($slot['start'], $slot['end']),
                 'description' => $slot['description'],
                 'status' => 'active'
             ]);
 
             $this->command->info("Created additional: {$slot['name']} ({$slot['start']} - {$slot['end']})");
-            $slotCounter++;
         }
 
         $this->command->info('Fixed preset schedule created successfully!');
@@ -129,5 +124,15 @@ class TimeSlotsSeeder extends Seeder
         $this->command->info('- 4 Periods after break: 11:10 AM - 1:30 PM');
         $this->command->info('- Additional slots: Admin can add after 1:30 PM only');
         $this->command->info('- Admin can only assign: Teachers & Subjects (not change times)');
+    }
+
+    /**
+     * Calculate duration in minutes between two times
+     */
+    private function calculateDuration(string $start, string $end): int
+    {
+        $startTime = Carbon::createFromFormat('H:i', $start);
+        $endTime = Carbon::createFromFormat('H:i', $end);
+        return $startTime->diffInMinutes($endTime);
     }
 }
