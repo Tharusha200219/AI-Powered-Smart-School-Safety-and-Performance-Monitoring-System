@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\Management\SecurityStaffController;
 use App\Http\Controllers\Admin\Management\StudentController;
 use App\Http\Controllers\Admin\Management\SubjectController;
 use App\Http\Controllers\Admin\Management\TeacherController;
+use App\Http\Controllers\Admin\Management\TimetableController;
+use App\Http\Controllers\Admin\TimetableViewerController;
 use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\PlaceholderController;
 use App\Http\Controllers\Admin\ProfileController;
@@ -48,6 +50,8 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('/delete/{id}', 'delete')->name('delete');
                 Route::post('/enroll', 'enroll')->name('enroll');
                 Route::get('/generate-code', 'generateCode')->name('generate-code');
+                Route::post('/write-nfc', 'writeToNFC')->name('write-nfc');
+                Route::get('/test-arduino', 'testArduino')->name('test-arduino');
             });
 
             // Teachers Management
@@ -92,6 +96,38 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('/delete/{id}', 'delete')->name('delete');
                 Route::post('/enroll', 'enroll')->name('enroll');
             });
+
+            // Timetables Management
+            Route::prefix('timetables')->name('timetables.')->controller(TimetableController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/create', 'create')->name('create');
+                Route::post('/', 'store')->name('store');
+                Route::get('/{timetable}', 'show')->name('show');
+                Route::get('/{timetable}/edit', 'edit')->name('edit');
+                Route::put('/{timetable}', 'update')->name('update');
+                Route::delete('/{timetable}', 'destroy')->name('destroy');
+                Route::get('/ajax/get-timetable', 'getTimetable')->name('get-timetable');
+                Route::post('/create-time-slot', 'createTimeSlot')->name('create-time-slot');
+                // Bulk operations for easier management
+                Route::get('/bulk-assign', 'bulkAssignForm')->name('bulk-assign');
+                Route::post('/bulk-assign', 'bulkAssignStore')->name('bulk-assign-store');
+                Route::post('/quick-assign', 'quickAssign')->name('quick-assign');
+                Route::delete('/bulk-delete', 'bulkDelete')->name('bulk-delete');
+                Route::delete('/delete-time-slot/{timeSlot}', 'deleteTimeSlot')->name('delete-time-slot');
+            });
+
+            // Attendance Management
+            Route::prefix('attendance')->name('attendance.')->controller(\App\Http\Controllers\Admin\Management\AttendanceController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/dashboard', 'dashboard')->name('dashboard');
+                Route::get('/create', 'create')->name('create');
+                Route::post('/', 'store')->name('store');
+                Route::get('/report', 'report')->name('report');
+                Route::get('/statistics', 'statistics')->name('statistics');
+                Route::post('/search-student', 'searchStudent')->name('search-student');
+                Route::post('/nfc-scan', 'nfcScan')->name('nfc-scan');
+                Route::get('/student/{studentId}/percentage', 'studentPercentage')->name('student-percentage');
+            });
         });
 
         // Placeholder routes for features in development
@@ -99,8 +135,8 @@ Route::middleware(['auth'])->group(function () {
             // Academic Operations
             Route::get('assignments', 'assignments')->name('assignments.index');
             Route::get('grades', 'grades')->name('grades.index');
-            Route::get('attendance', 'attendance')->name('attendance.index');
-            Route::get('timetable', 'timetable')->name('timetable.index');
+            // Route::get('attendance', 'attendance')->name('attendance.index'); // Removed - now implemented
+            Route::get('timetable-viewer', [TimetableViewerController::class, 'index'])->name('timetable-viewer.index');
 
             // Security Additional
             Route::get('security/visitors', 'visitors')->name('security.visitors.index');

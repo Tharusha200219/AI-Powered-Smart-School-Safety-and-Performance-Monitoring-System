@@ -11,9 +11,9 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
         }
 
-        .input-group-outline {
+        /* .input-group-outline {
             margin-bottom: 1.5rem !important;
-        }
+        } */
 
         .input-group-outline .form-control {
             border-radius: 8px !important;
@@ -83,6 +83,54 @@
         /* Reduce vertical spacing for password fields */
         .password-field .input-group-outline {
             margin-bottom: 0.75rem !important;
+        }
+
+        /* NFC Animation */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .nfc-animation {
+            position: relative;
+            display: inline-block;
+        }
+
+        .nfc-animation::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background: rgba(94, 114, 228, 0.1);
+            border-radius: 50%;
+            animation: ripple 2s infinite;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(2);
+                opacity: 0;
+            }
         }
     </style>
 @endsection
@@ -629,6 +677,67 @@
                                     </div>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NFC Modal -->
+            <div class="modal fade" id="nfcModal" tabindex="-1" aria-labelledby="nfcModalLabel" aria-hidden="true"
+                data-bs-backdrop="static" data-bs-keyboard="false">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-gradient-primary">
+                            <h5 class="modal-title text-white" id="nfcModalLabel">
+                                <i class="material-symbols-rounded me-2">nfc</i>
+                                NFC Wristband Registration
+                            </h5>
+                        </div>
+                        <div class="modal-body text-center py-5">
+                            <div id="nfcWaiting">
+                                <div class="nfc-animation mb-4">
+                                    <i class="material-symbols-rounded text-primary"
+                                        style="font-size: 80px; animation: pulse 2s infinite;">nfc</i>
+                                </div>
+                                <h5 class="mb-3">Put NFC Wristband to Copy Student Data</h5>
+                                <p class="text-muted">Please hold the NFC wristband near your device to write student
+                                    information to the tag.</p>
+                                <div class="spinner-border text-primary mt-3" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+
+                            <div id="nfcSuccess" style="display: none;">
+                                <div class="mb-4">
+                                    <i class="material-symbols-rounded text-success"
+                                        style="font-size: 80px;">check_circle</i>
+                                </div>
+                                <h5 class="text-success mb-3">Data Written Successfully!</h5>
+                                <p class="text-muted">Student data has been successfully written to the NFC wristband.</p>
+                            </div>
+
+                            <div id="nfcError" style="display: none;">
+                                <div class="mb-4">
+                                    <i class="material-symbols-rounded text-danger" style="font-size: 80px;">error</i>
+                                </div>
+                                <h5 class="text-danger mb-3">Error Writing Data</h5>
+                                <p class="text-muted" id="nfcErrorMessage">Failed to write data to NFC tag. Please try
+                                    again.</p>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" id="nfcSkipBtn">
+                                <i class="material-symbols-rounded me-1">skip_next</i>
+                                Skip NFC & Submit
+                            </button>
+                            <button type="button" class="btn btn-danger" id="nfcCancelBtn">
+                                <i class="material-symbols-rounded me-1">cancel</i>
+                                Cancel
+                            </button>
+                            <button type="button" class="btn btn-success" id="nfcContinueBtn" style="display: none;">
+                                <i class="material-symbols-rounded me-1">done</i>
+                                Continue & Submit
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -14,7 +14,9 @@ return [
             getSideBarElement('family_restroom', 'Parents', 'admin.management.parents.index'),
             getSideBarElement('class', 'Classes', 'admin.management.classes.index'),
             getSideBarElement('subject', 'Subjects', 'admin.management.subjects.index'),
+            getSideBarElement('schedule', 'Timetables', 'admin.management.timetables.index'),
             getSideBarElement('security', 'Security Staff', 'admin.management.security.index'),
+            getSideBarElement('fact_check', 'Attendance', 'admin.management.attendance.dashboard'),
         ],
     ],
     [
@@ -22,8 +24,7 @@ return [
         'items' => [
             getSideBarElement('assignment', 'Assignments', 'admin.assignments.index'),
             getSideBarElement('grade', 'Grades', 'admin.grades.index'),
-            getSideBarElement('calendar_today', 'Attendance', 'admin.attendance.index'),
-            getSideBarElement('schedule', 'Timetable', 'admin.timetable.index'),
+            getSideBarElement('schedule', 'Timetable Viewer', 'admin.timetable-viewer.index'),
         ],
     ],
     [

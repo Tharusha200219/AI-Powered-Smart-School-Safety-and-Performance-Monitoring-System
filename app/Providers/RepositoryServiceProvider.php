@@ -59,6 +59,11 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Repositories\Interfaces\Admin\Management\SecurityStaffRepositoryInterface::class,
             \App\Repositories\Admin\Management\SecurityStaffRepository::class
         );
+
+        $this->app->bind(
+            \App\Repositories\Interfaces\Admin\Management\AttendanceRepositoryInterface::class,
+            \App\Repositories\Admin\Management\AttendanceRepository::class
+        );
     }
 
     /**
