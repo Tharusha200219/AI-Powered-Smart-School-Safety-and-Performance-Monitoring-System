@@ -17,7 +17,7 @@ return new class extends Migration
             $table->time('start_time');
             $table->time('end_time');
             $table->string('slot_name');
-            $table->enum('slot_type', ['regular', 'additional'])->default('regular');
+            $table->enum('slot_type', ['regular', 'break', 'additional'])->default('regular');
             $table->integer('duration_minutes')->default(30);
             $table->text('description')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');

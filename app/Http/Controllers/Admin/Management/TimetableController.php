@@ -37,7 +37,7 @@ class TimetableController extends Controller
             $timetables = Timetable::with(['schoolClass', 'subject', 'teacher', 'timeSlot'])
                 ->where('school_class_id', $selectedClassId)
                 ->where('day_of_week', $selectedDay)
-                ->where('is_active', true)
+                ->where('status', 'active')
                 ->orderBy('time_slot_id')
                 ->get();
         }
