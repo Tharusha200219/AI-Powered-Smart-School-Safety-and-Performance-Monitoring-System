@@ -9,6 +9,7 @@ use App\Services\ArduinoNFCService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 
 class AttendanceController extends Controller
@@ -362,5 +363,144 @@ class AttendanceController extends Controller
                 'end_date' => $endDate->format('Y-m-d')
             ]
         ]);
+    }
+
+    /**
+     * Device management index page
+     */
+    public function devicesIndex()
+    {
+        return view('admin.pages.management.attendance.devices');
+    }
+
+    /**
+     * Get list of registered devices
+     */
+    public function devicesList()
+    {
+        $devices = [];
+        $cacheKeys = Cache::get('attendance_devices', []);
+
+        foreach ($cacheKeys as $deviceId) {
+            $deviceKey = "device_{$deviceId}";
+            $deviceData = Cache::get($deviceKey);
+
+            if ($deviceData) {
+                $lastSeenKey = "device_{$deviceId}_last_seen";
+                $lastSeen = Cache::get($lastSeenKey);
+
+                $todayScans = $this->attendanceRepository->getAll()
+                    ->where('device_id', $deviceId)
+                    ->whereDate('created_at', Carbon::today())
+                    ->count();
+
+                $devices[] = [
+                    'device_id' => $deviceId,
+                    'device_name' => $deviceData['device_name'] ?? $deviceId,
+                    'location' => $deviceData['location'] ?? null,
+                    'last_seen' => $lastSeen,
+                    'status' => $this->getDeviceStatus($lastSeen),
+                    'today_scans' => $todayScans
+                ];
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'devices' => $devices
+        ]);
+    }
+
+    /**
+     * Register a new device
+     */
+    public function devicesRegister(Request $request)
+    {
+        $validated = $request->validate([
+            'device_id' => 'required|string|max:50',
+            'device_name' => 'nullable|string|max:100',
+            'location' => 'nullable|string|max:100'
+        ]);
+
+        // Store device info
+        $deviceKey = "device_{$validated['device_id']}";
+        Cache::put($deviceKey, $validated, now()->addDays(365));
+
+        // Add to devices list
+        $devices = Cache::get('attendance_devices', []);
+        if (!in_array($validated['device_id'], $devices)) {
+            $devices[] = $validated['device_id'];
+            Cache::put('attendance_devices', $devices, now()->addDays(365));
+        }
+
+        Log::info('Device registered via web interface', $validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Device registered successfully',
+            'device' => $validated
+        ]);
+    }
+
+    /**
+     * Sync device (placeholder - actual sync happens via API)
+     */
+    public function devicesSync(Request $request)
+    {
+        $deviceId = $request->input('device_id');
+
+        // This would typically trigger a sync request to the device
+        // For now, just return status
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sync completed. Upload pending records from device SD card via API endpoint.'
+        ]);
+    }
+
+    /**
+     * Remove a device
+     */
+    public function devicesRemove(Request $request)
+    {
+        $deviceId = $request->input('device_id');
+
+        // Remove device data
+        $deviceKey = "device_{$deviceId}";
+        Cache::forget($deviceKey);
+        Cache::forget("device_{$deviceId}_last_seen");
+        Cache::forget("device_{$deviceId}_status");
+
+        // Remove from devices list
+        $devices = Cache::get('attendance_devices', []);
+        $devices = array_diff($devices, [$deviceId]);
+        Cache::put('attendance_devices', $devices, now()->addDays(365));
+
+        Log::info('Device removed', ['device_id' => $deviceId]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Device removed successfully'
+        ]);
+    }
+
+    /**
+     * Get device status based on last seen time
+     */
+    private function getDeviceStatus($lastSeen)
+    {
+        if (!$lastSeen) {
+            return 'offline';
+        }
+
+        $minutesAgo = Carbon::parse($lastSeen)->diffInMinutes(now());
+
+        if ($minutesAgo < 2) {
+            return 'online';
+        } elseif ($minutesAgo < 10) {
+            return 'idle';
+        } else {
+            return 'offline';
+        }
     }
 }

@@ -470,7 +470,7 @@
                     @endif
 
                     <div class="form-group">
-                        
+
                         <x-input name="email" type="email" class="form-input @error('email') is-invalid @enderror"
                             placeholder="Enter your email address" :isRequired="true" attr="autocomplete='email' autofocus"
                             :value="old('email')" />
@@ -574,7 +574,7 @@
                         position: absolute;
                         width: ${Math.random() * 60 + 20}px;
                         height: ${Math.random() * 60 + 20}px;
-                        background: linear-gradient(${Math.random() * 360}deg, 
+                        background: linear-gradient(${Math.random() * 360}deg,
                             rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.1),
                             rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.1));
                         border-radius: ${Math.random() * 50}%;

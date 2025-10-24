@@ -127,6 +127,13 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/search-student', 'searchStudent')->name('search-student');
                 Route::post('/nfc-scan', 'nfcScan')->name('nfc-scan');
                 Route::get('/student/{studentId}/percentage', 'studentPercentage')->name('student-percentage');
+
+                // Device Management
+                Route::get('/devices', 'devicesIndex')->name('devices.index');
+                Route::get('/devices/list', 'devicesList')->name('devices.list');
+                Route::post('/devices/register', 'devicesRegister')->name('devices.register');
+                Route::post('/devices/sync', 'devicesSync')->name('devices.sync');
+                Route::delete('/devices/remove', 'devicesRemove')->name('devices.remove');
             });
         });
 
