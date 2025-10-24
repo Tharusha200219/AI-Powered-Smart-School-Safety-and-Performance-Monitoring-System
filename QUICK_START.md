@@ -6,31 +6,32 @@ Your Laravel application **MUST** have these columns in the `students` table:
 
 ### **Essential Columns (Required by ML Model)**
 
-| Column Name | Data Type | Example Values | Description |
-|-------------|-----------|----------------|-------------|
-| `student_id` | VARCHAR(50) | "S001", "S123" | Unique student identifier |
-| `name` | VARCHAR(255) | "John Doe" | Student name |
-| `gender` | ENUM | "Male", "Female" | Student gender |
-| `study_hours_per_week` | DECIMAL(5,2) | 20.50 | Hours spent studying per week |
-| `attendance_rate` | DECIMAL(5,2) | 85.50 | Percentage of classes attended (0-100) |
-| `past_exam_scores` | DECIMAL(5,2) | 75.00 | Average of all past exam scores (0-100) |
-| `parental_education_level` | ENUM | "High School", "Bachelors", "Masters", "PhD" | Highest parent education |
-| `internet_access_at_home` | ENUM | "Yes", "No" | Internet availability at home |
-| `extracurricular_activities` | ENUM | "Yes", "No" | Participation in activities |
+| Column Name                  | Data Type    | Example Values                               | Description                             |
+| ---------------------------- | ------------ | -------------------------------------------- | --------------------------------------- |
+| `student_id`                 | VARCHAR(50)  | "S001", "S123"                               | Unique student identifier               |
+| `name`                       | VARCHAR(255) | "John Doe"                                   | Student name                            |
+| `gender`                     | ENUM         | "Male", "Female"                             | Student gender                          |
+| `study_hours_per_week`       | DECIMAL(5,2) | 20.50                                        | Hours spent studying per week           |
+| `attendance_rate`            | DECIMAL(5,2) | 85.50                                        | Percentage of classes attended (0-100)  |
+| `past_exam_scores`           | DECIMAL(5,2) | 75.00                                        | Average of all past exam scores (0-100) |
+| `parental_education_level`   | ENUM         | "High School", "Bachelors", "Masters", "PhD" | Highest parent education                |
+| `internet_access_at_home`    | ENUM         | "Yes", "No"                                  | Internet availability at home           |
+| `extracurricular_activities` | ENUM         | "Yes", "No"                                  | Participation in activities             |
 
 ### **Prediction Result Columns (Updated by API)**
 
-| Column Name | Data Type | Description |
-|-------------|-----------|-------------|
-| `predicted_performance` | ENUM("Pass", "Fail") | ML model prediction |
-| `prediction_confidence` | DECIMAL(5,4) | Confidence score (0.0000 to 1.0000) |
-| `last_prediction_date` | TIMESTAMP | When prediction was made |
+| Column Name             | Data Type            | Description                         |
+| ----------------------- | -------------------- | ----------------------------------- |
+| `predicted_performance` | ENUM("Pass", "Fail") | ML model prediction                 |
+| `prediction_confidence` | DECIMAL(5,4)         | Confidence score (0.0000 to 1.0000) |
+| `last_prediction_date`  | TIMESTAMP            | When prediction was made            |
 
 ---
 
 ## 🚀 QUICK START - 5 STEPS
 
 ### **Step 1: Install Python Dependencies**
+
 ```bash
 cd /Users/tharusha_rashmika/Documents/projects/aleph/student-performance-prediction-model
 python3 -m venv venv
@@ -39,24 +40,31 @@ pip install -r requirements.txt
 ```
 
 ### **Step 2: Train the Model**
+
 ```bash
 python train_model.py
 ```
+
 Expected output: "Model training completed successfully! Final Model Accuracy: XX%"
 
 ### **Step 3: Test the Model**
+
 ```bash
 python predict_simple.py
 ```
+
 You'll see sample predictions to verify the model works.
 
 ### **Step 4: Start the Prediction API**
+
 ```bash
 python predict_api.py
 ```
+
 API will run on: `http://localhost:5000`
 
 ### **Step 5: Test API from Terminal**
+
 ```bash
 curl -X POST http://localhost:5000/predict \
   -H "Content-Type: application/json" \
@@ -78,11 +86,13 @@ curl -X POST http://localhost:5000/predict \
 ### **Step 1: Create the Database Tables**
 
 Use the provided SQL schema:
+
 ```bash
 mysql -u your_username -p your_database < LARAVEL_DATABASE_SCHEMA.sql
 ```
 
 Or create Laravel migration:
+
 ```bash
 php artisan make:migration create_students_table
 ```
@@ -93,6 +103,7 @@ Create file: `app/Services/StudentPerformancePredictionService.php`
 (See README.md for complete code)
 
 Key method:
+
 ```php
 $service = new StudentPerformancePredictionService();
 $result = $service->predictSingleStudent([
@@ -115,7 +126,7 @@ public function predictStudentPerformance($studentId)
 {
     $service = new StudentPerformancePredictionService();
     $student = Student::findOrFail($studentId);
-    
+
     $result = $service->predictSingleStudent([
         'study_hours_per_week' => $student->study_hours_per_week,
         'attendance_rate' => $student->attendance_rate,
@@ -125,14 +136,14 @@ public function predictStudentPerformance($studentId)
         'internet_access_at_home' => $student->internet_access_at_home,
         'extracurricular_activities' => $student->extracurricular_activities,
     ]);
-    
+
     // Update student with prediction
     $student->update([
         'predicted_performance' => $result['prediction'],
         'prediction_confidence' => $result['confidence'],
         'last_prediction_date' => now(),
     ]);
-    
+
     return response()->json($result);
 }
 ```
@@ -153,7 +164,7 @@ public function calculateAttendanceRate()
     $presentClasses = $this->attendance()
         ->where('status', 'Present')
         ->count();
-    
+
     return $totalClasses > 0 ? ($presentClasses / $totalClasses) * 100 : 0;
 }
 
@@ -205,6 +216,7 @@ $student->save();
 ### **4. Background Information (One-Time Entry)**
 
 Collect during student registration:
+
 - Parental Education Level: Dropdown in registration form
 - Internet Access: Checkbox during registration
 - Extracurricular Activities: Based on enrollment records
@@ -223,6 +235,7 @@ php artisan make:command UpdateStudentPredictions
 ```
 
 Schedule it in `app/Console/Kernel.php`:
+
 ```php
 protected function schedule(Schedule $schedule)
 {
@@ -231,6 +244,7 @@ protected function schedule(Schedule $schedule)
 ```
 
 This will:
+
 1. Fetch all students
 2. Send batch prediction request to Python API
 3. Update database with predictions
@@ -246,6 +260,7 @@ This will:
 - **Batch Prediction**: 1000 students in ~5 seconds
 
 ### **Factors Affecting Accuracy**
+
 - Quality of attendance data
 - Frequency of exam score updates
 - Accuracy of study hours reporting
@@ -298,6 +313,7 @@ This will:
 ## 🆘 TROUBLESHOOTING
 
 ### Python API Not Starting?
+
 ```bash
 # Check if port is in use
 lsof -i :5000
@@ -307,6 +323,7 @@ python predict_api.py  # Edit file to change port
 ```
 
 ### Laravel Can't Connect to API?
+
 ```bash
 # Test API manually
 curl http://localhost:5000/health
@@ -316,6 +333,7 @@ tail -f storage/logs/laravel.log
 ```
 
 ### Model Accuracy Too Low?
+
 - Check if data has sufficient variation
 - Verify attendance is being tracked properly
 - Ensure exam scores are normalized (0-100)
@@ -326,6 +344,7 @@ tail -f storage/logs/laravel.log
 ## 📞 NEED HELP?
 
 Check these files in the project:
+
 - `README.md` - Complete documentation
 - `LARAVEL_DATABASE_SCHEMA.sql` - Database structure
 - `predict_simple.py` - Test predictions locally

@@ -24,6 +24,7 @@
 The model predicts whether a student will **PASS or FAIL** based on:
 
 ### Input Features (7 required):
+
 1. ✅ Study hours per week
 2. ✅ Attendance rate (from RFID)
 3. ✅ Past exam scores (average)
@@ -33,6 +34,7 @@ The model predicts whether a student will **PASS or FAIL** based on:
 7. ✅ Extracurricular activities
 
 ### Output:
+
 - **Prediction**: "Pass" or "Fail"
 - **Confidence**: 0.0 to 1.0 (e.g., 0.88 = 88% confident)
 - **Probabilities**: Individual probability for Pass and Fail
@@ -62,6 +64,7 @@ last_prediction_date TIMESTAMP
 ```
 
 ### **attendance** table (for RFID):
+
 ```sql
 student_id VARCHAR(50)
 rfid_tag VARCHAR(50)
@@ -70,6 +73,7 @@ status ENUM('Present', 'Late', 'Absent')
 ```
 
 ### **exam_scores** table (for manual entry):
+
 ```sql
 student_id VARCHAR(50)
 exam_name VARCHAR(255)
@@ -84,11 +88,13 @@ exam_date DATE
 ## 🚀 HOW TO USE IT
 
 ### **Step 1: Start the Python API**
+
 ```bash
 cd /Users/tharusha_rashmika/Documents/projects/aleph/student-performance-prediction-model
 source venv/bin/activate
 python predict_api.py
 ```
+
 API runs on: `http://localhost:5000`
 
 ### **Step 2: Call from Laravel**
@@ -127,6 +133,7 @@ $student->save();
 ✅ **Hyperparameter Tuning**: GridSearchCV
 
 ### Feature Importance (Most to Least):
+
 1. Performance Index (49.8%) - Past scores × Attendance
 2. Study Hours per Week (13.8%)
 3. Study-Attendance Score (13.2%)
@@ -140,11 +147,13 @@ $student->save();
 ## 🔄 WORKFLOW INTEGRATION
 
 ### **Current State (Your RFID System):**
+
 ```
 RFID Scanner → Laravel → Database (attendance table)
 ```
 
 ### **After Integration:**
+
 ```
 RFID Scanner → Laravel → Database (attendance table)
                   ↓
@@ -168,6 +177,7 @@ Teachers Enter → Database (exam_scores table)
 ## 📡 API ENDPOINTS
 
 ### 1. Health Check
+
 ```bash
 GET http://localhost:5000/health
 
@@ -180,6 +190,7 @@ Response:
 ```
 
 ### 2. Single Prediction
+
 ```bash
 POST http://localhost:5000/predict
 Content-Type: application/json
@@ -207,6 +218,7 @@ Response:
 ```
 
 ### 3. Batch Prediction
+
 ```bash
 POST http://localhost:5000/predict_batch
 
@@ -228,6 +240,7 @@ Response:
 ```
 
 ### 4. Model Info
+
 ```bash
 GET http://localhost:5000/model_info
 
@@ -264,25 +277,30 @@ Response:
 ## 📅 RECOMMENDED SCHEDULE
 
 ### **Daily (Automated):**
+
 - RFID attendance recording
 - Auto-update attendance_rate after each class
 - Batch predictions at midnight
 
 ### **After Each Exam:**
+
 - Teachers enter scores
 - Auto-update past_exam_scores
 - Trigger predictions for affected students
 
 ### **Weekly:**
+
 - Students report study hours
 - Review at-risk students (predicted Fail with high confidence)
 - Send alerts to teachers/parents
 
 ### **Monthly:**
+
 - Review model performance
 - Generate reports
 
 ### **Semester:**
+
 - Retrain model with new data
 - Update feature importance
 - Validate accuracy
@@ -292,7 +310,9 @@ Response:
 ## 🎯 USE CASES
 
 ### 1. **Early Warning System**
+
 Identify students likely to fail BEFORE final exams:
+
 ```php
 $atRiskStudents = Student::where('predicted_performance', 'Fail')
     ->where('prediction_confidence', '>', 0.7)
@@ -300,7 +320,9 @@ $atRiskStudents = Student::where('predicted_performance', 'Fail')
 ```
 
 ### 2. **Teacher Dashboard**
+
 Show teachers their at-risk students:
+
 ```php
 $teacherStudents = $teacher->students()
     ->where('predicted_performance', 'Fail')
@@ -309,9 +331,11 @@ $teacherStudents = $teacher->students()
 ```
 
 ### 3. **Parent Alerts**
+
 Send notifications to parents:
+
 ```php
-if ($student->predicted_performance == 'Fail' && 
+if ($student->predicted_performance == 'Fail' &&
     $student->prediction_confidence > 0.8) {
     Mail::to($student->parent_email)
         ->send(new AtRiskAlert($student));
@@ -319,7 +343,9 @@ if ($student->predicted_performance == 'Fail' &&
 ```
 
 ### 4. **Attendance Monitoring**
+
 Flag students with low attendance:
+
 ```php
 $lowAttendance = Student::where('attendance_rate', '<', 75)
     ->where('predicted_performance', 'Fail')
@@ -327,7 +353,9 @@ $lowAttendance = Student::where('attendance_rate', '<', 75)
 ```
 
 ### 5. **Intervention Tracking**
+
 Track which interventions help:
+
 ```php
 // Before intervention
 $initialPrediction = $student->predicted_performance;
@@ -336,7 +364,7 @@ $initialPrediction = $student->predicted_performance;
 $student->refreshPrediction();
 
 // Compare results
-$improved = $initialPrediction == 'Fail' && 
+$improved = $initialPrediction == 'Fail' &&
             $student->predicted_performance == 'Pass';
 ```
 
@@ -345,39 +373,45 @@ $improved = $initialPrediction == 'Fail' &&
 ## 📊 EXAMPLE PREDICTIONS
 
 ### **High-Performing Student:**
+
 - Study hours: 25/week
 - Attendance: 90%
 - Past scores: 85
 - **Prediction: PASS (88% confidence)**
 
 ### **At-Risk Student:**
+
 - Study hours: 10/week
 - Attendance: 65%
 - Past scores: 55
 - **Prediction: FAIL (100% confidence)**
 
 ### **Average Student:**
+
 - Study hours: 18/week
 - Attendance: 78%
 - Past scores: 72
 - **Prediction: FAIL (100% confidence)**
-  *(Note: Model is conservative - better safe than sorry!)*
+  _(Note: Model is conservative - better safe than sorry!)_
 
 ---
 
 ## 🚨 TROUBLESHOOTING
 
 ### **API Returns 400 Error**
+
 - Check all 7 fields are provided
 - Verify exact spelling of enum values
 - Ensure numeric fields are numbers, not strings
 
 ### **Low Accuracy in Production**
+
 - Verify attendance_rate is calculated correctly
 - Check exam scores are normalized to 0-100
 - Ensure sufficient historical data (>3 months)
 
 ### **API Not Responding**
+
 ```bash
 # Check if running
 ps aux | grep predict_api
@@ -388,6 +422,7 @@ python predict_api.py
 ```
 
 ### **Model File Not Found**
+
 ```bash
 # Retrain model
 python train_model.py
@@ -398,6 +433,7 @@ python train_model.py
 ## 🎓 NEXT STEPS
 
 ### **Immediate:**
+
 1. ✅ Create database tables in Laravel (use LARAVEL_DATABASE_SCHEMA.sql)
 2. ✅ Ensure RFID attendance is recording to attendance table
 3. ✅ Create exam score entry form for teachers
@@ -405,18 +441,21 @@ python train_model.py
 5. ✅ Test single prediction with sample data
 
 ### **This Week:**
+
 6. Create scheduled command for batch predictions
 7. Build dashboard to show at-risk students
 8. Set up email alerts for low-confidence students
 9. Train staff on using the system
 
 ### **This Month:**
+
 10. Monitor prediction accuracy
 11. Collect feedback from teachers
 12. Adjust intervention strategies
 13. Generate monthly reports
 
 ### **This Semester:**
+
 14. Retrain model with new data
 15. Add more features if available
 16. Validate predictions against actual results
@@ -448,19 +487,20 @@ Track these to measure impact:
 
 ## 📞 QUICK REFERENCE
 
-| Task | Command |
-|------|---------|
-| Train model | `python train_model.py` |
-| Test model | `python predict_simple.py` |
-| Start API | `python predict_api.py` |
-| Check API health | `curl http://localhost:5000/health` |
-| Make prediction | `curl -X POST http://localhost:5000/predict -H "Content-Type: application/json" -d '{...}'` |
+| Task             | Command                                                                                     |
+| ---------------- | ------------------------------------------------------------------------------------------- |
+| Train model      | `python train_model.py`                                                                     |
+| Test model       | `python predict_simple.py`                                                                  |
+| Start API        | `python predict_api.py`                                                                     |
+| Check API health | `curl http://localhost:5000/health`                                                         |
+| Make prediction  | `curl -X POST http://localhost:5000/predict -H "Content-Type: application/json" -d '{...}'` |
 
 ---
 
 ## ✨ YOU'RE ALL SET!
 
 You now have:
+
 - ✅ Trained ML model (87.32% accuracy)
 - ✅ Flask REST API
 - ✅ Complete database schema

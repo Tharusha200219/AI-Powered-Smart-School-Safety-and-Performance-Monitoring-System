@@ -13,11 +13,11 @@ CREATE TABLE students (
     -- Primary Keys
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     student_id VARCHAR(50) UNIQUE NOT NULL,
-    
+
     -- Basic Information
     name VARCHAR(255) NOT NULL,
     gender ENUM('Male', 'Female') NOT NULL,
-    
+
     -- ⭐ ML MODEL INPUT FEATURES (CRITICAL) ⭐
     study_hours_per_week DECIMAL(5,2) DEFAULT 0,
     attendance_rate DECIMAL(5,2) DEFAULT 0,
@@ -25,12 +25,12 @@ CREATE TABLE students (
     parental_education_level ENUM('High School', 'Bachelors', 'Masters', 'PhD'),
     internet_access_at_home ENUM('Yes', 'No') DEFAULT 'Yes',
     extracurricular_activities ENUM('Yes', 'No') DEFAULT 'No',
-    
+
     -- ⭐ ML MODEL OUTPUT (AUTO-UPDATED BY API) ⭐
     predicted_performance ENUM('Pass', 'Fail') NULL,
     prediction_confidence DECIMAL(5,4) NULL,
     last_prediction_date TIMESTAMP NULL,
-    
+
     -- Timestamps
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -42,23 +42,27 @@ CREATE TABLE students (
 ## 📋 DETAILED COLUMN SPECIFICATIONS
 
 ### 1️⃣ **student_id** (VARCHAR 50) - REQUIRED
+
 - **Purpose**: Unique identifier for each student
 - **Example**: "S001", "STU-2024-001", "2024CS001"
 - **Laravel**: Used as foreign key in all related tables
 - **Note**: Must be unique across all students
 
 ### 2️⃣ **name** (VARCHAR 255) - REQUIRED
+
 - **Purpose**: Student's full name
 - **Example**: "John Doe", "Sarah Smith"
 - **Laravel**: Display in dashboards and reports
 
 ### 3️⃣ **gender** (ENUM: 'Male', 'Female') - REQUIRED
+
 - **Purpose**: ML model feature for prediction
 - **Allowed Values**: ONLY "Male" or "Female" (exact spelling)
 - **Laravel**: Dropdown selection during registration
 - **⚠️ CRITICAL**: Must match exactly - case sensitive!
 
 ### 4️⃣ **study_hours_per_week** (DECIMAL 5,2) - REQUIRED
+
 - **Purpose**: Hours student studies per week
 - **Range**: 0.00 to 999.99
 - **Example**: 20.50, 15.00, 30.75
@@ -69,6 +73,7 @@ CREATE TABLE students (
 - **Update Frequency**: Weekly or monthly
 
 ### 5️⃣ **attendance_rate** (DECIMAL 5,2) - REQUIRED ⭐ MOST IMPORTANT
+
 - **Purpose**: Percentage of classes attended
 - **Range**: 0.00 to 100.00
 - **Example**: 85.50, 92.00, 67.25
@@ -82,6 +87,7 @@ CREATE TABLE students (
 - **Update Frequency**: Real-time after each class
 
 ### 6️⃣ **past_exam_scores** (DECIMAL 5,2) - REQUIRED ⭐ VERY IMPORTANT
+
 - **Purpose**: Average of all past exam scores
 - **Range**: 0.00 to 100.00
 - **Example**: 75.50, 88.00, 65.75
@@ -94,6 +100,7 @@ CREATE TABLE students (
 - **Update Frequency**: After each exam entry
 
 ### 7️⃣ **parental_education_level** (ENUM) - REQUIRED
+
 - **Purpose**: Highest education level of parents
 - **Allowed Values**: ONLY these 4 options:
   - "High School"
@@ -101,7 +108,7 @@ CREATE TABLE students (
   - "Masters"
   - "PhD"
 - **⚠️ CRITICAL**: Must match exactly - case sensitive!
-- **How to Populate**: 
+- **How to Populate**:
   - Dropdown during student registration
   - One-time entry
 - **Laravel Example**:
@@ -115,10 +122,11 @@ CREATE TABLE students (
   ```
 
 ### 8️⃣ **internet_access_at_home** (ENUM: 'Yes', 'No') - REQUIRED
+
 - **Purpose**: Whether student has internet at home
 - **Allowed Values**: ONLY "Yes" or "No"
 - **⚠️ CRITICAL**: Must match exactly - case sensitive!
-- **How to Populate**: 
+- **How to Populate**:
   - Checkbox during registration
   - One-time entry
 - **Laravel Example**:
@@ -130,10 +138,11 @@ CREATE TABLE students (
   ```
 
 ### 9️⃣ **extracurricular_activities** (ENUM: 'Yes', 'No') - REQUIRED
+
 - **Purpose**: Whether student participates in activities
 - **Allowed Values**: ONLY "Yes" or "No"
 - **⚠️ CRITICAL**: Must match exactly - case sensitive!
-- **How to Populate**: 
+- **How to Populate**:
   - Based on enrollment in clubs/sports
   - Checkbox during registration
   - Auto-update when student joins activity
@@ -145,6 +154,7 @@ CREATE TABLE students (
   ```
 
 ### 🔟 **predicted_performance** (ENUM: 'Pass', 'Fail') - AUTO-UPDATED
+
 - **Purpose**: ML model's prediction result
 - **Values**: "Pass" or "Fail"
 - **How to Populate**: **AUTOMATIC FROM API**
@@ -152,6 +162,7 @@ CREATE TABLE students (
 - **Never manually edit this field**
 
 ### 1️⃣1️⃣ **prediction_confidence** (DECIMAL 5,4) - AUTO-UPDATED
+
 - **Purpose**: How confident the model is (0-1)
 - **Range**: 0.0000 to 1.0000
 - **Example**: 0.8850 = 88.50% confident
@@ -159,6 +170,7 @@ CREATE TABLE students (
 - **Use for**: Filtering high-confidence predictions
 
 ### 1️⃣2️⃣ **last_prediction_date** (TIMESTAMP) - AUTO-UPDATED
+
 - **Purpose**: When prediction was last made
 - **How to Populate**: **AUTOMATIC FROM API**
 - **Use for**: Knowing if prediction is stale
@@ -168,6 +180,7 @@ CREATE TABLE students (
 ## 🗄️ SUPPORTING TABLES
 
 ### **TABLE: `attendance`** (for RFID tracking)
+
 ```sql
 CREATE TABLE attendance (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -181,6 +194,7 @@ CREATE TABLE attendance (
 ```
 
 ### **TABLE: `exam_scores`** (for manual exam entry)
+
 ```sql
 CREATE TABLE exam_scores (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -199,23 +213,27 @@ CREATE TABLE exam_scores (
 ## ⚠️ CRITICAL VALIDATION RULES
 
 ### **Gender Field**
+
 ```php
 // In Laravel Model or Request
 'gender' => 'required|in:Male,Female'  // Case sensitive!
 ```
 
 ### **Parental Education Level**
+
 ```php
 'parental_education_level' => 'required|in:High School,Bachelors,Masters,PhD'
 ```
 
 ### **Internet Access & Activities**
+
 ```php
 'internet_access_at_home' => 'required|in:Yes,No'
 'extracurricular_activities' => 'required|in:Yes,No'
 ```
 
 ### **Numeric Ranges**
+
 ```php
 'study_hours_per_week' => 'required|numeric|min:0|max:168',  // Max = hours in week
 'attendance_rate' => 'required|numeric|min:0|max:100',
@@ -226,57 +244,60 @@ CREATE TABLE exam_scores (
 
 ## 📊 HOW TO POPULATE EACH FIELD
 
-| Column | Source | Method | Update Frequency |
-|--------|--------|--------|------------------|
-| `student_id` | Manual/Auto | Registration | Once |
-| `name` | Manual | Registration | Once |
-| `gender` | Manual | Registration form | Once |
-| `study_hours_per_week` | Student/System | Self-report or calculated | Weekly |
-| `attendance_rate` | **RFID System** | **Auto from attendance table** | **Real-time** |
-| `past_exam_scores` | **Exam Scores** | **Auto from exam_scores table** | **After each exam** |
-| `parental_education_level` | Manual | Registration form | Once |
-| `internet_access_at_home` | Manual | Registration form | Once |
-| `extracurricular_activities` | System/Manual | Auto from enrollments | Dynamic |
-| `predicted_performance` | **Python API** | **Auto from ML model** | **Daily** |
-| `prediction_confidence` | **Python API** | **Auto from ML model** | **Daily** |
-| `last_prediction_date` | **Python API** | **Auto from ML model** | **Daily** |
+| Column                       | Source          | Method                          | Update Frequency    |
+| ---------------------------- | --------------- | ------------------------------- | ------------------- |
+| `student_id`                 | Manual/Auto     | Registration                    | Once                |
+| `name`                       | Manual          | Registration                    | Once                |
+| `gender`                     | Manual          | Registration form               | Once                |
+| `study_hours_per_week`       | Student/System  | Self-report or calculated       | Weekly              |
+| `attendance_rate`            | **RFID System** | **Auto from attendance table**  | **Real-time**       |
+| `past_exam_scores`           | **Exam Scores** | **Auto from exam_scores table** | **After each exam** |
+| `parental_education_level`   | Manual          | Registration form               | Once                |
+| `internet_access_at_home`    | Manual          | Registration form               | Once                |
+| `extracurricular_activities` | System/Manual   | Auto from enrollments           | Dynamic             |
+| `predicted_performance`      | **Python API**  | **Auto from ML model**          | **Daily**           |
+| `prediction_confidence`      | **Python API**  | **Auto from ML model**          | **Daily**           |
+| `last_prediction_date`       | **Python API**  | **Auto from ML model**          | **Daily**           |
 
 ---
 
 ## 🔄 AUTOMATED CALCULATIONS
 
 ### **1. Update Attendance Rate (Automatic)**
+
 ```php
 // After RFID scan, update attendance_rate
 public function updateAttendanceRate()
 {
     $total = $this->attendance()->count();
     $present = $this->attendance()->where('status', 'Present')->count();
-    
+
     $this->attendance_rate = $total > 0 ? ($present / $total) * 100 : 0;
     $this->save();
 }
 ```
 
 ### **2. Update Past Exam Scores (Automatic)**
+
 ```php
 // After teacher enters exam score
 public function updatePastExamScores()
 {
     $average = $this->examScores()->avg('percentage');
-    
+
     $this->past_exam_scores = $average ?? 0;
     $this->save();
 }
 ```
 
 ### **3. Update Extracurricular Activities (Automatic)**
+
 ```php
 // When student joins/leaves an activity
 public function updateExtracurricularStatus()
 {
     $hasActivities = $this->activities()->exists();
-    
+
     $this->extracurricular_activities = $hasActivities ? 'Yes' : 'No';
     $this->save();
 }
@@ -309,7 +330,7 @@ class Student extends Model
         'prediction_confidence',
         'last_prediction_date',
     ];
-    
+
     protected $casts = [
         'study_hours_per_week' => 'decimal:2',
         'attendance_rate' => 'decimal:2',
@@ -317,18 +338,18 @@ class Student extends Model
         'prediction_confidence' => 'decimal:4',
         'last_prediction_date' => 'datetime',
     ];
-    
+
     // Relationships
     public function attendance()
     {
         return $this->hasMany(Attendance::class, 'student_id', 'student_id');
     }
-    
+
     public function examScores()
     {
         return $this->hasMany(ExamScore::class, 'student_id', 'student_id');
     }
-    
+
     // Auto-calculate methods
     public function updateAttendanceRate()
     {
@@ -337,7 +358,7 @@ class Student extends Model
         $this->attendance_rate = $total > 0 ? ($present / $total) * 100 : 0;
         $this->save();
     }
-    
+
     public function updatePastExamScores()
     {
         $this->past_exam_scores = $this->examScores()->avg('percentage') ?? 0;
@@ -365,14 +386,14 @@ class Student extends Model
 
 ## 🚨 COMMON ERRORS & FIXES
 
-| Error | Cause | Fix |
-|-------|-------|-----|
-| "Gender not found" | Gender is "M" or "F" instead of "Male"/"Female" | Update to full words |
-| "Invalid parental education" | Using "Bachelor" instead of "Bachelors" | Match exact spelling |
-| "Attendance rate > 100" | Calculation error | Ensure formula divides by total |
-| "Past exam scores NULL" | No exams entered yet | Set default to 0 |
-| API returns 400 | Missing required field | Check all 7 fields are sent |
-| Low accuracy | Incorrect data types | Verify all numeric fields are numbers |
+| Error                        | Cause                                           | Fix                                   |
+| ---------------------------- | ----------------------------------------------- | ------------------------------------- |
+| "Gender not found"           | Gender is "M" or "F" instead of "Male"/"Female" | Update to full words                  |
+| "Invalid parental education" | Using "Bachelor" instead of "Bachelors"         | Match exact spelling                  |
+| "Attendance rate > 100"      | Calculation error                               | Ensure formula divides by total       |
+| "Past exam scores NULL"      | No exams entered yet                            | Set default to 0                      |
+| API returns 400              | Missing required field                          | Check all 7 fields are sent           |
+| Low accuracy                 | Incorrect data types                            | Verify all numeric fields are numbers |
 
 ---
 

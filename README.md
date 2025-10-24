@@ -31,22 +31,22 @@ CREATE TABLE students (
     student_id VARCHAR(50) UNIQUE NOT NULL,
     name VARCHAR(255) NOT NULL,
     gender ENUM('Male', 'Female') NOT NULL,
-    
+
     -- Academic data
     study_hours_per_week DECIMAL(5, 2) DEFAULT 0,
     attendance_rate DECIMAL(5, 2) DEFAULT 0,  -- Calculated from RFID attendance
     past_exam_scores DECIMAL(5, 2) DEFAULT 0,  -- Average of past exams
-    
+
     -- Background information
     parental_education_level ENUM('High School', 'Bachelors', 'Masters', 'PhD'),
     internet_access_at_home ENUM('Yes', 'No') DEFAULT 'Yes',
     extracurricular_activities ENUM('Yes', 'No') DEFAULT 'No',
-    
+
     -- Prediction results (updated by API)
     predicted_performance ENUM('Pass', 'Fail') NULL,
     prediction_confidence DECIMAL(5, 4) NULL,
     last_prediction_date TIMESTAMP NULL,
-    
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -99,6 +99,7 @@ python train_model.py
 ```
 
 This will:
+
 - Load and preprocess the dataset
 - Train multiple models with hyperparameter tuning
 - Select the best performing model
@@ -138,7 +139,7 @@ use Illuminate\Support\Facades\Log;
 class StudentPerformancePredictionService
 {
     private $apiUrl = 'http://localhost:5000';
-    
+
     public function predictSingleStudent($studentData)
     {
         try {
@@ -151,39 +152,39 @@ class StudentPerformancePredictionService
                 'internet_access_at_home' => $studentData['internet_access_at_home'],
                 'extracurricular_activities' => $studentData['extracurricular_activities'],
             ]);
-            
+
             if ($response->successful()) {
                 return $response->json();
             }
-            
+
             Log::error('Prediction API Error: ' . $response->body());
             return null;
-            
+
         } catch (\Exception $e) {
             Log::error('Prediction Service Error: ' . $e->getMessage());
             return null;
         }
     }
-    
+
     public function predictBatchStudents($studentsData)
     {
         try {
             $response = Http::timeout(60)->post($this->apiUrl . '/predict_batch', [
                 'students' => $studentsData
             ]);
-            
+
             if ($response->successful()) {
                 return $response->json();
             }
-            
+
             return null;
-            
+
         } catch (\Exception $e) {
             Log::error('Batch Prediction Error: ' . $e->getMessage());
             return null;
         }
     }
-    
+
     public function checkApiHealth()
     {
         try {
@@ -211,22 +212,22 @@ use Illuminate\Http\Request;
 class StudentPredictionController extends Controller
 {
     protected $predictionService;
-    
+
     public function __construct(StudentPerformancePredictionService $predictionService)
     {
         $this->predictionService = $predictionService;
     }
-    
+
     public function predictStudent($studentId)
     {
         $student = Student::findOrFail($studentId);
-        
+
         // Calculate attendance rate from RFID data
         $attendanceRate = $this->calculateAttendanceRate($student);
-        
+
         // Calculate average past exam scores
         $pastExamScores = $this->calculateAverageExamScores($student);
-        
+
         $studentData = [
             'study_hours_per_week' => $student->study_hours_per_week,
             'attendance_rate' => $attendanceRate,
@@ -236,9 +237,9 @@ class StudentPredictionController extends Controller
             'internet_access_at_home' => $student->internet_access_at_home,
             'extracurricular_activities' => $student->extracurricular_activities,
         ];
-        
+
         $result = $this->predictionService->predictSingleStudent($studentData);
-        
+
         if ($result) {
             // Update student record with prediction
             $student->update([
@@ -246,7 +247,7 @@ class StudentPredictionController extends Controller
                 'prediction_confidence' => $result['confidence'],
                 'last_prediction_date' => now(),
             ]);
-            
+
             return response()->json([
                 'success' => true,
                 'student_id' => $student->student_id,
@@ -255,23 +256,23 @@ class StudentPredictionController extends Controller
                 'probabilities' => $result['probabilities'],
             ]);
         }
-        
+
         return response()->json([
             'success' => false,
             'message' => 'Prediction failed'
         ], 500);
     }
-    
+
     private function calculateAttendanceRate($student)
     {
         $totalClasses = $student->attendance()->count();
         $presentClasses = $student->attendance()
             ->where('status', 'Present')
             ->count();
-            
+
         return $totalClasses > 0 ? ($presentClasses / $totalClasses) * 100 : 0;
     }
-    
+
     private function calculateAverageExamScores($student)
     {
         return $student->examScores()
@@ -296,14 +297,14 @@ class UpdateStudentPredictions extends Command
 {
     protected $signature = 'students:update-predictions';
     protected $description = 'Update performance predictions for all students';
-    
+
     public function handle(StudentPerformancePredictionService $service)
     {
         $this->info('Updating student predictions...');
-        
+
         $students = Student::all();
         $studentsData = [];
-        
+
         foreach ($students as $student) {
             $studentsData[] = [
                 'student_id' => $student->student_id,
@@ -316,9 +317,9 @@ class UpdateStudentPredictions extends Command
                 'extracurricular_activities' => $student->extracurricular_activities,
             ];
         }
-        
+
         $result = $service->predictBatchStudents($studentsData);
-        
+
         if ($result) {
             foreach ($result['predictions'] as $prediction) {
                 $student = Student::where('student_id', $prediction['student_id'])->first();
@@ -330,7 +331,7 @@ class UpdateStudentPredictions extends Command
                     ]);
                 }
             }
-            
+
             $this->info("Successfully updated predictions for {$result['total_students']} students");
         } else {
             $this->error('Failed to update predictions');
@@ -349,11 +350,13 @@ protected function schedule(Schedule $schedule)
 ## 📡 API Endpoints
 
 ### 1. Health Check
+
 ```bash
 GET http://localhost:5000/health
 ```
 
 ### 2. Single Prediction
+
 ```bash
 POST http://localhost:5000/predict
 Content-Type: application/json
@@ -370,6 +373,7 @@ Content-Type: application/json
 ```
 
 ### 3. Batch Prediction
+
 ```bash
 POST http://localhost:5000/predict_batch
 Content-Type: application/json
@@ -387,6 +391,7 @@ Content-Type: application/json
 ```
 
 ### 4. Model Information
+
 ```bash
 GET http://localhost:5000/model_info
 ```
@@ -402,6 +407,7 @@ GET http://localhost:5000/model_info
 ## 📈 Model Performance
 
 The model is trained using:
+
 - **Random Forest** and **Gradient Boosting** with GridSearchCV
 - **Cross-validation** for robust performance estimation
 - **Feature engineering** for improved accuracy
@@ -410,6 +416,7 @@ The model is trained using:
 ## 🛠️ Troubleshooting
 
 ### API Connection Issues
+
 ```bash
 # Check if API is running
 curl http://localhost:5000/health
@@ -419,12 +426,14 @@ ps aux | grep predict_api
 ```
 
 ### Model Loading Errors
+
 ```bash
 # Retrain the model
 python train_model.py
 ```
 
 ### Missing Dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -439,6 +448,7 @@ pip install -r requirements.txt
 ## 🚀 Production Deployment
 
 For production, consider:
+
 1. Using Gunicorn instead of Flask development server
 2. Setting up Nginx as reverse proxy
 3. Implementing API authentication
