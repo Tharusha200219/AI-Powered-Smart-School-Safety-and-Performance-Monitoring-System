@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Management;
 
+use App\DataTables\Admin\Management\AttendanceDataTable;
 use App\Http\Controllers\Controller;
 use App\Repositories\Interfaces\Admin\Management\AttendanceRepositoryInterface;
 use App\Repositories\Interfaces\Admin\Management\StudentRepositoryInterface;
@@ -10,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Session;
 use Carbon\Carbon;
 
 class AttendanceController extends Controller
@@ -29,23 +31,110 @@ class AttendanceController extends Controller
     }
 
     /**
-     * Display attendance list
+     * Display attendance list with DataTable
      */
-    public function index(Request $request)
+    public function index(AttendanceDataTable $dataTable, Request $request)
     {
-        $date = $request->get('date', Carbon::today()->format('Y-m-d'));
-        $status = $request->get('status');
-        $classId = $request->get('class_id');
+        Session::put('title', 'Attendance Management');
+        return $dataTable->render('admin.pages.management.attendance.index');
+    }
 
-        $filters = [
-            'date' => $date,
-            'status' => $status,
-            'class_id' => $classId
-        ];
+    /**
+     * Display the specified attendance record
+     */
+    public function show(string $id)
+    {
+        $attendance = $this->attendanceRepository->getById($id);
 
-        $attendances = $this->attendanceRepository->getReport($filters);
+        if (!$attendance) {
+            return redirect()->route('admin.management.attendance.index')
+                ->with('error', 'Attendance record not found.');
+        }
 
-        return view('admin.pages.management.attendance.index', compact('attendances', 'date'));
+        return view('admin.pages.management.attendance.show', compact('attendance'));
+    }
+
+    /**
+     * Show the form for editing the specified attendance record
+     */
+    public function edit(string $id)
+    {
+        $attendance = $this->attendanceRepository->getById($id);
+
+        if (!$attendance) {
+            return redirect()->route('admin.management.attendance.index')
+                ->with('error', 'Attendance record not found.');
+        }
+
+        return view('admin.pages.management.attendance.edit', compact('attendance'));
+    }
+
+    /**
+     * Update the specified attendance record
+     */
+    public function update(Request $request, string $id)
+    {
+        $validated = $request->validate([
+            'check_in_time' => 'nullable|date_format:H:i',
+            'check_out_time' => 'nullable|date_format:H:i',
+            'status' => 'required|in:present,absent,late,excused',
+            'notes' => 'nullable|string|max:500'
+        ]);
+
+        $attendance = $this->attendanceRepository->getById($id);
+
+        if (!$attendance) {
+            return redirect()->route('admin.management.attendance.index')
+                ->with('error', 'Attendance record not found.');
+        }
+
+        try {
+            $updateData = [
+                'status' => $validated['status'],
+                'notes' => $validated['notes'] ?? null
+            ];
+
+            if ($validated['check_in_time']) {
+                $date = $attendance->attendance_date->format('Y-m-d');
+                $updateData['check_in_time'] = Carbon::parse($date . ' ' . $validated['check_in_time']);
+            }
+
+            if ($validated['check_out_time']) {
+                $date = $attendance->attendance_date->format('Y-m-d');
+                $updateData['check_out_time'] = Carbon::parse($date . ' ' . $validated['check_out_time']);
+            }
+
+            $this->attendanceRepository->update($id, $updateData);
+
+            return redirect()->route('admin.management.attendance.index')
+                ->with('success', 'Attendance record updated successfully.');
+        } catch (\Exception $e) {
+            Log::error('Attendance update error: ' . $e->getMessage());
+            return back()->with('error', 'Failed to update attendance record: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Remove the specified attendance record
+     */
+    public function destroy(string $id)
+    {
+        try {
+            $attendance = $this->attendanceRepository->getById($id);
+
+            if (!$attendance) {
+                return redirect()->route('admin.management.attendance.index')
+                    ->with('error', 'Attendance record not found.');
+            }
+
+            $this->attendanceRepository->delete($id);
+
+            return redirect()->route('admin.management.attendance.index')
+                ->with('success', 'Attendance record deleted successfully.');
+        } catch (\Exception $e) {
+            Log::error('Attendance delete error: ' . $e->getMessage());
+            return back()->with('error', 'Failed to delete attendance record: ' . $e->getMessage());
+        }
     }
 
     /**

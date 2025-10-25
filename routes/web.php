@@ -126,6 +126,10 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('/dashboard', 'dashboard')->name('dashboard');
                 Route::get('/create', 'create')->name('create');
                 Route::post('/', 'store')->name('store');
+                Route::get('/{attendance}', 'show')->name('show');
+                Route::get('/{attendance}/edit', 'edit')->name('edit');
+                Route::put('/{attendance}', 'update')->name('update');
+                Route::delete('/{attendance}', 'destroy')->name('destroy');
                 Route::get('/report', 'report')->name('report');
                 Route::get('/statistics', 'statistics')->name('statistics');
                 Route::post('/search-student', 'searchStudent')->name('search-student');
