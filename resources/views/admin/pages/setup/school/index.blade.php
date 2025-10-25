@@ -39,7 +39,7 @@
                             <!-- Basic School Information -->
                             <div class="info-section">
                                 <h6 class="d-flex align-items-center">
-                                    <i class="material-symbols-rounded me-2" style="color: #5e72e4;">school</i>
+                                    <i class="material-symbols-rounded me-2">school</i>
                                     Basic School Information
                                 </h6>
 
@@ -116,7 +116,7 @@
                             <!-- Contact Information -->
                             <div class="info-section">
                                 <h6 class="d-flex align-items-center">
-                                    <i class="material-symbols-rounded me-2" style="color: #5e72e4;">contact_phone</i>
+                                    <i class="material-symbols-rounded me-2">contact_phone</i>
                                     Contact Information
                                 </h6>
 
@@ -161,7 +161,7 @@
                             <!-- Address Information -->
                             <div class="info-section">
                                 <h6 class="d-flex align-items-center">
-                                    <i class="material-symbols-rounded me-2" style="color: #5e72e4;">location_on</i>
+                                    <i class="material-symbols-rounded me-2">location_on</i>
                                     Address Information
                                 </h6>
 

@@ -76,16 +76,25 @@ class MarkDataTable extends DataTable
                     </button>
                     <div class="dropdown-menu dropdown-menu-end m-0">';
 
-                if (checkPermission('marks.show')) {
-                    $actions .= view('admin.layouts.actions.show', ['route' => route('admin.marks.show', $row->mark_id)])->render();
+                if (checkPermission('admin.management.marks.show')) {
+                    $actions .= view('admin.layouts.actions.show', [
+                        'url' => route('admin.management.marks.show', $row->mark_id),
+                        'id' => $row->mark_id,
+                    ])->render();
                 }
 
-                if (checkPermission('marks.edit')) {
-                    $actions .= view('admin.layouts.actions.edit', ['route' => route('admin.marks.edit', $row->mark_id)])->render();
+                if (checkPermission('admin.management.marks.edit')) {
+                    $actions .= view('admin.layouts.actions.edit', [
+                        'url' => route('admin.management.marks.edit', $row->mark_id),
+                        'id' => $row->mark_id,
+                    ])->render();
                 }
 
-                if (checkPermission('marks.destroy')) {
-                    $actions .= view('admin.layouts.actions.delete', ['route' => route('admin.marks.destroy', $row->mark_id)])->render();
+                if (checkPermission('admin.management.marks.delete')) {
+                    $actions .= view('admin.layouts.actions.delete', [
+                        'url' => route('admin.management.marks.destroy', $row->mark_id),
+                        'id' => $row->mark_id,
+                    ])->render();
                 }
 
                 $actions .= '</div></div>';

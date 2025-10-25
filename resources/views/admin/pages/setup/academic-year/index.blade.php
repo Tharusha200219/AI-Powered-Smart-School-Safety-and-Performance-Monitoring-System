@@ -42,7 +42,7 @@
                             <!-- Current Academic Year -->
                             <div class="info-section">
                                 <h6 class="section-title d-flex align-items-center">
-                                    <i class="material-symbols-rounded me-2" style="color: #5e72e4;">calendar_today</i>
+                                    <i class="material-symbols-rounded me-2">calendar_today</i>
                                     Current Academic Year
                                 </h6>
 
@@ -79,7 +79,7 @@
                             <!-- Academic Calendar -->
                             <div class="info-section">
                                 <h6 class="section-title d-flex align-items-center">
-                                    <i class="material-symbols-rounded me-2" style="color: #5e72e4;">event_note</i>
+                                    <i class="material-symbols-rounded me-2">event_note</i>
                                     Academic Calendar
                                 </h6>
 
@@ -157,7 +157,7 @@
                             <!-- School Hours -->
                             <div class="info-section">
                                 <h6 class="section-title d-flex align-items-center">
-                                    <i class="material-symbols-rounded me-2" style="color: #5e72e4;">schedule</i>
+                                    <i class="material-symbols-rounded me-2">schedule</i>
                                     School Hours
                                 </h6>
 
@@ -216,7 +216,7 @@
                             <!-- Academic Year Timeline -->
                             <div class="info-section">
                                 <h6 class="section-title d-flex align-items-center">
-                                    <i class="material-symbols-rounded me-2" style="color: #5e72e4;">timeline</i>
+                                    <i class="material-symbols-rounded me-2">timeline</i>
                                     Academic Timeline
                                 </h6>
 
