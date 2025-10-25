@@ -44,13 +44,21 @@
                                             <h5 class="mb-1">{{ $teacher->full_name }}</h5>
                                             <p class="text-secondary mb-2">{{ $teacher->teacher_code }}</p>
                                             <div class="mb-2">
-                                                @if ($teacher->is_class_teacher)
-                                                    <span class="badge bg-gradient-primary badge-sm me-1">Class
-                                                        Teacher</span>
-                                                @else
-                                                    <span class="badge bg-gradient-info badge-sm me-1">Subject
-                                                        Teacher</span>
-                                                @endif
+                                                @php
+                                                    $teachingLevelBadges = [
+                                                        'Primary' => 'bg-gradient-success',
+                                                        'Secondary' => 'bg-gradient-info',
+                                                        'Arts' => 'bg-gradient-warning',
+                                                        'Commerce' => 'bg-gradient-primary',
+                                                        'Science' => 'bg-gradient-danger',
+                                                        'Technology' => 'bg-gradient-secondary',
+                                                    ];
+                                                    $badgeClass =
+                                                        $teachingLevelBadges[$teacher->teaching_level] ??
+                                                        'bg-gradient-info';
+                                                @endphp
+                                                <span
+                                                    class="badge {{ $badgeClass }} badge-sm me-1">{{ $teacher->teaching_level }}</span>
                                                 <span
                                                     class="badge {{ $teacher->is_active ? 'bg-gradient-success' : 'bg-gradient-danger' }} badge-sm">
                                                     {{ $teacher->is_active ? 'Active' : 'Inactive' }}
@@ -216,7 +224,8 @@
                                         </div>
                                     @endif
 
-                                    @if ($teacher->is_class_teacher && $teacher->assignedClass)
+                                    {{-- Show assigned class if teacher has one --}}
+                                    @if (isset($teacher->assignedClass) && $teacher->assignedClass)
                                         <div class="card">
                                             <div class="card-header">
                                                 <h6 class="mb-0 d-flex align-items-center">

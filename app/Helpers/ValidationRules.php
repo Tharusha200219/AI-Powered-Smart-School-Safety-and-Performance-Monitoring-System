@@ -118,7 +118,7 @@ class ValidationRules
             'experience_years' => self::NUMERIC_RULES,
             'joining_date' => 'required|date',
             'employee_id' => 'nullable|max:50',
-            'is_class_teacher' => self::BOOLEAN_RULES,
+            'teaching_level' => 'required|in:Primary,Secondary,Arts,Commerce,Science,Technology',
             'subjects' => 'nullable|array',
             'subjects.*' => 'exists:subjects,id',
             'roles' => 'required|array',

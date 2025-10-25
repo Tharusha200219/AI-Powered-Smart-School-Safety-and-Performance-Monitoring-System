@@ -100,14 +100,32 @@ class TeacherRepository implements TeacherRepositoryInterface
 
     /**
      * Get class teachers
+     * Returns all active teachers who can be assigned as class teachers
      */
     public function getClassTeachers()
     {
         return $this->model->with(['user', 'subjects'])
-            ->where('is_class_teacher', true)
             ->where('is_active', true)
             ->orderBy('created_at', 'desc')
             ->get();
+    }
+
+    /**
+     * Get available teachers for class assignment
+     * Returns active teachers who are not already assigned to a class
+     */
+    public function getAvailableClassTeachers($excludeClassId = null)
+    {
+        $query = $this->model->with(['user', 'subjects'])
+            ->where('is_active', true)
+            ->whereDoesntHave('assignedClass', function ($query) use ($excludeClassId) {
+                if ($excludeClassId) {
+                    $query->where('id', '!=', $excludeClassId);
+                }
+            })
+            ->orderBy('created_at', 'desc');
+
+        return $query->get();
     }
 
     /**

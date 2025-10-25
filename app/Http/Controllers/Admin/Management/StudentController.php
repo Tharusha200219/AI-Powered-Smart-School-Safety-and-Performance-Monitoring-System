@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Management;
 
 use App\DataTables\Admin\Management\StudentDataTable;
+use App\Enums\Grade;
 use App\Enums\Status;
 use App\Enums\UserType;
 use App\Helpers\ValidationRules;
@@ -68,8 +69,9 @@ class StudentController extends BaseManagementController
         $subjects = $this->subjectRepository->getAll();
         $parents = $this->parentRepository->getActive();
         $roles = Role::where('name', 'student')->get();
+        $grades = Grade::getOptions(); // Add grades from enum
 
-        return compact('classes', 'subjects', 'parents', 'roles');
+        return compact('classes', 'subjects', 'parents', 'roles', 'grades');
     }
 
     protected function getValidationRules(bool $isUpdate = false, $id = null): array
@@ -154,8 +156,11 @@ class StudentController extends BaseManagementController
         }
 
         // Assign subjects if provided
-        if ($request->has('subjects') && !empty($request->subjects)) {
-            $this->repository->assignSubjects($student->student_id, $request->subjects, $request->grade_level);
+        if ($request->has('subject_ids')) {
+            $subjectIds = json_decode($request->input('subject_ids'), true);
+            if (is_array($subjectIds) && !empty($subjectIds)) {
+                $this->repository->assignSubjects($student->student_id, $subjectIds, $request->grade_level);
+            }
         }
 
         $this->notifyCreated($this->entityName, $student);
@@ -235,8 +240,11 @@ class StudentController extends BaseManagementController
         $student->parents()->sync($allParentIds);
 
         // Update subjects
-        if ($request->has('subjects')) {
-            $this->repository->assignSubjects($student->student_id, $request->subjects ?? [], $request->grade_level);
+        if ($request->has('subject_ids')) {
+            $subjectIds = json_decode($request->input('subject_ids'), true);
+            if (is_array($subjectIds)) {
+                $this->repository->assignSubjects($student->student_id, $subjectIds, $request->grade_level);
+            }
         }
 
         $this->notifyUpdated($this->entityName, $student);
@@ -262,6 +270,83 @@ class StudentController extends BaseManagementController
         return response()->json([
             'code' => \App\Models\Student::generateStudentCode(),
         ]);
+    }
+
+    /**
+     * Get subjects for a specific grade level
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getSubjectsByGrade(Request $request)
+    {
+        $gradeLevel = (int) $request->input('grade_level');
+
+        if (!$gradeLevel) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Grade level is required',
+                'data' => null
+            ]);
+        }
+
+        try {
+            $grade = Grade::from($gradeLevel);
+            $subjectData = \App\Models\Subject::getSubjectsWithRules($gradeLevel);
+
+            return response()->json([
+                'success' => true,
+                'data' => $subjectData
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching subjects: ' . $e->getMessage(),
+                'data' => null
+            ]);
+        }
+    }
+
+    /**
+     * Get classes for a specific grade level
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getClassesByGrade(Request $request)
+    {
+        $gradeLevel = (int) $request->input('grade_level');
+
+        if (!$gradeLevel) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Grade level is required',
+                'classes' => []
+            ]);
+        }
+
+        try {
+            $classes = $this->classRepository->getByGrade($gradeLevel);
+
+            return response()->json([
+                'success' => true,
+                'classes' => $classes->map(function ($class) {
+                    return [
+                        'id' => $class->id,
+                        'class_name' => $class->class_name,
+                        'grade_level' => $class->grade_level,
+                        'section' => $class->section,
+                        'full_name' => $class->class_name . ' (Grade ' . $class->grade_level . ')',
+                    ];
+                })
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching classes: ' . $e->getMessage(),
+                'classes' => []
+            ]);
+        }
     }
 
     protected function performDelete($id)

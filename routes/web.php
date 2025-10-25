@@ -50,6 +50,8 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('/delete/{id}', 'delete')->name('delete');
                 Route::post('/enroll', 'enroll')->name('enroll');
                 Route::get('/generate-code', 'generateCode')->name('generate-code');
+                Route::get('/subjects-by-grade', 'getSubjectsByGrade')->name('subjects-by-grade');
+                Route::get('/classes-by-grade', 'getClassesByGrade')->name('classes-by-grade');
                 Route::post('/write-nfc', 'writeToNFC')->name('write-nfc');
                 Route::get('/test-arduino', 'testArduino')->name('test-arduino');
             });
@@ -62,6 +64,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('/delete/{id}', 'delete')->name('delete');
                 Route::post('/enroll', 'enroll')->name('enroll');
                 Route::get('/generate-code', 'generateCode')->name('generate-code');
+                Route::get('/subjects-by-level', 'getSubjectsByTeachingLevel')->name('subjects-by-level');
             });
 
             // Parents Management (View-only - Parents are created through Student management)
@@ -127,6 +130,13 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/search-student', 'searchStudent')->name('search-student');
                 Route::post('/nfc-scan', 'nfcScan')->name('nfc-scan');
                 Route::get('/student/{studentId}/percentage', 'studentPercentage')->name('student-percentage');
+
+                // Device Management
+                Route::get('/devices', 'devicesIndex')->name('devices.index');
+                Route::get('/devices/list', 'devicesList')->name('devices.list');
+                Route::post('/devices/register', 'devicesRegister')->name('devices.register');
+                Route::post('/devices/sync', 'devicesSync')->name('devices.sync');
+                Route::delete('/devices/remove', 'devicesRemove')->name('devices.remove');
             });
         });
 

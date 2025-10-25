@@ -201,46 +201,76 @@ class ArduinoNFCService
     {
         $startTime = time();
         $response = '';
+        $infoMessages = [];
+
+        Log::info("Arduino NFC Service - Waiting for response (timeout: {$this->timeout}s)");
 
         while ((time() - $startTime) < $this->timeout) {
             if (feof($this->handle)) {
+                Log::warning("Arduino NFC Service - Connection closed unexpectedly");
                 break;
             }
 
-            $line = fgets($this->handle);
-            if ($line !== false) {
-                $response .= $line;
+            // Use stream_select for non-blocking read with timeout
+            $read = [$this->handle];
+            $write = null;
+            $except = null;
+            $tv_sec = 0;
+            $tv_usec = 100000; // 100ms
 
-                // Check if we have a complete response
-                if (strpos($response, 'SUCCESS') !== false) {
-                    Log::info("Arduino NFC Service - Success response received");
-                    return [
-                        'success' => true,
-                        'message' => 'Student data successfully written to NFC tag!'
-                    ];
-                } elseif (strpos($response, 'ERROR') !== false) {
-                    Log::warning("Arduino NFC Service - Error response: " . $response);
-                    return [
-                        'success' => false,
-                        'message' => 'Arduino reported an error: ' . trim($response)
-                    ];
-                } elseif (strpos($response, 'TIMEOUT') !== false) {
-                    Log::warning("Arduino NFC Service - Timeout waiting for NFC tag");
-                    return [
-                        'success' => false,
-                        'message' => 'Timeout: Please place the NFC wristband closer to the reader.'
-                    ];
+            if (stream_select($read, $write, $except, $tv_sec, $tv_usec) > 0) {
+                $line = fgets($this->handle);
+                if ($line !== false) {
+                    $line = trim($line);
+                    $response .= $line . "\n";
+
+                    Log::debug("Arduino NFC Service - Received: " . $line);
+
+                    $normalizedLine = strtoupper($line);
+
+                    // Handle INFO messages (progress updates)
+                    if (strpos($normalizedLine, 'INFO:') === 0) {
+                        $infoMessages[] = trim(substr($line, strpos($line, ':') + 1));
+                        continue;
+                    }
+
+                    // Check for final response
+                    if (strpos($normalizedLine, 'SUCCESS') !== false) {
+                        Log::info("Arduino NFC Service - Success response received");
+                        return [
+                            'success' => true,
+                            'message' => 'Student data successfully written to RFID tag!',
+                            'details' => implode("\n", $infoMessages)
+                        ];
+                    } elseif (strpos($normalizedLine, 'ERROR') !== false) {
+                        $errorMsg = trim(preg_replace('/^\s*ERROR\s*:*/i', '', $line));
+                        Log::warning("Arduino NFC Service - Error response: " . $errorMsg);
+                        return [
+                            'success' => false,
+                            'message' => 'Arduino reported an error: ' . $errorMsg,
+                            'details' => implode("\n", $infoMessages)
+                        ];
+                    } elseif (strpos($normalizedLine, 'TIMEOUT') !== false) {
+                        $timeoutMsg = trim(preg_replace('/^\s*TIMEOUT\s*:*/i', '', $line));
+                        Log::warning("Arduino NFC Service - Timeout: " . $timeoutMsg);
+                        return [
+                            'success' => false,
+                            'message' => 'Timeout: ' . $timeoutMsg,
+                            'details' => implode("\n", $infoMessages)
+                        ];
+                    }
                 }
             }
-
-            usleep(100000); // Wait 100ms before checking again
         }
 
-        // Timeout occurred
-        Log::warning("Arduino NFC Service - Communication timeout");
+        // Communication timeout occurred
+        Log::warning("Arduino NFC Service - Communication timeout after {$this->timeout} seconds");
+        Log::warning("Arduino NFC Service - Partial response: " . $response);
+
         return [
             'success' => false,
-            'message' => 'Communication timeout. Please ensure Arduino is connected and the NFC tag is present.'
+            'message' => 'Communication timeout. Please ensure Arduino is connected and the RFID tag is present.',
+            'details' => 'Last response: ' . trim($response)
         ];
     }
 

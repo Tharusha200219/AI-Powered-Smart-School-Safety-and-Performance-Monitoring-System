@@ -63,23 +63,32 @@ class TeacherDataTable extends DataTable
                         <span class="material-symbols-outlined text-lg">more_vert</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow rounded-3 p-2 w-100">
-                        '.$dropdownContent.'
+                        ' . $dropdownContent . '
                     </ul>
                 </div>';
 
                 return $dropdown;
             })
             ->addColumn('name', function ($row) {
-                $teacherType = $row->is_class_teacher ? 'CT' : 'TEA';
-                $badgeClass = $row->is_class_teacher ? 'bg-gradient-primary' : 'bg-gradient-info';
+                // Map teaching level to badge type
+                $teachingLevelBadges = [
+                    'Primary' => ['text' => 'PRI', 'class' => 'bg-gradient-success'],
+                    'Secondary' => ['text' => 'SEC', 'class' => 'bg-gradient-info'],
+                    'Arts' => ['text' => 'ART', 'class' => 'bg-gradient-warning'],
+                    'Commerce' => ['text' => 'COM', 'class' => 'bg-gradient-primary'],
+                    'Science' => ['text' => 'SCI', 'class' => 'bg-gradient-danger'],
+                    'Technology' => ['text' => 'TEC', 'class' => 'bg-gradient-secondary'],
+                ];
+
+                $badge = $teachingLevelBadges[$row->teaching_level] ?? ['text' => 'TEA', 'class' => 'bg-gradient-info'];
 
                 return '<div class="d-flex align-items-center">
-                    <span class="badge '.$badgeClass.' badge-sm me-2">'.$teacherType.'</span>
-                    <span class="fw-bold">'.$row->full_name.'</span>
+                    <span class="badge ' . $badge['class'] . ' badge-sm me-2">' . $badge['text'] . '</span>
+                    <span class="fw-bold">' . $row->full_name . '</span>
                 </div>';
             })
             ->addColumn('teacher_code', function ($row) {
-                return '<span class="text-secondary">'.$row->teacher_code.'</span>';
+                return '<span class="text-secondary">' . $row->teacher_code . '</span>';
             })
             ->addColumn('specialization', function ($row) {
                 return $row->specialization ? '<span class="text-primary">' . $row->specialization . '</span>' : '<span class="text-muted">' . __('common.not_specified') . '</span>';
@@ -196,6 +205,6 @@ class TeacherDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'Teacher_'.date('YmdHis');
+        return 'Teacher_' . date('YmdHis');
     }
 }

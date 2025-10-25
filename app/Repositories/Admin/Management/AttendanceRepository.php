@@ -273,4 +273,27 @@ class AttendanceRepository implements AttendanceRepositoryInterface
             ->whereDate('attendance_date', Carbon::today())
             ->first();
     }
+
+    /**
+     * Get attendance by specific date for a student
+     */
+    public function getAttendanceByDate($studentId, $date)
+    {
+        return $this->model->where('student_id', $studentId)
+            ->whereDate('attendance_date', $date)
+            ->first();
+    }
+
+    /**
+     * Get student attendance history within date range
+     */
+    public function getStudentAttendance($studentId, $startDate, $endDate)
+    {
+        return $this->model->with(['student', 'recorder'])
+            ->where('student_id', $studentId)
+            ->whereDate('attendance_date', '>=', $startDate)
+            ->whereDate('attendance_date', '<=', $endDate)
+            ->orderBy('attendance_date', 'desc')
+            ->get();
+    }
 }
