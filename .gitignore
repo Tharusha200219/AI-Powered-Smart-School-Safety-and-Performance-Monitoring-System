@@ -26,6 +26,8 @@ clinerules.md
 cline-rules.md
 cursorrules.mdc
 CLAUDE.md
+
+
 .env.arduino.example
 ARDUINO_IMPLEMENTATION_SUMMARY.md
 ARDUINO_NFC_SETUP.md
@@ -38,3 +40,5 @@ test-arduino-setup.sh
 ATTENDANCE_IMPLEMENTATION_SUMMARY.md
 ATTENDANCE_QUICK_START.md
 NFC_ATTENDANCE_GUIDE.md
+check_port.sh
+verify_arduino_writer.sh

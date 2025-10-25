@@ -18,7 +18,15 @@ return new class extends Migration
             $table->string('grade_level');
             $table->text('description')->nullable();
             $table->integer('credits')->default(1);
-            $table->enum('type', ['core', 'elective', 'extracurricular'])->default('core');
+            $table->enum('type', [
+                'Core',
+                'Elective',
+                'Extracurricular',
+                'Arts Stream',
+                'Commerce Stream',
+                'Science Stream',
+                'Technology Stream'
+            ])->default('Core');
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
 

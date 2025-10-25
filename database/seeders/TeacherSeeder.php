@@ -28,7 +28,7 @@ class TeacherSeeder extends Seeder
                 'experience_years' => 8.5,
                 'joining_date' => '2022-08-15',
                 'employee_id' => 'EMP-TEA-001',
-                'is_class_teacher' => true,
+                'teaching_level' => 'Primary',
                 'address_line1' => '123 Teacher Lane',
                 'city' => 'Springfield',
                 'state' => 'Illinois',
@@ -51,7 +51,7 @@ class TeacherSeeder extends Seeder
                 'experience_years' => 12.0,
                 'joining_date' => '2021-08-20',
                 'employee_id' => 'EMP-TEA-002',
-                'is_class_teacher' => true,
+                'teaching_level' => 'Primary',
                 'address_line1' => '456 Education Drive',
                 'address_line2' => 'Apt 5C',
                 'city' => 'Springfield',
@@ -75,7 +75,7 @@ class TeacherSeeder extends Seeder
                 'experience_years' => 6.0,
                 'joining_date' => '2023-01-10',
                 'employee_id' => 'EMP-TEA-003',
-                'is_class_teacher' => false,
+                'teaching_level' => 'Secondary',
                 'address_line1' => '789 Science Street',
                 'city' => 'Springfield',
                 'state' => 'Illinois',
@@ -98,7 +98,7 @@ class TeacherSeeder extends Seeder
                 'experience_years' => 15.5,
                 'joining_date' => '2020-08-25',
                 'employee_id' => 'EMP-TEA-004',
-                'is_class_teacher' => true,
+                'teaching_level' => 'Secondary',
                 'address_line1' => '321 History Boulevard',
                 'city' => 'Springfield',
                 'state' => 'Illinois',
@@ -121,7 +121,7 @@ class TeacherSeeder extends Seeder
                 'experience_years' => 7.5,
                 'joining_date' => '2022-09-05',
                 'employee_id' => 'EMP-TEA-005',
-                'is_class_teacher' => false,
+                'teaching_level' => 'Primary',
                 'address_line1' => '654 Arts Avenue',
                 'address_line2' => 'Studio 2B',
                 'city' => 'Springfield',
@@ -145,7 +145,7 @@ class TeacherSeeder extends Seeder
                 'experience_years' => 9.0,
                 'joining_date' => '2021-08-30',
                 'employee_id' => 'EMP-TEA-006',
-                'is_class_teacher' => false,
+                'teaching_level' => 'Primary',
                 'address_line1' => '987 Melody Lane',
                 'city' => 'Springfield',
                 'state' => 'Illinois',
@@ -168,7 +168,7 @@ class TeacherSeeder extends Seeder
                 'experience_years' => 8.0,
                 'joining_date' => '2022-07-15',
                 'employee_id' => 'EMP-TEA-007',
-                'is_class_teacher' => false,
+                'teaching_level' => 'Secondary',
                 'address_line1' => '147 Fitness Road',
                 'city' => 'Springfield',
                 'state' => 'Illinois',
@@ -191,7 +191,7 @@ class TeacherSeeder extends Seeder
                 'experience_years' => 11.0,
                 'joining_date' => '2020-08-12',
                 'employee_id' => 'EMP-TEA-008',
-                'is_class_teacher' => false,
+                'teaching_level' => 'Secondary',
                 'address_line1' => '258 Language Circle',
                 'address_line2' => 'Building A',
                 'city' => 'Springfield',
@@ -215,7 +215,7 @@ class TeacherSeeder extends Seeder
                 'experience_years' => 5.5,
                 'joining_date' => '2023-08-20',
                 'employee_id' => 'EMP-TEA-009',
-                'is_class_teacher' => false,
+                'teaching_level' => 'Technology',
                 'address_line1' => '369 Technology Way',
                 'city' => 'Springfield',
                 'state' => 'Illinois',
@@ -238,7 +238,7 @@ class TeacherSeeder extends Seeder
                 'experience_years' => 13.0,
                 'joining_date' => '2019-08-26',
                 'employee_id' => 'EMP-TEA-010',
-                'is_class_teacher' => true,
+                'teaching_level' => 'Primary',
                 'address_line1' => '741 Knowledge Street',
                 'city' => 'Springfield',
                 'state' => 'Illinois',
@@ -254,7 +254,7 @@ class TeacherSeeder extends Seeder
         foreach ($teachers as $teacherData) {
             // Create user account for teacher
             $user = User::create([
-                'name' => $teacherData['first_name'].' '.$teacherData['last_name'],
+                'name' => $teacherData['first_name'] . ' ' . $teacherData['last_name'],
                 'email' => $teacherData['email'],
                 'password' => Hash::make('teacher123'), // Default password
                 'email_verified_at' => now(),
@@ -279,7 +279,7 @@ class TeacherSeeder extends Seeder
                 'joining_date' => $teacherData['joining_date'],
                 'employee_id' => $teacherData['employee_id'],
                 'is_active' => true,
-                'is_class_teacher' => $teacherData['is_class_teacher'],
+                'teaching_level' => $teacherData['teaching_level'],
                 'address_line1' => $teacherData['address_line1'],
                 'address_line2' => $teacherData['address_line2'] ?? null,
                 'city' => $teacherData['city'],
@@ -299,7 +299,7 @@ class TeacherSeeder extends Seeder
                 }
             }
 
-            $this->command->info("Created teacher: {$teacher->full_name} ({$teacher->teacher_code}) - Subjects: ".implode(', ', $teacherData['subjects']));
+            $this->command->info("Created teacher: {$teacher->full_name} ({$teacher->teacher_code}) - Subjects: " . implode(', ', $teacherData['subjects']));
         }
     }
 }

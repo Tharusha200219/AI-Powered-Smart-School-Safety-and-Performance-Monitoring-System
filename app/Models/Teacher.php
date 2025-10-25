@@ -28,7 +28,7 @@ class Teacher extends Model
         'employee_id',
         'photo_path',
         'is_active',
-        'is_class_teacher',
+        'teaching_level',
         'address_line1',
         'address_line2',
         'city',
@@ -45,7 +45,6 @@ class Teacher extends Model
         'joining_date' => 'date',
         'experience_years' => 'decimal:1',
         'is_active' => 'boolean',
-        'is_class_teacher' => 'boolean',
     ];
 
     // Relationships
@@ -59,6 +58,11 @@ class Teacher extends Model
         return $this->hasMany(SchoolClass::class, 'class_teacher_id', 'teacher_id');
     }
 
+    public function assignedClass()
+    {
+        return $this->hasOne(SchoolClass::class, 'class_teacher_id', 'teacher_id');
+    }
+
     public function subjects()
     {
         return $this->belongsToMany(Subject::class, 'teacher_subject', 'teacher_id', 'subject_id')
@@ -68,12 +72,12 @@ class Teacher extends Model
     // Accessors
     public function getFullNameAttribute()
     {
-        return trim($this->first_name.' '.$this->middle_name.' '.$this->last_name);
+        return trim($this->first_name . ' ' . $this->middle_name . ' ' . $this->last_name);
     }
 
     public function getFullAddressAttribute()
     {
-        return trim($this->address_line1.' '.$this->address_line2.', '.$this->city.', '.$this->state.' '.$this->postal_code.', '.$this->country);
+        return trim($this->address_line1 . ' ' . $this->address_line2 . ', ' . $this->city . ', ' . $this->state . ' ' . $this->postal_code . ', ' . $this->country);
     }
 
     // Scopes
@@ -82,9 +86,9 @@ class Teacher extends Model
         return $query->where('is_active', true);
     }
 
-    public function scopeClassTeachers($query)
+    public function scopeByTeachingLevel($query, $teachingLevel)
     {
-        return $query->where('is_class_teacher', true);
+        return $query->where('teaching_level', $teachingLevel);
     }
 
     public function scopeBySpecialization($query, $specialization)
@@ -98,6 +102,6 @@ class Teacher extends Model
         $lastTeacher = self::orderBy('teacher_id', 'desc')->first();
         $sequence = $lastTeacher ? (int) substr($lastTeacher->teacher_code, 3) + 1 : 1;
 
-        return 'te-'.str_pad($sequence, 8, '0', STR_PAD_LEFT);
+        return 'te-' . str_pad($sequence, 8, '0', STR_PAD_LEFT);
     }
 }

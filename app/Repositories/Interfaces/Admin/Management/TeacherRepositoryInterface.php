@@ -40,6 +40,11 @@ interface TeacherRepositoryInterface
     public function getClassTeachers();
 
     /**
+     * Get available teachers for class assignment
+     */
+    public function getAvailableClassTeachers($excludeClassId = null);
+
+    /**
      * Get teachers by subject
      */
     public function getBySubject($subjectId);
