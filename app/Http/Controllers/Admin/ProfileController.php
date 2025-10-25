@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use App\Models\User;
+
 class ProfileController extends Controller
 {
     public function index()
@@ -96,6 +97,38 @@ class ProfileController extends Controller
         }
 
         return response()->json(['success' => true, 'message' => 'Profile image deleted successfully!']);
+    }
+
+    public function uploadImage(Request $request)
+    {
+        $request->validate([
+            'profile_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        try {
+            $user = User::find(Auth::id());
+
+            // Delete old image if exists
+            if ($user->profile_image && Storage::disk('public')->exists($user->profile_image)) {
+                Storage::disk('public')->delete($user->profile_image);
+            }
+
+            // Store new image
+            $imagePath = $request->file('profile_image')->store('profile_images', 'public');
+            $user->profile_image = $imagePath;
+            $user->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Profile image uploaded successfully!',
+                'image_url' => Storage::url($imagePath)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to upload image: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function getProfileStats()

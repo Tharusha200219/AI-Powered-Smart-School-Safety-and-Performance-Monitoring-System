@@ -3,454 +3,301 @@
 @section('title', 'Edit Profile')
 
 @section('css')
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        .edit-profile-page {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px 0;
-        }
-
-        .edit-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .edit-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .edit-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #45b7d1);
-            background-size: 400% 400%;
-            animation: gradientShift 3s ease infinite;
-        }
-
-        @keyframes gradientShift {
-
-            0%,
-            100% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-        }
-
-        .page-title {
-            font-size: 32px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .form-section {
-            margin-bottom: 40px;
-        }
-
-        .section-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-        }
-
-        .section-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            margin-right: 15px;
-            font-size: 16px;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-label {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 15px 20px;
-            border: 2px solid #e1e5e9;
-            border-radius: 12px;
-            font-size: 16px;
-            background: rgba(255, 255, 255, 0.9);
-            transition: all 0.3s ease;
-            outline: none;
-        }
-
-        .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .form-control.is-invalid {
-            border-color: #dc3545;
-            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
-        }
-
-        .invalid-feedback {
-            color: #dc3545;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-
-        .row {
-            display: flex;
-            margin: 0 -15px;
-        }
-
-        .col-md-6 {
-            flex: 0 0 50%;
-            padding: 0 15px;
-        }
-
-        .col-12 {
-            flex: 0 0 100%;
-            padding: 0 15px;
-        }
-
-        .profile-image-section {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .current-image {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 5px solid #fff;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .image-upload-btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 25px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-right: 10px;
-        }
-
-        .image-upload-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .image-delete-btn {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 25px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .image-delete-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.3);
-        }
-
-        .form-actions {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 40px;
-        }
-
-        .btn-save {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 25px;
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-save:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-save::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #764ba2, #667eea);
-            transition: left 0.3s ease;
-            z-index: 1;
-        }
-
-        .btn-save:hover::before {
-            left: 0;
-        }
-
-        .btn-save span {
-            position: relative;
-            z-index: 2;
-        }
-
-        .btn-cancel {
-            background: transparent;
-            color: #667eea;
-            border: 2px solid #667eea;
-            padding: 13px 40px;
-            border-radius: 25px;
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-        }
-
-        .btn-cancel:hover {
-            background: #667eea;
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .file-upload {
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            .edit-container {
-                padding: 0 15px;
-            }
-
-            .edit-card {
-                padding: 30px 20px;
-            }
-
-            .row {
-                flex-direction: column;
-                margin: 0;
-            }
-
-            .col-md-6,
-            .col-12 {
-                flex: none;
-                padding: 0;
-            }
-
-            .form-actions {
-                flex-direction: column;
-                align-items: center;
-            }
-        }
-
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-    </style>
+    @vite(['resources/css/admin/profile.css', 'resources/css/admin/forms.css', 'resources/css/components/utilities.css'])
 @endsection
 
 @section('content')
-    <div class="edit-profile-page">
-        <div class="edit-container">
-            <div class="edit-card">
-                <h1 class="page-title">Edit Profile</h1>
+    @include('admin.layouts.sidebar')
 
-                <form action="{{ route('admin.profile.update') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
+    <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+        @include('admin.layouts.navbar')
 
-                    <!-- Profile Image Section -->
-                    <div class="profile-image-section">
-                        @if ($user->profile_image)
-                            <img src="{{ Storage::url($user->profile_image) }}" alt="Current Profile" class="current-image"
-                                id="currentImage">
-                        @else
-                            <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&size=120&background=667eea&color=ffffff&bold=true"
-                                alt="Current Profile" class="current-image" id="currentImage">
-                        @endif
+        <div class="container-fluid pt-2">
+            <div class="row">
+                <div class="col-12">
+                    @include('admin.layouts.flash')
 
-                        <div>
-                            <button type="button" class="image-upload-btn"
-                                onclick="document.getElementById('profileImageInput').click()">
-                                <i class="fas fa-camera"></i> Change Photo
-                            </button>
-                            @if ($user->profile_image)
-                                <button type="button" class="image-delete-btn" onclick="deleteProfileImage()">
-                                    <i class="fas fa-trash"></i> Remove
-                                </button>
-                            @endif
+                    <div class="card">
+                        <div class="card-header pb-0">
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="mb-0">
+                                        <i class="material-symbols-rounded me-2">edit</i>
+                                        Edit Profile
+                                    </h6>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <a class="btn btn-outline-secondary mb-0" href="{{ route('admin.profile.index') }}">
+                                        <i class="material-symbols-rounded text-sm me-1">arrow_back</i>
+                                        Back to Profile
+                                    </a>
+                                </div>
+                            </div>
                         </div>
+                        <div class="card-body">
+                            <form action="{{ route('admin.profile.update') }}" method="POST" enctype="multipart/form-data"
+                                id="profileForm">
+                                @csrf
+                                @method('PUT')
 
-                        <input type="file" id="profileImageInput" name="profile_image" class="file-upload"
-                            accept="image/*" onchange="previewImage(this)">
-                        @error('profile_image')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                                <!-- Profile Image Section -->
+                                <div class="row mb-4">
+                                    <div class="col-12 text-center">
+                                        <div class="profile-avatar-wrapper">
+                                            <div class="profile-avatar">
+                                                @if ($user->profile_image)
+                                                    <img src="{{ Storage::url($user->profile_image) }}"
+                                                        alt="Profile Picture" id="profileImage" class="profile-img">
+                                                @else
+                                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&size=200&background=667eea&color=ffffff&bold=true"
+                                                        alt="Profile Picture" id="profileImage" class="profile-img">
+                                                @endif
+                                                <div class="avatar-overlay"
+                                                    onclick="document.getElementById('avatarUpload').click()">
+                                                    <i class="material-symbols-rounded">photo_camera</i>
+                                                    <span>Change Photo</span>
+                                                </div>
+                                            </div>
+                                            <div class="upload-progress" id="uploadProgress" style="display: none;">
+                                                <div class="progress-bar">
+                                                    <div class="progress-fill" id="progressFill"></div>
+                                                </div>
+                                                <p class="progress-text" id="progressText">Uploading...</p>
+                                            </div>
+                                            <input type="file" id="avatarUpload" class="d-none"
+                                                accept="image/jpeg,image/png,image/jpg">
+                                            <p class="upload-hint mt-2">
+                                                <i class="material-symbols-rounded text-xs">info</i>
+                                                Click on image to upload. Max 2MB (JPG, PNG)
+                                            </p>
+                                            @if ($user->profile_image)
+                                                <button type="button" class="btn btn-sm btn-outline-danger mt-2"
+                                                    onclick="deleteProfileImage()">
+                                                    <i class="material-symbols-rounded text-sm">delete</i>
+                                                    Remove Photo
+                                                </button>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr class="horizontal dark my-4">
+
+                                <!-- Personal Information -->
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h6 class="mb-3">
+                                            <i class="material-symbols-rounded me-2">person</i>
+                                            Personal Information
+                                        </h6>
+                                    </div>
+                                </div>
+
+                                <!-- Personal Information -->
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h6 class="mb-3">
+                                            <i class="material-symbols-rounded me-2">person</i>
+                                            Personal Information
+                                        </h6>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="input-group input-group-outline mb-3">
+                                            <label class="form-label">Full Name *</label>
+                                            <input type="text" name="name"
+                                                class="form-control @error('name') is-invalid @enderror"
+                                                value="{{ old('name', $user->name) }}" required>
+                                            @error('name')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="input-group input-group-outline mb-3">
+                                            <label class="form-label">Email Address *</label>
+                                            <input type="email" name="email"
+                                                class="form-control @error('email') is-invalid @enderror"
+                                                value="{{ old('email', $user->email) }}" required>
+                                            @error('email')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="input-group input-group-outline mb-3">
+                                            <label class="form-label">Phone Number</label>
+                                            <input type="tel" name="phone"
+                                                class="form-control @error('phone') is-invalid @enderror"
+                                                value="{{ old('phone', $user->phone) }}">
+                                            @error('phone')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="input-group input-group-outline mb-3">
+                                            <label class="form-label">Date of Birth</label>
+                                            <input type="date" name="date_of_birth"
+                                                class="form-control @error('date_of_birth') is-invalid @enderror"
+                                                value="{{ old('date_of_birth', $user->date_of_birth?->format('Y-m-d')) }}">
+                                            @error('date_of_birth')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="input-group input-group-outline mb-3">
+                                            <label class="form-label">Address</label>
+                                            <textarea name="address" class="form-control @error('address') is-invalid @enderror" rows="3">{{ old('address', $user->address) }}</textarea>
+                                            @error('address')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="input-group input-group-outline mb-3">
+                                            <label class="form-label">Bio</label>
+                                            <textarea name="bio" class="form-control @error('bio') is-invalid @enderror" rows="4"
+                                                placeholder="Tell us something about yourself...">{{ old('bio', $user->bio) }}</textarea>
+                                            @error('bio')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Form Actions -->
+                                <div class="row mt-4">
+                                    <div class="col-12 text-center">
+                                        <button type="submit" class="btn bg-gradient-primary me-2">
+                                            <i class="material-symbols-rounded text-sm me-1">save</i>
+                                            Save Changes
+                                        </button>
+                                        <a href="{{ route('admin.profile.index') }}" class="btn btn-outline-secondary">
+                                            <i class="material-symbols-rounded text-sm me-1">cancel</i>
+                                            Cancel
+                                        </a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-
-                    <!-- Personal Information -->
-                    <div class="form-section">
-                        <h3 class="section-title">
-                            <div class="section-icon">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            Personal Information
-                        </h3>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">Full Name *</label>
-                                    <x-input name="name" type="text"
-                                        class="form-control @error('name') is-invalid @enderror" :isRequired="true"
-                                        :value="old('name', $user->name)" />
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">Email Address *</label>
-                                    <x-input name="email" type="email"
-                                        class="form-control @error('email') is-invalid @enderror" :isRequired="true"
-                                        :value="old('email', $user->email)" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">Phone Number</label>
-                                    <x-input name="phone" type="tel"
-                                        class="form-control @error('phone') is-invalid @enderror" :value="old('phone', $user->phone)" />
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">Date of Birth</label>
-                                    <x-input name="date_of_birth" type="date"
-                                        class="form-control @error('date_of_birth') is-invalid @enderror"
-                                        :value="old('date_of_birth', $user->date_of_birth?->format('Y-m-d'))" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Address</label>
-                            <x-input name="address" type="textarea"
-                                class="form-control @error('address') is-invalid @enderror"
-                                placeholder="Enter your full address" attr="rows='3'" :value="old('address', $user->address)" />
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Bio</label>
-                            <x-input name="bio" type="textarea" class="form-control @error('bio') is-invalid @enderror"
-                                placeholder="Tell us something about yourself..." attr="rows='4'" :value="old('bio', $user->bio)" />
-                        </div>
-                    </div>
-
-                    <!-- Form Actions -->
-                    <div class="form-actions">
-                        <button type="submit" class="btn-save">
-                            <span>Save Changes</span>
-                        </button>
-                        <a href="{{ route('admin.profile.index') }}" class="btn-cancel">Cancel</a>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
-
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-spinner"></div>
-    </div>
+    </main>
 @endsection
 
 @section('script')
     <script>
-        function previewImage(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('currentImage').src = e.target.result;
-                };
-                reader.readAsDataURL(input.files[0]);
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle avatar upload
+            const avatarUpload = document.getElementById('avatarUpload');
+            if (avatarUpload) {
+                avatarUpload.addEventListener('change', function(e) {
+                    if (e.target.files && e.target.files[0]) {
+                        uploadProfileImage(e.target.files[0]);
+                    }
+                });
             }
+        });
+
+        function uploadProfileImage(file) {
+            // Validate file size (2MB max)
+            const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+            if (file.size > maxSize) {
+                showNotification('File size must be less than 2MB', 'error');
+                return;
+            }
+
+            // Validate file type
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            if (!validTypes.includes(file.type)) {
+                showNotification('Please upload a valid image file (JPG or PNG)', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('profile_image', file);
+            formData.append('_token', '{{ csrf_token() }}');
+
+            // Show progress
+            const uploadProgress = document.getElementById('uploadProgress');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const avatarOverlay = document.querySelector('.avatar-overlay');
+
+            if (uploadProgress) {
+                uploadProgress.style.display = 'block';
+                progressFill.style.width = '0%';
+                progressText.textContent = 'Uploading...';
+            }
+
+            if (avatarOverlay) {
+                avatarOverlay.style.display = 'none';
+            }
+
+            // Simulate progress
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 10;
+                if (progress <= 90) {
+                    progressFill.style.width = progress + '%';
+                }
+            }, 100);
+
+            fetch('{{ route('admin.profile.upload-image') }}', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    clearInterval(progressInterval);
+                    progressFill.style.width = '100%';
+
+                    if (data.success) {
+                        progressText.textContent = 'Upload complete!';
+                        document.getElementById('profileImage').src = data.image_url + '?t=' + new Date().getTime();
+                        showNotification('Profile image updated successfully!', 'success');
+
+                        // Hide progress after a short delay
+                        setTimeout(() => {
+                            if (uploadProgress) uploadProgress.style.display = 'none';
+                            if (avatarOverlay) avatarOverlay.style.display = 'flex';
+                        }, 1500);
+                    } else {
+                        progressText.textContent = 'Upload failed';
+                        showNotification('Failed to upload image: ' + (data.message || 'Unknown error'), 'error');
+                        setTimeout(() => {
+                            if (uploadProgress) uploadProgress.style.display = 'none';
+                            if (avatarOverlay) avatarOverlay.style.display = 'flex';
+                        }, 2000);
+                    }
+                })
+                .catch(error => {
+                    clearInterval(progressInterval);
+                    console.error('Error uploading image:', error);
+                    progressText.textContent = 'Upload failed';
+                    showNotification('An error occurred while uploading the image.', 'error');
+                    setTimeout(() => {
+                        if (uploadProgress) uploadProgress.style.display = 'none';
+                        if (avatarOverlay) avatarOverlay.style.display = 'flex';
+                    }, 2000);
+                });
         }
 
         function deleteProfileImage() {
@@ -465,17 +312,18 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            document.getElementById('currentImage').src =
-                                'https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&size=120&background=667eea&color=ffffff&bold=true';
+                            document.getElementById('profileImage').src =
+                                'https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&size=200&background=667eea&color=ffffff&bold=true';
                             showNotification('Profile image removed successfully!', 'success');
 
                             // Hide delete button
-                            const deleteBtn = document.querySelector('.image-delete-btn');
+                            const deleteBtn = document.querySelector('.btn-outline-danger');
                             if (deleteBtn) {
                                 deleteBtn.style.display = 'none';
                             }
                         } else {
-                            showNotification('Failed to remove profile image: ' + data.message, 'error');
+                            showNotification('Failed to remove profile image: ' + (data.message || 'Unknown error'),
+                                'error');
                         }
                     })
                     .catch(error => {
@@ -503,10 +351,5 @@
                 }
             }, 5000);
         }
-
-        // Show loading overlay on form submission
-        document.querySelector('form').addEventListener('submit', function() {
-            document.getElementById('loadingOverlay').style.display = 'flex';
-        });
     </script>
 @endsection

@@ -1,10 +1,9 @@
 @extends('admin.layouts.app')
 
 @section('css')
-    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    @vite(['resources/css/auth/login.css'])
 
     @php
         $settings = \App\Models\Setting::first() ?? new \App\Models\Setting();
@@ -438,6 +437,12 @@
 
         .dark-mode .form-input::placeholder {
             color: rgba(255, 255, 255, 0.6);
+        :root {
+            --login-primary: {{ $primaryColor }};
+            --login-secondary: {{ $secondaryColor }};
+            --login-accent: {{ $accentColor }};
+            --login-primary-rgb: {{ hexToRgb($primaryColor) }};
+            --login-secondary-rgb: {{ hexToRgb($secondaryColor) }};
         }
     </style>
 @endsection
