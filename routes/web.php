@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Management\StudentController;
 use App\Http\Controllers\Admin\Management\SubjectController;
 use App\Http\Controllers\Admin\Management\TeacherController;
 use App\Http\Controllers\Admin\Management\TimetableController;
+use App\Http\Controllers\Admin\Management\MarkController;
 use App\Http\Controllers\Admin\TimetableViewerController;
 use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\PlaceholderController;
@@ -137,6 +138,18 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/devices/register', 'devicesRegister')->name('devices.register');
                 Route::post('/devices/sync', 'devicesSync')->name('devices.sync');
                 Route::delete('/devices/remove', 'devicesRemove')->name('devices.remove');
+            });
+
+            // Marks Management
+            Route::prefix('marks')->name('marks.')->controller(MarkController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/create', 'create')->name('create');
+                Route::post('/', 'store')->name('store');
+                Route::get('/{mark}', 'show')->name('show');
+                Route::get('/{mark}/edit', 'edit')->name('edit');
+                Route::put('/{mark}', 'update')->name('update');
+                Route::delete('/{mark}', 'destroy')->name('destroy');
+                Route::get('/student/details', 'getStudentDetails')->name('student.details');
             });
         });
 

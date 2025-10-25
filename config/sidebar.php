@@ -17,6 +17,7 @@ return [
             getSideBarElement('schedule', 'Timetables', 'admin.management.timetables.index'),
             getSideBarElement('security', 'Security Staff', 'admin.management.security.index'),
             getSideBarElement('fact_check', 'Attendance', 'admin.management.attendance.dashboard'),
+            getSideBarElement('assessment', 'Marks', 'admin.management.marks.index'),
         ],
     ],
     [
