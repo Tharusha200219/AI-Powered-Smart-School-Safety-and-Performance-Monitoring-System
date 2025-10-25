@@ -31,7 +31,7 @@ class ClassTeacherAssignmentSeeder extends Seeder
         foreach ($classTeacherAssignments as $assignment) {
             $class = SchoolClass::where('class_code', $assignment['class_code'])->first();
             $teacher = Teacher::where('specialization', $assignment['teacher_specialization'])
-                ->where('is_class_teacher', true)
+                ->where('is_active', true)
                 ->first();
 
             if ($class && $teacher) {

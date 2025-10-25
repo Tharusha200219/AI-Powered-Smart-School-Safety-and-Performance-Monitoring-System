@@ -209,12 +209,17 @@
                                                     placeholder="Select Class Teacher" :options="collect($teachers)
                                                         ->mapWithKeys(
                                                             fn($teacher) => [
-                                                                $teacher->id =>
-                                                                    $teacher->first_name . ' ' . $teacher->last_name,
+                                                                $teacher->teacher_id =>
+                                                                    $teacher->full_name . ' (' . $teacher->teaching_level . ')',
                                                             ],
                                                         )
                                                         ->toArray()"
                                                     :value="old('class_teacher_id', $class->class_teacher_id ?? '')" />
+                                                @if($teachers->isEmpty())
+                                                    <small class="form-text text-warning" style="padding-left: 8px;">
+                                                        All active teachers are already assigned to classes
+                                                    </small>
+                                                @endif
                                             </div>
                                         </div>
                                         <div class="row">

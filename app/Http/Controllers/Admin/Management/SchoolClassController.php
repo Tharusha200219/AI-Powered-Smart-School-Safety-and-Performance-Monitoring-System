@@ -48,7 +48,9 @@ class SchoolClassController extends BaseManagementController
 
     protected function getFormData($id = null): array
     {
-        $teachers = $this->teacherRepository->getClassTeachers();
+        // Get available teachers (not assigned to other classes)
+        // If editing, exclude the current class so its teacher can remain assigned
+        $teachers = $this->teacherRepository->getAvailableClassTeachers($id);
         $subjects = $this->subjectRepository->getAll();
         return compact('teachers', 'subjects');
     }

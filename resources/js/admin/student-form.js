@@ -2,6 +2,16 @@
 let parentCount = 0;
 let studentFormData = null;
 let nfcModalInstance = null;
+let currentSubjectData = null;
+let selectedSubjects = {
+    firstLanguage: null,
+    religion: null,
+    aesthetic: null,
+    electives: [],
+    stream: null,
+    streamSubjects: [],
+    core: [],
+};
 
 // Global function declarations - accessible from onclick handlers
 window.addParentForm = function () {
@@ -383,6 +393,11 @@ function handleFormSubmit(event) {
         return;
     }
 
+    // Validate subject selections
+    if (!validateSubjectSelections()) {
+        return;
+    }
+
     // Show NFC modal
     showNFCModal();
 }
@@ -483,4 +498,550 @@ document.addEventListener("DOMContentLoaded", function () {
             submitStudentFormDirectly();
         });
     }
+
+    // Dynamic Subject Loading based on Grade Level
+    const gradeLevelSelect = document.querySelector(
+        'select[name="grade_level"]'
+    );
+    const classSelect = document.querySelector('select[name="class_id"]');
+
+    if (gradeLevelSelect) {
+        // Load classes and subjects when grade is changed
+        gradeLevelSelect.addEventListener("change", function () {
+            const gradeLevel = this.value;
+            loadClassesByGrade(gradeLevel);
+            loadSubjectsByGrade(gradeLevel);
+        });
+
+        // Load on page load if grade is already selected
+        if (gradeLevelSelect.value) {
+            loadClassesByGrade(gradeLevelSelect.value);
+            loadSubjectsByGrade(gradeLevelSelect.value);
+        }
+    }
+
+    // Handle stream selection for Advanced Level
+    document.querySelectorAll('input[name="stream"]').forEach((radio) => {
+        radio.addEventListener("change", function () {
+            if (this.checked) {
+                handleStreamSelection(this.value);
+            }
+        });
+    });
 });
+
+// Function to load classes by grade
+function loadClassesByGrade(gradeLevel) {
+    const classSelect = document.getElementById("class_id");
+
+    if (!classSelect || !gradeLevel) {
+        return;
+    }
+
+    // Filter classes from window.allClasses
+    const filteredClasses = window.allClasses
+        ? window.allClasses.filter((c) => c.grade_level == gradeLevel)
+        : [];
+
+    // Clear and repopulate
+    classSelect.innerHTML = '<option value="">Select Class</option>';
+
+    if (filteredClasses.length === 0) {
+        classSelect.innerHTML =
+            '<option value="">No classes available for this grade</option>';
+    } else {
+        filteredClasses.forEach((schoolClass) => {
+            const option = document.createElement("option");
+            option.value = schoolClass.id;
+            option.textContent = `${schoolClass.class_name} (Grade ${schoolClass.grade_level})`;
+            classSelect.appendChild(option);
+        });
+    }
+}
+
+// Function to load subjects based on selected grade
+function loadSubjectsByGrade(gradeLevel) {
+    if (!gradeLevel) {
+        document.getElementById("subjectSelectionContainer").style.display =
+            "none";
+        return;
+    }
+
+    // Get the URL from window object (set in blade template)
+    const url =
+        window.subjectsByGradeUrl ||
+        "/admin/management/students/subjects-by-grade";
+
+    // Get CSRF token
+    const csrfToken =
+        document
+            .querySelector('meta[name="csrf-token"]')
+            ?.getAttribute("content") ||
+        document.querySelector('input[name="_token"]')?.value;
+
+    // Fetch subjects from server
+    fetch(`${url}?grade_level=${gradeLevel}`, {
+        method: "GET",
+        headers: {
+            Accept: "application/json",
+            "X-CSRF-TOKEN": csrfToken,
+        },
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.success && data.data) {
+                currentSubjectData = data.data;
+                renderSubjectSelection(data.data);
+            } else {
+                console.error("Error loading subjects:", data.message);
+                alert("Error loading subjects. Please try again.");
+            }
+        })
+        .catch((error) => {
+            console.error("Error fetching subjects:", error);
+            alert("Error connecting to server. Please check your connection.");
+        });
+}
+
+// Render subject selection based on education level
+function renderSubjectSelection(data) {
+    // Show container
+    document.getElementById("subjectSelectionContainer").style.display =
+        "block";
+
+    // Hide all sections first
+    document.getElementById("primarySubjects").style.display = "none";
+    document.getElementById("secondarySubjects").style.display = "none";
+    document.getElementById("advancedSubjects").style.display = "none";
+
+    // Update info text
+    document.getElementById(
+        "educationLevelText"
+    ).textContent = `${data.education_level} - Grade ${data.grade}`;
+
+    // Reset selections
+    resetSubjectSelections();
+
+    // Render based on education level
+    if (data.education_level === "Primary Education") {
+        renderPrimarySubjects(data);
+    } else if (data.education_level === "Secondary Education") {
+        renderSecondarySubjects(data);
+    } else if (data.education_level === "Advanced Level") {
+        renderAdvancedSubjects(data);
+    }
+}
+
+// Render Primary Education subjects
+function renderPrimarySubjects(data) {
+    document.getElementById("primarySubjects").style.display = "block";
+
+    // First Language
+    if (data.subjects.first_language) {
+        renderCheckboxGroup(
+            "firstLanguagePrimary",
+            data.subjects.first_language,
+            "radio",
+            "first_language"
+        );
+    }
+
+    // Religion
+    if (data.subjects.religion) {
+        renderCheckboxGroup(
+            "religionPrimary",
+            data.subjects.religion,
+            "radio",
+            "religion"
+        );
+    }
+
+    // Aesthetic Studies
+    if (data.subjects.aesthetic) {
+        renderCheckboxGroup(
+            "aestheticPrimary",
+            data.subjects.aesthetic,
+            "radio",
+            "aesthetic"
+        );
+    }
+
+    // Core subjects (display only)
+    if (data.subjects.core) {
+        const coreList = document.getElementById("corePrimaryList");
+        coreList.innerHTML = "";
+        data.subjects.core.forEach((subject) => {
+            const li = document.createElement("li");
+            li.textContent = subject.subject_name;
+            coreList.appendChild(li);
+            selectedSubjects.core.push(subject.id);
+        });
+    }
+}
+
+// Render Secondary Education subjects
+function renderSecondarySubjects(data) {
+    document.getElementById("secondarySubjects").style.display = "block";
+
+    // First Language
+    if (data.subjects.first_language) {
+        renderCheckboxGroup(
+            "firstLanguageSecondary",
+            data.subjects.first_language,
+            "radio",
+            "first_language"
+        );
+    }
+
+    // Religion
+    if (data.subjects.religion) {
+        renderCheckboxGroup(
+            "religionSecondary",
+            data.subjects.religion,
+            "radio",
+            "religion"
+        );
+    }
+
+    // Core subjects (display only)
+    if (data.subjects.core) {
+        const coreList = document.getElementById("coreSecondaryList");
+        coreList.innerHTML = "";
+        data.subjects.core.forEach((subject) => {
+            const li = document.createElement("li");
+            li.textContent = subject.subject_name;
+            coreList.appendChild(li);
+            selectedSubjects.core.push(subject.id);
+        });
+    }
+
+    // Elective subjects
+    if (data.subjects.elective) {
+        renderCheckboxGroup(
+            "electiveSecondary",
+            data.subjects.elective,
+            "checkbox",
+            "elective",
+            3
+        );
+    }
+}
+
+// Render Advanced Level subjects
+function renderAdvancedSubjects(data) {
+    document.getElementById("advancedSubjects").style.display = "block";
+
+    // Store stream subjects for later use
+    window.streamSubjectsData = data.subjects.streams;
+}
+
+// Generic function to render checkbox/radio groups
+function renderCheckboxGroup(
+    containerId,
+    subjects,
+    inputType,
+    category,
+    maxSelection = 1
+) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = "";
+
+    subjects.forEach((subject) => {
+        const colDiv = document.createElement("div");
+        colDiv.className = "col-md-4";
+
+        const checkDiv = document.createElement("div");
+        checkDiv.className = "subject-checkbox";
+
+        const input = document.createElement("input");
+        input.type = inputType;
+        input.className = "form-check-input me-2";
+        input.id = `subject_${subject.id}`;
+        input.value = subject.id;
+        input.name =
+            inputType === "radio"
+                ? `subject_${category}`
+                : `subject_${category}[]`;
+        input.dataset.category = category;
+        input.dataset.maxSelection = maxSelection;
+
+        const label = document.createElement("label");
+        label.className = "form-check-label";
+        label.htmlFor = `subject_${subject.id}`;
+        label.textContent = subject.subject_name;
+
+        checkDiv.appendChild(input);
+        checkDiv.appendChild(label);
+        colDiv.appendChild(checkDiv);
+        container.appendChild(colDiv);
+
+        // Add event listener
+        input.addEventListener("change", function () {
+            handleSubjectSelection(this, category, inputType, maxSelection);
+            updateSubjectCheckboxStyles(this);
+        });
+
+        // Add click listener to div
+        checkDiv.addEventListener("click", function (e) {
+            if (e.target !== input) {
+                input.click();
+            }
+        });
+    });
+}
+
+// Handle subject selection
+function handleSubjectSelection(input, category, inputType, maxSelection) {
+    if (inputType === "radio") {
+        // Radio button - single selection
+        if (category === "first_language") {
+            selectedSubjects.firstLanguage = input.checked
+                ? parseInt(input.value)
+                : null;
+        } else if (category === "religion") {
+            selectedSubjects.religion = input.checked
+                ? parseInt(input.value)
+                : null;
+        } else if (category === "aesthetic") {
+            selectedSubjects.aesthetic = input.checked
+                ? parseInt(input.value)
+                : null;
+        }
+    } else {
+        // Checkbox - multiple selection with limit
+        if (category === "elective") {
+            if (input.checked) {
+                if (selectedSubjects.electives.length < maxSelection) {
+                    selectedSubjects.electives.push(parseInt(input.value));
+                } else {
+                    input.checked = false;
+                    alert(
+                        `You can only select ${maxSelection} elective subjects`
+                    );
+                    return;
+                }
+            } else {
+                selectedSubjects.electives = selectedSubjects.electives.filter(
+                    (id) => id !== parseInt(input.value)
+                );
+            }
+            document.getElementById("electiveCount").textContent =
+                selectedSubjects.electives.length;
+        } else if (category === "stream_subject") {
+            if (input.checked) {
+                if (selectedSubjects.streamSubjects.length < maxSelection) {
+                    selectedSubjects.streamSubjects.push(parseInt(input.value));
+                } else {
+                    input.checked = false;
+                    alert(
+                        `You can only select ${maxSelection} subjects from your stream`
+                    );
+                    return;
+                }
+            } else {
+                selectedSubjects.streamSubjects =
+                    selectedSubjects.streamSubjects.filter(
+                        (id) => id !== parseInt(input.value)
+                    );
+            }
+            document.getElementById("streamSubjectCount").textContent =
+                selectedSubjects.streamSubjects.length;
+        }
+    }
+
+    // Update hidden input
+    updateSubjectHiddenInputs();
+}
+
+// Handle stream selection for Advanced Level
+function handleStreamSelection(stream) {
+    selectedSubjects.stream = stream;
+    selectedSubjects.streamSubjects = [];
+
+    // Update stream card styling
+    document.querySelectorAll(".stream-card").forEach((card) => {
+        card.classList.remove("active");
+    });
+    document
+        .querySelector(`.stream-card[data-stream="${stream}"]`)
+        ?.classList.add("active");
+
+    // Show stream subjects
+    const container = document.getElementById("streamSubjectsContainer");
+    container.style.display = "block";
+
+    // Load subjects for this stream
+    const streamSubjects = window.streamSubjectsData?.[stream] || [];
+    renderCheckboxGroup(
+        "streamSubjects",
+        streamSubjects,
+        "checkbox",
+        "stream_subject",
+        3
+    );
+}
+
+// Update checkbox visual styles
+function updateSubjectCheckboxStyles(input) {
+    const checkDiv = input.closest(".subject-checkbox");
+    if (input.checked) {
+        checkDiv.classList.add("selected");
+    } else {
+        checkDiv.classList.remove("selected");
+    }
+}
+
+// Update hidden inputs with selected subjects
+function updateSubjectHiddenInputs() {
+    const allSubjects = [
+        ...selectedSubjects.core,
+        selectedSubjects.firstLanguage,
+        selectedSubjects.religion,
+        selectedSubjects.aesthetic,
+        ...selectedSubjects.electives,
+        ...selectedSubjects.streamSubjects,
+    ].filter((id) => id !== null && id !== undefined);
+
+    document.getElementById("subject_ids").value = JSON.stringify(allSubjects);
+    document.getElementById("core_subject_ids").value = JSON.stringify(
+        selectedSubjects.core
+    );
+}
+
+// Validate subject selections before form submission
+function validateSubjectSelections() {
+    if (!currentSubjectData) {
+        return true; // No validation needed if no subjects loaded
+    }
+
+    const educationLevel = currentSubjectData.education_level;
+    let isValid = true;
+    let errors = [];
+
+    if (educationLevel === "Primary Education") {
+        // Validate first language
+        if (!selectedSubjects.firstLanguage) {
+            document
+                .getElementById("firstLanguagePrimaryError")
+                .classList.remove("d-none");
+            errors.push("Please select a first language");
+            isValid = false;
+        } else {
+            document
+                .getElementById("firstLanguagePrimaryError")
+                .classList.add("d-none");
+        }
+
+        // Validate religion
+        if (!selectedSubjects.religion) {
+            document
+                .getElementById("religionPrimaryError")
+                .classList.remove("d-none");
+            errors.push("Please select a religion");
+            isValid = false;
+        } else {
+            document
+                .getElementById("religionPrimaryError")
+                .classList.add("d-none");
+        }
+
+        // Validate aesthetic
+        if (!selectedSubjects.aesthetic) {
+            document
+                .getElementById("aestheticPrimaryError")
+                .classList.remove("d-none");
+            errors.push("Please select an aesthetic study");
+            isValid = false;
+        } else {
+            document
+                .getElementById("aestheticPrimaryError")
+                .classList.add("d-none");
+        }
+    } else if (educationLevel === "Secondary Education") {
+        // Validate first language
+        if (!selectedSubjects.firstLanguage) {
+            document
+                .getElementById("firstLanguageSecondaryError")
+                .classList.remove("d-none");
+            errors.push("Please select a first language");
+            isValid = false;
+        } else {
+            document
+                .getElementById("firstLanguageSecondaryError")
+                .classList.add("d-none");
+        }
+
+        // Validate religion
+        if (!selectedSubjects.religion) {
+            document
+                .getElementById("religionSecondaryError")
+                .classList.remove("d-none");
+            errors.push("Please select a religion");
+            isValid = false;
+        } else {
+            document
+                .getElementById("religionSecondaryError")
+                .classList.add("d-none");
+        }
+
+        // Validate electives (exactly 3)
+        if (selectedSubjects.electives.length !== 3) {
+            document
+                .getElementById("electiveSecondaryError")
+                .classList.remove("d-none");
+            errors.push("Please select exactly 3 elective subjects");
+            isValid = false;
+        } else {
+            document
+                .getElementById("electiveSecondaryError")
+                .classList.add("d-none");
+        }
+    } else if (educationLevel === "Advanced Level") {
+        // Validate stream
+        if (!selectedSubjects.stream) {
+            document.getElementById("streamError").classList.remove("d-none");
+            errors.push("Please select a stream");
+            isValid = false;
+        } else {
+            document.getElementById("streamError").classList.add("d-none");
+        }
+
+        // Validate stream subjects (exactly 3)
+        if (selectedSubjects.streamSubjects.length !== 3) {
+            document
+                .getElementById("streamSubjectsError")
+                .classList.remove("d-none");
+            errors.push(
+                "Please select exactly 3 subjects from your chosen stream"
+            );
+            isValid = false;
+        } else {
+            document
+                .getElementById("streamSubjectsError")
+                .classList.add("d-none");
+        }
+    }
+
+    if (!isValid) {
+        alert(
+            "Please complete all required subject selections:\n\n" +
+                errors.join("\n")
+        );
+    }
+
+    return isValid;
+}
+
+// Reset subject selections
+function resetSubjectSelections() {
+    selectedSubjects = {
+        firstLanguage: null,
+        religion: null,
+        aesthetic: null,
+        electives: [],
+        stream: null,
+        streamSubjects: [],
+        core: [],
+    };
+    updateSubjectHiddenInputs();
+}

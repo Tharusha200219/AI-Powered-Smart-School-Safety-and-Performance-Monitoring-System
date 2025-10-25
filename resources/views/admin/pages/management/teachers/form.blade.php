@@ -146,13 +146,17 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <x-input name="is_class_teacher" type="checkbox" title="Is Class Teacher"
-                                                    :value="old(
-                                                        'is_class_teacher',
-                                                        $teacher->is_class_teacher ?? false,
-                                                    )
-                                                        ? '1'
-                                                        : ''" />
+                                                <x-input name="teaching_level" type="select" id="teaching_level" 
+                                                    title="Teaching Level" :isRequired="true"
+                                                    placeholder="Select Teaching Level" :options="[
+                                                        'Primary' => 'Primary Education (Grades 1-5)',
+                                                        'Secondary' => 'Secondary Education (Grades 6-11)',
+                                                        'A/L-Arts' => 'A/L - Arts Stream',
+                                                        'A/L-Commerce' => 'A/L - Commerce Stream',
+                                                        'A/L-Science' => 'A/L - Science Stream',
+                                                        'A/L-Technology' => 'A/L - Technology Stream',
+                                                    ]" :value="old('teaching_level', $teacher->teaching_level ?? '')" />
+                                                <small class="text-muted">Select the education level you teach</small>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -173,23 +177,16 @@
                                         </h6>
                                     </div>
                                     <div class="card-body">
-                                        <div class="row">
-                                            @foreach ($subjects as $subject)
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="subjects[]"
-                                                            value="{{ $subject->subject_id }}"
-                                                            id="subject_{{ $subject->subject_id }}"
-                                                            {{ in_array($subject->subject_id, old('subjects', $teacherSubjects ?? [])) ? 'checked' : '' }}>
-                                                        <label class="form-check-label"
-                                                            for="subject_{{ $subject->subject_id }}">
-                                                            <strong>{{ $subject->subject_name }}</strong>
-                                                            <br><small class="text-secondary">{{ $subject->category }} -
-                                                                {{ $subject->subject_code }}</small>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            @endforeach
+                                        <div id="subjectSelectionInfo" class="alert alert-info mb-3" style="display: none;">
+                                            <i class="material-symbols-rounded me-2">info</i>
+                                            <span id="teachingLevelText">Please select a teaching level to view available subjects</span>
+                                        </div>
+                                        
+                                        <div id="subjectsList" class="row">
+                                            <div class="col-12 text-center text-muted py-4">
+                                                <i class="material-symbols-rounded" style="font-size: 48px;">school</i>
+                                                <p class="mt-2">Select a teaching level above to see available subjects</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -214,17 +211,16 @@
                                                         placeholder="Leave empty to auto-generate password" />
                                                 </div>
                                             @endif
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <x-input name="is_active" type="checkbox" title="Active Status"
-                                                    :value="old('is_active', $teacher->is_active ?? true) ? '1' : ''" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="card">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <x-input name="is_active" type="select" title="Status" :isRequired="true"
+                                    :options="['1' => 'Active', '0' => 'Inactive']" 
+                                    :value="old('is_active', isset($teacher) ? ($teacher->is_active ? '1' : '0') : '1')" />
+                            </div>
+                        </div>
+                    </div>
+                </div>                                <div class="card">
                                     <div class="card-body">
                                         <div class="col-12 text-end">
                                             <a href="{{ route('admin.management.teachers.index') }}"
@@ -246,6 +242,9 @@
 
 @section('js')
     <script>
+        // Store previously selected subjects for edit mode
+        const previouslySelectedSubjects = @json(old('subjects', $teacherSubjects ?? []));
+        
         document.addEventListener('DOMContentLoaded', function() {
             // Auto-generate teacher code if empty
             const teacherCodeInput = document.querySelector('input[name="teacher_code"]');
@@ -285,6 +284,154 @@
                     reader.readAsDataURL(file);
                 }
             });
+
+            // Teaching level change handler
+            const teachingLevelSelect = document.getElementById('teaching_level');
+            if (teachingLevelSelect) {
+                teachingLevelSelect.addEventListener('change', function() {
+                    loadSubjectsByTeachingLevel(this.value);
+                });
+
+                // Load subjects on page load if teaching level is already selected
+                if (teachingLevelSelect.value) {
+                    loadSubjectsByTeachingLevel(teachingLevelSelect.value);
+                }
+            }
         });
+
+        // Function to load subjects based on teaching level
+        function loadSubjectsByTeachingLevel(teachingLevel) {
+            const subjectsList = document.getElementById('subjectsList');
+            const infoBox = document.getElementById('subjectSelectionInfo');
+            const levelText = document.getElementById('teachingLevelText');
+
+            if (!teachingLevel) {
+                subjectsList.innerHTML = `
+                    <div class="col-12 text-center text-muted py-4">
+                        <i class="material-symbols-rounded" style="font-size: 48px;">school</i>
+                        <p class="mt-2">Select a teaching level above to see available subjects</p>
+                    </div>
+                `;
+                infoBox.style.display = 'none';
+                return;
+            }
+
+            // Show loading state
+            subjectsList.innerHTML = `
+                <div class="col-12 text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading subjects...</p>
+                </div>
+            `;
+
+            // Get CSRF token
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+                document.querySelector('input[name="_token"]')?.value;
+
+            // Fetch subjects from server
+            fetch(`/admin/management/teachers/subjects-by-level?teaching_level=${encodeURIComponent(teachingLevel)}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.subjects) {
+                    infoBox.style.display = 'block';
+                    levelText.textContent = data.message || `Showing subjects for ${teachingLevel}`;
+                    
+                    if (data.subjects.length === 0) {
+                        subjectsList.innerHTML = `
+                            <div class="col-12 text-center text-warning py-4">
+                                <i class="material-symbols-rounded" style="font-size: 48px;">warning</i>
+                                <p class="mt-2">No subjects available for this teaching level</p>
+                            </div>
+                        `;
+                    } else {
+                        renderSubjects(data.subjects);
+                    }
+                } else {
+                    subjectsList.innerHTML = `
+                        <div class="col-12 text-center text-danger py-4">
+                            <i class="material-symbols-rounded" style="font-size: 48px;">error</i>
+                            <p class="mt-2">Error loading subjects: ${data.message || 'Unknown error'}</p>
+                        </div>
+                    `;
+                    infoBox.style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching subjects:', error);
+                subjectsList.innerHTML = `
+                    <div class="col-12 text-center text-danger py-4">
+                        <i class="material-symbols-rounded" style="font-size: 48px;">error</i>
+                        <p class="mt-2">Failed to load subjects. Please check your connection.</p>
+                    </div>
+                `;
+                infoBox.style.display = 'none';
+            });
+        }
+
+        // Function to render subjects
+        function renderSubjects(subjects) {
+            const subjectsList = document.getElementById('subjectsList');
+            subjectsList.innerHTML = '';
+
+            subjects.forEach(subject => {
+                const col = document.createElement('div');
+                col.className = 'col-md-4 mb-3';
+
+                const isChecked = previouslySelectedSubjects.includes(subject.id);
+
+                col.innerHTML = `
+                    <div class="form-check subject-check-box p-3 border rounded ${isChecked ? 'border-primary bg-light' : ''}">
+                        <input class="form-check-input" type="checkbox" name="subjects[]"
+                            value="${subject.id}"
+                            id="subject_${subject.id}"
+                            ${isChecked ? 'checked' : ''}>
+                        <label class="form-check-label w-100 cursor-pointer" for="subject_${subject.id}">
+                            <strong>${subject.subject_name}</strong>
+                            <br><small class="text-secondary">${subject.subject_code}</small>
+                            ${subject.category ? `<br><span class="badge bg-info mt-1">${subject.category}</span>` : ''}
+                            ${subject.stream ? `<br><span class="badge bg-success mt-1">${subject.stream}</span>` : ''}
+                        </label>
+                    </div>
+                `;
+
+                // Add click handler to highlight selected subjects
+                const checkbox = col.querySelector('input[type="checkbox"]');
+                const checkBox = col.querySelector('.subject-check-box');
+                
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        checkBox.classList.add('border-primary', 'bg-light');
+                    } else {
+                        checkBox.classList.remove('border-primary', 'bg-light');
+                    }
+                });
+
+                subjectsList.appendChild(col);
+            });
+        }
     </script>
+
+    <style>
+        .subject-check-box {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .subject-check-box:hover {
+            border-color: #5e72e4 !important;
+            background-color: rgba(94, 114, 228, 0.05);
+        }
+
+        .cursor-pointer {
+            cursor: pointer;
+        }
+    </style>
 @endsection

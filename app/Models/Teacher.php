@@ -28,7 +28,7 @@ class Teacher extends Model
         'employee_id',
         'photo_path',
         'is_active',
-        'is_class_teacher',
+        'teaching_level',
         'address_line1',
         'address_line2',
         'city',
@@ -45,7 +45,6 @@ class Teacher extends Model
         'joining_date' => 'date',
         'experience_years' => 'decimal:1',
         'is_active' => 'boolean',
-        'is_class_teacher' => 'boolean',
     ];
 
     // Relationships
@@ -57,6 +56,11 @@ class Teacher extends Model
     public function classes()
     {
         return $this->hasMany(SchoolClass::class, 'class_teacher_id', 'teacher_id');
+    }
+
+    public function assignedClass()
+    {
+        return $this->hasOne(SchoolClass::class, 'class_teacher_id', 'teacher_id');
     }
 
     public function subjects()
@@ -82,9 +86,9 @@ class Teacher extends Model
         return $query->where('is_active', true);
     }
 
-    public function scopeClassTeachers($query)
+    public function scopeByTeachingLevel($query, $teachingLevel)
     {
-        return $query->where('is_class_teacher', true);
+        return $query->where('teaching_level', $teachingLevel);
     }
 
     public function scopeBySpecialization($query, $specialization)

@@ -12,8 +12,8 @@
         }
 
         /* .input-group-outline {
-            margin-bottom: 1.5rem !important;
-        } */
+                    margin-bottom: 1.5rem !important;
+                } */
 
         .input-group-outline .form-control {
             border-radius: 8px !important;
@@ -131,6 +131,50 @@
                 transform: translate(-50%, -50%) scale(2);
                 opacity: 0;
             }
+        }
+
+        /* Subject Selection Styles */
+        .subject-checkbox {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .subject-checkbox:hover {
+            border-color: #5e72e4;
+            background-color: rgba(94, 114, 228, 0.05);
+        }
+
+        .subject-checkbox.selected {
+            border-color: #5e72e4;
+            background-color: rgba(94, 114, 228, 0.1);
+        }
+
+        .stream-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .stream-card:hover {
+            border-color: #5e72e4 !important;
+            background-color: rgba(94, 114, 228, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .stream-card input:checked+label {
+            color: #5e72e4;
+        }
+
+        .stream-card input:checked {
+            border-color: #5e72e4;
+        }
+
+        .stream-card.active {
+            border-color: #5e72e4 !important;
+            background-color: rgba(94, 114, 228, 0.1);
         }
     </style>
 @endsection
@@ -342,51 +386,18 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-md-4">
-                                                <x-input name="grade_level" type="select" title="Grade Level"
-                                                    :isRequired="true" placeholder="Select Grade Level" :options="[
-                                                        '1' => 'Grade 1',
-                                                        '2' => 'Grade 2',
-                                                        '3' => 'Grade 3',
-                                                        '4' => 'Grade 4',
-                                                        '5' => 'Grade 5',
-                                                        '6' => 'Grade 6',
-                                                        '7' => 'Grade 7',
-                                                        '8' => 'Grade 8',
-                                                        '9' => 'Grade 9',
-                                                        '10' => 'Grade 10',
-                                                        '11' => 'Grade 11',
-                                                        '12' => 'Grade 12',
-                                                        '13' => 'Grade 13',
-                                                    ]"
+                                                <x-input name="grade_level" type="select" id="grade_level"
+                                                    title="Grade Level" :isRequired="true"
+                                                    placeholder="Select Grade Level" :options="$grades"
                                                     :value="old('grade_level', $student->grade_level ?? '')" />
                                             </div>
-                                            {{-- <div class="col-md-4">
-                                                <div class="input-group input-group-outline mb-3">
-                                                    <select name="class_id" class="form-control">
-                                                        <option value="">Select Class</option>
-                                                        @foreach ($classes as $class)
-                                                            <option value="{{ $class->id }}"
-                                                                {{ old('class_id', $student->class_id ?? '') == $class->id ? 'selected' : '' }}>
-                                                                {{ $class->class_name }} (Grade {{ $class->grade_level }})
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div> --}}
 
                                             <div class="col-md-4">
-                                                <x-input name="class_id" type="select" title="Class" :isRequired="true"
-                                                    placeholder="Select Class" :options="$classes
-                                                        ->mapWithKeys(function ($class) {
-                                                            return [
-                                                                $class->id =>
-                                                                    $class->class_name .
-                                                                    ' (Grade ' .
-                                                                    $class->grade_level .
-                                                                    ')',
-                                                            ];
-                                                        })
-                                                        ->toArray()" :value="old('class_id', $student->class_id ?? '')" />
+                                                <x-input name="class_id" type="select" id="class_id" title="Class"
+                                                    :isRequired="true" placeholder="Select Grade First" :options="[]"
+                                                    :value="old('class_id', $student->class_id ?? '')" />
+                                                <small class="text-muted">Classes will be filtered based on selected
+                                                    grade</small>
                                             </div>
 
                                             <div class="col-md-4">
@@ -406,6 +417,188 @@
                                             <div class="col-md-6">
                                                 <x-input name="is_active" type="select" title="Active Status"
                                                     :isRequired="true" :options="['1' => 'Yes', '0' => 'No']" :value="old('is_active', $student->is_active ?? '1')" />
+                                            </div>
+                                        </div>
+
+                                        <!-- Subject Selection (Dynamic based on grade) -->
+                                        <div class="row" id="subjectSelectionContainer" style="display: none;">
+                                            <div class="col-md-12">
+                                                <div class="alert alert-info mb-3" id="subjectSelectionInfo">
+                                                    <i class="material-symbols-rounded me-2">info</i>
+                                                    <span id="educationLevelText"></span>
+                                                </div>
+
+                                                <!-- Primary Education (Grades 1-5) -->
+                                                <div id="primarySubjects" style="display: none;">
+                                                    <h6 class="text-primary mb-3">Primary Education Subject Selection</h6>
+
+                                                    <!-- First Language (Required - Choose 1) -->
+                                                    <div class="mb-4">
+                                                        <label class="form-label fw-bold">First Language <span
+                                                                class="text-danger">*</span> (Choose 1)</label>
+                                                        <div id="firstLanguagePrimary" class="row g-2"></div>
+                                                        <small class="text-danger d-none"
+                                                            id="firstLanguagePrimaryError">Please select one first
+                                                            language</small>
+                                                    </div>
+
+                                                    <!-- Religion (Required - Choose 1) -->
+                                                    <div class="mb-4">
+                                                        <label class="form-label fw-bold">Religion <span
+                                                                class="text-danger">*</span> (Choose 1)</label>
+                                                        <div id="religionPrimary" class="row g-2"></div>
+                                                        <small class="text-danger d-none" id="religionPrimaryError">Please
+                                                            select one religion</small>
+                                                    </div>
+
+                                                    <!-- Aesthetic Studies (Required - Choose 1) -->
+                                                    <div class="mb-4">
+                                                        <label class="form-label fw-bold">Aesthetic Studies <span
+                                                                class="text-danger">*</span> (Choose 1)</label>
+                                                        <div id="aestheticPrimary" class="row g-2"></div>
+                                                        <small class="text-danger d-none"
+                                                            id="aestheticPrimaryError">Please select one aesthetic
+                                                            study</small>
+                                                    </div>
+
+                                                    <!-- Core Subjects (Auto-assigned) -->
+                                                    <div class="mb-4">
+                                                        <label class="form-label fw-bold">Core Subjects
+                                                            (Auto-assigned)</label>
+                                                        <div id="corePrimary" class="alert alert-success">
+                                                            <ul id="corePrimaryList" class="mb-0"></ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Secondary Education (Grades 6-11) -->
+                                                <div id="secondarySubjects" style="display: none;">
+                                                    <h6 class="text-primary mb-3">Secondary Education Subject Selection
+                                                    </h6>
+
+                                                    <!-- First Language (Required - Choose 1) -->
+                                                    <div class="mb-4">
+                                                        <label class="form-label fw-bold">First Language <span
+                                                                class="text-danger">*</span> (Choose 1)</label>
+                                                        <div id="firstLanguageSecondary" class="row g-2"></div>
+                                                        <small class="text-danger d-none"
+                                                            id="firstLanguageSecondaryError">Please select one first
+                                                            language</small>
+                                                    </div>
+
+                                                    <!-- Religion (Required - Choose 1) -->
+                                                    <div class="mb-4">
+                                                        <label class="form-label fw-bold">Religion <span
+                                                                class="text-danger">*</span> (Choose 1)</label>
+                                                        <div id="religionSecondary" class="row g-2"></div>
+                                                        <small class="text-danger d-none"
+                                                            id="religionSecondaryError">Please select one religion</small>
+                                                    </div>
+
+                                                    <!-- Core Subjects (Auto-assigned) -->
+                                                    <div class="mb-4">
+                                                        <label class="form-label fw-bold">Core Subjects
+                                                            (Auto-assigned)</label>
+                                                        <div id="coreSecondary" class="alert alert-success">
+                                                            <ul id="coreSecondaryList" class="mb-0"></ul>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Elective Subjects (Choose 3) -->
+                                                    <div class="mb-4">
+                                                        <label class="form-label fw-bold">Elective Subjects <span
+                                                                class="text-danger">*</span> (Choose exactly 3)</label>
+                                                        <div id="electiveSecondary" class="row g-2"></div>
+                                                        <small class="text-danger d-none"
+                                                            id="electiveSecondaryError">Please select exactly 3 elective
+                                                            subjects</small>
+                                                        <small class="text-muted d-block mt-1">Selected: <span
+                                                                id="electiveCount" class="fw-bold">0</span>/3</small>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Advanced Level (Grades 12-13) -->
+                                                <div id="advancedSubjects" style="display: none;">
+                                                    <h6 class="text-primary mb-3">Advanced Level Subject Selection</h6>
+
+                                                    <!-- Stream Selection -->
+                                                    <div class="mb-4">
+                                                        <label class="form-label fw-bold">Select Stream <span
+                                                                class="text-danger">*</span></label>
+                                                        <div class="row g-3" id="streamSelection">
+                                                            <div class="col-md-3">
+                                                                <div class="form-check border rounded p-3 stream-card"
+                                                                    data-stream="Arts">
+                                                                    <input class="form-check-input" type="radio"
+                                                                        name="stream" id="streamArts" value="Arts">
+                                                                    <label class="form-check-label fw-bold"
+                                                                        for="streamArts">
+                                                                        <i class="material-symbols-rounded">palette</i>
+                                                                        Arts Stream
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <div class="form-check border rounded p-3 stream-card"
+                                                                    data-stream="Commerce">
+                                                                    <input class="form-check-input" type="radio"
+                                                                        name="stream" id="streamCommerce"
+                                                                        value="Commerce">
+                                                                    <label class="form-check-label fw-bold"
+                                                                        for="streamCommerce">
+                                                                        <i
+                                                                            class="material-symbols-rounded">business_center</i>
+                                                                        Commerce Stream
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <div class="form-check border rounded p-3 stream-card"
+                                                                    data-stream="Science">
+                                                                    <input class="form-check-input" type="radio"
+                                                                        name="stream" id="streamScience"
+                                                                        value="Science">
+                                                                    <label class="form-check-label fw-bold"
+                                                                        for="streamScience">
+                                                                        <i class="material-symbols-rounded">science</i>
+                                                                        Science Stream
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <div class="form-check border rounded p-3 stream-card"
+                                                                    data-stream="Technology">
+                                                                    <input class="form-check-input" type="radio"
+                                                                        name="stream" id="streamTechnology"
+                                                                        value="Technology">
+                                                                    <label class="form-check-label fw-bold"
+                                                                        for="streamTechnology">
+                                                                        <i class="material-symbols-rounded">computer</i>
+                                                                        Technology Stream
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <small class="text-danger d-none" id="streamError">Please select a
+                                                            stream</small>
+                                                    </div>
+
+                                                    <!-- Stream Subjects (Choose 3 after stream selection) -->
+                                                    <div class="mb-4" id="streamSubjectsContainer"
+                                                        style="display: none;">
+                                                        <label class="form-label fw-bold">Stream Subjects <span
+                                                                class="text-danger">*</span> (Choose exactly 3)</label>
+                                                        <div id="streamSubjects" class="row g-2"></div>
+                                                        <small class="text-danger d-none" id="streamSubjectsError">Please
+                                                            select exactly 3 subjects from your chosen stream</small>
+                                                        <small class="text-muted d-block mt-1">Selected: <span
+                                                                id="streamSubjectCount" class="fw-bold">0</span>/3</small>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Hidden inputs to store selected subjects -->
+                                                <input type="hidden" name="subject_ids" id="subject_ids">
+                                                <input type="hidden" name="core_subject_ids" id="core_subject_ids">
                                             </div>
                                         </div>
                                     </div>
@@ -751,6 +944,10 @@
         // Set blade template variables for JavaScript
         window.isEditMode = {{ $id ? 'true' : 'false' }};
         window.generateCodeUrl = '{{ route('admin.management.students.generate-code') }}';
+        window.subjectsByGradeUrl = '{{ route('admin.management.students.subjects-by-grade') }}';
+        window.classesByGradeUrl = '{{ route('admin.management.students.classes-by-grade') }}';
+        window.selectedSubjects = @json(old('subjects', isset($student) ? $student->subjects->pluck('id')->toArray() : []));
+        window.allClasses = @json($classes);
     </script>
     @vite('resources/js/admin/student-form.js')
 @endsection

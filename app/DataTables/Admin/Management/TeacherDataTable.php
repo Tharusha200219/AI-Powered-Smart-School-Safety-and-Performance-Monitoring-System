@@ -70,11 +70,20 @@ class TeacherDataTable extends DataTable
                 return $dropdown;
             })
             ->addColumn('name', function ($row) {
-                $teacherType = $row->is_class_teacher ? 'CT' : 'TEA';
-                $badgeClass = $row->is_class_teacher ? 'bg-gradient-primary' : 'bg-gradient-info';
+                // Map teaching level to badge type
+                $teachingLevelBadges = [
+                    'Primary' => ['text' => 'PRI', 'class' => 'bg-gradient-success'],
+                    'Secondary' => ['text' => 'SEC', 'class' => 'bg-gradient-info'],
+                    'Arts' => ['text' => 'ART', 'class' => 'bg-gradient-warning'],
+                    'Commerce' => ['text' => 'COM', 'class' => 'bg-gradient-primary'],
+                    'Science' => ['text' => 'SCI', 'class' => 'bg-gradient-danger'],
+                    'Technology' => ['text' => 'TEC', 'class' => 'bg-gradient-secondary'],
+                ];
+                
+                $badge = $teachingLevelBadges[$row->teaching_level] ?? ['text' => 'TEA', 'class' => 'bg-gradient-info'];
 
                 return '<div class="d-flex align-items-center">
-                    <span class="badge '.$badgeClass.' badge-sm me-2">'.$teacherType.'</span>
+                    <span class="badge '.$badge['class'].' badge-sm me-2">'.$badge['text'].'</span>
                     <span class="fw-bold">'.$row->full_name.'</span>
                 </div>';
             })

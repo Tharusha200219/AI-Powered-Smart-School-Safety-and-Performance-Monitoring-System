@@ -80,7 +80,7 @@ class TeacherController extends BaseManagementController
         
         $teacherData['user_id'] = $user->id;
         $teacherData['is_active'] = $request->input('is_active', true);
-        $teacherData['is_class_teacher'] = $request->boolean('is_class_teacher');
+        $teacherData['teaching_level'] = $request->input('teaching_level');
 
         // Handle profile image upload
         if ($request->hasFile('profile_image')) {
@@ -137,7 +137,7 @@ class TeacherController extends BaseManagementController
             'password', 'password_confirmation', 'roles', 'subjects', 'profile_image'
         ]);
         
-        $teacherData['is_class_teacher'] = $request->boolean('is_class_teacher');
+        $teacherData['teaching_level'] = $request->input('teaching_level');
 
         // Handle profile image upload
         if ($request->hasFile('profile_image')) {
@@ -179,6 +179,112 @@ class TeacherController extends BaseManagementController
         return response()->json([
             'code' => \App\Models\Teacher::generateTeacherCode(),
         ]);
+    }
+
+    /**
+     * Get subjects based on teaching level
+     */
+    public function getSubjectsByTeachingLevel(Request $request)
+    {
+        $teachingLevel = $request->input('teaching_level');
+
+        if (!$teachingLevel) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Teaching level is required',
+                'subjects' => []
+            ]);
+        }
+
+        try {
+            $subjects = [];
+            $message = '';
+
+            // Map teaching level to grade level and stream
+            switch ($teachingLevel) {
+                case 'Primary':
+                    $subjects = \App\Models\Subject::where('grade_level', '1-5')
+                        ->where('status', 'active')
+                        ->orderBy('category')
+                        ->orderBy('subject_name')
+                        ->get();
+                    $message = 'Showing Primary Education subjects (Grades 1-5)';
+                    break;
+
+                case 'Secondary':
+                    $subjects = \App\Models\Subject::where('grade_level', '6-11')
+                        ->where('status', 'active')
+                        ->orderBy('category')
+                        ->orderBy('subject_name')
+                        ->get();
+                    $message = 'Showing Secondary Education subjects (Grades 6-11)';
+                    break;
+
+                case 'A/L-Arts':
+                    $subjects = \App\Models\Subject::where('grade_level', '12-13')
+                        ->where('stream', 'Arts')
+                        ->where('status', 'active')
+                        ->orderBy('subject_name')
+                        ->get();
+                    $message = 'Showing A/L Arts Stream subjects';
+                    break;
+
+                case 'A/L-Commerce':
+                    $subjects = \App\Models\Subject::where('grade_level', '12-13')
+                        ->where('stream', 'Commerce')
+                        ->where('status', 'active')
+                        ->orderBy('subject_name')
+                        ->get();
+                    $message = 'Showing A/L Commerce Stream subjects';
+                    break;
+
+                case 'A/L-Science':
+                    $subjects = \App\Models\Subject::where('grade_level', '12-13')
+                        ->where('stream', 'Science')
+                        ->where('status', 'active')
+                        ->orderBy('subject_name')
+                        ->get();
+                    $message = 'Showing A/L Science Stream subjects';
+                    break;
+
+                case 'A/L-Technology':
+                    $subjects = \App\Models\Subject::where('grade_level', '12-13')
+                        ->where('stream', 'Technology')
+                        ->where('status', 'active')
+                        ->orderBy('subject_name')
+                        ->get();
+                    $message = 'Showing A/L Technology Stream subjects';
+                    break;
+
+                default:
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Invalid teaching level',
+                        'subjects' => []
+                    ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'subjects' => $subjects->map(function ($subject) {
+                    return [
+                        'id' => $subject->id,
+                        'subject_code' => $subject->subject_code,
+                        'subject_name' => $subject->subject_name,
+                        'category' => $subject->category,
+                        'stream' => $subject->stream,
+                        'grade_level' => $subject->grade_level,
+                    ];
+                })
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching subjects: ' . $e->getMessage(),
+                'subjects' => []
+            ]);
+        }
     }
 
     protected function performDelete($id)
