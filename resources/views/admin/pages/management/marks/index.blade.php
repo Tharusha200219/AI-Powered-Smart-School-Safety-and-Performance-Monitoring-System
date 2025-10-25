@@ -20,16 +20,10 @@
                                     <h6 class="mb-0">{{ pageTitle() }}</h6>
                                 </div>
                                 <div class="col-6 text-end">
-                                    @if (checkPermission('admin.management.attendance.dashboard'))
-                                        <a href="{{ route('admin.management.attendance.dashboard') }}"
-                                            class="btn btn-outline-primary mb-0 me-2">
-                                            <i class="material-symbols-rounded text-sm me-1">dashboard</i>Dashboard
-                                        </a>
-                                    @endif
-                                    @if (checkPermission('admin.management.attendance.create'))
-                                        <a href="{{ route('admin.management.attendance.create') }}"
-                                            class="btn bg-gradient-dark mb-0">
-                                            <i class="material-symbols-rounded text-sm me-1">add</i>Manual Entry
+                                    @if (checkPermission('admin.management.marks.form'))
+                                        <a class="btn bg-gradient-dark mb-0"
+                                            href="{{ route('admin.management.marks.create') }}">
+                                            <i class="material-symbols-rounded text-sm me-1">add</i>Create Marks
                                         </a>
                                     @endif
                                 </div>
@@ -51,7 +45,7 @@
     {{ $dataTable->scripts(attributes: ['type' => 'module', 'class' => 'table table-bordered']) }}
 @endisset
 
-@vite(['resources/css/admin/tables.css', 'resources/js/admin/attendance-table.js'])
+@vite(['resources/css/admin/tables.css', 'resources/js/admin/mark-table.js'])
 
 {{-- Include common scripts if they exist --}}
 @if (file_exists(public_path('build/js/common/show.js')))

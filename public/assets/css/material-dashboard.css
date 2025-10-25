@@ -21829,10 +21829,10 @@ fieldset:disabled .btn {
   padding: 0.3rem 0.3rem;
 }
 
-.btn.btn-sm i,
+/* .btn.btn-sm i,
 .btn-group-sm>.btn i {
   font-size: 0.5rem;
-}
+} */
 
 .btn.btn-lg.btn-icon-only,
 .btn-group-lg>.btn.btn-icon-only {
