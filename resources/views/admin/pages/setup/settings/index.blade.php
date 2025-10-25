@@ -1,5 +1,9 @@
 @extends('admin.layouts.app')
 
+@section('css')
+    @vite(['resources/css/admin/settings.css', 'resources/css/components/utilities.css'])
+@endsection
+
 @section('content')
     @include('admin.layouts.sidebar')
 
@@ -788,393 +792,395 @@
         </div>
     </main>
 
-    <style>
+    <script>
         /* Enhanced Theme Customization Styles */
-        .theme-customization-card {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
-            border-radius: 16px;
-            overflow: hidden;
-        }
+        .theme - customization - card {
+                background: rgba(255, 255, 255, 0.98);
+                backdrop - filter: blur(20 px);
+                border: 1 px solid rgba(255, 255, 255, 0.3);
+                box - shadow: 0 12 px 40 px rgba(0, 0, 0, 0.08);
+                border - radius: 16 px;
+                overflow: hidden;
+            }
 
-        .icon-circle-gradient {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, #06C167, #10B981);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 24px;
-        }
+            .icon - circle - gradient {
+                width: 48 px;
+                height: 48 px;
+                background: linear - gradient(135 deg, #06C167, # 10 B981);
+                border - radius: 12 px;
+                display: flex;
+                align - items: center;
+                justify - content: center;
+                color: white;
+                font - size: 24 px;
+            }
 
-        .theme-section {
-            position: relative;
-            padding: 24px;
-            background: rgba(248, 250, 252, 0.6);
-            border-radius: 12px;
-            border: 1px solid rgba(226, 232, 240, 0.8);
-        }
+            .theme - section {
+                position: relative;
+                padding: 24 px;
+                background: rgba(248, 250, 252, 0.6);
+                border - radius: 12 px;
+                border: 1 px solid rgba(226, 232, 240, 0.8);
+            }
 
-        .section-header {
-            text-align: center;
-            margin-bottom: 24px;
-        }
+            .section - header {
+                text - align: center;
+                margin - bottom: 24 px;
+            }
 
-        .section-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1e293b;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 8px;
-        }
+            .section - title {
+                font - size: 18 px;
+                font - weight: 600;
+                color: #1e293b;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 8px;
+            }
 
-        .section-subtitle {
-            color: #64748b;
-            margin: 0;
-            font-size: 14px;
-        }
+            .section-subtitle {
+                color: # 64748 b;
+                margin: 0;
+                font - size: 14 px;
+            }
 
-        /* Preset Grid */
-        .preset-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 16px;
-        }
+            /* Preset Grid */
+            .preset - grid {
+                display: grid;
+                grid - template - columns: repeat(auto - fit, minmax(160 px, 1 fr));
+                gap: 16 px;
+            }
 
-        .preset-card {
-            background: white;
-            border-radius: 12px;
-            padding: 16px;
-            border: 2px solid transparent;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
+            .preset - card {
+                background: white;
+                border - radius: 12 px;
+                padding: 16 px;
+                border: 2 px solid transparent;
+                cursor: pointer;
+                transition: all 0.3 s cubic - bezier(0.4, 0, 0.2, 1);
+                box - shadow: 0 4 px 12 px rgba(0, 0, 0, 0.05);
+            }
 
-        .preset-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
-            border-color: #06C167;
-        }
+            .preset - card: hover {
+                transform: translateY(-4 px);
+                box - shadow: 0 12 px 32 px rgba(0, 0, 0, 0.12);
+                border - color: #06C167;
+            }
 
-        .preset-preview {
-            display: flex;
-            height: 40px;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-bottom: 12px;
-        }
+            .preset-preview {
+                display: flex;
+                height: 40px;
+                border-radius: 8px;
+                overflow: hidden;
+                margin-bottom: 12px;
+            }
 
-        .color-strip {
-            flex: 1;
-            transition: transform 0.3s ease;
-        }
+            .color-strip {
+                flex: 1;
+                transition: transform 0.3s ease;
+            }
 
-        .preset-card:hover .color-strip {
-            transform: scale(1.05);
-        }
+            .preset-card:hover .color-strip {
+                transform: scale(1.05);
+            }
 
-        .preset-name {
-            font-weight: 500;
-            color: #374151;
-            font-size: 14px;
-            text-align: center;
-            display: block;
-        }
+            .preset-name {
+                font-weight: 500;
+                color: # 374151;
+                font - size: 14 px;
+                text - align: center;
+                display: block;
+            }
 
-        /* Enhanced Color Inputs */
-        .color-input-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            transition: all 0.3s ease;
-            height: 100%;
-        }
+            /* Enhanced Color Inputs */
+            .color - input - card {
+                background: white;
+                border - radius: 12 px;
+                padding: 20 px;
+                border: 1 px solid rgba(226, 232, 240, 0.8);
+                transition: all 0.3 s ease;
+                height: 100 % ;
+            }
 
-        .color-input-card:hover {
-            border-color: #06C167;
-            box-shadow: 0 8px 24px rgba(6, 193, 103, 0.12);
-        }
+            .color - input - card: hover {
+                border - color: #06C167;
+                box-shadow: 0 8px 24px rgba(6, 193, 103, 0.12);
+            }
 
-        .color-label {
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-        }
+            .color-label {
+                font-weight: 600;
+                color: # 1e293 b;
+                margin - bottom: 16 px;
+                display: flex;
+                align - items: center;
+                font - size: 14 px;
+            }
 
-        .color-picker-enhanced {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
+            .color - picker - enhanced {
+                display: flex;
+                align - items: center;
+                gap: 12 px;
+                margin - bottom: 12 px;
+            }
 
-        .color-picker-enhanced.mini {
-            gap: 8px;
-            margin-bottom: 8px;
-        }
+            .color - picker - enhanced.mini {
+                gap: 8 px;
+                margin - bottom: 8 px;
+            }
 
-        .color-preview-circle {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            border: 3px solid white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), inset 0 0 0 1px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
+            .color - preview - circle {
+                width: 48 px;
+                height: 48 px;
+                border - radius: 50 % ;
+                border: 3 px solid white;
+                box - shadow: 0 4 px 12 px rgba(0, 0, 0, 0.15),
+                inset 0 0 0 1 px rgba(0, 0, 0, 0.1);
+                cursor: pointer;
+                transition: all 0.3 s ease;
+                position: relative;
+            }
 
-        .color-picker-enhanced.mini .color-preview-circle {
-            width: 36px;
-            height: 36px;
-        }
+            .color - picker - enhanced.mini.color - preview - circle {
+                width: 36 px;
+                height: 36 px;
+            }
 
-        .color-preview-circle:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(0, 0, 0, 0.1);
-        }
+            .color - preview - circle: hover {
+                transform: scale(1.1);
+                box - shadow: 0 6 px 20 px rgba(0, 0, 0, 0.2),
+                inset 0 0 0 1 px rgba(0, 0, 0, 0.1);
+            }
 
-        .color-input-hidden {
-            display: none;
-        }
+            .color - input - hidden {
+                display: none;
+            }
 
-        .color-inputs {
-            flex: 1;
-        }
+            .color - inputs {
+                flex: 1;
+            }
 
-        .color-hex-input {
-            font-family: 'JetBrains Mono', 'Monaco', monospace;
-            font-size: 12px;
-            text-transform: uppercase;
-            font-weight: 500;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 8px 12px;
-            background: #f8fafc;
-            transition: all 0.3s ease;
-        }
+            .color - hex - input {
+                font - family: 'JetBrains Mono', 'Monaco', monospace;
+                font - size: 12 px;
+                text - transform: uppercase;
+                font - weight: 500;
+                border: 1 px solid #e2e8f0;
+                border - radius: 8 px;
+                padding: 8 px 12 px;
+                background: #f8fafc;
+                transition: all 0.3 s ease;
+            }
 
-        .color-hex-input:focus {
-            border-color: #06C167;
-            box-shadow: 0 0 0 3px rgba(6, 193, 103, 0.1);
-            background: white;
-        }
+            .color - hex - input: focus {
+                border - color: #06C167;
+                box-shadow: 0 0 0 3px rgba(6, 193, 103, 0.1);
+                background: white;
+            }
 
-        .color-description {
-            color: #64748b;
-            font-size: 12px;
-            line-height: 1.4;
-        }
+            .color-description {
+                color: # 64748 b;
+                font - size: 12 px;
+                line - height: 1.4;
+            }
 
-        /* Status Color Cards */
-        .status-color-card {
-            background: white;
-            border-radius: 12px;
-            padding: 16px;
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            transition: all 0.3s ease;
-            height: 100%;
-        }
+            /* Status Color Cards */
+            .status - color - card {
+                background: white;
+                border - radius: 12 px;
+                padding: 16 px;
+                border: 1 px solid rgba(226, 232, 240, 0.8);
+                transition: all 0.3 s ease;
+                height: 100 % ;
+            }
 
-        .status-color-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-        }
+            .status - color - card: hover {
+                transform: translateY(-2 px);
+                box - shadow: 0 8 px 24 px rgba(0, 0, 0, 0.08);
+            }
 
-        .status-color-card.success-theme:hover {
-            border-color: #10B981;
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
-        }
+            .status - color - card.success - theme: hover {
+                border - color: #10B981;
+                box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+            }
 
-        .status-color-card.info-theme:hover {
-            border-color: #3B82F6;
-            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15);
-        }
+            .status-color-card.info-theme:hover {
+                border-color: # 3 B82F6;
+                box - shadow: 0 8 px 24 px rgba(59, 130, 246, 0.15);
+            }
 
-        .status-color-card.warning-theme:hover {
-            border-color: #F59E0B;
-            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.15);
-        }
+            .status - color - card.warning - theme: hover {
+                border - color: #F59E0B;
+                box - shadow: 0 8 px 24 px rgba(245, 158, 11, 0.15);
+            }
 
-        .status-color-card.danger-theme:hover {
-            border-color: #EF4444;
-            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.15);
-        }
+            .status - color - card.danger - theme: hover {
+                border - color: #EF4444;
+                box - shadow: 0 8 px 24 px rgba(239, 68, 68, 0.15);
+            }
 
-        .status-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 16px;
-            font-weight: 600;
-            color: #374151;
-        }
+            .status - header {
+                display: flex;
+                align - items: center;
+                gap: 8 px;
+                margin - bottom: 16 px;
+                font - weight: 600;
+                color: #374151;
+            }
 
-        /* Gradient Configuration Cards */
-        .gradient-config-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            transition: all 0.3s ease;
-            height: 100%;
-        }
+            /* Gradient Configuration Cards */
+            .gradient-config-card {
+                background: white;
+                border-radius: 12px;
+                padding: 20px;
+                border: 1px solid rgba(226, 232, 240, 0.8);
+                transition: all 0.3s ease;
+                height: 100%;
+            }
 
-        .gradient-config-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-            border-color: #06C167;
-        }
+            .gradient-config-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+                border-color: # 06 C167;
+            }
 
-        .gradient-header {
-            margin-bottom: 20px;
-        }
+            .gradient - header {
+                margin - bottom: 20 px;
+            }
 
-        .gradient-title {
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 4px;
-        }
+            .gradient - title {
+                font - weight: 600;
+                color: #1e293b;
+                margin-bottom: 4px;
+            }
 
-        .gradient-controls {
-            margin-bottom: 20px;
-        }
+            .gradient-controls {
+                margin-bottom: 20px;
+            }
 
-        .gradient-label {
-            font-size: 12px;
-            font-weight: 500;
-            color: #64748b;
-            margin-bottom: 8px;
-            display: block;
-        }
+            .gradient-label {
+                font-size: 12px;
+                font-weight: 500;
+                color: # 64748 b;
+                margin - bottom: 8 px;
+                display: block;
+            }
 
-        .gradient-preview-enhanced {
-            height: 60px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
+            .gradient - preview - enhanced {
+                height: 60 px;
+                border - radius: 12 px;
+                display: flex;
+                align - items: center;
+                justify - content: center;
+                color: white;
+                font - weight: 600;
+                text - shadow: 0 2 px 4 px rgba(0, 0, 0, 0.3);
+                box - shadow: 0 4 px 12 px rgba(0, 0, 0, 0.15);
+                transition: all 0.3 s ease;
+                position: relative;
+                overflow: hidden;
+            }
 
-        .gradient-preview-enhanced:hover {
-            transform: scale(1.02);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-        }
+            .gradient - preview - enhanced: hover {
+                transform: scale(1.02);
+                box - shadow: 0 8 px 24 px rgba(0, 0, 0, 0.2);
+            }
 
-        .gradient-preview-text {
-            font-size: 14px;
-            z-index: 2;
-            position: relative;
-        }
+            .gradient - preview - text {
+                font - size: 14 px;
+                z - index: 2;
+                position: relative;
+            }
 
-        /* Enhanced Buttons */
-        .btn-gradient {
-            background: linear-gradient(135deg, #06C167, #10B981);
-            border: none;
-            color: white;
-            font-weight: 600;
-            padding: 12px 24px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
+            /* Enhanced Buttons */
+            .btn - gradient {
+                background: linear - gradient(135 deg, #06C167, # 10 B981);
+                border: none;
+                color: white;
+                font - weight: 600;
+                padding: 12 px 24 px;
+                border - radius: 8 px;
+                transition: all 0.3 s ease;
+            }
 
-        .btn-gradient:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(6, 193, 103, 0.3);
-            background: linear-gradient(135deg, #059669, #047857);
-        }
+            .btn - gradient: hover {
+                transform: translateY(-2 px);
+                box - shadow: 0 8 px 24 px rgba(6, 193, 103, 0.3);
+                background: linear - gradient(135 deg, #059669, # 047857);
+            }
 
-        /* Legacy color picker styles */
-        .color-picker-group {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
+            /* Legacy color picker styles */
+            .color - picker - group {
+                display: flex;
+                gap: 8 px;
+                align - items: center;
+            }
 
-        .color-picker {
-            width: 60px;
-            height: 40px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            padding: 0;
-        }
+            .color - picker {
+                width: 60 px;
+                height: 40 px;
+                border: none;
+                border - radius: 8 px;
+                cursor: pointer;
+                padding: 0;
+            }
 
-        .color-text {
-            flex: 1;
-            font-family: monospace;
-            text-transform: uppercase;
-        }
+            .color - text {
+                flex: 1;
+                font - family: monospace;
+                text - transform: uppercase;
+            }
 
-        .color-presets {
-            margin-top: 8px;
-        }
+            .color - presets {
+                margin - top: 8 px;
+            }
 
-        .color-preset {
-            border: 2px solid transparent;
-            border-radius: 8px;
-            color: white;
-            font-weight: 500;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-        }
+            .color - preset {
+                border: 2 px solid transparent;
+                border - radius: 8 px;
+                color: white;
+                font - weight: 500;
+                text - shadow: 0 1 px 2 px rgba(0, 0, 0, 0.3);
+                transition: all 0.3 s ease;
+            }
 
-        .color-preset:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
+            .color - preset: hover {
+                transform: translateY(-2 px);
+                box - shadow: 0 4 px 12 px rgba(0, 0, 0, 0.2);
+            }
 
-        .glassmorphism-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
+            .glassmorphism - card {
+                background: rgba(255, 255, 255, 0.95);
+                backdrop - filter: blur(20 px);
+                border: 1 px solid rgba(255, 255, 255, 0.2);
+                box - shadow: 0 8 px 32 px rgba(0, 0, 0, 0.1);
+            }
 
         /* Responsive Design */
-        @media (max-width: 768px) {
-            .preset-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        @media(max - width: 768 px) {
+            .preset - grid {
+                    grid - template - columns: repeat(2, 1 fr);
+                }
 
-            .color-preview-circle {
-                width: 40px;
-                height: 40px;
-            }
+                .color - preview - circle {
+                    width: 40 px;
+                    height: 40 px;
+                }
 
-            .color-picker-enhanced.mini .color-preview-circle {
-                width: 32px;
-                height: 32px;
-            }
+                .color - picker - enhanced.mini.color - preview - circle {
+                    width: 32 px;
+                    height: 32 px;
+                }
 
-            .theme-section {
-                padding: 16px;
-            }
+                .theme - section {
+                    padding: 16 px;
+                }
         }
 
         /* Animation for smooth transitions */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(20 px);
             }
 
             to {
@@ -1183,243 +1189,18 @@
             }
         }
 
-        .theme-section {
-            animation: fadeInUp 0.6s ease-out;
-        }
-
-        /* School Logo Upload Styles */
-        .school-logo-upload-section {
-            background: linear-gradient(145deg, #ffffff, #f8fffe);
-            border: 2px dashed #e2e8f0;
-            border-radius: 16px;
-            padding: 24px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .school-logo-upload-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(6, 193, 103, 0.02), rgba(16, 185, 129, 0.02));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .school-logo-upload-section:hover {
-            border-color: #06C167;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(6, 193, 103, 0.15);
-        }
-
-        .school-logo-upload-section:hover::before {
-            opacity: 1;
-        }
-
-        .upload-icon-circle {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, #06C167, #10B981);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 24px;
-            box-shadow: 0 4px 12px rgba(6, 193, 103, 0.3);
-        }
-
-        .upload-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1e293b;
-            margin: 0;
-        }
-
-        .logo-upload-container {
-            margin-top: 16px;
-        }
-
-        .logo-preview-card {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border: 2px solid #f1f5f9;
-            transition: all 0.3s ease;
-            height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo-preview-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-            border-color: #06C167;
-        }
-
-        .logo-preview-wrapper {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .logo-preview-image {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            border-radius: 8px;
-            transition: transform 0.3s ease;
-        }
-
-        .logo-preview-wrapper:hover .logo-preview-image {
-            transform: scale(1.05);
-        }
-
-        .logo-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            border-radius: 8px;
-            color: white;
-            font-size: 24px;
-        }
-
-        .logo-preview-wrapper:hover .logo-overlay {
-            opacity: 1;
-        }
-
-        .logo-placeholder {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-            border: 2px dashed #cbd5e1;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #64748b;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .logo-placeholder:hover {
-            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
-            border-color: #06C167;
-            color: #06C167;
-        }
-
-        .logo-placeholder-icon {
-            font-size: 3rem;
-            margin-bottom: 8px;
-            transition: transform 0.3s ease;
-        }
-
-        .logo-placeholder:hover .logo-placeholder-icon {
-            transform: scale(1.1);
-        }
-
-        .logo-placeholder-text {
-            font-size: 14px;
-            font-weight: 500;
-            margin: 0;
-        }
-
-        .upload-controls {
-            padding-left: 20px;
-        }
-
-        .btn-upload {
-            background: linear-gradient(135deg, #06C167, #10B981);
-            border: none;
-            border-radius: 10px;
-            padding: 12px 24px;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(6, 193, 103, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .btn-upload:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(6, 193, 103, 0.4);
-            background: linear-gradient(135deg, #059b5a, #0d9b6b);
-        }
-
-        .upload-requirements {
-            background: #f8fafc;
-            border-radius: 10px;
-            padding: 16px;
-            border-left: 4px solid #06C167;
-        }
-
-        .requirement-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
-            font-size: 13px;
-            color: #475569;
-        }
-
-        .requirement-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .requirement-item i {
-            font-size: 16px;
-            margin-right: 8px;
-        }
-
-        /* Upload animations */
-        @keyframes uploadSuccess {
-            0% {
-                opacity: 0;
-                transform: scale(0.8);
-            }
-
-            50% {
-                transform: scale(1.1);
-            }
-
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .upload-success {
-            animation: uploadSuccess 0.5s ease-out;
-        }
-    </style>
-
-    <script>
-        // Logo preview callback for immediate sidebar update
-        window.onFilePreviewLogo = function(dataUrl, file) {
-            // Update sidebar logo immediately with preview
-            const sidebarLogo = document.querySelector('.sidebar-logo');
-            if (sidebarLogo) {
-                sidebarLogo.src = dataUrl;
-            }
-        };
+        .theme - section {
+                animation: fadeInUp 0.6 s ease - out;
+            } <
+            script >
+            // Logo preview callback for immediate sidebar update
+            window.onFilePreviewLogo = function(dataUrl, file) {
+                // Update sidebar logo immediately with preview
+                const sidebarLogo = document.querySelector('.sidebar-logo');
+                if (sidebarLogo) {
+                    sidebarLogo.src = dataUrl;
+                }
+            };
 
         // Beautiful logo upload handler
         function handleLogoUpload(event) {
@@ -1458,7 +1239,7 @@
             reader.onload = function(e) {
                 // Create new preview with image
                 previewWrapper.innerHTML = `
-                    <img id="logo-preview" src="${e.target.result}" 
+                    <img id="logo-preview" src="${e.target.result}"
                          alt="School Logo Preview" class="logo-preview-image upload-success">
                     <div class="logo-overlay">
                         <i class="material-symbols-rounded">edit</i>

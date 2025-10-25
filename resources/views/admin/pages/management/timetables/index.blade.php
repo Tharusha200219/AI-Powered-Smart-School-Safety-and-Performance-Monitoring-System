@@ -1,51 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('css')
-    <style>
-        .timetable-grid {
-            overflow-x: auto;
-        }
-
-        .time-slot-card {
-            min-height: 80px;
-            border-left: 4px solid #e3f2fd;
-        }
-
-        .time-slot-card.has-class {
-            border-left-color: #1976d2;
-            background-color: #f3f9ff;
-        }
-
-        .day-selector {
-            border-radius: 25px;
-        }
-
-        .day-selector.active {
-            background: linear-gradient(45deg, #1976d2, #42a5f5);
-        }
-
-        .empty-slot {
-            border: 2px dashed #e0e0e0;
-            border-radius: 8px;
-            background-color: #fafafa;
-        }
-
-        .conflict-warning {
-            border-left-color: #f44336 !important;
-            background-color: #ffebee;
-        }
-
-        .quick-assign-form .form-control-sm {
-            font-size: 0.875rem;
-            padding: 0.375rem 0.75rem;
-        }
-
-        .dropdown-menu {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            border: none;
-        }
-    </style>
+    @vite(['resources/css/admin/timetables.css', 'resources/css/components/utilities.css'])
 @endsection
 
 @section('content')
@@ -314,7 +270,8 @@
                                                                                     <div class="mb-3">
                                                                                         <label
                                                                                             class="form-label small">Room
-                                                                                            (Optional)</label>
+                                                                                            (Optional)
+                                                                                        </label>
                                                                                         <input type="text"
                                                                                             name="room_number"
                                                                                             class="form-control form-control-sm"

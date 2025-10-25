@@ -38,7 +38,7 @@ Route::middleware(['auth'])->group(function () {
             Route::put('/update', 'update')->name('update');
             Route::post('/change-password', 'changePassword')->name('change-password');
             Route::delete('/delete-image', 'deleteProfileImage')->name('delete-image');
-            Route::post('/upload-image', 'update')->name('upload-image');
+            Route::post('/upload-image', 'uploadImage')->name('upload-image');
             Route::get('/stats', 'getProfileStats')->name('stats');
         });
 

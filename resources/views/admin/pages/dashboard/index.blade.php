@@ -12,20 +12,20 @@
 
         <div class="container-fluid py-2">
             <!-- Header -->
-                    <div class="row mb-4">
-            <div class="col-12">
-                <div class="d-flex align-items-center p-3">
-                <div class="ms-0">
-                    <h3 class="mb-0 h4 dashboard-title">{{ __('school.school_management_dashboard') }}</h3>
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex align-items-center p-3">
+                        <div class="ms-0">
+                            <h3 class="mb-0 h4 dashboard-title">{{ __('school.school_management_dashboard') }}</h3>
 
-                    <!-- single-line icon + text; icon kept at text-size (no size classes) -->
-                    <p class="mb-0 text-muted d-flex align-items-center">
-                    <i class="material-symbols-rounded header-icon me-2" aria-hidden="true">school</i>
-                    <span>{{ __('school.monitor_school_performance') }}</span>
-                    </p>
+                            <!-- single-line icon + text; icon kept at text-size (no size classes) -->
+                            <p class="mb-0 text-muted d-flex align-items-center">
+                                <i class="material-symbols-rounded header-icon me-2" aria-hidden="true">school</i>
+                                <span>{{ __('school.monitor_school_performance') }}</span>
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                </div>
-            </div>
             </div>
 
 
@@ -143,7 +143,7 @@
                     </div>
                 </div>
 
-                 <div class="col-xl-6 col-sm-12">
+                <div class="col-xl-6 col-sm-12">
                     <div class="card stat-card" style="--index: 6;">
                         <div class="card-body p-3">
                             <h6 class="quick-action">Quick Actions</h6>
@@ -157,12 +157,12 @@
                                     <i class="material-symbols-rounded me-1">school</i>Add Teacher
                                 </a>
                                 <a href="#" class="quick-action-btn btn btn-sm"
-                                 style="--index: 1; flex: 1; min-width: 120px;">
-                                    
+                                    style="--index: 1; flex: 1; min-width: 120px;">
+
                                     <i class="material-symbols-rounded me-1">class</i>Manage Classes
                                 </a>
-                                <a href="#" class="quick-action-btn btn btn-sm" style="--index: 1; flex: 1; min-width: 120px;"
-                                >
+                                <a href="#" class="quick-action-btn btn btn-sm"
+                                    style="--index: 1; flex: 1; min-width: 120px;">
                                     <i class="material-symbols-rounded me-1">book</i>View Reports
                                 </a>
                             </div>
@@ -273,13 +273,37 @@
             </div>
 
             <!-- School Settings & Theme Customization -->
-           
+
 
             @include('admin.layouts.inner-footer')
         </div>
+
+        <!-- Back to Top Button -->
+        <button class="back-to-top" id="backToTop" aria-label="Back to top">
+            <i class="material-symbols-rounded">arrow_upward</i>
+        </button>
     </main>
 @endsection
 
 @section('js')
     @vite('resources/js/admin/dashboard.js')
+    <script>
+        // Back to Top Button
+        const backToTopBtn = document.getElementById('backToTop');
+
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        });
+
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    </script>
 @endsection

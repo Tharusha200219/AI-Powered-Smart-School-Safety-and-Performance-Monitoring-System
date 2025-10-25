@@ -1,6 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('css')
+    @vite(['resources/css/admin/attendance-dashboard.css', 'resources/css/components/utilities.css'])
 @endsection
 
 @section('content')
@@ -232,3 +233,5 @@
     // Auto-refresh every 30 seconds
     setInterval(refreshCheckIns, 30000);
 </script>
+
+@vite(['resources/css/admin/dashboard.css'])
