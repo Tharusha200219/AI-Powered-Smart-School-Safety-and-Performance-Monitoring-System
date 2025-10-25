@@ -1,42 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('css')
-    <style>
-        .timetable-assignment-grid {
-            overflow-x: auto;
-        }
-
-        .assignment-card {
-            border: 2px solid #e3f2fd;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .assignment-card:hover {
-            border-color: #1976d2;
-            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.1);
-        }
-
-        .time-slot-header {
-            background: linear-gradient(45deg, #1976d2, #42a5f5);
-            color: white;
-            border-radius: 6px 6px 0 0;
-        }
-
-        .quick-select {
-            font-size: 0.875rem;
-        }
-
-        .day-tab {
-            border-radius: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .day-tab.active {
-            background: linear-gradient(45deg, #1976d2, #42a5f5);
-            color: white;
-        }
-    </style>
+    @vite(['resources/css/admin/timetables.css', 'resources/css/components/utilities.css'])
 @endsection
 
 @section('content')

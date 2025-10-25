@@ -3,87 +3,7 @@
 @section('title', 'Academic Year Information')
 
 @section('css')
-    @vite('resources/css/admin/forms.css')
-    <style>
-        .card {
-            border-radius: 12px !important;
-            border: none;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
-        }
-
-        .info-section {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid #e9ecef;
-        }
-
-        .info-section h6 {
-            color: #5e72e4;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .info-item {
-            margin-bottom: 0.75rem;
-        }
-
-        .info-label {
-            font-weight: 600;
-            color: #495057;
-            font-size: 0.875rem;
-        }
-
-        .info-value {
-            color: #6c757d;
-            font-size: 0.95rem;
-            margin-top: 0.25rem;
-        }
-
-        .info-value.empty {
-            color: #adb5bd;
-            font-style: italic;
-        }
-
-        .btn-edit-settings {
-            background: linear-gradient(135deg, #5e72e4, #825ee4);
-            border: none;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-
-        .btn-edit-settings:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(94, 114, 228, 0.3);
-            color: white;
-        }
-
-        .current-year-badge {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            display: inline-block;
-        }
-
-        .status-active {
-            color: #28a745;
-            font-weight: 600;
-        }
-
-        .status-inactive {
-            color: #6c757d;
-        }
-    </style>
+    @vite(['resources/css/admin/forms.css', 'resources/css/admin/school-setup.css', 'resources/css/components/utilities.css'])
 @endsection
 
 @section('content')
@@ -102,19 +22,19 @@
                                 <div class="col-6 d-flex align-items-center">
                                     <h6 class="mb-0">Academic Year Information</h6>
                                 </div>
-                             <div class="col-6 text-end">
-    <a href="{{ route('admin.setup.settings.index') }}" 
-       class="btn btn-outline-dark d-inline-flex align-items-center justify-content-center btn-custom me-2">
-        <i class="material-symbols-rounded me-1">edit</i>
-        Edit in Settings
-    </a>
+                                <div class="col-6 text-end">
+                                    <a href="{{ route('admin.setup.settings.index') }}"
+                                        class="btn btn-outline-dark d-inline-flex align-items-center justify-content-center btn-custom me-2">
+                                        <i class="material-symbols-rounded me-1">edit</i>
+                                        Edit in Settings
+                                    </a>
 
-    <a href="{{ route('admin.dashboard.index') }}" 
-       class="btn btn-outline-dark d-inline-flex align-items-center justify-content-center btn-custom">
-        <i class="material-symbols-rounded me-1 icon-size-md">arrow_back</i>
-        Back to Dashboard
-    </a>
-</div>
+                                    <a href="{{ route('admin.dashboard.index') }}"
+                                        class="btn btn-outline-dark d-inline-flex align-items-center justify-content-center btn-custom">
+                                        <i class="material-symbols-rounded me-1 icon-size-md">arrow_back</i>
+                                        Back to Dashboard
+                                    </a>
+                                </div>
 
                             </div>
                         </div>
@@ -122,7 +42,7 @@
                             <!-- Current Academic Year -->
                             <div class="info-section">
                                 <h6 class="section-title d-flex align-items-center">
-                                    <i class="material-symbols-rounded me-2" style="color: #5e72e4;">calendar_today</i>
+                                    <i class="material-symbols-rounded me-2">calendar_today</i>
                                     Current Academic Year
                                 </h6>
 
@@ -159,7 +79,7 @@
                             <!-- Academic Calendar -->
                             <div class="info-section">
                                 <h6 class="section-title d-flex align-items-center">
-                                    <i class="material-symbols-rounded me-2" style="color: #5e72e4;">event_note</i>
+                                    <i class="material-symbols-rounded me-2">event_note</i>
                                     Academic Calendar
                                 </h6>
 
@@ -237,7 +157,7 @@
                             <!-- School Hours -->
                             <div class="info-section">
                                 <h6 class="section-title d-flex align-items-center">
-                                    <i class="material-symbols-rounded me-2" style="color: #5e72e4;">schedule</i>
+                                    <i class="material-symbols-rounded me-2">schedule</i>
                                     School Hours
                                 </h6>
 
@@ -296,7 +216,7 @@
                             <!-- Academic Year Timeline -->
                             <div class="info-section">
                                 <h6 class="section-title d-flex align-items-center">
-                                    <i class="material-symbols-rounded me-2" style="color: #5e72e4;">timeline</i>
+                                    <i class="material-symbols-rounded me-2">timeline</i>
                                     Academic Timeline
                                 </h6>
 

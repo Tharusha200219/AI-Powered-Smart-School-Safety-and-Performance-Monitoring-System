@@ -115,6 +115,20 @@ return [
                     'admin.management.security.edit',
                 ]
             ),
+            getSideBarElement(
+                'assessment',
+                'Marks',
+                'admin.management.marks.index',
+                [],
+                [
+                    'admin.management.marks.form',
+                    'admin.management.marks.show',
+                    'admin.management.marks.delete',
+                ],
+                additional_permissions: [
+                    'admin.management.marks.edit',
+                ]
+            ),
         ],
     ],
 

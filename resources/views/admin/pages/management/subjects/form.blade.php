@@ -3,76 +3,7 @@
 @section('title', pageTitle())
 
 @section('css')
-    @vite('resources/css/admin/forms.css')
-    <style>
-        .card {
-            border-radius: 12px !important;
-            border: none;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
-        }
-
-        .input-group-outline {
-            margin-bottom: 1.5rem !important;
-        }
-
-        .input-group-outline .form-control {
-            border-radius: 8px !important;
-            border: 1.5px solid #e9ecef;
-            transition: all 0.3s ease;
-        }
-
-        .input-group-outline .form-control:focus {
-            border-color: #5e72e4;
-            box-shadow: 0 0 0 0.2rem rgba(94, 114, 228, 0.15);
-        }
-
-        .input-group-outline.is-focused .form-label {
-            color: #5e72e4;
-        }
-
-        .form-section {
-            border-left: 4px solid #5e72e4;
-            background: linear-gradient(135deg, rgba(94, 114, 228, 0.05) 0%, rgba(123, 136, 238, 0.03) 100%);
-            padding: 1.5rem;
-            border-radius: 0 8px 8px 0;
-            margin-bottom: 2rem;
-        }
-
-        .form-section h6 {
-            color: #5e72e4;
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-
-        .btn {
-            border-radius: 8px !important;
-            font-weight: 600;
-            text-transform: none;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #5e72e4 0%, #7b88ee 100%) !important;
-            border: none !important;
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, #6c757d 0%, #8a9296 100%) !important;
-            border: none !important;
-        }
-
-        .card-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            border-radius: 12px 12px 0 0 !important;
-            border: none !important;
-            color: white;
-        }
-
-        .card-header h6 {
-            color: white !important;
-            margin-bottom: 0;
-        }
-    </style>
+    @vite(['resources/css/admin/forms.css', 'resources/css/admin/common-forms.css', 'resources/css/components/utilities.css'])
 @endsection
 
 @section('content')

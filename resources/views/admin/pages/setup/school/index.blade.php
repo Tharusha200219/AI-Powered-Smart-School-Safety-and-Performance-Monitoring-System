@@ -3,86 +3,7 @@
 @section('title', 'School Information')
 
 @section('css')
-    @vite('resources/css/admin/forms.css')
-    <style>
-        .card {
-            border-radius: 12px !important;
-            border: none;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
-        }
-
-        .info-section {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid #e9ecef;
-        }
-
-        .info-section h6 {
-            color: #5e72e4;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .info-item {
-            margin-bottom: 0.75rem;
-        }
-
-        .info-label {
-            font-weight: 600;
-            color: #495057;
-            font-size: 0.875rem;
-        }
-
-        .info-value {
-            color: #6c757d;
-            font-size: 0.95rem;
-            margin-top: 0.25rem;
-        }
-
-        .info-value.empty {
-            color: #adb5bd;
-            font-style: italic;
-        }
-
-        .btn-edit-settings {
-            background: linear-gradient(135deg, #5e72e4, #825ee4);
-            border: none;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-
-        .btn-edit-settings:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(94, 114, 228, 0.3);
-            color: white;
-        }
-
-        .school-logo-display {
-            max-height: 120px;
-            max-width: 200px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .no-logo-placeholder {
-            width: 120px;
-            height: 120px;
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6c757d;
-        }
-    </style>
+    @vite(['resources/css/admin/forms.css', 'resources/css/admin/school-setup.css', 'resources/css/components/utilities.css'])
 @endsection
 
 @section('content')
@@ -118,7 +39,7 @@
                             <!-- Basic School Information -->
                             <div class="info-section">
                                 <h6 class="d-flex align-items-center">
-                                    <i class="material-symbols-rounded me-2" style="color: #5e72e4;">school</i>
+                                    <i class="material-symbols-rounded me-2">school</i>
                                     Basic School Information
                                 </h6>
 
@@ -195,7 +116,7 @@
                             <!-- Contact Information -->
                             <div class="info-section">
                                 <h6 class="d-flex align-items-center">
-                                    <i class="material-symbols-rounded me-2" style="color: #5e72e4;">contact_phone</i>
+                                    <i class="material-symbols-rounded me-2">contact_phone</i>
                                     Contact Information
                                 </h6>
 
@@ -240,7 +161,7 @@
                             <!-- Address Information -->
                             <div class="info-section">
                                 <h6 class="d-flex align-items-center">
-                                    <i class="material-symbols-rounded me-2" style="color: #5e72e4;">location_on</i>
+                                    <i class="material-symbols-rounded me-2">location_on</i>
                                     Address Information
                                 </h6>
 
