@@ -22,7 +22,7 @@ class MarkDataTable extends DataTable
             })
             ->addColumn('student_info', function ($row) {
                 if (!$row->student) return '<span class="text-muted">N/A</span>';
-                
+
                 return '<div class="d-flex align-items-center">
                     <span class="badge bg-gradient-success badge-sm me-2">STU</span>
                     <div>
@@ -54,10 +54,17 @@ class MarkDataTable extends DataTable
             ->addColumn('grade_display', function ($row) {
                 $grade = $row->grade ?? '-';
                 $colorMap = [
-                    'A+' => 'success', 'A' => 'success', 'A-' => 'success',
-                    'B+' => 'info', 'B' => 'info', 'B-' => 'info',
-                    'C+' => 'warning', 'C' => 'warning', 'C-' => 'warning',
-                    'D' => 'danger', 'F' => 'danger'
+                    'A+' => 'success',
+                    'A' => 'success',
+                    'A-' => 'success',
+                    'B+' => 'info',
+                    'B' => 'info',
+                    'B-' => 'info',
+                    'C+' => 'warning',
+                    'C' => 'warning',
+                    'C-' => 'warning',
+                    'D' => 'danger',
+                    'F' => 'danger'
                 ];
                 $color = $colorMap[$grade] ?? 'secondary';
                 return '<span class="badge bg-gradient-' . $color . ' badge-sm fw-bold">' . $grade . '</span>';
@@ -68,21 +75,21 @@ class MarkDataTable extends DataTable
                         <i class="material-symbols-outlined">more_vert</i>
                     </button>
                     <div class="dropdown-menu dropdown-menu-end m-0">';
-                
+
                 if (checkPermission('marks.show')) {
                     $actions .= view('admin.layouts.actions.show', ['route' => route('admin.marks.show', $row->mark_id)])->render();
                 }
-                
+
                 if (checkPermission('marks.edit')) {
                     $actions .= view('admin.layouts.actions.edit', ['route' => route('admin.marks.edit', $row->mark_id)])->render();
                 }
-                
+
                 if (checkPermission('marks.destroy')) {
                     $actions .= view('admin.layouts.actions.delete', ['route' => route('admin.marks.destroy', $row->mark_id)])->render();
                 }
-                
+
                 $actions .= '</div></div>';
-                
+
                 return $actions;
             })
             ->rawColumns(['student_info', 'grade_class', 'subject_name', 'academic_info', 'marks_display', 'percentage_display', 'grade_display', 'action'])
