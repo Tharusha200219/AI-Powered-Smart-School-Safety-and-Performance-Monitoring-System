@@ -110,9 +110,6 @@ class SchoolClassController extends BaseManagementController
             return Redirect::back();
         }
 
-        return view($this->parentViewPath.'view', compact('class'));
+        return view($this->parentViewPath . 'view', compact('class'));
     }
 }
-
-
-

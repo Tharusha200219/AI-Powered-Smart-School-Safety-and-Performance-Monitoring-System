@@ -16,7 +16,7 @@ return new class extends Migration
             if (Schema::hasColumn('teachers', 'is_class_teacher')) {
                 $table->dropColumn('is_class_teacher');
             }
-            
+
             // Add teaching_level field
             $table->enum('teaching_level', [
                 'Primary',
@@ -39,7 +39,7 @@ return new class extends Migration
             if (Schema::hasColumn('teachers', 'teaching_level')) {
                 $table->dropColumn('teaching_level');
             }
-            
+
             // Add back is_class_teacher field
             $table->boolean('is_class_teacher')->default(false)->after('is_active');
         });

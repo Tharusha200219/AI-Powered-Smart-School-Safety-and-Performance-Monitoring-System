@@ -49,13 +49,13 @@
                                                         @if (isset($teacher) && $teacher->photo_path)
                                                             <img id="profilePreview"
                                                                 src="{{ asset('storage/' . $teacher->photo_path) }}"
-                                                                alt="Teacher Photo"
-                                                                class="w-100 rounded-circle shadow-sm">
+                                                                alt="Teacher Photo" class="w-100 rounded-circle shadow-sm">
                                                         @else
                                                             <div id="profilePreview"
                                                                 class="w-100 rounded-circle shadow-sm bg-gradient-primary d-flex align-items-center justify-content-center"
                                                                 style="height: 70px; width: 70px;">
-                                                                <i class="material-symbols-rounded text-white text-lg">person</i>
+                                                                <i
+                                                                    class="material-symbols-rounded text-white text-lg">person</i>
                                                             </div>
                                                         @endif
                                                         <label for="profileImage"
@@ -65,7 +65,8 @@
                                                         <input type="file" id="profileImage" name="profile_image"
                                                             accept="image/*" style="display: none;">
                                                     </div>
-                                                    <small class="text-muted" style="margin-left: 8px">Click the edit icon to upload a photo</small>
+                                                    <small class="text-muted" style="margin-left: 8px">Click the edit icon
+                                                        to upload a photo</small>
                                                 </div>
                                             </div>
                                             <div class="col-md-9">
@@ -146,7 +147,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <x-input name="teaching_level" type="select" id="teaching_level" 
+                                                <x-input name="teaching_level" type="select" id="teaching_level"
                                                     title="Teaching Level" :isRequired="true"
                                                     placeholder="Select Teaching Level" :options="[
                                                         'Primary' => 'Primary Education (Grades 1-5)',
@@ -155,7 +156,8 @@
                                                         'A/L-Commerce' => 'A/L - Commerce Stream',
                                                         'A/L-Science' => 'A/L - Science Stream',
                                                         'A/L-Technology' => 'A/L - Technology Stream',
-                                                    ]" :value="old('teaching_level', $teacher->teaching_level ?? '')" />
+                                                    ]"
+                                                    :value="old('teaching_level', $teacher->teaching_level ?? '')" />
                                                 <small class="text-muted">Select the education level you teach</small>
                                             </div>
                                         </div>
@@ -177,15 +179,18 @@
                                         </h6>
                                     </div>
                                     <div class="card-body">
-                                        <div id="subjectSelectionInfo" class="alert alert-info mb-3" style="display: none;">
+                                        <div id="subjectSelectionInfo" class="alert alert-info mb-3"
+                                            style="display: none;">
                                             <i class="material-symbols-rounded me-2">info</i>
-                                            <span id="teachingLevelText">Please select a teaching level to view available subjects</span>
+                                            <span id="teachingLevelText">Please select a teaching level to view available
+                                                subjects</span>
                                         </div>
-                                        
+
                                         <div id="subjectsList" class="row">
                                             <div class="col-12 text-center text-muted py-4">
                                                 <i class="material-symbols-rounded" style="font-size: 48px;">school</i>
-                                                <p class="mt-2">Select a teaching level above to see available subjects</p>
+                                                <p class="mt-2">Select a teaching level above to see available subjects
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -211,16 +216,19 @@
                                                         placeholder="Leave empty to auto-generate password" />
                                                 </div>
                                             @endif
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <x-input name="is_active" type="select" title="Status" :isRequired="true"
-                                    :options="['1' => 'Active', '0' => 'Inactive']" 
-                                    :value="old('is_active', isset($teacher) ? ($teacher->is_active ? '1' : '0') : '1')" />
-                            </div>
-                        </div>
-                    </div>
-                </div>                                <div class="card">
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <x-input name="is_active" type="select" title="Status"
+                                                    :isRequired="true" :options="['1' => 'Active', '0' => 'Inactive']" :value="old(
+                                                        'is_active',
+                                                        isset($teacher) ? ($teacher->is_active ? '1' : '0') : '1',
+                                                    )" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card">
                                     <div class="card-body">
                                         <div class="col-12 text-end">
                                             <a href="{{ route('admin.management.teachers.index') }}"
@@ -244,7 +252,7 @@
     <script>
         // Store previously selected subjects for edit mode
         const previouslySelectedSubjects = @json(old('subjects', $teacherSubjects ?? []));
-        
+
         document.addEventListener('DOMContentLoaded', function() {
             // Auto-generate teacher code if empty
             const teacherCodeInput = document.querySelector('input[name="teacher_code"]');
@@ -332,48 +340,48 @@
 
             // Fetch subjects from server
             fetch(`/admin/management/teachers/subjects-by-level?teaching_level=${encodeURIComponent(teachingLevel)}`, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success && data.subjects) {
-                    infoBox.style.display = 'block';
-                    levelText.textContent = data.message || `Showing subjects for ${teachingLevel}`;
-                    
-                    if (data.subjects.length === 0) {
-                        subjectsList.innerHTML = `
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.subjects) {
+                        infoBox.style.display = 'block';
+                        levelText.textContent = data.message || `Showing subjects for ${teachingLevel}`;
+
+                        if (data.subjects.length === 0) {
+                            subjectsList.innerHTML = `
                             <div class="col-12 text-center text-warning py-4">
                                 <i class="material-symbols-rounded" style="font-size: 48px;">warning</i>
                                 <p class="mt-2">No subjects available for this teaching level</p>
                             </div>
                         `;
+                        } else {
+                            renderSubjects(data.subjects);
+                        }
                     } else {
-                        renderSubjects(data.subjects);
-                    }
-                } else {
-                    subjectsList.innerHTML = `
+                        subjectsList.innerHTML = `
                         <div class="col-12 text-center text-danger py-4">
                             <i class="material-symbols-rounded" style="font-size: 48px;">error</i>
                             <p class="mt-2">Error loading subjects: ${data.message || 'Unknown error'}</p>
                         </div>
                     `;
-                    infoBox.style.display = 'none';
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching subjects:', error);
-                subjectsList.innerHTML = `
+                        infoBox.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching subjects:', error);
+                    subjectsList.innerHTML = `
                     <div class="col-12 text-center text-danger py-4">
                         <i class="material-symbols-rounded" style="font-size: 48px;">error</i>
                         <p class="mt-2">Failed to load subjects. Please check your connection.</p>
                     </div>
                 `;
-                infoBox.style.display = 'none';
-            });
+                    infoBox.style.display = 'none';
+                });
         }
 
         // Function to render subjects
@@ -405,7 +413,7 @@
                 // Add click handler to highlight selected subjects
                 const checkbox = col.querySelector('input[type="checkbox"]');
                 const checkBox = col.querySelector('.subject-check-box');
-                
+
                 checkbox.addEventListener('change', function() {
                     if (this.checked) {
                         checkBox.classList.add('border-primary', 'bg-light');

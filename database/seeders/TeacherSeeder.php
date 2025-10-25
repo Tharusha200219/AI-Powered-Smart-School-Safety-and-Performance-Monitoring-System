@@ -254,7 +254,7 @@ class TeacherSeeder extends Seeder
         foreach ($teachers as $teacherData) {
             // Create user account for teacher
             $user = User::create([
-                'name' => $teacherData['first_name'].' '.$teacherData['last_name'],
+                'name' => $teacherData['first_name'] . ' ' . $teacherData['last_name'],
                 'email' => $teacherData['email'],
                 'password' => Hash::make('teacher123'), // Default password
                 'email_verified_at' => now(),
@@ -299,7 +299,7 @@ class TeacherSeeder extends Seeder
                 }
             }
 
-            $this->command->info("Created teacher: {$teacher->full_name} ({$teacher->teacher_code}) - Subjects: ".implode(', ', $teacherData['subjects']));
+            $this->command->info("Created teacher: {$teacher->full_name} ({$teacher->teacher_code}) - Subjects: " . implode(', ', $teacherData['subjects']));
         }
     }
 }

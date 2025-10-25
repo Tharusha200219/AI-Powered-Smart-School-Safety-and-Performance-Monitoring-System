@@ -53,9 +53,12 @@
                                                         'Science' => 'bg-gradient-danger',
                                                         'Technology' => 'bg-gradient-secondary',
                                                     ];
-                                                    $badgeClass = $teachingLevelBadges[$teacher->teaching_level] ?? 'bg-gradient-info';
+                                                    $badgeClass =
+                                                        $teachingLevelBadges[$teacher->teaching_level] ??
+                                                        'bg-gradient-info';
                                                 @endphp
-                                                <span class="badge {{ $badgeClass }} badge-sm me-1">{{ $teacher->teaching_level }}</span>
+                                                <span
+                                                    class="badge {{ $badgeClass }} badge-sm me-1">{{ $teacher->teaching_level }}</span>
                                                 <span
                                                     class="badge {{ $teacher->is_active ? 'bg-gradient-success' : 'bg-gradient-danger' }} badge-sm">
                                                     {{ $teacher->is_active ? 'Active' : 'Inactive' }}

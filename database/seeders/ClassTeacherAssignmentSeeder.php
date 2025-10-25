@@ -84,7 +84,7 @@ class ClassTeacherAssignmentSeeder extends Seeder
                     $class->subjects()->attach($subject->id);
                 }
             }
-            $this->command->info("Assigned subjects to {$class->class_name}: ".implode(', ', $subjectNames));
+            $this->command->info("Assigned subjects to {$class->class_name}: " . implode(', ', $subjectNames));
         }
     }
 }

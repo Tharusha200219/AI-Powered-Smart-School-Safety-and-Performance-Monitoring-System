@@ -75,9 +75,13 @@ class TeacherController extends BaseManagementController
 
         // Prepare teacher data
         $teacherData = $request->except([
-            'password', 'password_confirmation', 'roles', 'subjects', 'profile_image'
+            'password',
+            'password_confirmation',
+            'roles',
+            'subjects',
+            'profile_image'
         ]);
-        
+
         $teacherData['user_id'] = $user->id;
         $teacherData['is_active'] = $request->input('is_active', true);
         $teacherData['teaching_level'] = $request->input('teaching_level');
@@ -134,9 +138,13 @@ class TeacherController extends BaseManagementController
 
         // Prepare teacher data for update
         $teacherData = $request->except([
-            'password', 'password_confirmation', 'roles', 'subjects', 'profile_image'
+            'password',
+            'password_confirmation',
+            'roles',
+            'subjects',
+            'profile_image'
         ]);
-        
+
         $teacherData['teaching_level'] = $request->input('teaching_level');
 
         // Handle profile image upload
