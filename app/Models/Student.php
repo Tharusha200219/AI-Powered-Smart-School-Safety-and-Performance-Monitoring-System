@@ -72,6 +72,11 @@ class Student extends Model
             ->withTimestamps();
     }
 
+    public function marks()
+    {
+        return $this->hasMany(Mark::class, 'student_id', 'student_id');
+    }
+
     // Accessors
     public function getFullNameAttribute(): string
     {

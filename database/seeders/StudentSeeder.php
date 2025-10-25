@@ -17,321 +17,285 @@ class StudentSeeder extends Seeder
      */
     public function run(): void
     {
-        $students = [
-            [
-                'first_name' => 'Emma',
-                'middle_name' => 'Grace',
-                'last_name' => 'Anderson',
-                'date_of_birth' => '2018-03-15',
-                'gender' => 'F',
-                'nationality' => 'American',
-                'religion' => 'Christian',
-                'home_language' => 'English',
-                'enrollment_date' => '2024-08-20',
-                'grade_level' => '1',
-                'section' => 'A',
-                'address_line1' => '123 Oak Street',
-                'address_line2' => 'Apt 4B',
-                'city' => 'Springfield',
-                'state' => 'Illinois',
-                'postal_code' => '62701',
-                'country' => 'USA',
-                'home_phone' => '+1-217-555-0101',
-                'mobile_phone' => '+1-217-555-0102',
-                'email' => 'emma.anderson@student.school.edu',
-                'parent_names' => ['Michael Anderson'],
-                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Physical Education'],
-            ],
-            [
-                'first_name' => 'Liam',
-                'middle_name' => 'Alexander',
-                'last_name' => 'Johnson',
-                'date_of_birth' => '2018-07-22',
-                'gender' => 'M',
-                'nationality' => 'American',
-                'religion' => 'Christian',
-                'home_language' => 'English',
-                'enrollment_date' => '2024-08-20',
-                'grade_level' => '1',
-                'section' => 'B',
-                'address_line1' => '456 Maple Avenue',
-                'city' => 'Springfield',
-                'state' => 'Illinois',
-                'postal_code' => '62702',
-                'country' => 'USA',
-                'home_phone' => '+1-217-555-0201',
-                'mobile_phone' => '+1-217-555-0202',
-                'email' => 'liam.johnson@student.school.edu',
-                'parent_names' => ['Sarah Johnson'],
-                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Physical Education'],
-            ],
-            [
-                'first_name' => 'Olivia',
-                'middle_name' => 'Rose',
-                'last_name' => 'Williams',
-                'date_of_birth' => '2017-11-08',
-                'gender' => 'F',
-                'nationality' => 'American',
-                'religion' => 'Catholic',
-                'home_language' => 'English',
-                'enrollment_date' => '2024-08-20',
-                'grade_level' => '2',
-                'section' => 'A',
-                'address_line1' => '789 Pine Street',
-                'city' => 'Springfield',
-                'state' => 'Illinois',
-                'postal_code' => '62703',
-                'country' => 'USA',
-                'home_phone' => '+1-217-555-0301',
-                'mobile_phone' => '+1-217-555-0302',
-                'email' => 'olivia.williams@student.school.edu',
-                'parent_names' => ['David Williams'],
-                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Physical Education'],
-            ],
-            [
-                'first_name' => 'Noah',
-                'middle_name' => 'James',
-                'last_name' => 'Brown',
-                'date_of_birth' => '2017-05-14',
-                'gender' => 'M',
-                'nationality' => 'American',
-                'religion' => 'Protestant',
-                'home_language' => 'English',
-                'enrollment_date' => '2024-08-20',
-                'grade_level' => '2',
-                'section' => 'B',
-                'address_line1' => '321 Cedar Lane',
-                'address_line2' => 'Unit 12',
-                'city' => 'Springfield',
-                'state' => 'Illinois',
-                'postal_code' => '62704',
-                'country' => 'USA',
-                'home_phone' => '+1-217-555-0401',
-                'mobile_phone' => '+1-217-555-0402',
-                'email' => 'noah.brown@student.school.edu',
-                'parent_names' => ['Jennifer Brown'],
-                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Physical Education'],
-            ],
-            [
-                'first_name' => 'Sophia',
-                'middle_name' => 'Elizabeth',
-                'last_name' => 'Davis',
-                'date_of_birth' => '2016-09-30',
-                'gender' => 'F',
-                'nationality' => 'American',
-                'religion' => 'Jewish',
-                'home_language' => 'English',
-                'enrollment_date' => '2024-08-20',
-                'grade_level' => '3',
-                'section' => 'A',
-                'address_line1' => '654 Elm Street',
-                'city' => 'Springfield',
-                'state' => 'Illinois',
-                'postal_code' => '62705',
-                'country' => 'USA',
-                'home_phone' => '+1-217-555-0501',
-                'mobile_phone' => '+1-217-555-0502',
-                'email' => 'sophia.davis@student.school.edu',
-                'parent_names' => ['Robert Davis'],
-                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Visual Arts', 'Physical Education'],
-            ],
-            [
-                'first_name' => 'Jackson',
-                'middle_name' => 'William',
-                'last_name' => 'Miller',
-                'date_of_birth' => '2016-12-03',
-                'gender' => 'M',
-                'nationality' => 'American',
-                'religion' => 'Christian',
-                'home_language' => 'English',
-                'enrollment_date' => '2024-08-20',
-                'grade_level' => '3',
-                'section' => 'B',
-                'address_line1' => '987 Birch Road',
-                'city' => 'Springfield',
-                'state' => 'Illinois',
-                'postal_code' => '62706',
-                'country' => 'USA',
-                'home_phone' => '+1-217-555-0601',
-                'mobile_phone' => '+1-217-555-0602',
-                'email' => 'jackson.miller@student.school.edu',
-                'parent_names' => ['Lisa Miller'],
-                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Music', 'Physical Education'],
-            ],
-            [
-                'first_name' => 'Ava',
-                'middle_name' => 'Nicole',
-                'last_name' => 'Wilson',
-                'date_of_birth' => '2015-04-18',
-                'gender' => 'F',
-                'nationality' => 'American',
-                'religion' => 'Baptist',
-                'home_language' => 'English',
-                'enrollment_date' => '2024-08-20',
-                'grade_level' => '4',
-                'section' => 'A',
-                'address_line1' => '147 Spruce Street',
-                'address_line2' => 'House 5',
-                'city' => 'Springfield',
-                'state' => 'Illinois',
-                'postal_code' => '62707',
-                'country' => 'USA',
-                'home_phone' => '+1-217-555-0701',
-                'mobile_phone' => '+1-217-555-0702',
-                'email' => 'ava.wilson@student.school.edu',
-                'parent_names' => ['Christopher Wilson'],
-                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Technology Education', 'Physical Education'],
-            ],
-            [
-                'first_name' => 'Lucas',
-                'middle_name' => 'Daniel',
-                'last_name' => 'Moore',
-                'date_of_birth' => '2015-08-25',
-                'gender' => 'M',
-                'nationality' => 'American',
-                'religion' => 'Methodist',
-                'home_language' => 'English',
-                'enrollment_date' => '2024-08-20',
-                'grade_level' => '4',
-                'section' => 'B',
-                'address_line1' => '258 Walnut Avenue',
-                'city' => 'Springfield',
-                'state' => 'Illinois',
-                'postal_code' => '62708',
-                'country' => 'USA',
-                'home_phone' => '+1-217-555-0801',
-                'mobile_phone' => '+1-217-555-0802',
-                'email' => 'lucas.moore@student.school.edu',
-                'parent_names' => ['Amanda Moore'],
-                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Technology Education', 'Physical Education'],
-            ],
-            [
-                'first_name' => 'Isabella',
-                'middle_name' => 'Marie',
-                'last_name' => 'Taylor',
-                'date_of_birth' => '2014-01-12',
-                'gender' => 'F',
-                'nationality' => 'American',
-                'religion' => 'Catholic',
-                'home_language' => 'English',
-                'enrollment_date' => '2024-08-20',
-                'grade_level' => '5',
-                'section' => 'A',
-                'address_line1' => '369 Chestnut Drive',
-                'city' => 'Springfield',
-                'state' => 'Illinois',
-                'postal_code' => '62709',
-                'country' => 'USA',
-                'home_phone' => '+1-217-555-0901',
-                'mobile_phone' => '+1-217-555-0902',
-                'email' => 'isabella.taylor@student.school.edu',
-                'parent_names' => ['Kevin Taylor'],
-                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Spanish Language', 'Technology Education', 'Physical Education'],
-            ],
-            [
-                'first_name' => 'Ethan',
-                'middle_name' => 'Christopher',
-                'last_name' => 'Garcia',
-                'date_of_birth' => '2014-06-07',
-                'gender' => 'M',
-                'nationality' => 'American',
-                'religion' => 'Christian',
-                'home_language' => 'English',
-                'enrollment_date' => '2024-08-20',
-                'grade_level' => '5',
-                'section' => 'B',
-                'address_line1' => '741 Poplar Street',
-                'address_line2' => 'Building A',
-                'city' => 'Springfield',
-                'state' => 'Illinois',
-                'postal_code' => '62710',
-                'country' => 'USA',
-                'home_phone' => '+1-217-555-1001',
-                'mobile_phone' => '+1-217-555-1002',
-                'email' => 'ethan.garcia@student.school.edu',
-                'parent_names' => ['Michelle Garcia'],
-                'subjects' => ['Mathematics', 'English Language Arts', 'Science', 'Social Studies', 'Spanish Language', 'Technology Education', 'Physical Education'],
-            ],
+        $this->command->info('Creating students for grades 1-13 with proper subject assignments...');
+
+        // Generate students for each grade (1-13)
+        for ($grade = 1; $grade <= 13; $grade++) {
+            $this->createStudentsForGrade($grade);
+        }
+    }
+
+    /**
+     * Create students for a specific grade
+     */
+    private function createStudentsForGrade(int $grade): void
+    {
+        $sections = ['A', 'B'];
+        $studentsPerSection = 2; // Create 2 students per section
+
+        foreach ($sections as $section) {
+            for ($i = 1; $i <= $studentsPerSection; $i++) {
+                $this->createStudent($grade, $section, $i);
+            }
+        }
+    }
+
+    /**
+     * Create a single student with proper subject assignment
+     */
+    private function createStudent(int $grade, string $section, int $index): void
+    {
+        $studentData = $this->generateStudentData($grade, $section, $index);
+
+        // Create user account for student
+        $user = User::create([
+            'name' => $studentData['first_name'] . ' ' . $studentData['last_name'],
+            'email' => $studentData['email'],
+            'password' => Hash::make('student123'), // Default password
+            'email_verified_at' => now(),
+        ]);
+
+        // Assign student role
+        $user->assignRole('Student');
+
+        // Find the appropriate class based on grade and section
+        $schoolClass = SchoolClass::where('grade_level', $grade)
+            ->where('section', $section)
+            ->first();
+
+        // Create student record
+        $student = Student::create([
+            'user_id' => $user->id,
+            'student_code' => Student::generateStudentCode(),
+            'first_name' => $studentData['first_name'],
+            'middle_name' => $studentData['middle_name'],
+            'last_name' => $studentData['last_name'],
+            'date_of_birth' => $studentData['date_of_birth'],
+            'gender' => $studentData['gender'],
+            'nationality' => $studentData['nationality'],
+            'religion' => $studentData['religion'],
+            'home_language' => $studentData['home_language'],
+            'enrollment_date' => $studentData['enrollment_date'],
+            'grade_level' => $grade,
+            'class_id' => $schoolClass ? $schoolClass->id : null,
+            'section' => $section,
+            'is_active' => true,
+            'address_line1' => $studentData['address_line1'],
+            'address_line2' => $studentData['address_line2'] ?? null,
+            'city' => $studentData['city'],
+            'state' => $studentData['state'],
+            'postal_code' => $studentData['postal_code'],
+            'country' => $studentData['country'],
+            'home_phone' => $studentData['home_phone'],
+            'mobile_phone' => $studentData['mobile_phone'],
+            'email' => $studentData['email'],
+        ]);
+
+        // Attach parent to student
+        $parent = ParentModel::inRandomOrder()->first();
+        if ($parent) {
+            $student->parents()->attach($parent->parent_id, [
+                'is_primary_contact' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        // Attach subjects to student based on grade rules
+        $this->attachSubjectsToStudent($student, $grade);
+
+        $this->command->info("Created student: {$student->full_name} ({$student->student_code}) - Grade {$grade}{$section}");
+    }
+
+    /**
+     * Attach subjects to student following grade-specific rules
+     */
+    private function attachSubjectsToStudent(Student $student, int $grade): void
+    {
+        $subjectsData = Subject::getSubjectsWithRules($grade);
+        $subjects = $subjectsData['subjects'];
+        $rules = $subjectsData['rules'];
+
+        $subjectsToAttach = [];
+
+        // Primary Education (Grades 1-5)
+        if ($grade >= 1 && $grade <= 5) {
+            // Add core subjects (auto-assigned)
+            if (isset($subjects['core'])) {
+                foreach ($subjects['core'] as $subject) {
+                    $subjectsToAttach[] = $subject->id;
+                }
+            }
+
+            // Add first language (pick one)
+            if (isset($subjects['first_language']) && $subjects['first_language']->isNotEmpty()) {
+                $subjectsToAttach[] = $subjects['first_language']->random()->id;
+            }
+
+            // Add religion (pick one)
+            if (isset($subjects['religion']) && $subjects['religion']->isNotEmpty()) {
+                $subjectsToAttach[] = $subjects['religion']->random()->id;
+            }
+
+            // Add aesthetic studies (pick one)
+            if (isset($subjects['aesthetic']) && $subjects['aesthetic']->isNotEmpty()) {
+                $subjectsToAttach[] = $subjects['aesthetic']->random()->id;
+            }
+        }
+        // Secondary Education (Grades 6-11)
+        elseif ($grade >= 6 && $grade <= 11) {
+            // Add core subjects (auto-assigned)
+            if (isset($subjects['core'])) {
+                foreach ($subjects['core'] as $subject) {
+                    $subjectsToAttach[] = $subject->id;
+                }
+            }
+
+            // Add first language (pick one)
+            if (isset($subjects['first_language']) && $subjects['first_language']->isNotEmpty()) {
+                $subjectsToAttach[] = $subjects['first_language']->random()->id;
+            }
+
+            // Add religion (pick one)
+            if (isset($subjects['religion']) && $subjects['religion']->isNotEmpty()) {
+                $subjectsToAttach[] = $subjects['religion']->random()->id;
+            }
+
+            // Add elective subjects (pick 3)
+            if (isset($subjects['elective']) && $subjects['elective']->isNotEmpty()) {
+                $electiveCount = min(3, $subjects['elective']->count());
+                $electives = $subjects['elective']->random($electiveCount);
+                foreach ($electives as $subject) {
+                    $subjectsToAttach[] = $subject->id;
+                }
+            }
+        }
+        // Advanced Level (Grades 12-13)
+        elseif ($grade >= 12 && $grade <= 13) {
+            // Pick a stream and add its subjects
+            if (isset($subjects['streams'])) {
+                $availableStreams = array_keys($subjects['streams']);
+                $selectedStream = $availableStreams[array_rand($availableStreams)];
+
+                if (isset($subjects['streams'][$selectedStream]) && $subjects['streams'][$selectedStream]->isNotEmpty()) {
+                    $streamSubjectCount = min(3, $subjects['streams'][$selectedStream]->count());
+                    $streamSubjects = $subjects['streams'][$selectedStream]->random($streamSubjectCount);
+                    foreach ($streamSubjects as $subject) {
+                        $subjectsToAttach[] = $subject->id;
+                    }
+                }
+            }
+        }
+
+        // Attach all subjects to the student
+        foreach (array_unique($subjectsToAttach) as $subjectId) {
+            $student->subjects()->attach($subjectId, [
+                'enrollment_date' => $student->enrollment_date,
+                'grade' => $grade,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+    }
+
+    /**
+     * Generate student data
+     */
+    private function generateStudentData(int $grade, string $section, int $index): array
+    {
+        $firstNames = [
+            'Emma',
+            'Liam',
+            'Olivia',
+            'Noah',
+            'Ava',
+            'Ethan',
+            'Sophia',
+            'Mason',
+            'Isabella',
+            'Lucas',
+            'Mia',
+            'Oliver',
+            'Amelia',
+            'James',
+            'Harper',
+            'Benjamin',
+            'Evelyn',
+            'Elijah',
+            'Abigail',
+            'William'
+        ];
+        $middleNames = [
+            'Grace',
+            'Alexander',
+            'Rose',
+            'James',
+            'Nicole',
+            'Christopher',
+            'Elizabeth',
+            'Daniel',
+            'Marie',
+            'William'
+        ];
+        $lastNames = [
+            'Anderson',
+            'Johnson',
+            'Williams',
+            'Brown',
+            'Davis',
+            'Miller',
+            'Wilson',
+            'Moore',
+            'Taylor',
+            'Garcia',
+            'Martinez',
+            'Robinson',
+            'Clark',
+            'Rodriguez',
+            'Lewis',
+            'Lee',
+            'Walker',
+            'Hall',
+            'Allen',
+            'Young'
         ];
 
-        foreach ($students as $studentData) {
-            // Create user account for student
-            $user = User::create([
-                'name' => $studentData['first_name'].' '.$studentData['last_name'],
-                'email' => $studentData['email'],
-                'password' => Hash::make('student123'), // Default password
-                'email_verified_at' => now(),
-            ]);
+        $genders = ['M', 'F'];
+        $religions = ['Christian', 'Catholic', 'Protestant', 'Baptist', 'Buddhist', 'Hindu', 'Muslim', 'Other'];
 
-            // Assign student role
-            $user->assignRole('Student');
+        // Calculate date of birth based on grade
+        $currentYear = now()->year;
+        $birthYear = $currentYear - (5 + $grade); // Approximate age
+        $birthMonth = rand(1, 12);
+        $birthDay = rand(1, 28);
 
-            // Find the appropriate class based on grade and section
-            $schoolClass = SchoolClass::where('grade_level', $studentData['grade_level'])
-                ->where('section', $studentData['section'])
-                ->first();
+        $firstName = $firstNames[($grade * 10 + $index + ord($section)) % count($firstNames)];
+        $middleName = $middleNames[($grade + $index) % count($middleNames)];
+        $lastName = $lastNames[($grade * 2 + $index) % count($lastNames)];
+        $gender = $genders[($grade + $index) % 2];
+        $religion = $religions[$grade % count($religions)];
 
-            // Create student record
-            $student = Student::create([
-                'user_id' => $user->id,
-                'student_code' => Student::generateStudentCode(),
-                'first_name' => $studentData['first_name'],
-                'middle_name' => $studentData['middle_name'],
-                'last_name' => $studentData['last_name'],
-                'date_of_birth' => $studentData['date_of_birth'],
-                'gender' => $studentData['gender'],
-                'nationality' => $studentData['nationality'],
-                'religion' => $studentData['religion'],
-                'home_language' => $studentData['home_language'],
-                'enrollment_date' => $studentData['enrollment_date'],
-                'grade_level' => $studentData['grade_level'],
-                'class_id' => $schoolClass ? $schoolClass->id : null,
-                'section' => $studentData['section'],
-                'is_active' => true,
-                'address_line1' => $studentData['address_line1'],
-                'address_line2' => $studentData['address_line2'] ?? null,
-                'city' => $studentData['city'],
-                'state' => $studentData['state'],
-                'postal_code' => $studentData['postal_code'],
-                'country' => $studentData['country'],
-                'home_phone' => $studentData['home_phone'],
-                'mobile_phone' => $studentData['mobile_phone'],
-                'email' => $studentData['email'],
-            ]);
+        $email = strtolower($firstName . '.' . $lastName . $grade . $section . '@student.school.edu');
 
-            // Attach parents to student
-            foreach ($studentData['parent_names'] as $parentName) {
-                $nameParts = explode(' ', $parentName);
-                $firstName = $nameParts[0];
-                $lastName = end($nameParts);
-
-                $parent = ParentModel::where('first_name', $firstName)
-                    ->where('last_name', $lastName)
-                    ->first();
-
-                if ($parent) {
-                    $student->parents()->attach($parent->parent_id, [
-                        'is_primary_contact' => true,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-                }
-            }
-
-            // Attach subjects to student
-            foreach ($studentData['subjects'] as $subjectName) {
-                $subject = Subject::where('subject_name', $subjectName)->first();
-                if ($subject) {
-                    $student->subjects()->attach($subject->id, [
-                        'enrollment_date' => $studentData['enrollment_date'],
-                        'grade' => (int) $studentData['grade_level'], // Add the grade field
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-                }
-            }
-
-            $this->command->info("Created student: {$student->full_name} ({$student->student_code}) - Grade {$studentData['grade_level']}{$studentData['section']} - Subjects: ".implode(', ', $studentData['subjects']));
-        }
+        return [
+            'first_name' => $firstName,
+            'middle_name' => $middleName,
+            'last_name' => $lastName,
+            'date_of_birth' => sprintf('%04d-%02d-%02d', $birthYear, $birthMonth, $birthDay),
+            'gender' => $gender,
+            'nationality' => 'American',
+            'religion' => $religion,
+            'home_language' => 'English',
+            'enrollment_date' => '2024-08-20',
+            'address_line1' => ($index * 100 + $grade) . ' ' . $lastNames[$grade % count($lastNames)] . ' Street',
+            'address_line2' => ($index % 2 == 0) ? 'Apt ' . ($index + 1) : null,
+            'city' => 'Springfield',
+            'state' => 'Illinois',
+            'postal_code' => '627' . str_pad($grade, 2, '0', STR_PAD_LEFT),
+            'country' => 'USA',
+            'home_phone' => '+1-217-555-' . str_pad(($grade * 100 + $index), 4, '0', STR_PAD_LEFT),
+            'mobile_phone' => '+1-217-555-' . str_pad(($grade * 100 + $index + 50), 4, '0', STR_PAD_LEFT),
+            'email' => $email,
+        ];
     }
 }
