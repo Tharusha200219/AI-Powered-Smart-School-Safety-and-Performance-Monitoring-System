@@ -9,9 +9,8 @@
 
     <div class="input-group input-group-outline my-1">
         @if ($type === 'select')
-            <select name="{{ $name }}" id="{{ $name }}"
-                class="form-control {{ $class ?? '' }} @error($name) is-invalid @enderror" {{ $attr }}
-                @if ($isRequired) required @endif>
+            <select name="{{ $name }}" class="form-control {{ $class ?? '' }} @error($name) is-invalid @enderror"
+                {{ $attr }} @if ($isRequired) required @endif>
                 <option value="">{{ $placeholder ?? 'Select an option' }}</option>
                 @foreach ($options as $key => $label)
                     <option value="{{ $key }}" @selected($value == $key)>

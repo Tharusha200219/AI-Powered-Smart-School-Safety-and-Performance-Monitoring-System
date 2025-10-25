@@ -61,7 +61,7 @@
                                                                     ')',
                                                             ],
                                                         )
-                                                        ->toArray()" />
+                                                        ->toArray()" attr="id=student_id" />
                                             </div>
                                         </div>
                                     </div>
@@ -219,7 +219,8 @@
                             // Show subject section
                             $('#subjectSection').slideDown();
                         },
-                        error: function() {
+                        error: function(xhr, status, error) {
+                            console.error('AJAX error:', xhr, status, error);
                             alert('{{ __('common.error_fetching_student_details') }}');
                         }
                     });
