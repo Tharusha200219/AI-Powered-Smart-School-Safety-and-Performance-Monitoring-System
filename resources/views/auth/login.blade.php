@@ -437,13 +437,14 @@
 
         .dark-mode .form-input::placeholder {
             color: rgba(255, 255, 255, 0.6);
-        :root {
-            --login-primary: {{ $primaryColor }};
-            --login-secondary: {{ $secondaryColor }};
-            --login-accent: {{ $accentColor }};
-            --login-primary-rgb: {{ hexToRgb($primaryColor) }};
-            --login-secondary-rgb: {{ hexToRgb($secondaryColor) }};
-        }
+
+            :root {
+                --login-primary: {{ $primaryColor }};
+                --login-secondary: {{ $secondaryColor }};
+                --login-accent: {{ $accentColor }};
+                --login-primary-rgb: {{ hexToRgb($primaryColor) }};
+                --login-secondary-rgb: {{ hexToRgb($secondaryColor) }};
+            }
     </style>
 @endsection
 
