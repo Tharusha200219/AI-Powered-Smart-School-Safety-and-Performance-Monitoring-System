@@ -10,6 +10,7 @@
 
     @include('admin.layouts.script')
 
+    @stack('scripts')
     @yield('js')
 </body>
 

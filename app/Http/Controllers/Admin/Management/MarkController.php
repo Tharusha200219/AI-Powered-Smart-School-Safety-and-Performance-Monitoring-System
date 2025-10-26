@@ -62,12 +62,13 @@ class MarkController extends Controller
     {
         $validated = $request->validate([
             'student_id' => 'required|exists:students,student_id',
-            'subject_id' => 'required|exists:subjects,id',
             'academic_year' => 'required|string|max:20',
             'term' => 'required|integer|between:1,3',
-            'marks' => 'required|numeric|min:0',
-            'total_marks' => 'required|numeric|min:0|gt:0',
-            'remarks' => 'nullable|string|max:500',
+            'marks' => 'required|array',
+            'marks.*.subject_id' => 'required|exists:subjects,id',
+            'marks.*.marks_obtained' => 'required|numeric|min:0',
+            'marks.*.total_marks' => 'required|numeric|min:0|gte:marks.*.marks_obtained',
+            'marks.*.remarks' => 'nullable|string|max:500',
         ]);
 
         // Get student's grade level
@@ -75,21 +76,47 @@ class MarkController extends Controller
         $validated['grade_level'] = $student->grade_level;
         $validated['entered_by'] = Auth::id();
 
-        // Check if marks already exist for this combination
-        $existingMark = Mark::where('student_id', $validated['student_id'])
-            ->where('subject_id', $validated['subject_id'])
-            ->where('academic_year', $validated['academic_year'])
-            ->where('term', $validated['term'])
-            ->first();
+        $savedCount = 0;
+        $errors = [];
 
-        if ($existingMark) {
-            return back()->with('error', 'Marks already exist for this student, subject, and term. Please edit the existing entry.');
+        foreach ($validated['marks'] as $markData) {
+            // Check if marks already exist for this combination
+            $existingMark = Mark::where('student_id', $validated['student_id'])
+                ->where('subject_id', $markData['subject_id'])
+                ->where('academic_year', $validated['academic_year'])
+                ->where('term', $validated['term'])
+                ->first();
+
+            if ($existingMark) {
+                $subject = Subject::find($markData['subject_id']);
+                $errors[] = "Marks already exist for {$subject->subject_name} in this term.";
+                continue;
+            }
+
+            // Only save if marks_obtained > 0 (optional subjects)
+            if ($markData['marks_obtained'] > 0) {
+                Mark::create([
+                    'student_id' => $validated['student_id'],
+                    'subject_id' => $markData['subject_id'],
+                    'academic_year' => $validated['academic_year'],
+                    'term' => $validated['term'],
+                    'marks' => $markData['marks_obtained'],
+                    'total_marks' => $markData['total_marks'],
+                    'remarks' => $markData['remarks'] ?? null,
+                    'grade_level' => $validated['grade_level'],
+                    'entered_by' => $validated['entered_by'],
+                ]);
+                $savedCount++;
+            }
         }
 
-        Mark::create($validated);
+        $message = $savedCount > 0 ? "Successfully saved marks for {$savedCount} subject(s)." : "No marks were saved.";
+        if (!empty($errors)) {
+            $message .= " Errors: " . implode(' ', $errors);
+        }
 
         return redirect()->route('admin.management.marks.index')
-            ->with('success', 'Marks added successfully.');
+            ->with('success', $message);
     }
 
     /**
@@ -149,7 +176,7 @@ class MarkController extends Controller
     }
 
     /**
-     * Get student details and subjects for AJAX request
+     * Get student details and all subjects for AJAX request
      */
     public function getStudentDetails(Request $request)
     {
@@ -162,6 +189,11 @@ class MarkController extends Controller
         $student = Student::with(['subjects', 'schoolClass'])
             ->findOrFail($studentId);
 
+        // Get all subjects for the student's grade level
+        $allSubjects = Subject::where('grade_level', $student->grade_level)
+            ->orderBy('subject_name')
+            ->get();
+
         return response()->json([
             'student_id' => $student->student_id,
             'student_code' => $student->student_code,
@@ -169,7 +201,7 @@ class MarkController extends Controller
             'grade_level' => $student->grade_level,
             'class_name' => $student->schoolClass ? $student->schoolClass->class_name : 'N/A',
             'section' => $student->section,
-            'subjects' => $student->subjects->map(function ($subject) {
+            'subjects' => $allSubjects->map(function ($subject) {
                 return [
                     'id' => $subject->id,
                     'subject_code' => $subject->subject_code,

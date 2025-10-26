@@ -97,64 +97,46 @@
                                     </div>
                                 </div>
 
-                                <!-- Subject Selection (populated after student selection) -->
-                                <div class="row mb-4" id="subjectSection" style="display: none;">
-                                    <div class="col-md-6">
-                                        <x-input type="select" name="subject_id" title="{{ __('common.subject') }}"
-                                            :isRequired="true" :value="old('subject_id')"
-                                            placeholder="-- {{ __('common.select_subject') }} --" :options="[]"
-                                            attr="id=subject_id" />
-                                        <small
-                                            class="form-text text-muted ms-2">{{ __('school.only_enrolled_subjects_shown') }}</small>
-                                    </div>
-                                </div>
-
                                 <!-- Academic Details -->
                                 <div class="row mb-4" id="markDetailsSection" style="display: none;">
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <x-input type="select" name="academic_year"
                                             title="{{ __('school.academic_year') }}" :isRequired="true" :value="old('academic_year', $currentAcademicYear)"
                                             :options="array_combine($academicYears, $academicYears)" />
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <x-input type="select" name="term" title="{{ __('common.term') }}"
                                             :isRequired="true" :value="old('term')"
                                             placeholder="-- {{ __('common.select_term') }} --" :options="$terms" />
                                     </div>
                                 </div>
 
-                                <!-- Marks Entry -->
-                                <div class="row mb-4" id="marksEntrySection" style="display: none;">
-                                    <div class="col-md-4">
-                                        <x-input type="number" name="marks" title="{{ __('school.marks_obtained') }}"
-                                            :isRequired="true" :value="old('marks')"
-                                            placeholder="{{ __('school.enter_marks_obtained') }}" attr="step=0.01 min=0" />
+                                <!-- Subjects and Marks Entry -->
+                                <div class="card mb-4 shadow-sm" id="subjectsMarksSection" style="display: none;">
+                                    <div class="card-header bg-gradient-info">
+                                        <h6 class="mb-0 d-flex align-items-center text-white">
+                                            <i class="material-symbols-rounded me-2 icon-size-sm">assignment</i>
+                                            {{ __('school.subject_marks') }}
+                                        </h6>
                                     </div>
-                                    <div class="col-md-4">
-                                        <x-input type="number" name="total_marks" title="{{ __('school.total_marks') }}"
-                                            :isRequired="true" :value="old('total_marks', 100)"
-                                            placeholder="{{ __('school.enter_total_marks') }}" attr="step=0.01 min=0" />
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="mt-2">
-                                            <small class="text-xs">{{ __('common.percentage') }}</small>
-                                            <div class="input-group input-group-outline my-1">
-                                                <input type="text" id="percentage_display" class="form-control" readonly
-                                                    disabled>
-                                            </div>
+                                    <div class="card-body">
+                                        <p class="text-muted small mb-3">{{ __('school.enter_marks_for_all_subjects') }}</p>
+                                        <div class="table-responsive">
+                                            <table class="table table-striped" id="subjectsTable">
+                                                <thead class="table-dark">
+                                                    <tr>
+                                                        <th>{{ __('common.subject') }}</th>
+                                                        <th>{{ __('school.marks_obtained') }}</th>
+                                                        <th>{{ __('school.total_marks') }}</th>
+                                                        <th>{{ __('common.percentage') }}</th>
+                                                        <th>{{ __('common.remarks') }}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="subjectsTableBody">
+                                                    <!-- Subjects will be populated here -->
+                                                </tbody>
+                                            </table>
                                         </div>
-                                    </div>
-                                </div>
-
-                                <!-- Remarks -->
-                                <div class="row mb-4" id="remarksSection" style="display: none;">
-                                    <div class="col-md-12">
-                                        <x-input type="textarea" name="remarks"
-                                            title="{{ __('common.remarks') }} ({{ __('common.optional') }})"
-                                            :isRequired="false" :value="old('remarks')"
-                                            placeholder="{{ __('common.enter_remarks') }}" attr="rows=3 maxlength=500" />
-                                        <small
-                                            class="form-text text-muted ms-2">{{ __('common.maximum_500_characters') }}</small>
                                     </div>
                                 </div>
 
@@ -186,7 +168,7 @@
                 const studentId = $(this).val();
 
                 if (studentId) {
-                    // Fetch student details and subjects
+                    // Fetch student details and all subjects for the grade
                     $.ajax({
                         url: '{{ route('admin.management.marks.student.details') }}',
                         method: 'GET',
@@ -201,23 +183,45 @@
                             $('#display_class_name').text(response.class_name);
                             $('#studentDetails').slideDown();
 
-                            // Populate subjects dropdown
-                            const subjectSelect = $('#subject_id');
-                            subjectSelect.empty();
-                            subjectSelect.append(
-                                '<option value="">-- Select Subject --</option>');
+                            // Populate subjects table
+                            const tableBody = $('#subjectsTableBody');
+                            tableBody.empty();
 
-                            response.subjects.forEach(function(subject) {
-                                subjectSelect.append(
-                                    $('<option></option>')
-                                    .val(subject.id)
-                                    .text(subject.subject_code + ' - ' + subject
-                                        .subject_name)
-                                );
+                            response.subjects.forEach(function(subject, index) {
+                                const row = `
+                                    <tr>
+                                        <td>
+                                            <strong>${subject.subject_code}</strong><br>
+                                            <small class="text-muted">${subject.subject_name}</small>
+                                            <input type="hidden" name="marks[${index}][subject_id]" value="${subject.id}">
+                                        </td>
+                                        <td>
+                                            <input type="number" name="marks[${index}][marks_obtained]"
+                                                   class="form-control marks-obtained"
+                                                   step="0.01" min="0" placeholder="0.00"
+                                                   data-row="${index}">
+                                        </td>
+                                        <td>
+                                            <input type="number" name="marks[${index}][total_marks]"
+                                                   class="form-control total-marks"
+                                                   step="0.01" min="0" placeholder="100.00" value="100.00"
+                                                   data-row="${index}">
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control percentage-display"
+                                                   readonly disabled data-row="${index}">
+                                        </td>
+                                        <td>
+                                            <textarea name="marks[${index}][remarks]" class="form-control"
+                                                      rows="1" maxlength="500" placeholder="Optional remarks"></textarea>
+                                        </td>
+                                    </tr>
+                                `;
+                                tableBody.append(row);
                             });
 
-                            // Show subject section
-                            $('#subjectSection').slideDown();
+                            // Show academic details and subjects marks section
+                            $('#markDetailsSection, #subjectsMarksSection').slideDown();
                         },
                         error: function(xhr, status, error) {
                             console.error('AJAX error:', xhr, status, error);
@@ -226,31 +230,23 @@
                     });
                 } else {
                     // Hide all sections
-                    $('#studentDetails, #subjectSection, #markDetailsSection, #marksEntrySection, #remarksSection')
-                        .slideUp();
-                    $('#subject_id').empty().append('<option value="">-- Select Subject --</option>');
+                    $('#studentDetails, #markDetailsSection, #subjectsMarksSection').slideUp();
+                    $('#subjectsTableBody').empty();
                 }
             });
 
-            // When subject is selected
-            $('#subject_id').on('change', function() {
-                if ($(this).val()) {
-                    $('#markDetailsSection, #marksEntrySection, #remarksSection').slideDown();
-                } else {
-                    $('#markDetailsSection, #marksEntrySection, #remarksSection').slideUp();
-                }
-            });
-
-            // Calculate percentage on marks change
-            $('#marks, #total_marks').on('input', function() {
-                const marks = parseFloat($('#marks').val()) || 0;
-                const totalMarks = parseFloat($('#total_marks').val()) || 0;
+            // Calculate percentage when marks or total marks change
+            $(document).on('input', '.marks-obtained, .total-marks', function() {
+                const row = $(this).data('row');
+                const marks = parseFloat($(`.marks-obtained[data-row="${row}"]`).val()) || 0;
+                const totalMarks = parseFloat($(`.total-marks[data-row="${row}"]`).val()) || 0;
+                const percentageField = $(`.percentage-display[data-row="${row}"]`);
 
                 if (totalMarks > 0) {
                     const percentage = (marks / totalMarks) * 100;
-                    $('#percentage_display').val(percentage.toFixed(2) + '%');
+                    percentageField.val(percentage.toFixed(2) + '%');
                 } else {
-                    $('#percentage_display').val('');
+                    percentageField.val('');
                 }
             });
 
