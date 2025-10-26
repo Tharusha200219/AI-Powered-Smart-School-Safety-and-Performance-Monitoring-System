@@ -120,7 +120,8 @@
                                         </h6>
                                     </div>
                                     <div class="card-body">
-                                        <p class="text-muted small mb-3">{{ __('school.enter_marks_for_all_subjects') }}</p>
+                                        <p class="text-muted small mb-3">{{ __('school.enter_marks_for_all_subjects') }}
+                                        </p>
                                         <div class="table-responsive">
                                             <table class="table table-striped" id="subjectsTable">
                                                 <thead class="table-dark">
