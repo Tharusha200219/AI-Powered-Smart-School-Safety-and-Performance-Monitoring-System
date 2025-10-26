@@ -91,4 +91,13 @@ return [
     'student_code' => 'Student Code',
     'teacher_code' => 'Teacher Code',
     'parent_code' => 'Parent Code',
+
+    // Marks Management
+    'add_student_marks' => 'Add Student Marks',
+    'marks_obtained' => 'Marks Obtained',
+    'total_marks' => 'Total Marks',
+    'enter_marks_obtained' => 'Enter marks obtained',
+    'enter_total_marks' => 'Enter total marks',
+    'subject_marks' => 'Subject Marks',
+    'enter_marks_for_all_subjects' => 'Enter marks for all subjects. Leave marks as 0 for subjects not taken by the student.',
 ];
