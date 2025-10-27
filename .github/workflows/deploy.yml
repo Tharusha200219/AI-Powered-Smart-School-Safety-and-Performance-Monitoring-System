@@ -16,11 +16,21 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.2'
-        extensions: mbstring, bcmath, pdo_mysql
+        php-version: '8.3'
+        extensions: mbstring, bcmath, pdo_mysql, intl, zip, gd, exif
+
+    - name: Cache Composer dependencies
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: ${{ runner.os }}-php-
+
+    - name: Validate composer.json
+      run: composer validate
 
     - name: Install Composer dependencies
-      run: composer install --no-dev --optimize-autoloader
+      run: composer install --no-dev --optimize-autoloader --prefer-dist --no-progress --no-interaction
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -42,7 +52,7 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         port: 21
         local-dir: ./
-        server-dir: ./
+        server-dir: htdocs/
         exclude: |
           .git*
           .github*
