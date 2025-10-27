@@ -215,7 +215,7 @@ class TeacherSeeder extends Seeder
                 'experience_years' => 5.5,
                 'joining_date' => '2023-08-20',
                 'employee_id' => 'EMP-TEA-009',
-                'teaching_level' => 'Technology',
+                'teaching_level' => 'A/L-Technology',
                 'address_line1' => '369 Technology Way',
                 'city' => 'Springfield',
                 'state' => 'Illinois',
