@@ -1,1 +1,13 @@
 venv/
+__pycache__/
+*.pt
+*.bin
+*.h5
+*.ckpt
+datasets/
+models/model_weights/
+node_modules/
+.env
+dist/
+build/
+logs/
