@@ -1,10 +1,20 @@
 
 .env
 .env.example
-vendor/
 node_modules/
 storage/
 bootstrap/cache/*
 .git/
 .github/
 .ftpignore
+tests/
+README.md
+artisan
+composer.json
+composer.lock
+package.json
+package-lock.json
+vite.config.js
+phpunit.xml
+*.sh
+BACKEND_CODING_GUIDE.md
