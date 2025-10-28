@@ -53,19 +53,3 @@ jobs:
         port: 21
         local-dir: ./
         server-dir: htdocs/
-        exclude: |
-          .git*
-          .github*
-          node_modules/**
-          tests/**
-          README.md
-          .env.example
-          artisan
-          composer.json
-          composer.lock
-          package.json
-          package-lock.json
-          vite.config.js
-          phpunit.xml
-          *.sh
-          BACKEND_CODING_GUIDE.md
