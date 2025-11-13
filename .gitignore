@@ -1,0 +1,16 @@
+# Ignore raw audio recordings (do not commit large/raw audio files)
+# Keeps the raw directory itself (so you can add a .gitkeep if you want it tracked)
+/data/raw/
+
+# If you prefer tracking the directory but not the audio files inside, use:
+# /data/raw/**/*.wav
+# /data/raw/**/*.mp3
+# /data/raw/**/*.flac
+
+# Optional: allow a .gitkeep so the empty directory can be kept in git
+!data/raw/.gitkeep
+
+# Ignore common temporary/model files (optional convenience)
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
