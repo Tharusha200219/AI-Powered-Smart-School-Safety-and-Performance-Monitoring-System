@@ -28,14 +28,6 @@ def record_audio():
     write(temp_path, SAMPLE_RATE, audio)
     return temp_path
 
-def predict_from_mic():
-    temp_file = record_audio()
 
-    mel = audio_to_melspectrogram(temp_file)
-    if mel is None:
-        print("❌ Error converting microphone audio.")
-        return
-
-    mel = np.expand_dims(mel, axis=0)
 
   
