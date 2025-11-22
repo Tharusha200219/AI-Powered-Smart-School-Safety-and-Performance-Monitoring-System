@@ -1,457 +1,306 @@
-# Student Performance Prediction Model
+# Student Performance Prediction & Education Recommendation System
 
-A machine learning model to predict student academic performance (Pass/Fail) based on attendance, study hours, past exam scores, and other factors. This model can be integrated with your Laravel web application.
+A production-ready machine learning system that predicts a student's future education track based on performance data.
 
-## 🎯 Features
+## 🎯 Project Overview
 
-- **High Accuracy**: Uses ensemble methods (Random Forest & Gradient Boosting) with hyperparameter tuning
-- **Real-time Predictions**: Flask API for easy integration with Laravel
-- **Batch Processing**: Predict performance for multiple students at once
-- **Feature Engineering**: Advanced features like Study-Attendance Score and Performance Index
+This system analyzes student performance data including:
 
-## 📊 Model Input Features
+- Academic metrics (exam scores, final grades, attendance)
+- Engagement metrics (study hours, discussions, assignment completion)
+- Personal factors (motivation, stress level, learning style)
 
-The model uses the following features:
+And recommends appropriate future education tracks such as:
 
-1. **Study Hours per Week** (numeric): Hours spent studying weekly
-2. **Attendance Rate** (numeric): Percentage of classes attended (0-100)
-3. **Past Exam Scores** (numeric): Previous exam performance (0-100)
-4. **Gender** (categorical): "Male" or "Female"
-5. **Parental Education Level** (categorical): "High School", "Bachelors", "Masters", or "PhD"
-6. **Internet Access at Home** (categorical): "Yes" or "No"
-7. **Extracurricular Activities** (categorical): "Yes" or "No"
+- Advanced Level Stream
+- Technology Stream
+- Commerce Stream
+- Average Progress
+- Needs Extra Support
 
-## 🗄️ Required Database Columns for Laravel Application
+## 📁 Project Structure
 
-Your Laravel application should have a `students` table with these columns:
-
-```sql
-CREATE TABLE students (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    student_id VARCHAR(50) UNIQUE NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    gender ENUM('Male', 'Female') NOT NULL,
-
-    -- Academic data
-    study_hours_per_week DECIMAL(5, 2) DEFAULT 0,
-    attendance_rate DECIMAL(5, 2) DEFAULT 0,  -- Calculated from RFID attendance
-    past_exam_scores DECIMAL(5, 2) DEFAULT 0,  -- Average of past exams
-
-    -- Background information
-    parental_education_level ENUM('High School', 'Bachelors', 'Masters', 'PhD'),
-    internet_access_at_home ENUM('Yes', 'No') DEFAULT 'Yes',
-    extracurricular_activities ENUM('Yes', 'No') DEFAULT 'No',
-
-    -- Prediction results (updated by API)
-    predicted_performance ENUM('Pass', 'Fail') NULL,
-    prediction_confidence DECIMAL(5, 4) NULL,
-    last_prediction_date TIMESTAMP NULL,
-
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
--- Attendance table (for RFID tracking)
-CREATE TABLE attendance (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    student_id VARCHAR(50) NOT NULL,
-    rfid_tag VARCHAR(50) NOT NULL,
-    check_in_time TIMESTAMP NOT NULL,
-    subject_code VARCHAR(20),
-    status ENUM('Present', 'Late', 'Absent') DEFAULT 'Present',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (student_id) REFERENCES students(student_id)
-);
-
--- Exam scores table
-CREATE TABLE exam_scores (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    student_id VARCHAR(50) NOT NULL,
-    exam_name VARCHAR(255) NOT NULL,
-    subject_code VARCHAR(20),
-    score DECIMAL(5, 2) NOT NULL,
-    max_score DECIMAL(5, 2) DEFAULT 100,
-    exam_date DATE NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (student_id) REFERENCES students(student_id)
-);
+```
+student-performance-prediction-model/
+├── data/
+│   ├── raw/              # Raw data files
+│   ├── processed/        # Processed data files
+│   ├── dataset.csv       # Training dataset
+│   └── merged_dataset.csv
+├── models/
+│   ├── education_model.pkl    # Trained model
+│   ├── label_encoder.pkl      # Feature encoders
+│   └── scaler.pkl            # Feature scaler
+├── src/
+│   ├── main.py           # Main application entry point
+│   ├── inference.py      # Inference/prediction module
+│   └── pipeline.py       # ML pipeline orchestration
+├── training/
+│   ├── train_model.py    # Model training
+│   ├── preprocess.py     # Data preprocessing
+│   └── evaluate.py       # Model evaluation
+├── utils/
+│   ├── load_data.py          # Data loading utilities
+│   ├── transform_real_data.py # Real data transformation
+│   ├── feature_engineering.py # Feature engineering
+│   └── logger.py             # Logging utilities
+├── results/              # Evaluation results (auto-generated)
+├── logs/                 # Application logs (auto-generated)
+└── requirements.txt      # Python dependencies
 ```
 
-## 🚀 Installation & Setup
+## 🚀 Quick Start
 
-### 1. Install Python Dependencies
+### 1. Install Dependencies
 
 ```bash
-# Create virtual environment (recommended)
-python3 -m venv venv
-source venv/bin/activate  # On macOS/Linux
-# or
-venv\Scripts\activate  # On Windows
-
-# Install required packages
 pip install -r requirements.txt
 ```
 
-### 2. Train the Model
+### 2. Run Demo Mode (Recommended First)
 
 ```bash
-python train_model.py
+python src/main.py --mode demo
 ```
 
 This will:
 
-- Load and preprocess the dataset
-- Train multiple models with hyperparameter tuning
-- Select the best performing model
-- Save the model and preprocessors as `student_performance_model.pkl`
+- Load the trained model (or prompt you to train first)
+- Create mock student data
+- Make predictions
+- Display results with confidence scores
 
-### 3. Test the Model
-
-```bash
-python predict_simple.py
-```
-
-This runs example predictions to verify the model works correctly.
-
-### 4. Start the API Server
+### 3. Train the Model
 
 ```bash
-python predict_api.py
+python src/main.py --mode train --data data/dataset.csv
 ```
 
-The API will start on `http://localhost:5000`
+Options:
 
-## 🔌 Laravel Integration
+- `--model-type random_forest` (default) or `--model-type gradient_boosting`
 
-### Method 1: Direct API Calls (Recommended)
-
-Create a service in Laravel to communicate with the Python API:
-
-```php
-<?php
-// app/Services/StudentPerformancePredictionService.php
-
-namespace App\Services;
-
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
-
-class StudentPerformancePredictionService
-{
-    private $apiUrl = 'http://localhost:5000';
-
-    public function predictSingleStudent($studentData)
-    {
-        try {
-            $response = Http::timeout(30)->post($this->apiUrl . '/predict', [
-                'study_hours_per_week' => $studentData['study_hours_per_week'],
-                'attendance_rate' => $studentData['attendance_rate'],
-                'past_exam_scores' => $studentData['past_exam_scores'],
-                'gender' => $studentData['gender'],
-                'parental_education_level' => $studentData['parental_education_level'],
-                'internet_access_at_home' => $studentData['internet_access_at_home'],
-                'extracurricular_activities' => $studentData['extracurricular_activities'],
-            ]);
-
-            if ($response->successful()) {
-                return $response->json();
-            }
-
-            Log::error('Prediction API Error: ' . $response->body());
-            return null;
-
-        } catch (\Exception $e) {
-            Log::error('Prediction Service Error: ' . $e->getMessage());
-            return null;
-        }
-    }
-
-    public function predictBatchStudents($studentsData)
-    {
-        try {
-            $response = Http::timeout(60)->post($this->apiUrl . '/predict_batch', [
-                'students' => $studentsData
-            ]);
-
-            if ($response->successful()) {
-                return $response->json();
-            }
-
-            return null;
-
-        } catch (\Exception $e) {
-            Log::error('Batch Prediction Error: ' . $e->getMessage());
-            return null;
-        }
-    }
-
-    public function checkApiHealth()
-    {
-        try {
-            $response = Http::timeout(5)->get($this->apiUrl . '/health');
-            return $response->successful();
-        } catch (\Exception $e) {
-            return false;
-        }
-    }
-}
-```
-
-### Method 2: Laravel Controller Example
-
-```php
-<?php
-// app/Http/Controllers/StudentPredictionController.php
-
-namespace App\Http\Controllers;
-
-use App\Models\Student;
-use App\Services\StudentPerformancePredictionService;
-use Illuminate\Http\Request;
-
-class StudentPredictionController extends Controller
-{
-    protected $predictionService;
-
-    public function __construct(StudentPerformancePredictionService $predictionService)
-    {
-        $this->predictionService = $predictionService;
-    }
-
-    public function predictStudent($studentId)
-    {
-        $student = Student::findOrFail($studentId);
-
-        // Calculate attendance rate from RFID data
-        $attendanceRate = $this->calculateAttendanceRate($student);
-
-        // Calculate average past exam scores
-        $pastExamScores = $this->calculateAverageExamScores($student);
-
-        $studentData = [
-            'study_hours_per_week' => $student->study_hours_per_week,
-            'attendance_rate' => $attendanceRate,
-            'past_exam_scores' => $pastExamScores,
-            'gender' => $student->gender,
-            'parental_education_level' => $student->parental_education_level,
-            'internet_access_at_home' => $student->internet_access_at_home,
-            'extracurricular_activities' => $student->extracurricular_activities,
-        ];
-
-        $result = $this->predictionService->predictSingleStudent($studentData);
-
-        if ($result) {
-            // Update student record with prediction
-            $student->update([
-                'predicted_performance' => $result['prediction'],
-                'prediction_confidence' => $result['confidence'],
-                'last_prediction_date' => now(),
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'student_id' => $student->student_id,
-                'prediction' => $result['prediction'],
-                'confidence' => $result['confidence'],
-                'probabilities' => $result['probabilities'],
-            ]);
-        }
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Prediction failed'
-        ], 500);
-    }
-
-    private function calculateAttendanceRate($student)
-    {
-        $totalClasses = $student->attendance()->count();
-        $presentClasses = $student->attendance()
-            ->where('status', 'Present')
-            ->count();
-
-        return $totalClasses > 0 ? ($presentClasses / $totalClasses) * 100 : 0;
-    }
-
-    private function calculateAverageExamScores($student)
-    {
-        return $student->examScores()
-            ->avg('score') ?? 0;
-    }
-}
-```
-
-### Method 3: Scheduled Batch Predictions
-
-```php
-<?php
-// app/Console/Commands/UpdateStudentPredictions.php
-
-namespace App\Console\Commands;
-
-use Illuminate\Console\Command;
-use App\Models\Student;
-use App\Services\StudentPerformancePredictionService;
-
-class UpdateStudentPredictions extends Command
-{
-    protected $signature = 'students:update-predictions';
-    protected $description = 'Update performance predictions for all students';
-
-    public function handle(StudentPerformancePredictionService $service)
-    {
-        $this->info('Updating student predictions...');
-
-        $students = Student::all();
-        $studentsData = [];
-
-        foreach ($students as $student) {
-            $studentsData[] = [
-                'student_id' => $student->student_id,
-                'study_hours_per_week' => $student->study_hours_per_week,
-                'attendance_rate' => $student->attendance_rate,
-                'past_exam_scores' => $student->past_exam_scores,
-                'gender' => $student->gender,
-                'parental_education_level' => $student->parental_education_level,
-                'internet_access_at_home' => $student->internet_access_at_home,
-                'extracurricular_activities' => $student->extracurricular_activities,
-            ];
-        }
-
-        $result = $service->predictBatchStudents($studentsData);
-
-        if ($result) {
-            foreach ($result['predictions'] as $prediction) {
-                $student = Student::where('student_id', $prediction['student_id'])->first();
-                if ($student) {
-                    $student->update([
-                        'predicted_performance' => $prediction['prediction'],
-                        'prediction_confidence' => $prediction['confidence'],
-                        'last_prediction_date' => now(),
-                    ]);
-                }
-            }
-
-            $this->info("Successfully updated predictions for {$result['total_students']} students");
-        } else {
-            $this->error('Failed to update predictions');
-        }
-    }
-}
-
-// Add to app/Console/Kernel.php
-protected function schedule(Schedule $schedule)
-{
-    // Run predictions daily at midnight
-    $schedule->command('students:update-predictions')->daily();
-}
-```
-
-## 📡 API Endpoints
-
-### 1. Health Check
+### 4. Run Inference
 
 ```bash
-GET http://localhost:5000/health
+python src/main.py --mode inference
 ```
 
-### 2. Single Prediction
+## 💻 Usage Examples
 
-```bash
-POST http://localhost:5000/predict
-Content-Type: application/json
+### Training Pipeline
 
-{
-    "study_hours_per_week": 25,
-    "attendance_rate": 85.5,
-    "past_exam_scores": 75,
-    "gender": "Male",
-    "parental_education_level": "Bachelors",
-    "internet_access_at_home": "Yes",
-    "extracurricular_activities": "Yes"
+```python
+from src.pipeline import run_training_pipeline
+
+results = run_training_pipeline(
+    data_path='data/dataset.csv',
+    model_type='random_forest',
+    model_save_path='models/education_model.pkl',
+    preprocessing_save_dir='models',
+    evaluation_save_dir='results'
+)
+
+print(f"Accuracy: {results['metrics']['accuracy']:.2%}")
+```
+
+### Making Predictions
+
+```python
+from src.inference import StudentPerformancePredictor
+
+# Initialize predictor
+predictor = StudentPerformancePredictor(
+    model_path='models/education_model.pkl',
+    encoder_path='models/label_encoder.pkl',
+    scaler_path='models/scaler.pkl'
+)
+
+# Prepare student features
+features = {
+    'StudyHours': 6.5,
+    'Attendance': 90.0,
+    'Resources': 4,
+    'Extracurricular': 3,
+    'Motivation': 4,
+    'Internet': 1,
+    'Gender': 'Male',
+    'Age': 15,
+    'LearningStyle': 'Visual',
+    'OnlineCourses': 5,
+    'Discussions': 7,
+    'AssignmentCompletion': 92.0,
+    'ExamScore': 87.4,
+    'EduTech': 1,
+    'StressLevel': 2,
+    'FinalGrade': 87.4
 }
+
+# Make prediction
+result = predictor.predict(features)
+
+print(f"Predicted Track: {result['predicted_track']}")
+print(f"Confidence: {result['confidence']:.2%}")
 ```
 
-### 3. Batch Prediction
+### Converting Real School Data
 
-```bash
-POST http://localhost:5000/predict_batch
-Content-Type: application/json
+```python
+from utils.transform_real_data import prepare_student_features
 
-{
-    "students": [
-        {
-            "student_id": "S001",
-            "study_hours_per_week": 25,
-            "attendance_rate": 85.5,
-            ...
-        }
-    ]
+# Real school database records
+student = {
+    'student_id': 'STU001',
+    'first_name': 'John',
+    'last_name': 'Doe',
+    'date_of_birth': '2010-05-15',
+    'gender': 'Male',
+    'grade_level': '9'
 }
+
+attendance_records = [
+    {'attendance_id': 1, 'student_id': 'STU001', 'status': 'Present'},
+    {'attendance_id': 2, 'student_id': 'STU001', 'status': 'Present'},
+    # ... more records
+]
+
+subject_records = [
+    {'id': 1, 'student_id': 'STU001', 'subject_id': 'MATH', 'grade': 85},
+    {'id': 2, 'student_id': 'STU001', 'subject_id': 'SCI', 'grade': 88},
+    # ... more subjects
+]
+
+additional_data = {
+    'StudyHours': 6.5,
+    'Resources': 4,
+    'Extracurricular': 3,
+    # ... other metrics
+}
+
+# Convert to model features
+features = prepare_student_features(
+    student=student,
+    attendance_records=attendance_records,
+    subject_records=subject_records,
+    additional_data=additional_data
+)
+
+# Make prediction
+result = predictor.predict(features)
 ```
 
-### 4. Model Information
+## 📊 Model Features
 
-```bash
-GET http://localhost:5000/model_info
-```
+The model uses the following features:
 
-## 🔄 Automated Workflow
+| Feature              | Description                   | Type        | Range/Values                |
+| -------------------- | ----------------------------- | ----------- | --------------------------- |
+| StudyHours           | Average study hours per day   | Numerical   | 0-24                        |
+| Attendance           | Attendance percentage         | Numerical   | 0-100                       |
+| Resources            | Access to learning resources  | Numerical   | 1-5                         |
+| Extracurricular      | Participation in activities   | Numerical   | 0-5                         |
+| Motivation           | Student motivation level      | Numerical   | 1-5                         |
+| Internet             | Internet access               | Categorical | 0 or 1                      |
+| Gender               | Student gender                | Categorical | Male/Female/Other           |
+| Age                  | Student age                   | Numerical   | 5-25                        |
+| LearningStyle        | Preferred learning style      | Categorical | Visual/Auditory/Kinesthetic |
+| OnlineCourses        | Number of online courses      | Numerical   | 0-10                        |
+| Discussions          | Participation in discussions  | Numerical   | 0-10                        |
+| AssignmentCompletion | Assignment completion rate    | Numerical   | 0-100                       |
+| ExamScore            | Average exam score            | Numerical   | 0-100                       |
+| EduTech              | Use of educational technology | Categorical | 0 or 1                      |
+| StressLevel          | Student stress level          | Numerical   | 1-5                         |
+| FinalGrade           | Final grade                   | Numerical   | 0-100                       |
 
-1. **RFID Attendance**: Laravel records attendance automatically
-2. **Exam Entry**: Teachers manually enter exam scores
-3. **Scheduled Prediction**: Laravel runs batch predictions daily
-4. **Dashboard Display**: Show at-risk students to administrators
-5. **Intervention**: Take action for students predicted to fail
+### Engineered Features (Auto-created)
+
+- **PerformanceIndex**: `(ExamScore * 0.6) + (FinalGrade * 0.4)`
+- **EngagementScore**: `Attendance + Extracurricular + Discussions`
 
 ## 📈 Model Performance
 
-The model is trained using:
+The model is evaluated using:
 
-- **Random Forest** and **Gradient Boosting** with GridSearchCV
-- **Cross-validation** for robust performance estimation
-- **Feature engineering** for improved accuracy
-- Expected accuracy: **85-95%** depending on data quality
+- **Accuracy**: Overall prediction accuracy
+- **F1 Score**: Weighted and macro averaged F1 scores
+- **Precision & Recall**: Per-class precision and recall
+- **Confusion Matrix**: Visualization of predictions vs actual
+- **Feature Importance**: Most influential features
 
-## 🛠️ Troubleshooting
+Results are saved in the `results/` directory:
 
-### API Connection Issues
+- `evaluation_report.txt`: Detailed metrics
+- `confusion_matrix.png`: Confusion matrix heatmap
+- `feature_importance.png`: Feature importance chart
 
-```bash
-# Check if API is running
-curl http://localhost:5000/health
+## 🔧 Configuration
 
-# Check Python process
-ps aux | grep predict_api
-```
-
-### Model Loading Errors
+### Command Line Arguments
 
 ```bash
-# Retrain the model
-python train_model.py
+python src/main.py [OPTIONS]
+
+Options:
+  --mode {train,inference,demo}
+                        Operating mode (default: demo)
+  --data DATA           Path to training dataset (default: data/dataset.csv)
+  --model-type {random_forest,gradient_boosting}
+                        Model type to train (default: random_forest)
 ```
 
-### Missing Dependencies
+## 📝 Real School Database Integration
 
-```bash
-pip install -r requirements.txt
+The system includes utilities to convert real school database tables:
+
+### Attendance Table
+
+- Converts attendance records to attendance percentage
+- Handles various status formats (Present/Absent, P/A, 1/0)
+
+### Students Table
+
+- Extracts demographic information (age, gender)
+- Maps gender values to standard format
+
+### Student Subject Table
+
+- Calculates average exam scores across subjects
+- Handles both numeric and letter grades
+
+See `utils/transform_real_data.py` for implementation details.
+
+## 🧪 Testing
+
+Use mock data for testing:
+
+```python
+from utils.transform_real_data import create_mock_student_data
+
+mock_data = create_mock_student_data()
+# Returns complete mock student, attendance, and subject data
 ```
 
-## 📝 Notes
+## 📋 Logs
 
-- Ensure the Python API is always running for real-time predictions
-- Use a process manager like `supervisor` or `systemd` for production
-- Consider using Docker for easier deployment
-- Regularly retrain the model with new data to maintain accuracy
+Application logs are stored in `logs/` directory:
 
-## 🚀 Production Deployment
+- Separate log file for each module
+- Daily rotation with timestamp
+- Both INFO and ERROR level logging
 
-For production, consider:
+## 🤝 Support
 
-1. Using Gunicorn instead of Flask development server
-2. Setting up Nginx as reverse proxy
-3. Implementing API authentication
-4. Adding rate limiting
-5. Using Docker containers
-6. Setting up monitoring and logging
+For issues or questions:
+
+1. Check the logs in `logs/` directory
+2. Review error messages in console output
+3. Verify all dependencies are installed
+4. Ensure model files exist in `models/` directory
+
+## 📄 License
+
+This is an educational project for student performance prediction.
+
+---
+
+**Built with**: Python, scikit-learn, pandas, numpy, matplotlib, seaborn
