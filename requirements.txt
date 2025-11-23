@@ -1,0 +1,12 @@
+# Core Deep Learning Frameworks
+torch>=2.0.0
+torchvision>=0.15.0
+ultralytics>=8.0.0  # YOLOv8 for object detection
+
+# Computer Vision
+opencv-python>=4.8.0
+Pillow>=10.0.0
+
+# Utilities
+python-dotenv>=1.0.0
+pyyaml>=6.0
