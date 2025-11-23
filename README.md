@@ -1,1 +1,0 @@
-# VideoBasedObjectDetect-Model
