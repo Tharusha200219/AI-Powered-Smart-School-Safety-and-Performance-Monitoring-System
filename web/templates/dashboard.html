@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Real-time Audio Threat Dashboard</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
+
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        h2 { margin-bottom: 20px; }
+        .alert-box {
+            padding: 12px;
+            border: 1px solid #ccc;
+            background: #f4f4f4;
+            margin-bottom: 12px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>🎧 Real-time Audio Threat Dashboard</h2>
+
+    <div id="alerts"></div>
+
+    <script>
+        console.log("📡 Dashboard connecting...");
+
+        const socket = io("http://127.0.0.1:5000", {
+            transports: ["polling"],   // MUST MATCH realtime_mic.py
+        });
+
+        socket.on("connect", () => {
+            console.log("✅ Dashboard connected.");
+        });
+
+        socket.on("connect_error", (err) => {
+            console.log("❌ Connection error:", err);
+        });
+
+        socket.on("new_alert", function(data) {
+            console.log("🔥 Alert received:", data);
+
+            const div = document.createElement("div");
+            div.className = "alert-box";
+
+            div.innerHTML = `
+                <b>Source:</b> ${data.source}<br>
+                <b>Prediction:</b> ${data.prediction}<br>
+                <b>Confidence:</b> ${data.confidence}<br>
+            `;
+
+            document.getElementById("alerts").prepend(div);
+        });
+    </script>
+</body>
+</html>
