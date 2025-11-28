@@ -6,7 +6,10 @@ import tensorflow as tf
 import os
 from utils_audio import audio_to_melspectrogram
 
-# Connect to Flask server
+# ---------------------------------------------
+# Connect the microphone script to Flask server
+# using Socket.IO (polling mode).
+# ---------------------------------------------
 sio = socketio.Client()
 
 try:
@@ -16,7 +19,10 @@ except Exception as e:
     print("❌ Failed to connect:", e)
     exit()
 
-# Load model
+# ---------------------------------------------
+# Load trained audio classification model
+# and label classes for predictions
+# ---------------------------------------------
 model = tf.keras.models.load_model("models/audio_cnn.h5")
 label_classes = np.load("models/label_classes.npy")
 
