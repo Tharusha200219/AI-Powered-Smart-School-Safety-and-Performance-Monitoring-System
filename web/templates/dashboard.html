@@ -36,7 +36,6 @@
             gap: 15px;
             max-height: 600px;
             overflow-y: auto;
-            padding: 10px;
             background: rgba(255,255,255,0.05);
             border-radius: 12px;
             border: 1px solid rgba(255,255,255,0.1);
@@ -59,22 +58,10 @@
         }
 
         .alert-box b {
-            color: #333;
-            font-weight: 600;
-            display: inline-block;
-            min-width: 110px;
             color: #2c3e50;
-        }
-
-        .alert-box div {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .alert-box div:last-child {
-            margin-bottom: 0;
+            font-weight: 600;
+            min-width: 110px;
+            display: inline-block;
         }
 
         @keyframes slideIn {
@@ -108,10 +95,6 @@
             background: rgba(255,255,255,0.2);
             border-radius: 10px;
         }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255,255,255,0.3);
-        }
     </style>
 </head>
 
@@ -125,13 +108,14 @@
         console.log("📡 Dashboard connecting...");
 
         const socket = io("http://127.0.0.1:5000", {
-            transports: ["polling"],   // MUST MATCH realtime_mic.py
+            transports: ["polling"],
         });
 
         socket.on("connect", () => {
             console.log("✅ Dashboard connected.");
-            // Show empty state on first load
+
             const alerts = document.getElementById("alerts");
+
             if (alerts.children.length === 0) {
                 const empty = document.createElement("div");
                 empty.className = "empty-state";
@@ -152,17 +136,18 @@
             div.className = "alert-box";
 
             const timestamp = new Date().toLocaleTimeString();
+
             div.innerHTML = `
                 <div><b>🕐 Time:</b> <span>${timestamp}</span></div>
                 <div><b>📍 Source:</b> <span>${data.source}</span></div>
                 <div><b>🎯 Prediction:</b> <span>${data.prediction}</span></div>
                 <div><b>📊 Confidence:</b> <span>${data.confidence}</span></div>
+                ${data.text ? `<div><b>🗣 Speech:</b> <span>${data.text}</span></div>` : ""}
             `;
 
             document.getElementById("alerts").prepend(div);
 
-            // Remove empty state if present
-            const emptyState = document.getElementById("alerts").querySelector(".empty-state");
+            const emptyState = document.getElementById("empty-msg");
             if (emptyState) emptyState.remove();
         });
     </script>

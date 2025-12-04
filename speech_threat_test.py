@@ -1,16 +1,21 @@
 from speech_to_text import speech_to_text
-from language_classifier import classify_text
+from pretrained_text_classifier import classify_text
 
-if __name__ == "__main__":
-    audio_path = input("Enter path to .wav or .mp3 file: ")
+print("Speech → Threat Detection Test")
 
-    # 1) Speech → Text
-    text = speech_to_text(audio_path)
+audio_path = input("Enter path to .wav or .mp3 file: ")
 
-    # 2) Text → Threat / Abuse / Safe
-    label, score = classify_text(text)
+# ---- 1. Convert audio to text ----
+text = speech_to_text(audio_path)
 
-    print("\n✅ FINAL RESULT")
-    print("Transcript :", text)
-    print("Category   :", label)
-    print("Confidence :", round(score, 3))
+print("\n🎧 TRANSCRIPT:")
+print(text)
+
+# ---- 2. Classify text for threat/abuse/safety ----
+category, score, raw_label = classify_text(text)
+
+print("\n🚨 FINAL RESULT")
+print("Transcript :", text)
+print("Raw label  :", raw_label)
+print("Category   :", category)
+print("Confidence :", round(score, 3))
