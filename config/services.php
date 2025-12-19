@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'prediction_api' => [
+        'url' => env('PREDICTION_API_URL', 'http://localhost:5001'),
+        'timeout' => env('PREDICTION_API_TIMEOUT', 30),
+    ],
+
 ];
