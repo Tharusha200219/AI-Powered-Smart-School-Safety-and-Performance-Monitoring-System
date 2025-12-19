@@ -9,6 +9,11 @@ import os
 import sys
 import argparse
 from typing import Dict, Any
+
+# Add the project root to Python path
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, project_root)
+
 from utils.logger import get_logger
 from utils.transform_real_data import (
     create_mock_student_data,

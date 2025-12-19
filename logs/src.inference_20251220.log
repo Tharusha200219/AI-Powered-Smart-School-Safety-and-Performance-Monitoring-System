@@ -1,0 +1,14 @@
+2025-12-20 00:03:01 - src.inference - INFO - Loading model from /Users/tharusha_rashmika/Documents/projects/aleph/reserch/student-performance-prediction-model/src/../models/education_model.pkl
+2025-12-20 00:03:01 - src.inference - ERROR - Error loading model artifacts: Ran out of input
+2025-12-20 00:03:35 - src.inference - INFO - Loading model from /Users/tharusha_rashmika/Documents/projects/aleph/reserch/student-performance-prediction-model/src/../models/education_model.pkl
+2025-12-20 00:03:35 - src.inference - ERROR - Error loading model artifacts: Ran out of input
+2025-12-20 00:20:23 - src.inference - INFO - Loading model from /Users/tharusha_rashmika/Documents/projects/aleph/reserch/student-performance-prediction-model/src/../models/education_model.pkl
+2025-12-20 00:20:23 - src.inference - ERROR - Error loading model artifacts: Ran out of input
+2025-12-20 00:42:45 - src.inference - INFO - Loading model from /Users/tharusha_rashmika/Documents/projects/aleph/reserch/student-performance-prediction-model/src/../models/education_model.pkl
+2025-12-20 00:42:45 - src.inference - ERROR - Error loading model artifacts: Ran out of input
+2025-12-20 00:43:21 - src.inference - INFO - Loading model from /Users/tharusha_rashmika/Documents/projects/aleph/reserch/student-performance-prediction-model/src/../models/education_model.pkl
+2025-12-20 00:43:21 - src.inference - ERROR - Error loading model artifacts: Ran out of input
+2025-12-20 00:44:09 - src.inference - INFO - Loading model from models/education_model.pkl
+2025-12-20 00:44:09 - src.inference - ERROR - Error loading model artifacts: Ran out of input
+2025-12-20 00:57:28 - src.inference - INFO - Loading model from /Users/tharusha_rashmika/Documents/projects/aleph/reserch/student-performance-prediction-model/src/../models/education_model.pkl
+2025-12-20 00:57:28 - src.inference - ERROR - Error loading model artifacts: Ran out of input

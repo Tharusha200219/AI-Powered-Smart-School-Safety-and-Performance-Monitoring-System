@@ -64,11 +64,20 @@ class StudentPerformancePredictor:
                 self.encoders = pickle.load(f)
             logger.info(f"Loaded {len(self.encoders)} encoders")
             
-            # Load scaler
-            logger.info(f"Loading scaler from {self.scaler_path}")
-            with open(self.scaler_path, 'rb') as f:
-                self.scaler = pickle.load(f)
-            logger.info("Scaler loaded successfully")
+            # Load scaler (optional - create identity scaler if not found)
+            try:
+                logger.info(f"Loading scaler from {self.scaler_path}")
+                with open(self.scaler_path, 'rb') as f:
+                    self.scaler = pickle.load(f)
+                logger.info("Scaler loaded successfully")
+            except FileNotFoundError:
+                logger.warning(f"Scaler not found at {self.scaler_path}, creating identity scaler")
+                from sklearn.preprocessing import StandardScaler
+                self.scaler = StandardScaler()
+                # Fit on dummy data to create a no-op scaler
+                dummy_data = [[0] * 16]  # 16 features
+                self.scaler.fit(dummy_data)
+                logger.info("Identity scaler created")
             
             # Store feature names (if available)
             if hasattr(self.model, 'feature_names_in_'):

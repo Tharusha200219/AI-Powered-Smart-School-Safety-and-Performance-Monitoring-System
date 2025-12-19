@@ -1,0 +1,21 @@
+2025-12-20 00:35:14 - training.train_model - INFO - ================================================================================
+2025-12-20 00:35:14 - training.train_model - INFO - STARTING MODEL TRAINING PIPELINE
+2025-12-20 00:35:14 - training.train_model - INFO - ================================================================================
+2025-12-20 00:35:14 - training.train_model - INFO - Starting data preparation
+2025-12-20 00:35:14 - training.train_model - INFO - Categorical columns: ['StudyHours', 'Gender', 'LearningStyle']
+2025-12-20 00:35:14 - training.train_model - INFO - Numerical columns: ['Attendance', 'Resources', 'Extracurricular', 'Motivation', 'Internet', 'Age', 'OnlineCourses', 'Discussions', 'AssignmentCompletion', 'ExamScore', 'EduTech', 'StressLevel', 'FinalGrade', 'PerformanceIndex', 'EngagementScore']
+2025-12-20 00:35:14 - training.train_model - INFO - Data preparation completed
+2025-12-20 00:44:01 - training.train_model - INFO - ================================================================================
+2025-12-20 00:44:01 - training.train_model - INFO - STARTING MODEL TRAINING PIPELINE
+2025-12-20 00:44:01 - training.train_model - INFO - ================================================================================
+2025-12-20 00:44:01 - training.train_model - INFO - Starting data preparation
+2025-12-20 00:44:01 - training.train_model - INFO - Categorical columns: ['StudyHours', 'Gender', 'LearningStyle']
+2025-12-20 00:44:01 - training.train_model - INFO - Numerical columns: ['Attendance', 'Resources', 'Extracurricular', 'Motivation', 'Internet', 'Age', 'OnlineCourses', 'Discussions', 'AssignmentCompletion', 'ExamScore', 'EduTech', 'StressLevel', 'FinalGrade', 'PerformanceIndex', 'EngagementScore']
+2025-12-20 00:44:01 - training.train_model - INFO - Data preparation completed
+2025-12-20 00:57:54 - training.train_model - INFO - ================================================================================
+2025-12-20 00:57:54 - training.train_model - INFO - STARTING MODEL TRAINING PIPELINE
+2025-12-20 00:57:54 - training.train_model - INFO - ================================================================================
+2025-12-20 00:57:54 - training.train_model - INFO - Starting data preparation
+2025-12-20 00:57:54 - training.train_model - INFO - Categorical columns: ['StudyHours', 'Gender', 'LearningStyle']
+2025-12-20 00:57:54 - training.train_model - INFO - Numerical columns: ['Attendance', 'Resources', 'Extracurricular', 'Motivation', 'Internet', 'Age', 'OnlineCourses', 'Discussions', 'AssignmentCompletion', 'ExamScore', 'EduTech', 'StressLevel', 'FinalGrade', 'PerformanceIndex', 'EngagementScore']
+2025-12-20 00:57:54 - training.train_model - INFO - Data preparation completed

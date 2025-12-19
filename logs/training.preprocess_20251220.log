@@ -1,0 +1,147 @@
+2025-12-20 00:35:14 - training.preprocess - INFO - Handling missing values
+2025-12-20 00:35:14 - training.preprocess - INFO - Missing values found:
+Attendance              1
+Resources               1
+Extracurricular         1
+Motivation              1
+Internet                1
+Gender                  1
+Age                     1
+LearningStyle           1
+OnlineCourses           1
+Discussions             1
+AssignmentCompletion    1
+ExamScore               1
+EduTech                 1
+StressLevel             1
+FinalGrade              1
+FutureEducationTrack    1
+PerformanceIndex        1
+EngagementScore         1
+dtype: int64
+2025-12-20 00:35:14 - training.preprocess - INFO - Filled Attendance with median: 84.5
+2025-12-20 00:35:14 - training.preprocess - INFO - Filled Resources with median: 3.5
+2025-12-20 00:35:14 - training.preprocess - INFO - Filled Extracurricular with median: 3.0
+2025-12-20 00:35:14 - training.preprocess - INFO - Filled Motivation with median: 3.5
+2025-12-20 00:35:14 - training.preprocess - INFO - Filled Internet with median: 1.0
+2025-12-20 00:35:14 - training.preprocess - INFO - Filled Age with median: 16.0
+2025-12-20 00:35:14 - training.preprocess - INFO - Filled OnlineCourses with median: 4.0
+2025-12-20 00:35:14 - training.preprocess - INFO - Filled Discussions with median: 6.0
+2025-12-20 00:35:14 - training.preprocess - INFO - Filled AssignmentCompletion with median: 83.0
+2025-12-20 00:35:14 - training.preprocess - INFO - Filled ExamScore with median: 79.44999999999999
+2025-12-20 00:35:14 - training.preprocess - INFO - Filled EduTech with median: 1.0
+2025-12-20 00:35:14 - training.preprocess - INFO - Filled StressLevel with median: 2.0
+2025-12-20 00:35:14 - training.preprocess - INFO - Filled FinalGrade with median: 80.0
+2025-12-20 00:35:14 - training.preprocess - INFO - Filled PerformanceIndex with median: 79.66999999999999
+2025-12-20 00:35:14 - training.preprocess - INFO - Filled EngagementScore with median: 93.5
+2025-12-20 00:35:14 - training.preprocess - INFO - Filled Gender with mode: Female
+2025-12-20 00:35:14 - training.preprocess - INFO - Filled LearningStyle with mode: Visual
+2025-12-20 00:35:14 - training.preprocess - INFO - Filled FutureEducationTrack with mode: Advanced Level Stream
+2025-12-20 00:35:14 - training.preprocess - INFO - Rows after handling missing values: 51 (removed: 0)
+2025-12-20 00:35:14 - training.preprocess - INFO - Encoding categorical features: ['StudyHours', 'Gender', 'LearningStyle']
+2025-12-20 00:35:14 - training.preprocess - INFO - Encoded StudyHours: 51 unique values
+2025-12-20 00:35:14 - training.preprocess - INFO - Encoded Gender: 2 unique values
+2025-12-20 00:35:14 - training.preprocess - INFO - Encoded LearningStyle: 3 unique values
+2025-12-20 00:35:14 - training.preprocess - INFO - Encoding categorical features: ['FutureEducationTrack']
+2025-12-20 00:35:14 - training.preprocess - INFO - Encoded FutureEducationTrack: 6 unique values
+2025-12-20 00:35:14 - training.preprocess - INFO - Normalizing numerical features: ['Attendance', 'Resources', 'Extracurricular', 'Motivation', 'Internet', 'Age', 'OnlineCourses', 'Discussions', 'AssignmentCompletion', 'ExamScore', 'EduTech', 'StressLevel', 'FinalGrade', 'PerformanceIndex', 'EngagementScore']
+2025-12-20 00:35:14 - training.preprocess - INFO - Normalized 15 numerical features
+2025-12-20 00:35:14 - training.preprocess - INFO - Splitting data: test_size=0.2, random_state=42
+2025-12-20 00:44:01 - training.preprocess - INFO - Handling missing values
+2025-12-20 00:44:01 - training.preprocess - INFO - Missing values found:
+Attendance              1
+Resources               1
+Extracurricular         1
+Motivation              1
+Internet                1
+Gender                  1
+Age                     1
+LearningStyle           1
+OnlineCourses           1
+Discussions             1
+AssignmentCompletion    1
+ExamScore               1
+EduTech                 1
+StressLevel             1
+FinalGrade              1
+FutureEducationTrack    1
+PerformanceIndex        1
+EngagementScore         1
+dtype: int64
+2025-12-20 00:44:01 - training.preprocess - INFO - Filled Attendance with median: 84.5
+2025-12-20 00:44:01 - training.preprocess - INFO - Filled Resources with median: 3.5
+2025-12-20 00:44:01 - training.preprocess - INFO - Filled Extracurricular with median: 3.0
+2025-12-20 00:44:01 - training.preprocess - INFO - Filled Motivation with median: 3.5
+2025-12-20 00:44:01 - training.preprocess - INFO - Filled Internet with median: 1.0
+2025-12-20 00:44:01 - training.preprocess - INFO - Filled Age with median: 16.0
+2025-12-20 00:44:01 - training.preprocess - INFO - Filled OnlineCourses with median: 4.0
+2025-12-20 00:44:01 - training.preprocess - INFO - Filled Discussions with median: 6.0
+2025-12-20 00:44:01 - training.preprocess - INFO - Filled AssignmentCompletion with median: 83.0
+2025-12-20 00:44:01 - training.preprocess - INFO - Filled ExamScore with median: 79.44999999999999
+2025-12-20 00:44:01 - training.preprocess - INFO - Filled EduTech with median: 1.0
+2025-12-20 00:44:01 - training.preprocess - INFO - Filled StressLevel with median: 2.0
+2025-12-20 00:44:01 - training.preprocess - INFO - Filled FinalGrade with median: 80.0
+2025-12-20 00:44:01 - training.preprocess - INFO - Filled PerformanceIndex with median: 79.66999999999999
+2025-12-20 00:44:01 - training.preprocess - INFO - Filled EngagementScore with median: 93.5
+2025-12-20 00:44:01 - training.preprocess - INFO - Filled Gender with mode: Female
+2025-12-20 00:44:01 - training.preprocess - INFO - Filled LearningStyle with mode: Visual
+2025-12-20 00:44:01 - training.preprocess - INFO - Filled FutureEducationTrack with mode: Advanced Level Stream
+2025-12-20 00:44:01 - training.preprocess - INFO - Rows after handling missing values: 51 (removed: 0)
+2025-12-20 00:44:01 - training.preprocess - INFO - Encoding categorical features: ['StudyHours', 'Gender', 'LearningStyle']
+2025-12-20 00:44:01 - training.preprocess - INFO - Encoded StudyHours: 51 unique values
+2025-12-20 00:44:01 - training.preprocess - INFO - Encoded Gender: 2 unique values
+2025-12-20 00:44:01 - training.preprocess - INFO - Encoded LearningStyle: 3 unique values
+2025-12-20 00:44:01 - training.preprocess - INFO - Encoding categorical features: ['FutureEducationTrack']
+2025-12-20 00:44:01 - training.preprocess - INFO - Encoded FutureEducationTrack: 6 unique values
+2025-12-20 00:44:01 - training.preprocess - INFO - Normalizing numerical features: ['Attendance', 'Resources', 'Extracurricular', 'Motivation', 'Internet', 'Age', 'OnlineCourses', 'Discussions', 'AssignmentCompletion', 'ExamScore', 'EduTech', 'StressLevel', 'FinalGrade', 'PerformanceIndex', 'EngagementScore']
+2025-12-20 00:44:01 - training.preprocess - INFO - Normalized 15 numerical features
+2025-12-20 00:44:01 - training.preprocess - INFO - Splitting data: test_size=0.2, random_state=42
+2025-12-20 00:57:54 - training.preprocess - INFO - Handling missing values
+2025-12-20 00:57:54 - training.preprocess - INFO - Missing values found:
+Attendance              1
+Resources               1
+Extracurricular         1
+Motivation              1
+Internet                1
+Gender                  1
+Age                     1
+LearningStyle           1
+OnlineCourses           1
+Discussions             1
+AssignmentCompletion    1
+ExamScore               1
+EduTech                 1
+StressLevel             1
+FinalGrade              1
+FutureEducationTrack    1
+PerformanceIndex        1
+EngagementScore         1
+dtype: int64
+2025-12-20 00:57:54 - training.preprocess - INFO - Filled Attendance with median: 84.5
+2025-12-20 00:57:54 - training.preprocess - INFO - Filled Resources with median: 3.5
+2025-12-20 00:57:54 - training.preprocess - INFO - Filled Extracurricular with median: 3.0
+2025-12-20 00:57:54 - training.preprocess - INFO - Filled Motivation with median: 3.5
+2025-12-20 00:57:54 - training.preprocess - INFO - Filled Internet with median: 1.0
+2025-12-20 00:57:54 - training.preprocess - INFO - Filled Age with median: 16.0
+2025-12-20 00:57:54 - training.preprocess - INFO - Filled OnlineCourses with median: 4.0
+2025-12-20 00:57:54 - training.preprocess - INFO - Filled Discussions with median: 6.0
+2025-12-20 00:57:54 - training.preprocess - INFO - Filled AssignmentCompletion with median: 83.0
+2025-12-20 00:57:54 - training.preprocess - INFO - Filled ExamScore with median: 79.44999999999999
+2025-12-20 00:57:54 - training.preprocess - INFO - Filled EduTech with median: 1.0
+2025-12-20 00:57:54 - training.preprocess - INFO - Filled StressLevel with median: 2.0
+2025-12-20 00:57:54 - training.preprocess - INFO - Filled FinalGrade with median: 80.0
+2025-12-20 00:57:54 - training.preprocess - INFO - Filled PerformanceIndex with median: 79.66999999999999
+2025-12-20 00:57:54 - training.preprocess - INFO - Filled EngagementScore with median: 93.5
+2025-12-20 00:57:54 - training.preprocess - INFO - Filled Gender with mode: Female
+2025-12-20 00:57:54 - training.preprocess - INFO - Filled LearningStyle with mode: Visual
+2025-12-20 00:57:54 - training.preprocess - INFO - Filled FutureEducationTrack with mode: Advanced Level Stream
+2025-12-20 00:57:54 - training.preprocess - INFO - Rows after handling missing values: 51 (removed: 0)
+2025-12-20 00:57:54 - training.preprocess - INFO - Encoding categorical features: ['StudyHours', 'Gender', 'LearningStyle']
+2025-12-20 00:57:54 - training.preprocess - INFO - Encoded StudyHours: 51 unique values
+2025-12-20 00:57:54 - training.preprocess - INFO - Encoded Gender: 2 unique values
+2025-12-20 00:57:54 - training.preprocess - INFO - Encoded LearningStyle: 3 unique values
+2025-12-20 00:57:54 - training.preprocess - INFO - Encoding categorical features: ['FutureEducationTrack']
+2025-12-20 00:57:54 - training.preprocess - INFO - Encoded FutureEducationTrack: 6 unique values
+2025-12-20 00:57:54 - training.preprocess - INFO - Normalizing numerical features: ['Attendance', 'Resources', 'Extracurricular', 'Motivation', 'Internet', 'Age', 'OnlineCourses', 'Discussions', 'AssignmentCompletion', 'ExamScore', 'EduTech', 'StressLevel', 'FinalGrade', 'PerformanceIndex', 'EngagementScore']
+2025-12-20 00:57:54 - training.preprocess - INFO - Normalized 15 numerical features
+2025-12-20 00:57:54 - training.preprocess - INFO - Splitting data: test_size=0.2, random_state=42
