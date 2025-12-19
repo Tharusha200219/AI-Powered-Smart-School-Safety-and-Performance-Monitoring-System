@@ -45,8 +45,8 @@ class SchoolClassSeeder extends Seeder
                     'status' => 'active',
                 ];
 
-                $schoolClass = SchoolClass::create($classData);
-                $this->command->info("Created class: {$schoolClass->class_name} ({$schoolClass->class_code})");
+                $schoolClass = SchoolClass::firstOrCreate(['class_code' => $classData['class_code']], $classData);
+                $this->command->info("Seeded class: {$schoolClass->class_name} ({$schoolClass->class_code})");
 
                 $classCounter++;
             }

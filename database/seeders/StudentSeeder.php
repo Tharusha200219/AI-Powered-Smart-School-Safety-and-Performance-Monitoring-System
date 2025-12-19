@@ -48,9 +48,10 @@ class StudentSeeder extends Seeder
         $studentData = $this->generateStudentData($grade, $section, $index);
 
         // Create user account for student
-        $user = User::create([
+        $user = User::firstOrCreate([
+            'email' => $studentData['email']
+        ], [
             'name' => $studentData['first_name'] . ' ' . $studentData['last_name'],
-            'email' => $studentData['email'],
             'password' => Hash::make('student123'), // Default password
             'email_verified_at' => now(),
         ]);
@@ -64,7 +65,7 @@ class StudentSeeder extends Seeder
             ->first();
 
         // Create student record
-        $student = Student::create([
+        $student = Student::firstOrCreate(['email' => $studentData['email']], [
             'user_id' => $user->id,
             'student_code' => Student::generateStudentCode(),
             'first_name' => $studentData['first_name'],
@@ -88,17 +89,16 @@ class StudentSeeder extends Seeder
             'country' => $studentData['country'],
             'home_phone' => $studentData['home_phone'],
             'mobile_phone' => $studentData['mobile_phone'],
-            'email' => $studentData['email'],
         ]);
 
         // Attach parent to student
         $parent = ParentModel::inRandomOrder()->first();
         if ($parent) {
-            $student->parents()->attach($parent->parent_id, [
+            $student->parents()->syncWithoutDetaching([$parent->parent_id => [
                 'is_primary_contact' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]);
+            ]]);
         }
 
         // Attach subjects to student based on grade rules
@@ -189,12 +189,12 @@ class StudentSeeder extends Seeder
 
         // Attach all subjects to the student
         foreach (array_unique($subjectsToAttach) as $subjectId) {
-            $student->subjects()->attach($subjectId, [
+            $student->subjects()->syncWithoutDetaching([$subjectId => [
                 'enrollment_date' => $student->enrollment_date,
                 'grade' => $grade,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]);
+            ]]);
         }
     }
 

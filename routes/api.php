@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AttendanceApiController;
+use App\Http\Controllers\Api\PredictionApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,5 +50,19 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/statistics', 'getStatistics')->name('statistics');
         Route::get('/report', 'getReport')->name('report');
         Route::get('/student/{studentId}', 'getStudentAttendance')->name('student');
+    });
+});
+
+// Public prediction routes for testing
+Route::prefix('predictions')->name('api.predictions.')->controller(PredictionApiController::class)->group(function () {
+    Route::get('/health', 'healthCheck')->name('health');
+});
+
+// Protected prediction routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::prefix('predictions')->name('api.predictions.')->controller(PredictionApiController::class)->group(function () {
+        Route::get('/student/{studentId}', 'getStudentPrediction')->name('student');
+        Route::post('/batch', 'getBatchPredictions')->name('batch');
+        Route::get('/class', 'getClassPredictions')->name('class');
     });
 });

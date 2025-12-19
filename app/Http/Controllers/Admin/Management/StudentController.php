@@ -16,6 +16,7 @@ use App\Repositories\Interfaces\Admin\Management\SubjectRepositoryInterface;
 use App\Services\DatabaseTransactionService;
 use App\Services\ImageUploadService;
 use App\Services\ParentCreationService;
+use App\Services\PredictionService;
 use App\Services\UserService;
 use App\Services\ArduinoNFCService;
 use Illuminate\Http\RedirectResponse;
@@ -38,6 +39,7 @@ class StudentController extends BaseManagementController
     protected ParentRepositoryInterface $parentRepository;
     protected ParentCreationService $parentCreationService;
     protected ArduinoNFCService $arduinoNFCService;
+    protected PredictionService $predictionService;
 
     public function __construct(
         StudentRepositoryInterface $repository,
@@ -48,7 +50,8 @@ class StudentController extends BaseManagementController
         ImageUploadService $imageService,
         DatabaseTransactionService $transactionService,
         ParentCreationService $parentCreationService,
-        ArduinoNFCService $arduinoNFCService
+        ArduinoNFCService $arduinoNFCService,
+        PredictionService $predictionService
     ) {
         parent::__construct($repository, $userService, $imageService, $transactionService);
         $this->classRepository = $classRepository;
@@ -56,6 +59,7 @@ class StudentController extends BaseManagementController
         $this->parentRepository = $parentRepository;
         $this->parentCreationService = $parentCreationService;
         $this->arduinoNFCService = $arduinoNFCService;
+        $this->predictionService = $predictionService;
     }
 
     public function index(StudentDataTable $datatable)
@@ -262,7 +266,19 @@ class StudentController extends BaseManagementController
             return Redirect::back();
         }
 
-        return view($this->parentViewPath . 'view', compact('student'));
+        // Get AI prediction for the student
+        $prediction = null;
+        try {
+            $prediction = $this->predictionService->getStudentPrediction(
+                $this->predictionService->prepareStudentData($student),
+                $this->predictionService->prepareSchoolData($student)
+            );
+        } catch (\Exception $e) {
+            // Log error but don't fail the page load
+            \Log::warning('Failed to load AI prediction for student ' . $id . ': ' . $e->getMessage());
+        }
+
+        return view($this->parentViewPath . 'view', compact('student', 'prediction'));
     }
 
     public function generateCode()
