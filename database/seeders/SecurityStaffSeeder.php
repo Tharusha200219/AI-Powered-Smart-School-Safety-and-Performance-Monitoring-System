@@ -225,7 +225,7 @@ class SecurityStaffSeeder extends Seeder
             $user = User::firstOrCreate([
                 'email' => $staffData['email']
             ], [
-                'name' => $staffData['first_name'].' '.$staffData['last_name'],
+                'name' => $staffData['first_name'] . ' ' . $staffData['last_name'],
                 'password' => Hash::make('security123'), // Default password
                 'email_verified_at' => now(),
             ]);
@@ -235,7 +235,7 @@ class SecurityStaffSeeder extends Seeder
 
             // Generate unique security code for seeding
             $year = substr($staffData['joining_date'], 0, 4); // Extract year from joining_date
-            $securityCode = 'SEC'.$year.str_pad($index + 1, 4, '0', STR_PAD_LEFT);
+            $securityCode = 'SEC' . $year . str_pad($index + 1, 4, '0', STR_PAD_LEFT);
 
             // Create security staff record
             $security = SecurityStaff::firstOrCreate(['employee_id' => $staffData['employee_id']], [

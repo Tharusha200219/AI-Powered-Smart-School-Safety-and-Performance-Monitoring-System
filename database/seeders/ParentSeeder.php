@@ -231,7 +231,7 @@ class ParentSeeder extends Seeder
             $user = User::firstOrCreate([
                 'email' => $parentData['email']
             ], [
-                'name' => $parentData['first_name'].' '.$parentData['last_name'],
+                'name' => $parentData['first_name'] . ' ' . $parentData['last_name'],
                 'password' => Hash::make('password123'), // Default password
                 'email_verified_at' => now(),
             ]);
