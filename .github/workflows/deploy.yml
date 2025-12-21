@@ -2,9 +2,9 @@ name: Safe Learn Hub Deployment
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - dev-tharusha
+  # push:
+  #   branches:
+  #     - dev
 
 jobs:
   deploy:
