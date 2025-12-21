@@ -59,3 +59,5 @@ jobs:
           port: 21
           local-dir: ./
           server-dir: htdocs/
+          exclude: |
+            **/vendor/**
