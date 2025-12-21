@@ -1,16 +1,17 @@
-name: Deploy to Infinity Free
+name: Safe Learn Hub Deployment
 
 on:
-  push:
-    branches:
-      - dev-tharusha
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - dev-tharusha
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Fetching Latest Codes
         uses: actions/checkout@v4
 
       - name: Setup PHP
@@ -43,6 +44,11 @@ jobs:
 
       - name: Build assets
         run: npm run build
+
+      - name: Remove File
+        uses: JesseTG/rm@v1.0.3
+        with:
+          path: /public/hot
 
       - name: Deploy to FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
