@@ -61,3 +61,4 @@ jobs:
           server-dir: htdocs/
           exclude: |
             **/vendor/**
+            **/node_modules/**
