@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   # push:
   #   branches:
-  #     - dev-tharusha
+  #     - dev
 
 jobs:
   deploy:
@@ -59,3 +59,6 @@ jobs:
           port: 21
           local-dir: ./
           server-dir: htdocs/
+          exclude: |
+            **/vendor/**
+            **/node_modules/**
