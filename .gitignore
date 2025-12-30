@@ -1,33 +1,53 @@
+# --------------------
 # Python cache
+# --------------------
 __pycache__/
 *.pyc
 *.pyo
 
+# --------------------
 # Logs
+# --------------------
 *.log
+logs/
 
+# --------------------
 # Virtual environment (DO NOT PUSH)
+# --------------------
 venv/
 .env/
 
+# --------------------
 # Audio datasets (DO NOT PUSH)
+# --------------------
 Non Speech Dataset/
 *.wav
 *.mp3
 *.ogg
 *.flac
 
-# Large binaries
+# --------------------
+# Training artifacts (optional)
+# --------------------
+training/
+*.h5
+*.ckpt
+
+# --------------------
+# Model files (IMPORTANT)
+# --------------------
+# ❌ DO NOT ignore .pth globally
+# We WANT to commit trained models
+
+# --------------------
+# Large binaries (system-specific)
+# --------------------
 *.dll
 *.exe
 *.so
 
-# Model files (optional)
-*.pth
-*.pt
-*.h5
-*.ckpt
-
-# Editor
+# --------------------
+# Editor / OS
+# --------------------
 .vscode/
 .DS_Store
