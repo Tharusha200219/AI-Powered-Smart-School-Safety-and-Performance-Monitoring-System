@@ -1,9 +1,0 @@
-2025-12-20 00:35:14 - __main__ - INFO - Starting training mode
-2025-12-20 00:35:14 - __main__ - ERROR - Application error: The least populated classes in y have only 1 member, which is too few. The minimum number of groups for any class cannot be less than 2. Classes with too few members are: [3]
-2025-12-20 00:44:01 - __main__ - INFO - Starting training mode
-2025-12-20 00:44:01 - __main__ - ERROR - Application error: The least populated classes in y have only 1 member, which is too few. The minimum number of groups for any class cannot be less than 2. Classes with too few members are: [3]
-2025-12-20 00:44:09 - __main__ - INFO - Starting demo mode
-2025-12-20 00:44:09 - __main__ - INFO - Starting inference mode
-2025-12-20 00:44:09 - __main__ - ERROR - Error loading model: Ran out of input
-2025-12-20 00:57:54 - __main__ - INFO - Starting training mode
-2025-12-20 00:57:54 - __main__ - ERROR - Application error: The least populated classes in y have only 1 member, which is too few. The minimum number of groups for any class cannot be less than 2. Classes with too few members are: [3]
