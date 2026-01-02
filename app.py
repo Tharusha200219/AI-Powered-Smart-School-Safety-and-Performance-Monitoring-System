@@ -36,6 +36,9 @@ class FlaskConfig:
     HOST = os.environ.get('FLASK_HOST', '127.0.0.1')
     PORT = int(os.environ.get('FLASK_PORT', 5003))
     CORS_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000']
+    # Option to disable threat detection if it's causing issues
+    # DISABLED BY DEFAULT due to SlowFast model issues
+    ENABLE_THREAT_DETECTION = os.environ.get('ENABLE_THREAT_DETECTION', 'False').lower() == 'true'
 
 # Global instances
 object_detector = None
@@ -52,22 +55,46 @@ def initialize_models():
         config_path = Path(__file__).parent / 'config' / 'config.yaml'
         with open(config_path, 'r') as f:
             config = yaml.safe_load(f)
-        
+
+        # Initialize object detector with fallback if weights not found
         logger.info("Initializing object detector...")
-        object_detector = LeftBehindObjectDetector(
-            model_path=config['object_detection']['model']['weights'],
-            confidence_threshold=config['object_detection']['model']['confidence_threshold'],
-            target_classes=config['object_detection']['target_classes']
-        )
-        
-        logger.info("Initializing threat detector...")
-        threat_detector = ThreatDetector(
-            model_path=config['threat_detection']['model']['weights'],
-            model_type=config['threat_detection']['model']['type'],
-            confidence_threshold=config['threat_detection']['model']['confidence_threshold'],
-            clip_length=config['threat_detection']['model']['clip_length']
-        )
-        
+        obj_weights = config['object_detection']['model'].get('weights')
+        if not obj_weights or not (Path(__file__).parent / obj_weights).exists():
+            logger.warning(f"Object model weights not found at {obj_weights}, falling back to 'yolov8n.pt'")
+            obj_weights = 'yolov8n.pt'
+
+        try:
+            object_detector = LeftBehindObjectDetector(
+                model_path=obj_weights,
+                confidence_threshold=config['object_detection']['model']['confidence_threshold'],
+                target_classes=config['object_detection']['target_classes']
+            )
+        except Exception as inner_e:
+            logger.error(f"Failed to initialize LeftBehindObjectDetector with {obj_weights}: {inner_e}")
+            object_detector = None
+
+        # Initialize threat detector (ThreatDetector has its own fallbacks)
+        if FlaskConfig.ENABLE_THREAT_DETECTION:
+            logger.info("Initializing threat detector...")
+            threat_weights = config['threat_detection']['model'].get('weights')
+            if threat_weights and not (Path(__file__).parent / threat_weights).exists():
+                logger.warning(f"Threat model weights not found at {threat_weights}, continuing with fallback model")
+                threat_weights = None
+
+            try:
+                threat_detector = ThreatDetector(
+                    model_path=threat_weights,
+                    model_type=config['threat_detection']['model']['type'],
+                    confidence_threshold=config['threat_detection']['model']['confidence_threshold'],
+                    clip_length=config['threat_detection']['model']['clip_length']
+                )
+            except Exception as inner_e:
+                logger.error(f"Failed to initialize ThreatDetector: {inner_e}")
+                threat_detector = None
+        else:
+            logger.warning("Threat detection is DISABLED via ENABLE_THREAT_DETECTION=False")
+            threat_detector = None
+
         logger.info("Initializing object tracker...")
         object_tracker = ObjectTracker(
             iou_threshold=config['tracking']['iou_threshold'],
@@ -75,8 +102,8 @@ def initialize_models():
             min_hits=config['tracking']['min_hits'],
             left_behind_threshold_minutes=config['object_detection']['left_behind_threshold']
         )
-        
-        logger.info("Models initialized successfully!")
+
+        logger.info("Model initialization complete (some components may be fallback or unavailable)")
         return True
     except Exception as e:
         logger.error(f"Error initializing models: {e}")
@@ -133,6 +160,11 @@ def create_app():
     def detect_objects():
         """Detect left-behind objects in frame"""
         try:
+            # Ensure object detector is available
+            if object_detector is None:
+                logger.error("Object detector not initialized")
+                return jsonify({'success': False, 'error': 'Object detector not initialized'}), 503
+
             data = request.get_json()
             
             if not data or 'frame' not in data:
@@ -187,6 +219,11 @@ def create_app():
     def detect_threats():
         """Detect threats in frame"""
         try:
+            # Ensure threat detector is available
+            if threat_detector is None:
+                logger.error("Threat detector not initialized")
+                return jsonify({'success': False, 'error': 'Threat detector not initialized'}), 503
+
             data = request.get_json()
 
             if not data or 'frame' not in data:
@@ -216,6 +253,11 @@ def create_app():
     def process_frame():
         """Process frame for both objects and threats"""
         try:
+            # Ensure detectors are available
+            if object_detector is None and threat_detector is None:
+                logger.error("No detectors initialized (objects and threats)")
+                return jsonify({'success': False, 'error': 'No detectors initialized'}), 503
+
             data = request.get_json()
 
             if not data or 'frame' not in data:
@@ -236,8 +278,22 @@ def create_app():
             tracked_objects = object_tracker.update(detections)
             left_behind = object_tracker.get_left_behind_objects()
 
-            # Detect threats
-            threat_result = threat_detector.detect(frame)
+            # Detect threats (with error handling)
+            threat_result = {
+                'is_threat': False,
+                'threat_type': None,
+                'confidence': 0.0,
+                'all_scores': {},
+                'status': 'disabled'
+            }
+
+            if threat_detector is not None:
+                try:
+                    threat_result = threat_detector.detect(frame)
+                except Exception as threat_error:
+                    logger.error(f"Threat detection failed: {threat_error}")
+                    threat_result['status'] = 'error'
+                    threat_result['error'] = str(threat_error)
 
             # Prepare response
             result = {
