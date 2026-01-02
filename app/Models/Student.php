@@ -77,11 +77,6 @@ class Student extends Model
         return $this->hasMany(Mark::class, 'student_id', 'student_id');
     }
 
-    public function attendance()
-    {
-        return $this->hasMany(Attendance::class, 'student_id', 'student_id');
-    }
-
     // Accessors
     public function getFullNameAttribute(): string
     {

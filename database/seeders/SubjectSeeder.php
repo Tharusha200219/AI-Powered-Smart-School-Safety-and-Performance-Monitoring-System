@@ -584,8 +584,8 @@ class SubjectSeeder extends Seeder
         ];
 
         foreach ($subjects as $subjectData) {
-            Subject::firstOrCreate(['subject_code' => $subjectData['subject_code']], $subjectData);
-            $this->command->info("Seeded subject: {$subjectData['subject_name']} ({$subjectData['subject_code']})");
+            Subject::create($subjectData);
+            $this->command->info("Created subject: {$subjectData['subject_name']} ({$subjectData['subject_code']})");
         }
 
         $this->command->info("\n✓ Successfully seeded " . count($subjects) . " subjects for Sri Lankan education system");

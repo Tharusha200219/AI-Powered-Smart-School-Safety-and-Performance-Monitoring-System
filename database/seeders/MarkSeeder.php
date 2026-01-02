@@ -19,67 +19,24 @@ class MarkSeeder extends Seeder
         $academicYear = '2024-2025';
         $terms = [1, 2, 3];
 
+        // Get all students with their subjects
+        $students = Student::with('subjects')->get();
+
         // Get a user to attribute as the one who entered the marks (e.g., admin or teacher)
         $enteredBy = User::role('Admin')->first() ?? User::first();
 
         $marksCreated = 0;
 
-        // First, create marks for the first student (for testing AI predictions)
-        $firstStudent = Student::first();
-
-        if ($firstStudent) {
-            $this->command->info("Creating marks for first student: {$firstStudent->full_name}");
-
-            // Get some subjects for this grade level
-            $subjects = \App\Models\Subject::where('grade_level', $firstStudent->grade_level)->take(5)->get();
-
-            if ($subjects->isEmpty()) {
-                // Fallback: get any subjects
-                $subjects = \App\Models\Subject::take(5)->get();
-            }
-
-            foreach ($subjects as $subject) {
+        foreach ($students as $student) {
+            // Create marks for each subject the student is enrolled in
+            foreach ($student->subjects as $subject) {
+                // Create marks for each term
                 foreach ($terms as $term) {
-                    // Generate high marks for testing (80-95 range for good performance)
-                    $obtainedMarks = rand(80, 95);
-                    $totalMarks = 100;
-
-                    Mark::create([
-                        'student_id' => $firstStudent->student_id,
-                        'subject_id' => $subject->id,
-                        'grade_level' => $firstStudent->grade_level,
-                        'academic_year' => $academicYear,
-                        'term' => $term,
-                        'marks' => $obtainedMarks,
-                        'total_marks' => $totalMarks,
-                        'percentage' => round(($obtainedMarks / $totalMarks) * 100, 2),
-                        'grade' => $this->calculateGrade($obtainedMarks),
-                        'remarks' => $this->generateRemark($obtainedMarks, $totalMarks),
-                        'entered_by' => $enteredBy ? $enteredBy->id : null,
-                    ]);
-
-                    $marksCreated++;
-                }
-            }
-        }
-
-        // Create marks for other students (optional - limit to avoid too much data)
-        $otherStudents = Student::where('student_id', '>', 1)->take(5)->get();
-
-        foreach ($otherStudents as $student) {
-            // Get subjects for this student
-            $subjects = $student->subjects ?? collect();
-
-            if ($subjects->isEmpty()) {
-                // If no subjects assigned, skip this student
-                continue;
-            }
-
-            foreach ($subjects->take(3) as $subject) { // Limit subjects per student
-                foreach ($terms as $term) {
+                    // Generate random marks (between 40-100)
                     $totalMarks = 100;
                     $obtainedMarks = rand(40, 100);
 
+                    // Create mark entry
                     Mark::create([
                         'student_id' => $student->student_id,
                         'subject_id' => $subject->id,
@@ -88,8 +45,6 @@ class MarkSeeder extends Seeder
                         'term' => $term,
                         'marks' => $obtainedMarks,
                         'total_marks' => $totalMarks,
-                        'percentage' => round(($obtainedMarks / $totalMarks) * 100, 2),
-                        'grade' => $this->calculateGrade($obtainedMarks),
                         'remarks' => $this->generateRemark($obtainedMarks, $totalMarks),
                         'entered_by' => $enteredBy ? $enteredBy->id : null,
                     ]);
@@ -99,7 +54,7 @@ class MarkSeeder extends Seeder
             }
         }
 
-        $this->command->info("Created {$marksCreated} mark entries for students.");
+        $this->command->info("Created {$marksCreated} mark entries for students across all terms.");
     }
 
     /**
@@ -142,31 +97,5 @@ class MarkSeeder extends Seeder
         }
 
         return $remarks[array_rand($remarks)];
-    }
-
-    /**
-     * Calculate grade based on marks (Sri Lankan grading system)
-     */
-    private function calculateGrade(float $marks): string
-    {
-        if ($marks >= 90) {
-            return 'A+';
-        } elseif ($marks >= 80) {
-            return 'A';
-        } elseif ($marks >= 70) {
-            return 'B+';
-        } elseif ($marks >= 60) {
-            return 'B';
-        } elseif ($marks >= 50) {
-            return 'C+';
-        } elseif ($marks >= 40) {
-            return 'C';
-        } elseif ($marks >= 30) {
-            return 'D+';
-        } elseif ($marks >= 20) {
-            return 'D';
-        } else {
-            return 'E';
-        }
     }
 }

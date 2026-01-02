@@ -253,10 +253,9 @@ class TeacherSeeder extends Seeder
 
         foreach ($teachers as $teacherData) {
             // Create user account for teacher
-            $user = User::firstOrCreate([
-                'email' => $teacherData['email']
-            ], [
+            $user = User::create([
                 'name' => $teacherData['first_name'] . ' ' . $teacherData['last_name'],
+                'email' => $teacherData['email'],
                 'password' => Hash::make('teacher123'), // Default password
                 'email_verified_at' => now(),
             ]);
@@ -265,7 +264,7 @@ class TeacherSeeder extends Seeder
             $user->assignRole('Teacher');
 
             // Create teacher record
-            $teacher = Teacher::firstOrCreate(['employee_id' => $teacherData['employee_id']], [
+            $teacher = Teacher::create([
                 'user_id' => $user->id,
                 'teacher_code' => Teacher::generateTeacherCode(),
                 'first_name' => $teacherData['first_name'],
@@ -278,6 +277,7 @@ class TeacherSeeder extends Seeder
                 'specialization' => $teacherData['specialization'],
                 'experience_years' => $teacherData['experience_years'],
                 'joining_date' => $teacherData['joining_date'],
+                'employee_id' => $teacherData['employee_id'],
                 'is_active' => true,
                 'teaching_level' => $teacherData['teaching_level'],
                 'address_line1' => $teacherData['address_line1'],
@@ -295,7 +295,7 @@ class TeacherSeeder extends Seeder
             foreach ($teacherData['subjects'] as $subjectName) {
                 $subject = Subject::where('subject_name', $subjectName)->first();
                 if ($subject) {
-                    $teacher->subjects()->syncWithoutDetaching($subject->id);
+                    $teacher->subjects()->attach($subject->id);
                 }
             }
 

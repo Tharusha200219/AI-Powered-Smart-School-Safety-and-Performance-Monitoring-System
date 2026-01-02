@@ -40,8 +40,6 @@ export default defineConfig({
 
                 // Component JavaScript files
                 "resources/js/components/notifications.js",
-
-                "resources/js/admin/mark-table.js"
             ],
             refresh: true,
         }),
