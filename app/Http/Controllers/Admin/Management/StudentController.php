@@ -18,6 +18,8 @@ use App\Services\ImageUploadService;
 use App\Services\ParentCreationService;
 use App\Services\UserService;
 use App\Services\ArduinoNFCService;
+use App\Services\PerformancePredictionService;
+use App\Services\SeatingArrangementService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -38,6 +40,8 @@ class StudentController extends BaseManagementController
     protected ParentRepositoryInterface $parentRepository;
     protected ParentCreationService $parentCreationService;
     protected ArduinoNFCService $arduinoNFCService;
+    protected PerformancePredictionService $predictionService;
+    protected SeatingArrangementService $seatingService;
 
     public function __construct(
         StudentRepositoryInterface $repository,
@@ -48,7 +52,9 @@ class StudentController extends BaseManagementController
         ImageUploadService $imageService,
         DatabaseTransactionService $transactionService,
         ParentCreationService $parentCreationService,
-        ArduinoNFCService $arduinoNFCService
+        ArduinoNFCService $arduinoNFCService,
+        PerformancePredictionService $predictionService,
+        SeatingArrangementService $seatingService
     ) {
         parent::__construct($repository, $userService, $imageService, $transactionService);
         $this->classRepository = $classRepository;
@@ -56,6 +62,8 @@ class StudentController extends BaseManagementController
         $this->parentRepository = $parentRepository;
         $this->parentCreationService = $parentCreationService;
         $this->arduinoNFCService = $arduinoNFCService;
+        $this->predictionService = $predictionService;
+        $this->seatingService = $seatingService;
     }
 
     public function index(StudentDataTable $datatable)
@@ -262,7 +270,50 @@ class StudentController extends BaseManagementController
             return Redirect::back();
         }
 
-        return view($this->parentViewPath . 'view', compact('student'));
+        // Get current academic year
+        $currentYear = date('Y');
+        $academicYear = $currentYear . '-' . ($currentYear + 1);
+        $currentTerm = 1; // You might want to calculate this based on current date
+
+        // Get marks for comparison
+        $marks = $student->marks()
+            ->with('subject')
+            ->where('academic_year', $academicYear)
+            ->where('term', $currentTerm)
+            ->get();
+
+        // Auto-generate predictions if they don't exist or are outdated
+        $predictions = $student->performancePredictions()
+            ->with('subject')
+            ->where('academic_year', $academicYear)
+            ->where('term', $currentTerm)
+            ->get();
+
+        // Generate predictions automatically if:
+        // 1. No predictions exist
+        // 2. Student has marks for this term
+        // 3. API is available
+        if ($predictions->isEmpty() && $marks->isNotEmpty()) {
+            try {
+                if ($this->predictionService->checkApiHealth()) {
+                    $this->predictionService->predictStudentPerformance($student, $academicYear, $currentTerm);
+                    // Reload predictions after generation
+                    $predictions = $student->performancePredictions()
+                        ->with('subject')
+                        ->where('academic_year', $academicYear)
+                        ->where('term', $currentTerm)
+                        ->get();
+                }
+            } catch (\Exception $e) {
+                // Silently fail - predictions will show as unavailable
+                \Log::warning('Failed to auto-generate predictions for student ' . $id . ': ' . $e->getMessage());
+            }
+        }
+
+        // Get seat assignment
+        $seatAssignment = $student->seatAssignment;
+
+        return view($this->parentViewPath . 'view', compact('student', 'predictions', 'seatAssignment', 'marks', 'academicYear', 'currentTerm'));
     }
 
     public function generateCode()
@@ -428,6 +479,52 @@ class StudentController extends BaseManagementController
                 'success' => false,
                 'message' => 'Connection test failed: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    /**
+     * Generate performance predictions for a student
+     *
+     * @param Request $request
+     * @param string $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function generatePredictions(Request $request, string $id)
+    {
+        checkPermissionAndRedirect('admin.management.students.show');
+
+        $student = $this->repository->find($id);
+        if (!$student) {
+            return response()->json(['error' => 'Student not found'], 404);
+        }
+
+        $currentYear = date('Y');
+        $academicYear = $request->get('academic_year', $currentYear . '-' . ($currentYear + 1));
+        $term = $request->get('term', 1);
+
+        try {
+            // Check if API is available
+            if (!$this->predictionService->checkApiHealth()) {
+                return response()->json([
+                    'error' => 'Performance prediction service is currently unavailable. Please ensure the Python API is running.'
+                ], 503);
+            }
+
+            $predictions = $this->predictionService->predictStudentPerformance($student, $academicYear, $term);
+
+            if ($predictions) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Predictions generated successfully!',
+                    'predictions' => $predictions
+                ]);
+            } else {
+                return response()->json([
+                    'error' => 'Failed to generate predictions. Please ensure the student has marks and attendance records.'
+                ], 400);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error generating predictions: ' . $e->getMessage()], 500);
         }
     }
 }

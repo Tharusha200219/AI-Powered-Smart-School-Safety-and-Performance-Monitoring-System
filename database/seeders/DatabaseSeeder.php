@@ -29,5 +29,10 @@ class DatabaseSeeder extends Seeder
         // Final assignments (after all entities are created)
         $this->call(ClassTeacherAssignmentSeeder::class);
         $this->call(TimetableSeeder::class); // Create timetables last
+
+        // Student data enrichment
+        $this->call(StudentSubjectSeeder::class); // Assign subjects to students
+        $this->call(MarkSeederEnhanced::class); // Generate marks for students
+        $this->call(AttendanceSeeder::class); // Generate attendance records
     }
 }

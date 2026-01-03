@@ -55,6 +55,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('/classes-by-grade', 'getClassesByGrade')->name('classes-by-grade');
                 Route::post('/write-nfc', 'writeToNFC')->name('write-nfc');
                 Route::get('/test-arduino', 'testArduino')->name('test-arduino');
+                Route::post('/{id}/generate-predictions', 'generatePredictions')->name('generate-predictions');
             });
 
             // Teachers Management
@@ -224,6 +225,28 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/update-social-media', 'updateSocialMedia')->name('update-social-media');
             Route::get('/theme-colors', 'getThemeColors')->name('theme-colors');
         });
+
+        // Seating Arrangement Routes
+        Route::prefix('seating-arrangement')->name('seating-arrangement.')
+            ->controller(\App\Http\Controllers\Admin\SeatingArrangementController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/create', 'create')->name('create');
+                Route::post('/generate', 'generate')->name('generate');
+                Route::get('/get-sections', 'getSectionsForGrade')->name('get-sections');
+                Route::get('/{id}', 'show')->name('show');
+                Route::delete('/{id}', 'destroy')->name('destroy');
+                Route::post('/{id}/toggle-active', 'toggleActive')->name('toggle-active');
+
+                // Student Portal Routes
+                Route::prefix('student')->name('student.')->group(function () {
+                    Route::controller(\App\Http\Controllers\Student\StudentDashboardController::class)->group(function () {
+                        Route::get('/dashboard', 'index')->name('dashboard');
+                        Route::get('/performance', 'performance')->name('performance');
+                        Route::get('/seat-assignment', 'seatAssignment')->name('seat-assignment');
+                    });
+                });
+                Route::get('/api/classes-for-grade', 'getClassesForGrade')->name('classes-for-grade');
+            });
 
         // Notification API routes
         Route::prefix('notifications')->name('notifications.')->controller(NotificationController::class)->group(function () {

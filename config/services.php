@@ -35,4 +35,21 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | AI Model Services
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for Python-based AI model APIs
+    |
+    */
+
+    'performance_prediction' => [
+        'url' => env('PERFORMANCE_PREDICTION_API_URL', 'http://localhost:5002'),
+    ],
+
+    'seating_arrangement' => [
+        'url' => env('SEATING_ARRANGEMENT_API_URL', 'http://localhost:5001'),
+    ],
+
 ];

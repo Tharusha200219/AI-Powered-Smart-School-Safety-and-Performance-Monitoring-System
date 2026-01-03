@@ -77,6 +77,25 @@ class Student extends Model
         return $this->hasMany(Mark::class, 'student_id', 'student_id');
     }
 
+    public function performancePredictions()
+    {
+        return $this->hasMany(StudentPerformancePrediction::class, 'student_id', 'student_id');
+    }
+
+    public function seatAssignment()
+    {
+        return $this->hasOne(StudentSeatAssignment::class, 'student_id', 'student_id')
+            ->whereHas('seatingArrangement', function ($query) {
+                $query->where('is_active', true);
+            })
+            ->latest();
+    }
+
+    public function attendance()
+    {
+        return $this->hasMany(Attendance::class, 'student_id', 'student_id');
+    }
+
     // Accessors
     public function getFullNameAttribute(): string
     {

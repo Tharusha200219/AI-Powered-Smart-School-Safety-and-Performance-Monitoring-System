@@ -49,6 +49,31 @@ class Mark extends Model
                 $mark->grade = self::calculateGrade($mark->percentage);
             }
         });
+
+        // Auto-regenerate predictions when marks are saved/updated
+        static::saved(function ($mark) {
+            try {
+                $predictionService = app(\App\Services\PerformancePredictionService::class);
+                $student = $mark->student;
+
+                if ($student && $predictionService->checkApiHealth()) {
+                    // Delete old predictions for this student/year/term
+                    \App\Models\StudentPerformancePrediction::where('student_id', $mark->student_id)
+                        ->where('academic_year', $mark->academic_year)
+                        ->where('term', $mark->term)
+                        ->delete();
+
+                    // Generate new predictions
+                    $predictionService->predictStudentPerformance(
+                        $student,
+                        $mark->academic_year,
+                        $mark->term
+                    );
+                }
+            } catch (\Exception $e) {
+                \Log::warning('Failed to auto-regenerate predictions: ' . $e->getMessage());
+            }
+        });
     }
 
     /**
