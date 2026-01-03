@@ -19,7 +19,7 @@ SCALER_PATH = os.path.join(MODELS_DIR, 'scaler.pkl')
 
 # API Configuration
 API_HOST = '0.0.0.0'
-API_PORT = 5001  # Changed from 5000 due to macOS Control Center conflict
+API_PORT = 5002  # Performance Prediction API (changed from 5000 due to macOS AirPlay conflict)
 API_DEBUG = True
 
 # Model Configuration
