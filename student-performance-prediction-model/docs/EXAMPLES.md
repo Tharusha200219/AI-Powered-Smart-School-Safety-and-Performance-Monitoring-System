@@ -9,6 +9,7 @@ This document explains the prediction system with real examples and the conditio
 ### What Gets Predicted?
 
 For each student and subject, the system predicts:
+
 1. **Future Performance Score** (0-100%)
 2. **Trend** (Improving/Declining/Stable)
 3. **Recommendation Message** based on performance level
@@ -23,12 +24,12 @@ For each student and subject, the system predicts:
 
 **Current Marks:**
 
-| Subject | Current Marks |
-|---------|---------------|
-| Accounting | 47.5% |
-| Economics | 70.9% |
-| Information Technology | 88.2% |
-| Entrepreneurship Studies | 68.9% |
+| Subject                  | Current Marks |
+| ------------------------ | ------------- |
+| Accounting               | 47.5%         |
+| Economics                | 70.9%         |
+| Information Technology   | 88.2%         |
+| Entrepreneurship Studies | 68.9%         |
 
 ### API Request
 
@@ -128,6 +129,7 @@ Status Badge: ⚠️ Needs Support → ✅ Good
 ```
 
 **Why this message?**
+
 - Current marks < 60% (Needs Support)
 - Predicted marks ≥ 75% (Good performance)
 - Improving trend (64.6% increase)
@@ -150,6 +152,7 @@ Status Badge: ✅ Good → ✅ Good
 ```
 
 **Why this message?**
+
 - Current marks 60-85% (Average/Good)
 - Predicted marks 75-85% (Good)
 - Improving trend (12.3% increase)
@@ -172,6 +175,7 @@ Status Badge: 🌟 Excellent → ✅ Good
 ```
 
 **Why this message?**
+
 - Current marks > 85% (Excellent)
 - Predicted marks 75-85% (Good but lower)
 - Declining trend (-8.6% decrease)
@@ -194,6 +198,7 @@ Status Badge: ✅ Good → ✅ Good
 ```
 
 **Why this message?**
+
 - Current marks 60-85% (Average/Good)
 - Predicted marks 75-85% (Good)
 - Improving trend (15.2% increase)
@@ -212,24 +217,24 @@ def calculate_trend(current_marks, predicted_marks):
     """
     difference = predicted_marks - current_marks
     percentage_change = (difference / current_marks) * 100
-    
+
     if abs(percentage_change) <= 5:
         trend = "stable"  # ➡️ trending_flat
     elif percentage_change > 5:
         trend = "improving"  # 📈 trending_up
     else:
         trend = "declining"  # 📉 trending_down
-    
+
     return trend, percentage_change
 ```
 
 ### Trend Categories
 
-| Trend | Icon | Condition | Example |
-|-------|------|-----------|---------|
-| **Improving** | 📈 trending_up | Predicted > Current + 5% | 70% → 80% (14.3% increase) |
+| Trend         | Icon             | Condition                | Example                     |
+| ------------- | ---------------- | ------------------------ | --------------------------- |
+| **Improving** | 📈 trending_up   | Predicted > Current + 5% | 70% → 80% (14.3% increase)  |
 | **Declining** | 📉 trending_down | Predicted < Current - 5% | 85% → 75% (-11.8% decrease) |
-| **Stable** | ➡️ trending_flat | -5% ≤ Change ≤ +5% | 78% → 80% (2.6% change) |
+| **Stable**    | ➡️ trending_flat | -5% ≤ Change ≤ +5%       | 78% → 80% (2.6% change)     |
 
 ---
 
@@ -238,12 +243,15 @@ def calculate_trend(current_marks, predicted_marks):
 ### Message Types and When They Appear
 
 #### 1. "Continue with current study approach"
+
 **Conditions:**
+
 - Current marks < 60% (Needs Support)
 - Predicted marks ≥ 60% (Improving to Average or better)
 - Trend: Improving
 
 **Example:**
+
 ```
 Current: 45% → Predicted: 65%
 Message: "Continue with current study approach
@@ -253,12 +261,15 @@ Focus on fundamental concepts and seek additional help"
 ---
 
 #### 2. "Great potential! Keep up the good work"
+
 **Conditions:**
+
 - Current marks ≥ 60% (Average or better)
 - Predicted marks ≥ 75% (Good or better)
 - Trend: Improving or Stable
 
 **Example:**
+
 ```
 Current: 72% → Predicted: 78%
 Message: "Great potential! Keep up the good work
@@ -268,12 +279,15 @@ Regular practice and revision recommended"
 ---
 
 #### 3. "Extra attention needed to maintain current performance"
+
 **Conditions:**
+
 - Current marks ≥ 75% (Good or better)
 - Predicted marks < Current marks (Declining)
 - Trend: Declining
 
 **Example:**
+
 ```
 Current: 88% → Predicted: 80%
 Message: "Extra attention needed to maintain current performance
@@ -283,12 +297,15 @@ Consider reviewing recent topics and study habits"
 ---
 
 #### 4. "Immediate intervention required"
+
 **Conditions:**
+
 - Current marks < 50% (Weak)
 - Predicted marks < 50% (Still weak)
 - Trend: Stable or Declining
 
 **Example:**
+
 ```
 Current: 35% → Predicted: 40%
 Message: "Immediate intervention required
@@ -298,12 +315,15 @@ Schedule meeting with teacher and develop improvement plan"
 ---
 
 #### 5. "Excellent performance! Consider advanced topics"
+
 **Conditions:**
+
 - Current marks ≥ 85% (Excellent)
 - Predicted marks ≥ 85% (Excellent)
 - Trend: Improving or Stable
 
 **Example:**
+
 ```
 Current: 90% → Predicted: 92%
 Message: "Excellent performance! Consider advanced topics
@@ -313,12 +333,15 @@ Challenge yourself with additional materials"
 ---
 
 #### 6. "Regular practice and revision recommended"
+
 **Conditions:**
+
 - Current marks 60-75% (Average to Good)
 - Predicted marks 65-80% (Average to Good)
 - Trend: Any
 
 **Example:**
+
 ```
 Current: 68% → Predicted: 72%
 Message: "Regular practice and revision recommended
@@ -331,46 +354,46 @@ Consistent effort will lead to better results"
 
 ### Badge Colors and Conditions
 
-| Badge | Icon | Condition | Color |
-|-------|------|-----------|-------|
-| **Excellent** | 🌟 | Marks ≥ 85% | Green |
-| **Good** | ✅ | Marks 75-84% | Blue |
-| **Average** | ⚠️ | Marks 60-74% | Yellow |
-| **Needs Support** | 🚨 | Marks < 60% | Red |
+| Badge             | Icon | Condition    | Color  |
+| ----------------- | ---- | ------------ | ------ |
+| **Excellent**     | 🌟   | Marks ≥ 85%  | Green  |
+| **Good**          | ✅   | Marks 75-84% | Blue   |
+| **Average**       | ⚠️   | Marks 60-74% | Yellow |
+| **Needs Support** | 🚨   | Marks < 60%  | Red    |
 
 ### Badge Display Logic
 
 ```javascript
 function getBadge(marks) {
-    if (marks >= 85) {
-        return {
-            label: "Excellent",
-            icon: "🌟",
-            color: "success",  // Green
-            class: "badge-success"
-        };
-    } else if (marks >= 75) {
-        return {
-            label: "Good",
-            icon: "✅",
-            color: "primary",  // Blue
-            class: "badge-primary"
-        };
-    } else if (marks >= 60) {
-        return {
-            label: "Average",
-            icon: "⚠️",
-            color: "warning",  // Yellow
-            class: "badge-warning"
-        };
-    } else {
-        return {
-            label: "Needs Support",
-            icon: "🚨",
-            color: "danger",  // Red
-            class: "badge-danger"
-        };
-    }
+  if (marks >= 85) {
+    return {
+      label: "Excellent",
+      icon: "🌟",
+      color: "success", // Green
+      class: "badge-success",
+    };
+  } else if (marks >= 75) {
+    return {
+      label: "Good",
+      icon: "✅",
+      color: "primary", // Blue
+      class: "badge-primary",
+    };
+  } else if (marks >= 60) {
+    return {
+      label: "Average",
+      icon: "⚠️",
+      color: "warning", // Yellow
+      class: "badge-warning",
+    };
+  } else {
+    return {
+      label: "Needs Support",
+      icon: "🚨",
+      color: "danger", // Red
+      class: "badge-danger",
+    };
+  }
 }
 ```
 
@@ -381,19 +404,19 @@ function getBadge(marks) {
 ### Scenario A: Struggling Student (Needs Urgent Help)
 
 **Input:**
+
 ```json
 {
   "student_id": 2,
   "age": 16,
   "grade": 11,
   "attendance": 65,
-  "subjects": [
-    {"subject": "Mathematics", "marks": 35}
-  ]
+  "subjects": [{ "subject": "Mathematics", "marks": 35 }]
 }
 ```
 
 **Output:**
+
 ```
 Current: 35% 🚨 Needs Support
 Predicted: 42% 🚨 Needs Support
@@ -412,19 +435,19 @@ Additional tutoring strongly recommended"
 ### Scenario B: High Performer (Maintaining Excellence)
 
 **Input:**
+
 ```json
 {
   "student_id": 3,
   "age": 17,
   "grade": 12,
   "attendance": 95,
-  "subjects": [
-    {"subject": "Physics", "marks": 92}
-  ]
+  "subjects": [{ "subject": "Physics", "marks": 92 }]
 }
 ```
 
 **Output:**
+
 ```
 Current: 92% 🌟 Excellent
 Predicted: 94% 🌟 Excellent
@@ -443,19 +466,19 @@ Consider mentoring other students"
 ### Scenario C: Average Student (Steady Improvement)
 
 **Input:**
+
 ```json
 {
   "student_id": 4,
   "age": 16,
   "grade": 11,
   "attendance": 82,
-  "subjects": [
-    {"subject": "English", "marks": 68}
-  ]
+  "subjects": [{ "subject": "English", "marks": 68 }]
 }
 ```
 
 **Output:**
+
 ```
 Current: 68% ⚠️ Average
 Predicted: 75% ✅ Good
@@ -474,19 +497,19 @@ You're on the right track"
 ### Scenario D: Declining Performance (Warning Sign)
 
 **Input:**
+
 ```json
 {
   "student_id": 5,
   "age": 17,
   "grade": 12,
   "attendance": 70,
-  "subjects": [
-    {"subject": "Chemistry", "marks": 85}
-  ]
+  "subjects": [{ "subject": "Chemistry", "marks": 85 }]
 }
 ```
 
 **Output:**
+
 ```
 Current: 85% 🌟 Excellent
 Predicted: 72% ✅ Good
@@ -506,15 +529,15 @@ Attendance and engagement may be affecting performance"
 
 ### Recommendation Logic Table
 
-| Current Performance | Predicted Performance | Trend | Recommendation Message |
-|--------------------|-----------------------|-------|------------------------|
-| < 50% | < 50% | Any | "Immediate intervention required" |
-| < 60% | ≥ 60% | Improving | "Continue with current study approach" |
-| 60-75% | 65-85% | Any | "Regular practice and revision recommended" |
-| ≥ 60% | ≥ 75% | Improving/Stable | "Great potential! Keep up the good work" |
-| ≥ 75% | < Current | Declining | "Extra attention needed to maintain" |
-| ≥ 85% | ≥ 85% | Improving/Stable | "Excellent performance! Consider advanced topics" |
-| Any | < Current | Declining | "Review study methods and seek help" |
+| Current Performance | Predicted Performance | Trend            | Recommendation Message                            |
+| ------------------- | --------------------- | ---------------- | ------------------------------------------------- |
+| < 50%               | < 50%                 | Any              | "Immediate intervention required"                 |
+| < 60%               | ≥ 60%                 | Improving        | "Continue with current study approach"            |
+| 60-75%              | 65-85%                | Any              | "Regular practice and revision recommended"       |
+| ≥ 60%               | ≥ 75%                 | Improving/Stable | "Great potential! Keep up the good work"          |
+| ≥ 75%               | < Current             | Declining        | "Extra attention needed to maintain"              |
+| ≥ 85%               | ≥ 85%                 | Improving/Stable | "Excellent performance! Consider advanced topics" |
+| Any                 | < Current             | Declining        | "Review study methods and seek help"              |
 
 ---
 
@@ -584,6 +607,7 @@ Regular practice and revision recommended
 ### Test Case 1: Excellent Student
 
 **Request:**
+
 ```bash
 curl -X POST http://localhost:5002/predict \
   -H "Content-Type: application/json" \
@@ -602,6 +626,7 @@ curl -X POST http://localhost:5002/predict \
 ```
 
 **Expected Response:**
+
 ```json
 {
   "success": true,
@@ -631,6 +656,7 @@ curl -X POST http://localhost:5002/predict \
 ### Test Case 2: Struggling Student
 
 **Request:**
+
 ```bash
 curl -X POST http://localhost:5002/predict \
   -H "Content-Type: application/json" \
@@ -649,6 +675,7 @@ curl -X POST http://localhost:5002/predict \
 ```
 
 **Expected Response:**
+
 ```json
 {
   "success": true,
@@ -680,17 +707,20 @@ curl -X POST http://localhost:5002/predict \
 ### Key Points to Remember
 
 1. **Trends** are calculated by comparing predicted vs current marks:
+
    - Improving: > +5% change
    - Declining: < -5% change
    - Stable: ±5% change
 
 2. **Recommendations** depend on:
+
    - Current performance level
    - Predicted performance level
    - Trend direction
    - The gap between current and predicted
 
 3. **Badges** are based on mark ranges:
+
    - 🌟 Excellent: ≥ 85%
    - ✅ Good: 75-84%
    - ⚠️ Average: 60-74%

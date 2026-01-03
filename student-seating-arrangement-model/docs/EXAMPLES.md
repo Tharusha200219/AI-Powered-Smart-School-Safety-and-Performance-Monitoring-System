@@ -9,6 +9,7 @@ This document explains the seating arrangement system with real examples and the
 ### What Gets Generated?
 
 For each classroom, the system generates:
+
 1. **Seat Assignments** (row, column, student mapping)
 2. **Seat Labels** (A1, B2, C3, etc.)
 3. **High-Low Pairing** (balanced peer learning)
@@ -24,14 +25,14 @@ For each classroom, the system generates:
 **Classroom:** 3 rows × 2 columns = 6 seats  
 **Students:** 6
 
-| Student ID | Name | Math | Science | English | Average |
-|------------|------|------|---------|---------|---------|
-| 1 | Alice Johnson | 95 | 92 | 90 | 92.3% |
-| 2 | Bob Smith | 60 | 65 | 62 | 62.3% |
-| 3 | Charlie Brown | 88 | 85 | 87 | 86.7% |
-| 4 | David Wilson | 55 | 58 | 60 | 57.7% |
-| 5 | Emma Davis | 82 | 80 | 85 | 82.3% |
-| 6 | Frank Miller | 68 | 70 | 65 | 67.7% |
+| Student ID | Name          | Math | Science | English | Average |
+| ---------- | ------------- | ---- | ------- | ------- | ------- |
+| 1          | Alice Johnson | 95   | 92      | 90      | 92.3%   |
+| 2          | Bob Smith     | 60   | 65      | 62      | 62.3%   |
+| 3          | Charlie Brown | 88   | 85      | 87      | 86.7%   |
+| 4          | David Wilson  | 55   | 58      | 60      | 57.7%   |
+| 5          | Emma Davis    | 82   | 80      | 85      | 82.3%   |
+| 6          | Frank Miller  | 68   | 70      | 65      | 67.7%   |
 
 ### API Request
 
@@ -126,11 +127,13 @@ David:   (55 + 58 + 60) / 3 = 57.7%  🚨 Needs Support
 #### Step 3: Split into High and Low Performers
 
 **High Performers (Top 50%):**
+
 - Alice (92.3%)
 - Charlie (86.7%)
 - Emma (82.3%)
 
 **Low Performers (Bottom 50%):**
+
 - Frank (67.7%)
 - Bob (62.3%)
 - David (57.7%)
@@ -138,6 +141,7 @@ David:   (55 + 58 + 60) / 3 = 57.7%  🚨 Needs Support
 #### Step 4: Create Zigzag Pairing
 
 **Paired List:**
+
 1. Alice (High)
 2. Frank (Low)
 3. Charlie (High)
@@ -226,7 +230,7 @@ Row C:  [C1: Emma (82%)]     [C2: David (58%)]     → Left to Right
 Row A:
     Seat A1: Alice Johnson (92.3% - Excellent)
     Seat A2: Frank Miller (67.7% - Average)
-    
+
     → Direction: Left to Right
     🔄 Pairing: High performer (Alice) with Average performer (Frank)
     📊 Gap: 24.6% difference - Good for peer learning
@@ -235,7 +239,7 @@ Row A:
 Row B:
     Seat B1: Charlie Brown (86.7% - Excellent)
     Seat B2: Bob Smith (62.3% - Average)
-    
+
     → Direction: Right to Left (Serpentine)
     🔄 Pairing: High performer (Charlie) with Average performer (Bob)
     📊 Gap: 24.4% difference - Good for peer learning
@@ -244,7 +248,7 @@ Row B:
 Row C:
     Seat C1: Emma Davis (82.3% - Good)
     Seat C2: David Wilson (57.7% - Needs Support)
-    
+
     → Direction: Left to Right
     🔄 Pairing: Good performer (Emma) with Low performer (David)
     📊 Gap: 24.6% difference - Excellent for peer support
@@ -259,6 +263,7 @@ Row C:
 ### When to Generate New Arrangement
 
 #### Condition 1: No Existing Arrangement
+
 ```
 IF no arrangement exists for this grade
 THEN generate new arrangement
@@ -269,12 +274,14 @@ THEN generate new arrangement
 ---
 
 #### Condition 2: Marks Changed
+
 ```
 IF any student's marks updated AFTER last arrangement generation
 THEN show "⚠️ Marks Changed - Regeneration Recommended" badge
 ```
 
 **Example:**
+
 ```
 Last Generated: 2026-01-01 10:00 AM
 Student Mark Updated: 2026-01-02 03:00 PM
@@ -286,12 +293,14 @@ Action: Teacher should regenerate seating
 ---
 
 #### Condition 3: New Students Added
+
 ```
 IF number of students > number of assigned seats
 THEN show "⚠️ New Students - Regeneration Required" badge
 ```
 
 **Example:**
+
 ```
 Original: 6 students assigned
 Current: 8 students in grade
@@ -302,12 +311,14 @@ Action: Must regenerate to include new students
 ---
 
 #### Condition 4: Students Removed
+
 ```
 IF assigned student_id no longer exists in grade
 THEN show "⚠️ Students Removed - Update Required" badge
 ```
 
 **Example:**
+
 ```
 Original: Student ID 5 assigned to seat C1
 Current: Student ID 5 transferred/graduated
@@ -322,6 +333,7 @@ Action: Regenerate to redistribute seats
 #### Pairing Strategy Rules
 
 **Rule 1: Calculate Averages**
+
 ```python
 for student in students:
     marks = student['marks']
@@ -329,6 +341,7 @@ for student in students:
 ```
 
 **Rule 2: Sort Descending**
+
 ```python
 sorted_students = sorted(
     students,
@@ -338,6 +351,7 @@ sorted_students = sorted(
 ```
 
 **Rule 3: Split in Half**
+
 ```python
 mid_point = len(sorted_students) // 2
 high_performers = sorted_students[:mid_point]
@@ -345,6 +359,7 @@ low_performers = sorted_students[mid_point:]
 ```
 
 **Rule 4: Zigzag Pairing**
+
 ```python
 paired = []
 for i in range(max(len(high_performers), len(low_performers))):
@@ -373,6 +388,7 @@ for row_index in range(rows):
 ```
 
 **Visual Example:**
+
 ```
 Row 0 (Even):  → [S1] [S2] [S3] [S4]
 Row 1 (Odd):   ← [S8] [S7] [S6] [S5]
@@ -389,18 +405,14 @@ Row 3 (Odd):   ← [S16] [S15] [S14] [S13]
 **Classroom:** 5 rows × 4 columns = 20 seats
 
 **Top 5 Students:**
+
 1. Sarah (94%)
 2. Michael (91%)
 3. Jessica (89%)
 4. Ryan (87%)
 5. Amanda (85%)
 
-**Bottom 5 Students:**
-16. Kevin (62%)
-17. Laura (60%)
-18. Mark (58%)
-19. Nina (55%)
-20. Oscar (52%)
+**Bottom 5 Students:** 16. Kevin (62%) 17. Laura (60%) 18. Mark (58%) 19. Nina (55%) 20. Oscar (52%)
 
 ### Generated Seating
 
@@ -416,12 +428,12 @@ Row E: [Student-75%][Student-73%]  [Student-71%]  [Oscar-52%]     → LTR
 
 **Pairing Analysis:**
 
-| Seat | Student | Performance | Adjacent To | Gap |
-|------|---------|-------------|-------------|-----|
-| A1 | Sarah | 94% (High) | - | - |
-| B1 | Laura | 60% (Low) | Sarah (above) | 34% |
-| A2 | Michael | 91% (High) | Sarah (left) | 3% |
-| B2 | Mark | 58% (Low) | Michael (above) | 33% |
+| Seat | Student | Performance | Adjacent To     | Gap |
+| ---- | ------- | ----------- | --------------- | --- |
+| A1   | Sarah   | 94% (High)  | -               | -   |
+| B1   | Laura   | 60% (Low)   | Sarah (above)   | 34% |
+| A2   | Michael | 91% (High)  | Sarah (left)    | 3%  |
+| B2   | Mark    | 58% (Low)   | Michael (above) | 33% |
 
 **Result:** High performers surrounded by lower performers for maximum peer learning opportunity.
 
@@ -430,13 +442,16 @@ Row E: [Student-75%][Student-73%]  [Student-71%]  [Oscar-52%]     → LTR
 ## 💬 Dashboard Messages & Conditions
 
 ### Message 1: "✅ Current Arrangement"
+
 **Condition:**
+
 - Arrangement exists
 - No marks updated since generation
 - All students assigned
 - No new students added
 
 **Display:**
+
 ```
 Last Generated: 3 days ago
 Status: ✅ Current and valid
@@ -447,12 +462,15 @@ Action: No regeneration needed
 ---
 
 ### Message 2: "⚠️ Marks Changed - Regeneration Recommended"
+
 **Condition:**
+
 - Arrangement exists
 - One or more students' marks updated AFTER generation date
 - Marks changed > 5%
 
 **Display:**
+
 ```
 Last Generated: 2026-01-01 10:00 AM
 Marks Last Updated: 2026-01-02 03:00 PM
@@ -470,12 +488,15 @@ Action: Click "Generate New Arrangement"
 ---
 
 ### Message 3: "🚨 New Students - Regeneration Required"
+
 **Condition:**
+
 - Arrangement exists
 - Student count > assigned seat count
 - New students have no seat assignment
 
 **Display:**
+
 ```
 Current Arrangement: 18 seats assigned
 Total Students: 20
@@ -491,11 +512,14 @@ Action: Regenerate to include all students
 ---
 
 ### Message 4: "ℹ️ Empty Seats Available"
+
 **Condition:**
+
 - Total seats > number of students
 - Some seats remain empty
 
 **Display:**
+
 ```
 Classroom Capacity: 20 seats
 Students Assigned: 18
@@ -513,6 +537,7 @@ Note: Arrangement optimized for current student count
 ### Test Case 1: Perfect Scenario
 
 **Request:**
+
 ```bash
 curl -X POST http://localhost:5001/generate-seating \
   -H "Content-Type: application/json" \
@@ -530,21 +555,23 @@ curl -X POST http://localhost:5001/generate-seating \
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
   "arrangement_id": "SA-2026-001",
   "seats": [
-    {"row": 1, "column": 1, "student_id": 1, "seat_label": "A1"},
-    {"row": 1, "column": 2, "student_id": 3, "seat_label": "A2"},
-    {"row": 2, "column": 2, "student_id": 4, "seat_label": "B2"},
-    {"row": 2, "column": 1, "student_id": 2, "seat_label": "B1"}
+    { "row": 1, "column": 1, "student_id": 1, "seat_label": "A1" },
+    { "row": 1, "column": 2, "student_id": 3, "seat_label": "A2" },
+    { "row": 2, "column": 2, "student_id": 4, "seat_label": "B2" },
+    { "row": 2, "column": 1, "student_id": 2, "seat_label": "B1" }
   ],
   "message": "Seating arrangement generated successfully"
 }
 ```
 
 **Visual:**
+
 ```
 [WHITEBOARD]
 
@@ -563,17 +590,18 @@ Pairing:
 ### Test Case 2: Uneven Numbers
 
 **Request:**
+
 ```json
 {
   "grade": "11-C",
   "rows": 3,
   "columns": 2,
   "students": [
-    {"id": 1, "name": "Student A", "marks": {"math": 90}},
-    {"id": 2, "name": "Student B", "marks": {"math": 85}},
-    {"id": 3, "name": "Student C", "marks": {"math": 70}},
-    {"id": 4, "name": "Student D", "marks": {"math": 65}},
-    {"id": 5, "name": "Student E", "marks": {"math": 60}}
+    { "id": 1, "name": "Student A", "marks": { "math": 90 } },
+    { "id": 2, "name": "Student B", "marks": { "math": 85 } },
+    { "id": 3, "name": "Student C", "marks": { "math": 70 } },
+    { "id": 4, "name": "Student D", "marks": { "math": 65 } },
+    { "id": 5, "name": "Student E", "marks": { "math": 60 } }
   ]
 }
 ```
@@ -594,30 +622,30 @@ C1: Student E (60%)  C2: [Empty]           → LTR
 
 ### Seating Generation Triggers
 
-| Trigger | Condition | Action Required |
-|---------|-----------|-----------------|
-| **First Time** | No arrangement exists | Generate new |
-| **Marks Updated** | Student marks changed after last generation | Regenerate recommended |
-| **New Students** | More students than assigned seats | Regenerate required |
-| **Students Left** | Assigned students no longer in grade | Regenerate required |
-| **Manual Request** | Teacher clicks "Generate New" | Regenerate |
+| Trigger            | Condition                                   | Action Required        |
+| ------------------ | ------------------------------------------- | ---------------------- |
+| **First Time**     | No arrangement exists                       | Generate new           |
+| **Marks Updated**  | Student marks changed after last generation | Regenerate recommended |
+| **New Students**   | More students than assigned seats           | Regenerate required    |
+| **Students Left**  | Assigned students no longer in grade        | Regenerate required    |
+| **Manual Request** | Teacher clicks "Generate New"               | Regenerate             |
 
 ### Pairing Outcomes
 
-| Scenario | Result | Benefit |
-|----------|--------|---------|
-| High (90%) next to Low (55%) | 35% gap | Excellent peer learning |
-| High (85%) next to Average (70%) | 15% gap | Good collaboration |
-| Average (70%) next to Average (68%) | 2% gap | Balanced teamwork |
+| Scenario                            | Result  | Benefit                 |
+| ----------------------------------- | ------- | ----------------------- |
+| High (90%) next to Low (55%)        | 35% gap | Excellent peer learning |
+| High (85%) next to Average (70%)    | 15% gap | Good collaboration      |
+| Average (70%) next to Average (68%) | 2% gap  | Balanced teamwork       |
 
 ### Warning Badges
 
-| Badge | Condition | Color |
-|-------|-----------|-------|
-| ✅ Current | Up to date | Green |
-| ⚠️ Marks Changed | Performance updated | Yellow |
-| 🚨 Regeneration Required | Structure mismatch | Red |
-| ℹ️ Empty Seats | Seats > Students | Blue |
+| Badge                    | Condition           | Color  |
+| ------------------------ | ------------------- | ------ |
+| ✅ Current               | Up to date          | Green  |
+| ⚠️ Marks Changed         | Performance updated | Yellow |
+| 🚨 Regeneration Required | Structure mismatch  | Red    |
+| ℹ️ Empty Seats           | Seats > Students    | Blue   |
 
 ---
 
