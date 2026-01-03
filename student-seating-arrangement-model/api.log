@@ -1,0 +1,18 @@
+Starting Seating Arrangement API...
+INFO:src.utils:Starting Seating Arrangement API on 0.0.0.0:5001
+INFO:src.utils:Debug mode: False
+ * Serving Flask app 'app'
+ * Debug mode: off
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.8.171:5001
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [02/Jan/2026 01:42:51] "GET /health HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [02/Jan/2026 01:43:19] "GET /health HTTP/1.1" 200 -
+INFO:src.utils:Seating generator initialized: 5 seats/row x 2 rows = 10 total seats
+INFO:src.utils:Generated seating arrangement for Grade 11-A with 10 students
+INFO:src.utils:Successfully generated seating for Grade 11-A with 10 students
+INFO:werkzeug:127.0.0.1 - - [02/Jan/2026 01:43:19] "POST /generate-seating HTTP/1.1" 200 -
+INFO:src.utils:Seating generator initialized: 5 seats/row x 6 rows = 30 total seats
+INFO:werkzeug:127.0.0.1 - - [02/Jan/2026 01:43:19] "GET /student-seat?student_id=S001 HTTP/1.1" 200 -
