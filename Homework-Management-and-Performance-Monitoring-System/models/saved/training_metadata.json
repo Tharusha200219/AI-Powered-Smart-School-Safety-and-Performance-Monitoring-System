@@ -1,0 +1,24 @@
+{
+  "trained_at": "2025-12-26T12:17:26.867759",
+  "total_lessons": 156,
+  "total_questions": 1560,
+  "subjects": [
+    "health_science",
+    "history",
+    "english",
+    "science"
+  ],
+  "grades": [
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "question_types": [
+    "MCQ",
+    "DESCRIPTIVE",
+    "SHORT_ANSWER"
+  ]
+}
