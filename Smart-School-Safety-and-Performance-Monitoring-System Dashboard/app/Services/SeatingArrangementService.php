@@ -66,7 +66,18 @@ class SeatingArrangementService
                 ->post("{$this->apiUrl}/generate-seating", $requestData);
 
             if ($response->successful()) {
-                $arrangementData = $response->json();
+                $responseData = $response->json();
+
+                // Extract the actual arrangement data from the API response
+                // API returns: {success: true, data: {...arrangement...}}
+                $arrangementData = $responseData['data'] ?? $responseData;
+
+                Log::info("Received arrangement data from API", [
+                    'grade' => $gradeLevel,
+                    'section' => $section,
+                    'students_count' => count($students),
+                    'has_arrangement' => isset($arrangementData['arrangement'])
+                ]);
 
                 // Store arrangement in database
                 return $this->storeSeatingArrangement(
@@ -81,7 +92,10 @@ class SeatingArrangementService
                     $userId
                 );
             } else {
-                Log::error("Seating arrangement API error: " . $response->body());
+                Log::error("Seating arrangement API error", [
+                    'status' => $response->status(),
+                    'body' => $response->body()
+                ]);
                 return null;
             }
         } catch (\Exception $e) {
@@ -107,7 +121,11 @@ class SeatingArrangementService
             $query->where('class_id', $classId);
         }
 
-        return $query->with('marks')->get();
+        Log::info("Fetching students for grade: {$gradeLevel}, section: {$section}, class: {$classId}");
+        $students = $query->with('marks')->get();
+        Log::info("Found {$students->count()} students");
+
+        return $students;
     }
 
     /**
@@ -189,8 +207,15 @@ class SeatingArrangementService
             ]);
 
             // Store individual seat assignments
-            if (isset($arrangementData['seating_arrangement'])) {
-                $this->storeSeatAssignments($arrangement, $arrangementData['seating_arrangement']);
+            if (isset($arrangementData['arrangement'])) {
+                $this->storeSeatAssignments($arrangement, $arrangementData['arrangement']);
+            } elseif (isset($arrangementData['data']['arrangement'])) {
+                // Handle nested data structure
+                $this->storeSeatAssignments($arrangement, $arrangementData['data']['arrangement']);
+            } else {
+                Log::warning("No arrangement data found in response", [
+                    'keys' => array_keys($arrangementData)
+                ]);
             }
 
             return $arrangement;
@@ -202,17 +227,32 @@ class SeatingArrangementService
      */
     protected function storeSeatAssignments(SeatingArrangement $arrangement, array $seatingData): void
     {
-        foreach ($seatingData as $rowNumber => $row) {
-            foreach ($row as $seatNumber => $seatData) {
-                if (isset($seatData['student_id']) && $seatData['student_id']) {
-                    StudentSeatAssignment::create([
-                        'seating_arrangement_id' => $arrangement->id,
-                        'student_id' => $seatData['student_id'],
-                        'row_number' => $rowNumber + 1, // Convert from 0-indexed to 1-indexed
-                        'seat_number' => $seatNumber + 1,
-                        'seat_position' => "Row " . ($rowNumber + 1) . " - Seat " . ($seatNumber + 1),
-                    ]);
-                }
+        Log::info("Storing seat assignments", [
+            'arrangement_id' => $arrangement->id,
+            'seats_count' => count($seatingData)
+        ]);
+
+        foreach ($seatingData as $seatInfo) {
+            // Handle flat array structure from API
+            if (isset($seatInfo['student_id']) && $seatInfo['student_id']) {
+                $rowNumber = $seatInfo['row'] ?? 1;
+                $columnNumber = $seatInfo['column'] ?? 1;
+                $seatNumber = $seatInfo['seat_number'] ?? 1;
+
+                StudentSeatAssignment::create([
+                    'seating_arrangement_id' => $arrangement->id,
+                    'student_id' => $seatInfo['student_id'],
+                    'row_number' => $rowNumber,
+                    'seat_number' => $seatNumber,
+                    'seat_position' => $seatInfo['seat_label'] ?? "Row {$rowNumber} - Seat {$columnNumber}",
+                ]);
+
+                Log::info("Created seat assignment", [
+                    'student_id' => $seatInfo['student_id'],
+                    'student_name' => $seatInfo['student_name'] ?? 'Unknown',
+                    'row' => $rowNumber,
+                    'seat' => $seatNumber
+                ]);
             }
         }
     }

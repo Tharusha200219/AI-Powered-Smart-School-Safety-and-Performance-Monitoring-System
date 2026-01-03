@@ -172,9 +172,32 @@
                                             <h6 class="mb-0 d-flex align-items-center">
                                                 <i class="material-symbols-rounded me-2 icon-size-sm">event_seat</i>
                                                 Seat Assignment
+                                                @if (isset($needsSeatingUpdate) && $needsSeatingUpdate)
+                                                    <span class="badge bg-gradient-warning badge-sm ms-2">⚠️ Marks
+                                                        Changed</span>
+                                                @endif
                                             </h6>
                                         </div>
                                         <div class="card-body">
+                                            {{-- Warning if marks changed --}}
+                                            @if (isset($needsSeatingUpdate) && $needsSeatingUpdate)
+                                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                                    <i class="material-symbols-rounded me-2">warning</i>
+                                                    <strong>⚠️ Student Marks Have Changed</strong>
+                                                    <p class="mb-2">This student's marks have been updated since the last
+                                                        seating arrangement was generated.</p>
+                                                    <p class="mb-0">
+                                                        <strong>Action Required:</strong>
+                                                        <a href="{{ route('admin.seating-arrangement.index') }}"
+                                                            class="alert-link">
+                                                            Regenerate the seating arrangement
+                                                        </a> to reflect the latest performance data.
+                                                    </p>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                            @endif
+
                                             @if (isset($seatAssignment) && $seatAssignment)
                                                 <div class="row">
                                                     <div class="col-md-6">
@@ -225,14 +248,42 @@
                                             <h6 class="mb-0 d-flex align-items-center">
                                                 <i class="material-symbols-rounded me-2 icon-size-sm">trending_up</i>
                                                 Performance Predictions
-                                                @if (isset($predictions) && $predictions->count() > 0)
-                                                    <span class="badge bg-gradient-success badge-sm ms-2">Live</span>
+                                                @if (isset($predictionApiStatus) && $predictionApiStatus && isset($predictions) && $predictions->count() > 0)
+                                                    <span class="badge bg-gradient-success badge-sm ms-2">🔴 Live</span>
+                                                @else
+                                                    <span class="badge bg-gradient-danger badge-sm ms-2">⚠️ API Not
+                                                        Connected</span>
                                                 @endif
                                             </h6>
                                         </div>
                                         <div class="card-body">
+                                            {{-- Always check if API is running --}}
+                                            @if (!isset($predictionApiStatus) || !$predictionApiStatus)
+                                                <div class="alert alert-danger alert-dismissible fade show"
+                                                    role="alert">
+                                                    <i class="material-symbols-rounded me-2">error</i>
+                                                    <strong>⚠️ API Not Connected</strong>
+                                                    <p class="mb-2">The performance prediction API is not running.
+                                                        Predictions cannot be generated.</p>
+                                                    <p class="mb-0"><strong>To start the API:</strong></p>
+                                                    <ol class="mb-2 mt-1">
+                                                        <li>Open a new terminal</li>
+                                                        <li>Navigate to: <code>student-performance-prediction-model</code>
+                                                        </li>
+                                                        <li>Run: <code>./start_api.sh</code></li>
+                                                        <li>Refresh this page</li>
+                                                    </ol>
+                                                    <div class="alert alert-info mb-0">
+                                                        <i class="material-symbols-rounded me-2">info</i>
+                                                        <strong>Live Predictions:</strong> Predictions are generated in
+                                                        real-time based on current marks and attendance. When you update
+                                                        marks, refresh this page to see new predictions instantly.
+                                                    </div>
+                                                </div>
+                                            @endif
+
                                             <div id="predictionsContainer">
-                                                @if (isset($predictions) && $predictions->count() > 0)
+                                                @if (isset($predictionApiStatus) && $predictionApiStatus && isset($predictions) && $predictions->count() > 0)
                                                     <div class="table-responsive">
                                                         <table class="table align-items-center mb-0">
                                                             <thead>
