@@ -27,13 +27,28 @@ class SeatingArrangementController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
+        // Check which arrangements need updates due to mark changes
+        foreach ($arrangements as $arrangement) {
+            $marksUpdatedAfter = \App\Models\Mark::whereHas('student', function ($q) use ($arrangement) {
+                $q->where('grade_level', $arrangement->grade_level)
+                    ->where('section', $arrangement->section);
+            })
+                ->where('updated_at', '>', $arrangement->generated_at)
+                ->count();
+
+            $arrangement->needs_update = $marksUpdatedAfter > 0;
+        }
+
         // Get all classes grouped by grade
         $classesByGrade = SchoolClass::orderBy('grade_level')
             ->orderBy('section')
             ->get()
             ->groupBy('grade_level');
 
-        return view('admin.pages.seating-arrangement.index', compact('arrangements', 'classesByGrade'));
+        // Check API health status
+        $apiStatus = $this->seatingService->checkApiHealth();
+
+        return view('admin.pages.seating-arrangement.index', compact('arrangements', 'classesByGrade', 'apiStatus'));
     }
 
     /**
