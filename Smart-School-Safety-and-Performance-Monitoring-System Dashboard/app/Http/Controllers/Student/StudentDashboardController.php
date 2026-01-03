@@ -39,6 +39,10 @@ class StudentDashboardController extends Controller
         $academicYear = $currentYear . '-' . ($currentYear + 1);
         $currentTerm = 1; // You might want to calculate this based on current date
 
+        // Check API health status
+        $predictionApiStatus = $this->predictionService->checkApiHealth();
+        $seatingApiStatus = $this->seatingService->checkApiHealth();
+
         // Get seat assignment
         $seatAssignment = $student->seatAssignment;
 
@@ -66,7 +70,9 @@ class StudentDashboardController extends Controller
             'marks',
             'attendanceSummary',
             'academicYear',
-            'currentTerm'
+            'currentTerm',
+            'predictionApiStatus',
+            'seatingApiStatus'
         ));
     }
 
@@ -87,6 +93,9 @@ class StudentDashboardController extends Controller
         $academicYear = $currentYear . '-' . ($currentYear + 1);
         $currentTerm = 1;
 
+        // Check API health status
+        $predictionApiStatus = $this->predictionService->checkApiHealth();
+
         // Get all predictions
         $predictions = $student->performancePredictions()
             ->with('subject')
@@ -102,7 +111,7 @@ class StudentDashboardController extends Controller
             ->get()
             ->groupBy('term');
 
-        return view('student.performance', compact('student', 'predictions', 'marks', 'academicYear'));
+        return view('student.performance', compact('student', 'predictions', 'marks', 'academicYear', 'predictionApiStatus'));
     }
 
     /**

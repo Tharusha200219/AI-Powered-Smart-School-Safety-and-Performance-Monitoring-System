@@ -275,6 +275,9 @@ class StudentController extends BaseManagementController
         $academicYear = $currentYear . '-' . ($currentYear + 1);
         $currentTerm = 1; // You might want to calculate this based on current date
 
+        // Check API health status FIRST
+        $predictionApiStatus = $this->predictionService->checkApiHealth();
+
         // Get marks for comparison
         $marks = $student->marks()
             ->with('subject')
@@ -282,38 +285,55 @@ class StudentController extends BaseManagementController
             ->where('term', $currentTerm)
             ->get();
 
-        // Auto-generate predictions if they don't exist or are outdated
-        $predictions = $student->performancePredictions()
-            ->with('subject')
-            ->where('academic_year', $academicYear)
-            ->where('term', $currentTerm)
-            ->get();
+        // Initialize predictions as empty
+        $predictions = collect();
 
-        // Generate predictions automatically if:
-        // 1. No predictions exist
-        // 2. Student has marks for this term
-        // 3. API is available
-        if ($predictions->isEmpty() && $marks->isNotEmpty()) {
+        // ONLY generate predictions if API is running
+        // Always fetch fresh predictions, never use cached data
+        if ($predictionApiStatus && $marks->isNotEmpty()) {
             try {
-                if ($this->predictionService->checkApiHealth()) {
-                    $this->predictionService->predictStudentPerformance($student, $academicYear, $currentTerm);
-                    // Reload predictions after generation
-                    $predictions = $student->performancePredictions()
-                        ->with('subject')
-                        ->where('academic_year', $academicYear)
-                        ->where('term', $currentTerm)
-                        ->get();
-                }
+                // Generate fresh predictions every time
+                $this->predictionService->predictStudentPerformance($student, $academicYear, $currentTerm);
+
+                // Load the fresh predictions
+                $predictions = $student->performancePredictions()
+                    ->with('subject')
+                    ->where('academic_year', $academicYear)
+                    ->where('term', $currentTerm)
+                    ->get();
             } catch (\Exception $e) {
-                // Silently fail - predictions will show as unavailable
-                \Log::warning('Failed to auto-generate predictions for student ' . $id . ': ' . $e->getMessage());
+                // Log error but continue
+                \Log::error('Failed to generate live predictions for student ' . $id . ': ' . $e->getMessage());
             }
         }
 
         // Get seat assignment
         $seatAssignment = $student->seatAssignment;
 
-        return view($this->parentViewPath . 'view', compact('student', 'predictions', 'seatAssignment', 'marks', 'academicYear', 'currentTerm'));
+        // Check if marks have changed since last seating arrangement
+        $needsSeatingUpdate = false;
+        if ($seatAssignment && $seatAssignment->seatingArrangement) {
+            $arrangement = $seatAssignment->seatingArrangement;
+            $lastGenerated = $arrangement->generated_at;
+
+            // Check if any marks were updated after the seating was generated
+            $recentMarkUpdates = $student->marks()
+                ->where('updated_at', '>', $lastGenerated)
+                ->count();
+
+            $needsSeatingUpdate = $recentMarkUpdates > 0;
+        }
+
+        return view($this->parentViewPath . 'view', compact(
+            'student',
+            'predictions',
+            'seatAssignment',
+            'marks',
+            'academicYear',
+            'currentTerm',
+            'predictionApiStatus',
+            'needsSeatingUpdate'
+        ));
     }
 
     public function generateCode()

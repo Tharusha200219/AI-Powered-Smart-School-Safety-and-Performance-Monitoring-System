@@ -7,7 +7,7 @@ echo "Starting AI Model APIs"
 echo "============================================================"
 
 # Get the absolute path to the project root
-PROJECT_ROOT="/Users/tharusha_rashmika/Documents/projects/aleph/reserch"
+PROJECT_ROOT="$(cd "$(dirname "$0")" && pwd)"
 
 # Kill any existing processes on ports 5002 and 5001
 echo "Cleaning up existing processes..."
