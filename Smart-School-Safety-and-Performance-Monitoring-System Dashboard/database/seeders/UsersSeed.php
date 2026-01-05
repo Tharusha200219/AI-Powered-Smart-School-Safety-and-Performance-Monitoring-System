@@ -42,6 +42,6 @@ class UsersSeed extends Seeder
         $adminUser->assignRole('admin');
 
         echo "Admin user created/updated: admin@gmail.com / Admin@123\n";
-        echo 'Admin role has '.$permissions->count()." permissions\n";
+        echo 'Admin role has ' . $permissions->count() . " permissions\n";
     }
 }
