@@ -30,6 +30,19 @@
                                     @else
                                         <span class="badge bg-gradient-secondary">Inactive</span>
                                     @endif
+                                    
+                                    {{-- Delete Button --}}
+                                    <form action="{{ route('admin.seating-arrangement.destroy', $arrangement->id) }}" 
+                                          method="POST" 
+                                          class="d-inline-block ms-2"
+                                          onsubmit="return confirm('Are you sure you want to delete this seating arrangement? This action cannot be undone.');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="material-symbols-rounded" style="font-size: 18px;">delete</i>
+                                            Delete
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -132,10 +145,14 @@
                                     @for($row = 1; $row <= $arrangement->total_rows; $row++)
                                         <div class="seat-row mb-3 d-flex justify-content-center gap-2">
                                             <span class="row-label text-sm font-weight-bold me-2">Row {{ $row }}</span>
-                                            @for($seat = 1; $seat <= $arrangement->seats_per_row; $seat++)
+                                            @for($seatInRow = 1; $seatInRow <= $arrangement->seats_per_row; $seatInRow++)
                                                 @php
-                                                    $assignment = $arrangement->seatAssignments->first(function($a) use ($row, $seat) {
-                                                        return $a->row_number == $row && $a->seat_number == $seat;
+                                                    // Calculate the actual seat number (sequential across all rows)
+                                                    $actualSeatNumber = (($row - 1) * $arrangement->seats_per_row) + $seatInRow;
+                                                    
+                                                    // Find assignment by row and actual seat number
+                                                    $assignment = $arrangement->seatAssignments->first(function($item) use ($row, $actualSeatNumber) {
+                                                        return (int)$item->row_number === (int)$row && (int)$item->seat_number === (int)$actualSeatNumber;
                                                     });
                                                 @endphp
                                                 
@@ -148,7 +165,7 @@
                                                                 <div class="text-xs font-weight-bold mt-1">
                                                                     {{ $assignment->student->first_name }} {{ $assignment->student->last_name }}
                                                                 </div>
-                                                                <small class="text-xxs">Seat {{ $seat }}</small>
+                                                                <small class="text-xxs">Seat {{ $seatInRow }}</small>
                                                             </div>
                                                         </div>
                                                     @else
@@ -156,7 +173,7 @@
                                                             <div class="card-body p-2 text-center">
                                                                 <i class="material-symbols-rounded text-secondary" style="font-size: 20px;">event_seat</i>
                                                                 <div class="text-xs text-secondary mt-1">Empty</div>
-                                                                <small class="text-xxs text-secondary">Seat {{ $seat }}</small>
+                                                                <small class="text-xxs text-secondary">Seat {{ $seatInRow }}</small>
                                                             </div>
                                                         </div>
                                                     @endif
