@@ -145,22 +145,20 @@
                                                             class="text-xs text-secondary">{{ $arrangement->created_at->format('M d, Y') }}</span>
                                                     </td>
                                                     <td class="align-middle">
-                                                        <a href="{{ route('admin.seating-arrangement.show', $arrangement->id) }}" 
-                                                           class="btn btn-link text-secondary mb-0 px-2" 
-                                                           title="View Details">
+                                                        <a href="{{ route('admin.seating-arrangement.show', $arrangement->id) }}"
+                                                            class="btn btn-link text-secondary mb-0 px-2"
+                                                            title="View Details">
                                                             <i class="material-symbols-rounded">visibility</i>
                                                         </a>
-                                                        
+
                                                         <div class="dropdown d-inline">
-                                                            <button class="btn btn-link text-secondary mb-0 px-2" 
-                                                                type="button"
-                                                                id="dropdownMenu{{ $arrangement->id }}"
-                                                                data-bs-toggle="dropdown"
-                                                                aria-expanded="false"
+                                                            <button class="btn btn-link text-secondary mb-0 px-2"
+                                                                type="button" id="dropdownMenu{{ $arrangement->id }}"
+                                                                data-bs-toggle="dropdown" aria-expanded="false"
                                                                 title="More Actions">
                                                                 <i class="material-symbols-rounded">more_vert</i>
                                                             </button>
-                                                            <ul class="dropdown-menu dropdown-menu-end" 
+                                                            <ul class="dropdown-menu dropdown-menu-end"
                                                                 aria-labelledby="dropdownMenu{{ $arrangement->id }}">
                                                                 <li>
                                                                     <a class="dropdown-item"
@@ -228,14 +226,14 @@
 @endsection
 
 @push('scripts')
-<script>
-    // Ensure dropdowns work properly
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize Bootstrap dropdowns manually if needed
-        var dropdownElementList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
-        var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
-            return new bootstrap.Dropdown(dropdownToggleEl);
+    <script>
+        // Ensure dropdowns work properly
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Bootstrap dropdowns manually if needed
+            var dropdownElementList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
+            var dropdownList = dropdownElementList.map(function(dropdownToggleEl) {
+                return new bootstrap.Dropdown(dropdownToggleEl);
+            });
         });
-    });
-</script>
+    </script>
 @endpush
