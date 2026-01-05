@@ -39,16 +39,19 @@ An integrated AI-powered solution designed to enhance school safety, optimize ed
 The **AI-Powered Smart School Safety and Performance Monitoring System** is a comprehensive, multi-component platform that leverages artificial intelligence, machine learning, and IoT technologies to create a safer and more efficient educational environment. The system integrates six specialized modules working together through a centralized dashboard to provide:
 
 ### Safety Monitoring
+
 - **Real-time Audio Threat Detection** - Identifies dangerous sounds (screaming, glass breaking, aggressive speech)
 - **Video-Based Threat Detection** - Detects violent behavior, fighting, or aggressive actions
 - **Left-Behind Object Detection** - Monitors classrooms for forgotten items after hours
 
 ### Performance Optimization
+
 - **Student Performance Prediction** - Forecasts academic outcomes based on attendance and marks
 - **Intelligent Seating Arrangement** - Optimizes classroom seating for better learning outcomes
 - **Homework Management System** - Automates homework generation, distribution, and evaluation
 
 ### Administrative Excellence
+
 - **Centralized Dashboard** - Laravel-based web interface for system-wide management
 - **Real-time Alerts** - Multi-channel notifications (Email, Telegram, SMS)
 - **Analytics & Reporting** - Comprehensive performance and safety reports
@@ -58,6 +61,7 @@ The **AI-Powered Smart School Safety and Performance Monitoring System** is a co
 ## ✨ Key Features
 
 ### 🛡️ Safety & Security
+
 - ✅ **Real-time audio analysis** for threat detection (screaming, glass breaking, threatening speech)
 - ✅ **Video surveillance** with AI-powered action recognition
 - ✅ **Multi-language support** (English & Sinhala) for speech analysis
@@ -67,6 +71,7 @@ The **AI-Powered Smart School Safety and Performance Monitoring System** is a co
 - ✅ **Instant alert system** with configurable notification channels
 
 ### 📊 Performance & Analytics
+
 - ✅ **Predictive analytics** for student performance across all subjects
 - ✅ **Automated homework generation** using NLP and AI
 - ✅ **Intelligent answer evaluation** for both MCQ and descriptive questions
@@ -75,6 +80,7 @@ The **AI-Powered Smart School Safety and Performance Monitoring System** is a co
 - ✅ **Monthly performance reports** for teachers and parents
 
 ### 🎓 Academic Management
+
 - ✅ **Multi-subject support** (Science, Mathematics, History, English, Health Science)
 - ✅ **Question generation** from lesson content
 - ✅ **Automatic grading system** with feedback generation
@@ -226,9 +232,11 @@ The system follows a **microservices architecture** with specialized AI/ML modul
 ## 🧩 System Components
 
 ### 1. 📊 Smart School Dashboard (Laravel)
+
 **Location**: `Smart-School-Safety-and-Performance-Monitoring-System Dashboard/`
 
 The central administrative hub providing:
+
 - User management (Admin, Teachers, Students, Security Staff)
 - Real-time alert monitoring and management
 - Performance analytics and reporting
@@ -241,9 +249,11 @@ The central administrative hub providing:
 ---
 
 ### 2. 🎧 Audio-Based Threat Detection
+
 **Location**: `AudioBasedThreatDetection-Models/`
 
 Real-time audio intelligence for safety monitoring:
+
 - **Non-speech detection**: Identifies screaming, crying, shouting, glass breaking
 - **Speech analysis**: Converts speech to text and analyzes for threats
 - **Multi-language**: Supports English and Sinhala
@@ -257,17 +267,20 @@ Real-time audio intelligence for safety monitoring:
 ---
 
 ### 3. 📹 Video-Based Threat & Object Detection
+
 **Location**: `Video_Based_Left_Behind_Object_and_Threat_Detection-main/`
 
 Dual-purpose video surveillance system:
 
 #### Left-Behind Object Detection
+
 - Monitors classrooms according to schedules
 - Identifies forgotten items (bags, books, bottles)
 - Triggers alerts 1 hour after last class ends
 - Temporal tracking with configurable thresholds
 
 #### Threat Detection
+
 - Real-time action recognition
 - Detects fighting, pushing, aggressive behavior
 - Immediate alerts to principal/teachers
@@ -282,9 +295,11 @@ Dual-purpose video surveillance system:
 ---
 
 ### 4. 📝 Homework Management & Performance Monitoring
+
 **Location**: `Homework-Management-and-Performance-Monitoring-System/`
 
 Automated homework workflow:
+
 - **Question generation**: AI-generated questions from lesson content
 - **Multi-subject support**: Science, Math, History, English, Health Science
 - **Automatic grading**: Instant MCQ grading + NLP-based subjective evaluation
@@ -298,9 +313,11 @@ Automated homework workflow:
 ---
 
 ### 5. 📈 Student Performance Prediction
+
 **Location**: `student-performance-prediction-model/`
 
 ML-based performance forecasting:
+
 - Predicts student performance for each subject
 - Analyzes attendance and marks correlation
 - Provides trend analysis (improving/declining)
@@ -314,9 +331,11 @@ ML-based performance forecasting:
 ---
 
 ### 6. 🪑 Student Seating Arrangement Optimizer
+
 **Location**: `student-seating-arrangement-model/`
 
 Intelligent classroom seating optimization:
+
 - Considers student relationships and performance
 - Maximizes learning outcomes
 - Minimizes disruptions
@@ -330,36 +349,40 @@ Intelligent classroom seating optimization:
 ## 🛠️ Technology Stack
 
 ### Backend & AI/ML
-| Component | Technology | Version |
-|-----------|-----------|---------|
-| **Web Framework** | Flask | 3.0.0+ |
-| **Deep Learning** | PyTorch | 2.0.0+ |
-| **Computer Vision** | YOLOv8 (Ultralytics) | 8.0.0+ |
-| **NLP** | Transformers, NLTK | 4.36.0+ |
-| **Audio Processing** | Torchaudio, SoundFile | 2.0.0+ |
-| **Video Processing** | OpenCV, MoviePy | 4.8.0+ |
-| **ML Libraries** | Scikit-learn, NumPy, Pandas | 1.3.0+ |
-| **Action Recognition** | PyTorchVideo | 0.1.5+ |
+
+| Component              | Technology                  | Version |
+| ---------------------- | --------------------------- | ------- |
+| **Web Framework**      | Flask                       | 3.0.0+  |
+| **Deep Learning**      | PyTorch                     | 2.0.0+  |
+| **Computer Vision**    | YOLOv8 (Ultralytics)        | 8.0.0+  |
+| **NLP**                | Transformers, NLTK          | 4.36.0+ |
+| **Audio Processing**   | Torchaudio, SoundFile       | 2.0.0+  |
+| **Video Processing**   | OpenCV, MoviePy             | 4.8.0+  |
+| **ML Libraries**       | Scikit-learn, NumPy, Pandas | 1.3.0+  |
+| **Action Recognition** | PyTorchVideo                | 0.1.5+  |
 
 ### Dashboard & Frontend
-| Component | Technology | Version |
-|-----------|-----------|---------|
-| **Web Framework** | Laravel | 11.x |
-| **Language** | PHP | 8.2+ |
-| **Database** | MySQL | 8.0+ |
-| **Frontend** | Blade Templates, Bootstrap | - |
-| **Data Tables** | Yajra DataTables | 11.0+ |
-| **Authentication** | Laravel UI | 4.6+ |
-| **Permissions** | Spatie Laravel Permission | 6.21+ |
+
+| Component          | Technology                 | Version |
+| ------------------ | -------------------------- | ------- |
+| **Web Framework**  | Laravel                    | 11.x    |
+| **Language**       | PHP                        | 8.2+    |
+| **Database**       | MySQL                      | 8.0+    |
+| **Frontend**       | Blade Templates, Bootstrap | -       |
+| **Data Tables**    | Yajra DataTables           | 11.0+   |
+| **Authentication** | Laravel UI                 | 4.6+    |
+| **Permissions**    | Spatie Laravel Permission  | 6.21+   |
 
 ### IoT Hardware
-| Component | Specification |
-|-----------|---------------|
-| **Cameras** | ESP32-CAM modules |
-| **Communication** | WiFi, MQTT |
-| **Audio** | Web Audio API (browser-based) |
+
+| Component         | Specification                 |
+| ----------------- | ----------------------------- |
+| **Cameras**       | ESP32-CAM modules             |
+| **Communication** | WiFi, MQTT                    |
+| **Audio**         | Web Audio API (browser-based) |
 
 ### Deployment & Infrastructure
+
 - **OS**: Linux (Ubuntu 20.04+), macOS, Windows
 - **Python**: 3.8 - 3.14
 - **Web Server**: Apache/Nginx
@@ -373,6 +396,7 @@ Intelligent classroom seating optimization:
 ### Core Python Dependencies
 
 #### Audio Threat Detection
+
 ```
 torch>=2.0.0
 torchaudio>=2.0.0
@@ -387,6 +411,7 @@ scikit-learn>=1.3.0
 ```
 
 #### Video Threat Detection
+
 ```
 torch>=2.0.0
 torchvision>=0.15.0
@@ -400,6 +425,7 @@ paho-mqtt>=1.6.1
 ```
 
 #### Homework Management
+
 ```
 transformers>=4.36.0
 torch>=2.0.0
@@ -411,6 +437,7 @@ huggingface-hub>=0.19.0
 ```
 
 #### Performance Prediction & Seating
+
 ```
 flask>=3.0.0
 scikit-learn>=1.3.0
@@ -449,12 +476,12 @@ joblib>=1.3.0
 
 ### System Requirements
 
-| Component | Minimum | Recommended |
-|-----------|---------|-------------|
-| **CPU** | 4 cores | 8+ cores |
-| **RAM** | 8 GB | 16+ GB |
-| **Storage** | 50 GB | 100+ GB SSD |
-| **GPU** | - | NVIDIA with 4GB+ VRAM |
+| Component   | Minimum | Recommended           |
+| ----------- | ------- | --------------------- |
+| **CPU**     | 4 cores | 8+ cores              |
+| **RAM**     | 8 GB    | 16+ GB                |
+| **Storage** | 50 GB   | 100+ GB SSD           |
+| **GPU**     | -       | NVIDIA with 4GB+ VRAM |
 
 ---
 
@@ -758,16 +785,17 @@ Response:
 
 ### Server Requirements
 
-| Use Case | CPU | RAM | GPU | Storage |
-|----------|-----|-----|-----|---------|
-| **Development** | 4 cores | 8 GB | Optional | 50 GB |
-| **Small School (<500 students)** | 8 cores | 16 GB | GTX 1060 | 100 GB SSD |
-| **Medium School (500-1500)** | 16 cores | 32 GB | RTX 3060 | 250 GB SSD |
-| **Large School (>1500)** | 32+ cores | 64 GB | RTX 3080+ | 500 GB SSD |
+| Use Case                         | CPU       | RAM   | GPU       | Storage    |
+| -------------------------------- | --------- | ----- | --------- | ---------- |
+| **Development**                  | 4 cores   | 8 GB  | Optional  | 50 GB      |
+| **Small School (<500 students)** | 8 cores   | 16 GB | GTX 1060  | 100 GB SSD |
+| **Medium School (500-1500)**     | 16 cores  | 32 GB | RTX 3060  | 250 GB SSD |
+| **Large School (>1500)**         | 32+ cores | 64 GB | RTX 3080+ | 500 GB SSD |
 
 ### IoT Hardware
 
 #### ESP32-CAM Specifications
+
 - **Processor**: ESP32-S (dual-core 160MHz)
 - **Camera**: OV2640 (2MP)
 - **WiFi**: 802.11 b/g/n
@@ -775,6 +803,7 @@ Response:
 - **Cost**: ~$10 per unit
 
 #### Deployment Recommendations
+
 - 1 camera per classroom
 - 1 camera per hallway/corridor
 - 1 camera for main entrance
@@ -867,6 +896,7 @@ We welcome contributions! Please follow these steps:
 ### Common Issues
 
 #### Port Already in Use
+
 ```bash
 # Find process using port
 lsof -ti:5001 | xargs kill -9  # macOS/Linux
@@ -874,6 +904,7 @@ netstat -ano | findstr :5001   # Windows
 ```
 
 #### CUDA/GPU Issues
+
 ```bash
 # Verify CUDA installation
 python -c "import torch; print(torch.cuda.is_available())"
@@ -883,6 +914,7 @@ USE_GPU=false
 ```
 
 #### Model Download Failures
+
 ```bash
 # Manually download models
 cd models/saved/
@@ -890,6 +922,7 @@ wget <model-url>
 ```
 
 #### Database Connection Issues
+
 ```bash
 # Check MySQL service
 sudo systemctl status mysql  # Linux
@@ -903,20 +936,21 @@ php artisan migrate:fresh --seed
 
 ## 📊 Performance Benchmarks
 
-| Component | Latency | Throughput | GPU Usage |
-|-----------|---------|------------|-----------|
-| **Audio Detection** | <100ms | 30 fps | N/A |
-| **Video Detection** | <50ms | 25 fps | 60% |
-| **Homework Generation** | 2-5s | 10 req/min | N/A |
-| **Performance Prediction** | <200ms | 100 req/min | N/A |
+| Component                  | Latency | Throughput  | GPU Usage |
+| -------------------------- | ------- | ----------- | --------- |
+| **Audio Detection**        | <100ms  | 30 fps      | N/A       |
+| **Video Detection**        | <50ms   | 25 fps      | 60%       |
+| **Homework Generation**    | 2-5s    | 10 req/min  | N/A       |
+| **Performance Prediction** | <200ms  | 100 req/min | N/A       |
 
-*Benchmarks on: Intel i7-10700K, 32GB RAM, RTX 3070*
+_Benchmarks on: Intel i7-10700K, 32GB RAM, RTX 3070_
 
 ---
 
 ## 📅 Roadmap
 
 ### Phase 1 - Core Features (Completed)
+
 - ✅ Audio threat detection
 - ✅ Video threat detection
 - ✅ Homework management
@@ -924,12 +958,14 @@ php artisan migrate:fresh --seed
 - ✅ Dashboard integration
 
 ### Phase 2 - Enhancements (In Progress)
+
 - 🔄 Mobile application
 - 🔄 Advanced analytics dashboard
 - 🔄 Parent portal
 - 🔄 Integration with existing school systems
 
 ### Phase 3 - Advanced Features (Planned)
+
 - 📋 Face recognition for attendance
 - 📋 Emotion detection
 - 📋 Predictive maintenance for equipment
@@ -946,9 +982,11 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 👥 Team & Support
 
 ### Project Maintainers
+
 - Primary Contact: [Your Contact Information]
 
 ### Support Channels
+
 - 📧 Email: support@schoolsafety.ai
 - 💬 Discord: [Community Server Link]
 - 🐛 Issues: [GitHub Issues](link)
