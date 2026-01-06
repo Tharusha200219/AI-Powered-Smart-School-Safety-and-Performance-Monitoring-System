@@ -141,7 +141,7 @@ The system follows a **microservices architecture** with specialized AI/ML modul
 │  ┌─────────────────────────────────────────────────────────────────────────┐  │
 │  │  Video Threat & Object Detection (Flask API)                            │  │
 │  │  • Object detection (YOLOv8)                                            │  │
-│  │  • Action recognition (SlowFast/X3D)                                    │  │
+│  │  • Action recognition (SlowFast)                                    │  │
 │  │  • Object tracking (DeepSORT)                                           │  │
 │  │  • Temporal analysis with configurable thresholds                       │  │
 │  │  Port: 5002                                                             │  │
@@ -286,7 +286,7 @@ Dual-purpose video surveillance system:
 - Immediate alerts to principal/teachers
 - Multi-camera support with zone configuration
 
-**Models**: YOLOv8 (object detection), SlowFast/X3D (action recognition), DeepSORT (tracking)
+**Models**: YOLOv8 (object detection), SlowFast (threa detection), DeepSORT (multi-object tracking)
 
 **API Port**: 5002
 
