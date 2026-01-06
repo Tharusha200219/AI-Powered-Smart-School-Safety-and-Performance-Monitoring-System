@@ -118,7 +118,10 @@ class PerformancePredictionService
             ->count();
 
         if ($totalDays === 0) {
-            return 85.0; // Default attendance if no records
+            // Generate random attendance between 0% and 100% when no records exist
+            // Use student ID as seed for consistent but varied results
+            srand($student->student_id);
+            return round(mt_rand(0, 100) + mt_rand(0, 99) / 100, 2);
         }
 
         return round(($presentDays / $totalDays) * 100, 2);
