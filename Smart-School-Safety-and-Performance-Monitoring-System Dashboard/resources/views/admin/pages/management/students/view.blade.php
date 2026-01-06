@@ -28,29 +28,31 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-4">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h6 class="mb-0 d-flex align-items-center">
-                                                <i class="material-symbols-rounded me-2 icon-size-sm">person</i>
-                                                Student Profile
-                                            </h6>
-                                        </div>
-                                        <div class="card-body text-center">
-                                            <div class="avatar avatar-xl rounded-circle bg-gradient-primary mx-auto mb-3">
-                                                <span
-                                                    class="text-white text-lg">{{ strtoupper(substr($student->first_name, 0, 1) . substr($student->last_name, 0, 1)) }}</span>
+
+                                <div class="col-md-12">
+                                    <div class="col-md-12 mb-4">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h6 class="mb-0 d-flex align-items-center">
+                                                    <i class="material-symbols-rounded me-2 icon-size-sm">person</i>
+                                                    Student Profile
+                                                </h6>
                                             </div>
-                                            <h5 class="mb-1">{{ $student->full_name }}</h5>
-                                            <p class="text-secondary mb-2">{{ $student->student_code }}</p>
-                                            <span
-                                                class="badge {{ $student->is_active ? 'bg-gradient-success' : 'bg-gradient-danger' }} badge-sm">
-                                                {{ $student->is_active ? 'Active' : 'Inactive' }}
-                                            </span>
+                                            <div class="card-body text-center">
+                                                <div
+                                                    class="avatar avatar-xl rounded-circle bg-gradient-primary mx-auto mb-3">
+                                                    <span
+                                                        class="text-white text-lg">{{ strtoupper(substr($student->first_name, 0, 1) . substr($student->last_name, 0, 1)) }}</span>
+                                                </div>
+                                                <h5 class="mb-1">{{ $student->full_name }}</h5>
+                                                <p class="text-secondary mb-2">{{ $student->student_code }}</p>
+                                                <span
+                                                    class="badge {{ $student->is_active ? 'bg-gradient-success' : 'bg-gradient-danger' }} badge-sm">
+                                                    {{ $student->is_active ? 'Active' : 'Inactive' }}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-8">
                                     <div class="card mb-4">
                                         <div class="card-header">
                                             <h6 class="mb-0 d-flex align-items-center">
@@ -266,7 +268,7 @@
                                                     <p class="mb-2">The performance prediction API is not running.
                                                         Predictions cannot be generated.</p>
                                                     <p class="mb-0"><strong>To start the API:</strong></p>
-                                                    <ol class="mb-2 mt-1">
+                                                    {{-- <ol class="mb-2 mt-1">
                                                         <li>Open a new terminal</li>
                                                         <li>Navigate to: <code>student-performance-prediction-model</code>
                                                         </li>
@@ -278,7 +280,7 @@
                                                         <strong>Live Predictions:</strong> Predictions are generated in
                                                         real-time based on current marks and attendance. When you update
                                                         marks, refresh this page to see new predictions instantly.
-                                                    </div>
+                                                    </div> --}}
                                                 </div>
                                             @endif
 
@@ -296,7 +298,7 @@
                                                                         Attendance</th>
                                                                     <th
                                                                         class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                                                        Current</th>
+                                                                        Current Marks</th>
                                                                     <th
                                                                         class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                                                         Predicted</th>
@@ -326,14 +328,14 @@
                                                                                 <span
                                                                                     class="text-xs font-weight-bold">{{ number_format($prediction->current_attendance ?? 0, 0) }}%</span>
                                                                                 @if ($prediction->current_attendance >= 80)
-                                                                                    <i class="material-symbols-rounded text-success ms-1"
-                                                                                        style="font-size: 16px;">check_circle</i>
+                                                                                    {{-- <i class="material-symbols-rounded text-success ms-1"
+                                                                                        style="font-size: 16px;">check_circle</i> --}}
                                                                                 @elseif($prediction->current_attendance >= 60)
-                                                                                    <i class="material-symbols-rounded text-warning ms-1"
-                                                                                        style="font-size: 16px;">warning</i>
+                                                                                    {{-- <i class="material-symbols-rounded text-warning ms-1"
+                                                                                        style="font-size: 16px;">warning</i> --}}
                                                                                 @else
-                                                                                    <i class="material-symbols-rounded text-danger ms-1"
-                                                                                        style="font-size: 16px;">cancel</i>
+                                                                                    {{-- <i class="material-symbols-rounded text-danger ms-1"
+                                                                                        style="font-size: 16px;">cancel</i> --}}
                                                                                 @endif
                                                                             </div>
                                                                         </td>
@@ -412,7 +414,7 @@
                                                         </div>
                                                     @endif
 
-                                                    <div class="mt-3">
+                                                    {{-- <div class="mt-3">
                                                         <small class="text-muted">
                                                             <i class="material-symbols-rounded"
                                                                 style="font-size: 14px;">info</i>
@@ -421,7 +423,7 @@
                                                             Last updated:
                                                             {{ $predictions->first()->predicted_at->format('M d, Y H:i') }}
                                                         </small>
-                                                    </div>
+                                                    </div> --}}
                                                 @else
                                                     <div class="alert alert-light text-center mb-0">
                                                         <i class="material-symbols-rounded opacity-10"

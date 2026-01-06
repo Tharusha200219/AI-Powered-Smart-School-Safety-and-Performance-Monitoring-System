@@ -15,22 +15,22 @@
                     <div class="card my-4">
                         <div class="card-header">
                             <div class="row">
-                                <div class="col-6 d-flex align-items-center">
+                                <div class="col-6 d-flex align-items-center d-flex align-content-center">
                                     <a href="{{ route('admin.seating-arrangement.index') }}"
-                                        class="btn btn-sm btn-secondary me-2">
+                                        class="btn btn-sm btn-secondary m-0 me-3">
                                         <i class="material-symbols-rounded" style="font-size: 18px;">arrow_back</i>
                                     </a>
-                                    <h6 class="mb-0">
+                                    <h6 class="mb-0 d-flex align-content-center align-items-center">
                                         <i class="material-symbols-rounded me-2">event_seat</i>
                                         Seating Arrangement Details
                                     </h6>
                                 </div>
                                 <div class="col-6 text-end">
-                                    @if ($arrangement->is_active)
+                                    {{-- @if ($arrangement->is_active)
                                         <span class="badge bg-gradient-success">Active</span>
                                     @else
                                         <span class="badge bg-gradient-secondary">Inactive</span>
-                                    @endif
+                                    @endif --}}
 
                                     {{-- Delete Button --}}
                                     <form action="{{ route('admin.seating-arrangement.destroy', $arrangement->id) }}"
@@ -38,7 +38,7 @@
                                         onsubmit="return confirm('Are you sure you want to delete this seating arrangement? This action cannot be undone.');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger">
+                                        <button type="submit" class="btn btn-sm btn-danger m-0">
                                             <i class="material-symbols-rounded" style="font-size: 18px;">delete</i>
                                             Delete
                                         </button>
@@ -177,7 +177,7 @@
                                                 <div class="seat-card {{ $assignment ? 'occupied' : 'empty' }}"
                                                     style="width: 120px;">
                                                     @if ($assignment)
-                                                        <div class="card bg-gradient-primary text-white">
+                                                        <div class="card bg-gradient-primary text-white" style="min-height: 110px;">
                                                             <div class="card-body p-2 text-center">
                                                                 <i class="material-symbols-rounded"
                                                                     style="font-size: 20px;">person</i>

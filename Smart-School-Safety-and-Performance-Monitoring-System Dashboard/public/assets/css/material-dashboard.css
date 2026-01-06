@@ -4591,6 +4591,12 @@ fieldset:disabled .btn {
   border-radius: var(--bs-dropdown-item-border-radius, 0);
 }
 
+.dropdown-item{
+    display: flex !important;
+    align-items: center !important;
+
+}
+
 .dropdown-item:hover,
 .dropdown-item:focus {
   color: var(--bs-dropdown-link-hover-color);
