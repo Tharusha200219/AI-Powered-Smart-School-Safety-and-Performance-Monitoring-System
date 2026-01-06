@@ -883,32 +883,6 @@ cd "Smart-School-Safety-and-Performance-Monitoring-System Dashboard"
 php artisan test
 ```
 
----
-
-## 🤝 Contributing
-
-We welcome contributions! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-### Development Guidelines
-
-- Follow PEP 8 for Python code
-- Use PSR-12 for PHP code
-- Write unit tests for new features
-- Update documentation
-- Maintain backward compatibility
-
----
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
 #### Port Already in Use
 
 ```bash
@@ -970,21 +944,6 @@ _Benchmarks on: Intel i7-10700K, 32GB RAM, RTX 3070_
 - ✅ Homework management
 - ✅ Performance prediction
 - ✅ Dashboard integration
-
-### Phase 2 - Enhancements (In Progress)
-
-- 🔄 Mobile application
-- 🔄 Advanced analytics dashboard
-- 🔄 Parent portal
-- 🔄 Integration with existing school systems
-
-### Phase 3 - Advanced Features (Planned)
-
-- 📋 Face recognition for attendance
-- 📋 Emotion detection
-- 📋 Predictive maintenance for equipment
-- 📋 AI-powered tutoring system
-
 
 
 ## 🙏 Acknowledgments
