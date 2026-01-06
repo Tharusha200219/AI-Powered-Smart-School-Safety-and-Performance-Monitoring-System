@@ -4,7 +4,7 @@
 
 This component introduces an intelligent system that automates the generation, delivery, and evaluation of student homework using Natural Language Processing (NLP) and Small Language Models (SLMs). The system reduces teacher workload, ensures consistency in homework assignments, and improves student performance monitoring through real-time analytics and reporting.
 
----
+
 
 ## 🎯 Key Objectives
 
