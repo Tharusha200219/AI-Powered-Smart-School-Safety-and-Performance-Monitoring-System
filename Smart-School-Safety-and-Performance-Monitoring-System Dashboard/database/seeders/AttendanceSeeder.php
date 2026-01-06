@@ -50,15 +50,19 @@ class AttendanceSeeder extends Seeder
             // Random attendance pattern (85% present, 5% late, 5% absent, 5% excused)
             $rand = rand(1, 100);
 
+
             if ($rand <= 85) {
+                // 30
                 $status = 'present';
                 $checkInTime = $this->getRandomCheckInTime('07:30:00', '08:00:00');
                 $checkOutTime = $this->getRandomCheckOutTime('14:00:00', '15:00:00');
             } elseif ($rand <= 90) {
+                // 40
                 $status = 'late';
                 $checkInTime = $this->getRandomCheckInTime('08:01:00', '09:00:00');
                 $checkOutTime = $this->getRandomCheckOutTime('14:00:00', '15:00:00');
             } elseif ($rand <= 95) {
+                // 75
                 $status = 'absent';
                 $checkInTime = null;
                 $checkOutTime = null;
