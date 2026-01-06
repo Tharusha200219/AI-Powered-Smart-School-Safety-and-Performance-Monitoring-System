@@ -794,13 +794,19 @@ Response:
 
 ### IoT Hardware
 
-| Item                                         | Price(LKR)|       
-| -------------------------------------------- | --------- | 
-| **ESP32 OV2640 Camera and Development bord** | 2,880.00  | 
-| **2 SD Card 64GB and MicroSD Card Module**   | 3140.00   | 
-| **Arduino UNO R3 and UNO+WiFi R3**           | 4,110.00  | 
-| **RFID Card Reader/Writer RC522 x 2**        | 800.00    | 
+| Item                                                                                      |Price(LKR) |       
+| ------------------------------------------------------------------------------------------|-----------| 
+| **ESP32 OV2640 Camera and Development bord**                                              | 2,880.00  | 
+| **2 SD Card 64GB and MicroSD Card Module**                                                | 3,140.00  | 
+| **Arduino UNO R3 and UNO+WiFi R3**                                                        | 4,110.00  | 
+| **RFID Card Reader/Writer RC522 x 2**                                                     | 800.00    | 
+| **LCD1602 I2C Display Module Blue Green Screen 5V PCF8574 IIC Adapter Llate for Arduino** | 700.00    | 
+| **10pcs 5mm Diffused RGB Common Anode LED Bulb and RTC Real Time Clock Module**           | 396.00    | 
+| **RFID Wristband**                                                                        | 365.00    | 
+| ------------------------------------------------------------------------------------------|-----------|
+| Total                                                                                     | 12,391.00 |
 
+**One-time hardware setup cost per unit**: 12,391.00
 
 #### ESP32-CAM Specifications
 
@@ -808,7 +814,7 @@ Response:
 - **Camera**: OV2640 (2MP)
 - **WiFi**: 802.11 b/g/n
 - **Memory**: 520KB SRAM + 4MB PSRAM
-  
+- **Estimated cost camera setup**: 5000LKR 
 
 #### Deployment Recommendations
 
