@@ -29159,3 +29159,6 @@ pre[class*=language-] {
 }
 
 /*# sourceMappingURL=dashboard-free.css.map */
+.dropdown-toggle::after {
+    display: none !important;
+}

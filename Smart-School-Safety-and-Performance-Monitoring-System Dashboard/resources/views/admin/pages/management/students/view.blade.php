@@ -267,7 +267,7 @@
                                                     <strong>⚠️ API Not Connected</strong>
                                                     <p class="mb-2">The performance prediction API is not running.
                                                         Predictions cannot be generated.</p>
-                                                    <p class="mb-0"><strong>To start the API:</strong></p>
+                                                    {{-- <p class="mb-0"><strong>To start the API:</strong></p> --}}
                                                     {{-- <ol class="mb-2 mt-1">
                                                         <li>Open a new terminal</li>
                                                         <li>Navigate to: <code>student-performance-prediction-model</code>
@@ -402,8 +402,8 @@
                                                                                     </h6>
                                                                                 </div>
                                                                                 <p class="text-xs text-muted mb-0">
-                                                                                    <i class="material-symbols-rounded"
-                                                                                        style="font-size: 14px;">lightbulb</i>
+                                                                                    {{-- <i class="material-symbols-rounded"
+                                                                                        style="font-size: 14px;">lightbulb</i> --}}
                                                                                     {{ $prediction->recommendations }}
                                                                                 </p>
                                                                             </div>
