@@ -303,9 +303,9 @@
                                                                     <th
                                                                         class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                                                         Trend</th>
-                                                                    <th
+                                                                    {{-- <th
                                                                         class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                                                        Confidence</th>
+                                                                        Confidence</th> --}}
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -355,7 +355,7 @@
                                                                                 {{ ucfirst($prediction->prediction_trend) }}
                                                                             </span>
                                                                         </td>
-                                                                        <td>
+                                                                        {{-- <td>
                                                                             <div class="progress-wrapper w-75 mx-auto">
                                                                                 <div class="progress-info">
                                                                                     <div class="progress-percentage">
@@ -369,7 +369,7 @@
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                        </td>
+                                                                        </td> --}}
                                                                     </tr>
                                                                 @endforeach
                                                             </tbody>
