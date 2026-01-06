@@ -17,3 +17,11 @@
     border: 1px solid rgba(255, 255, 255, 0.54);
     color: white;
 }
+
+
+.dropdown-item{
+    display: flex !important;
+    align-items: center !important;
+}
+
+

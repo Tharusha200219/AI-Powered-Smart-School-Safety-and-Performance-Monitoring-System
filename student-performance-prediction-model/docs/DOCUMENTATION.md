@@ -12,6 +12,13 @@ This is a **Machine Learning-based prediction system** that predicts student aca
 
 ---
 
+<!-- jupyter notebook -->
+
+  cd student-performance-prediction-model
+  source venv/bin/activate
+  jupyter notebook
+
+
 ## 🛠️ Technology Stack
 
 ### Programming Language

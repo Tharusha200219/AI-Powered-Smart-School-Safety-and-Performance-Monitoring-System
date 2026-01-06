@@ -34,7 +34,7 @@ class MarkSeeder extends Seeder
                 foreach ($terms as $term) {
                     // Generate random marks (between 40-100)
                     $totalMarks = 100;
-                    $obtainedMarks = rand(40, 100);
+                    $obtainedMarks = rand(10, 100);
 
                     // Create mark entry
                     Mark::create([
