@@ -804,9 +804,9 @@ Response:
 | **10pcs 5mm Diffused RGB Common Anode LED Bulb and RTC Real Time Clock Module**           | 396.00    | 
 | **RFID Wristband**                                                                        | 365.00    | 
 | ------------------------------------------------------------------------------------------|-----------|
-| Total                                                                                     | 12,391.00 |
+| Total                                                                                     | 12,026.00 |
 
-**One-time hardware setup cost per unit**: 12,391.00
+**One-time hardware setup cost per unit without wristband and Hostinger**: 12,026.00
 
 #### ESP32-CAM Specifications
 
