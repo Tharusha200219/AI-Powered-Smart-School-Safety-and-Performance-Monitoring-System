@@ -1,0 +1,25 @@
+{
+  "evaluation_date": "2026-01-06 16:05:18",
+  "model_type": "Linear Regression",
+  "dataset_size": 5000,
+  "test_size": 1000,
+  "metrics": {
+    "mae": 8.230962384477815,
+    "mse": 93.22620451646874,
+    "rmse": 9.65537179586932,
+    "r2_score": -0.0013944311711995283,
+    "adjusted_r2": -0.006431626499022514,
+    "mape": 10.763999264151701,
+    "accuracy_within_5": 24.9,
+    "accuracy_within_10": 65.9,
+    "accuracy_within_15": 89.4,
+    "total_predictions": 1000
+  },
+  "performance_assessment": "NEEDS IMPROVEMENT",
+  "recommendations": [
+    "Add more predictive features (homework completion, study hours, etc.)",
+    "Try advanced algorithms (Random Forest, XGBoost)",
+    "Improve data quality and quantity",
+    "Feature engineering and selection"
+  ]
+}

@@ -110,13 +110,13 @@ class StudentPerformancePredictor:
             current_marks = subjects[i].get('marks', 0)
             attendance = subjects[i].get('attendance', 0)
             
-            # Determine trend
-            if predicted_performance > current_marks + 5:
+            # Determine trend based on current performance quality
+            if current_marks >= 80:
                 trend = "improving"
-            elif predicted_performance < current_marks - 5:
-                trend = "declining"
-            else:
+            elif current_marks >= 60:
                 trend = "stable"
+            else:
+                trend = "declining"
             
             # Calculate confidence based on attendance
             confidence = min(0.95, 0.5 + (attendance / 200))

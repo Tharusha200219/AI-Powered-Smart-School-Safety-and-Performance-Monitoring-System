@@ -178,15 +178,15 @@ The system follows a **microservices architecture** with specialized AI/ML modul
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │                           HARDWARE LAYER (IoT)                                  │
 │                                                                                 │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
-│  │  ESP32-CAM   │  │  ESP32-CAM   │  │  ESP32-CAM   │  │  ESP32-CAM   │      │
-│  │  Classroom   │  │  Hallway     │  │  Playground  │  │  Library     │      │
-│  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘      │
+│                      ┌──────────────┐  ┌──────────────┐                         │
+│                      │  ESP32-CAM   │  │  ESP32-CAM   │                         │
+│                      │  Classroom   │  │  Library     │                         │
+│                      └──────────────┘  └──────────────┘                         │
 │                                                                                 │
-│  ┌──────────────────────────────────────────────────────────────────────────┐ │
-│  │                    Microphones (Web Audio API)                           │ │
-│  │         Browser-based audio capture in monitored areas                   │ │
-│  └──────────────────────────────────────────────────────────────────────────┘ │
+│  ┌──────────────────────────────────────────────────────────────────────────┐   │
+│  │                    Microphones (Web Audio API)                           │   │
+│  │         Browser-based audio capture in monitored areas                   │   │
+│  └──────────────────────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────────────────────┘
                                       │
                                       ▼
@@ -800,7 +800,7 @@ Response:
 - **Camera**: OV2640 (2MP)
 - **WiFi**: 802.11 b/g/n
 - **Memory**: 520KB SRAM + 4MB PSRAM
-- **Cost**: ~$10 per unit
+- **Cost**: 5000LKR per unit
 
 #### Deployment Recommendations
 
@@ -809,7 +809,7 @@ Response:
 - 1 camera for main entrance
 - 1 camera for playground (optional)
 
-**Estimated cost for 20-camera setup**: ~$200
+**Estimated cost for 20-camera setup**: 100000LKR
 
 ---
 
@@ -971,28 +971,7 @@ _Benchmarks on: Intel i7-10700K, 32GB RAM, RTX 3070_
 - 📋 Predictive maintenance for equipment
 - 📋 AI-powered tutoring system
 
----
 
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
----
-
-## 👥 Team & Support
-
-### Project Maintainers
-
-- Primary Contact: [Your Contact Information]
-
-### Support Channels
-
-- 📧 Email: support@schoolsafety.ai
-- 💬 Discord: [Community Server Link]
-- 🐛 Issues: [GitHub Issues](link)
-- 📖 Wiki: [Project Wiki](link)
-
----
 
 ## 🙏 Acknowledgments
 
@@ -1002,17 +981,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - **Transformers** - Hugging Face
 - **OpenCV** - Open Source Computer Vision Library
 
----
 
-## 📞 Contact
-
-For inquiries, support, or collaboration opportunities:
-
-- **Project Website**: [www.schoolsafety.ai](http://www.schoolsafety.ai)
-- **Email**: info@schoolsafety.ai
-- **GitHub**: [Project Repository](link)
-
----
 
 <div align="center">
 

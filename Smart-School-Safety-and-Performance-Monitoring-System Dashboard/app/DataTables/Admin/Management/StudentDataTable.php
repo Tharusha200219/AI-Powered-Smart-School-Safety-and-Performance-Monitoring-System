@@ -162,15 +162,15 @@ class StudentDataTable extends DataTable
     protected function getColumns(): array
     {
         $columns = [
-            Column::make('student_id')->title(__('common.id'))->addClass('text-start align-middle text-xs'),
-            Column::make('student_code')->title(__('common.code'))->addClass('align-middle text-xs')->searchable(true),
-            Column::make('name')->title(__('common.name'))->addClass('align-middle text-xs')->searchable(true),
+            Column::make('student_id')->title(__('common.id'))->addClass('text-center align-middle text-xs'),
+            Column::make('student_code')->title(__('common.code'))->addClass('text-center align-middle text-xs')->searchable(true),
+            Column::make('name')->title(__('common.name'))->addClass('text-center align-middle text-xs')->searchable(true),
             Column::make('grade_level')->title(__('common.grade'))->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
             Column::make('class')->title(__('common.class'))->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
-            Column::make('email')->title(__('common.email'))->addClass('text-start align-middle text-xs')->searchable(true),
-            Column::make('parents')->title(__('common.parents'))->addClass('text-start align-middle text-xs')->searchable(false)->orderable(false),
+            Column::make('email')->title(__('common.email'))->addClass('text-center align-middle text-xs')->searchable(true),
+            Column::make('parents')->title(__('common.parents'))->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
             Column::make('status')->title(__('common.status'))->searchable(false)->orderable(false)->addClass('text-center align-middle text-xs'),
-            Column::make('modified')->title(__('common.modified'))->addClass('text-start align-middle text-xs')->searchable(false),
+            Column::make('modified')->title(__('common.modified'))->addClass('text-center align-middle text-xs')->searchable(false),
         ];
 
         if (
@@ -179,7 +179,7 @@ class StudentDataTable extends DataTable
             checkPermission('admin.management.students.edit') ||
             checkPermission('admin.management.students.delete')
         ) {
-            $columns[] = Column::computed('action')->title(__('common.actions'))->addClass('text-start align-middle text-xs')->exportable(false)->printable(false)->orderable(false)->searchable(false);
+            $columns[] = Column::computed('action')->title(__('actions'))->addClass('text-center align-middle text-xs')->exportable(false)->printable(false)->orderable(false)->searchable(false);
         }
 
         return $columns;
