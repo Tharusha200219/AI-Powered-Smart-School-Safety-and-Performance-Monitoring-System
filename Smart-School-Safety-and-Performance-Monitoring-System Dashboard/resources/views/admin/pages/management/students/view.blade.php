@@ -249,9 +249,9 @@
                                                 <i class="material-symbols-rounded me-2 icon-size-sm">trending_up</i>
                                                 Performance Predictions
                                                 @if (isset($predictionApiStatus) && $predictionApiStatus && isset($predictions) && $predictions->count() > 0)
-                                                    <span class="badge bg-gradient-success badge-sm ms-2">🔴 Live</span>
+                                                    <span class="badge bg-gradient-success badge-sm ms-2">Live</span>
                                                 @else
-                                                    <span class="badge bg-gradient-danger badge-sm ms-2">⚠️ API Not
+                                                    <span class="badge bg-gradient-danger badge-sm ms-2"> API Not
                                                         Connected</span>
                                                 @endif
                                             </h6>
