@@ -129,10 +129,21 @@ class AttendanceDataTable extends DataTable
 
     public function query(Attendance $model): QueryBuilder
     {
-        return $model->with(['student.schoolClass'])
+        $query = $model->with(['student.schoolClass'])
             ->select('attendance.*')
             ->orderBy('attendance_date', 'desc')
             ->orderBy('check_in_time', 'desc');
+
+        // Apply filters
+        if ($this->request()->has('student_filter') && $this->request()->get('student_filter')) {
+            $query->where('student_id', $this->request()->get('student_filter'));
+        }
+
+        if ($this->request()->has('status_filter') && $this->request()->get('status_filter')) {
+            $query->where('status', $this->request()->get('status_filter'));
+        }
+
+        return $query;
     }
 
     public function html(): HtmlBuilder

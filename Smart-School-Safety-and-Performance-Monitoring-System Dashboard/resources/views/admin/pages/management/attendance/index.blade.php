@@ -36,6 +36,43 @@
                             </div>
                         </div>
                         <div class="card-body">
+                            <!-- Filters -->
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="student_filter" class="form-label ">Filter by Student</label>
+                                    <select id="student_filter" class="form-select p-2" name="student_filter">
+                                        <option value="">All Students</option>
+                                        @foreach (\App\Models\Student::active()->orderBy('first_name')->get() as $student)
+                                            <option value="{{ $student->student_id }}"
+                                                {{ request('student_filter') == $student->student_id ? 'selected' : '' }}>
+                                                {{ $student->full_name }} ({{ $student->student_code }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="status_filter" class="form-label">Filter by Status</label>
+                                    <select id="status_filter" class="form-select p-2" name="status_filter">
+                                        <option value="">All Status</option>
+                                        <option value="present"
+                                            {{ request('status_filter') == 'present' ? 'selected' : '' }}>Present</option>
+                                        <option value="absent" {{ request('status_filter') == 'absent' ? 'selected' : '' }}>
+                                            Absent</option>
+                                        <option value="late" {{ request('status_filter') == 'late' ? 'selected' : '' }}>
+                                            Late</option>
+                                        <option value="excused"
+                                            {{ request('status_filter') == 'excused' ? 'selected' : '' }}>Excused</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 d-flex align-items-end">
+                                    <button type="button" id="apply_filters" class="btn btn-primary me-2 mb-0">
+                                        <i class="material-symbols-rounded text-sm me-1">filter_list</i>Apply Filters
+                                    </button>
+                                    <button type="button" id="clear_filters" class="btn btn-outline-secondary mb-0">
+                                        <i class="material-symbols-rounded text-sm me-1">clear</i>Clear
+                                    </button>
+                                </div>
+                            </div>
                             <div class="custom-table-responsive">
                                 {{ $dataTable->table() }}
                             </div>

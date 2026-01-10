@@ -109,7 +109,18 @@ class MarkDataTable extends DataTable
 
     public function query(Mark $model): QueryBuilder
     {
-        return $model->with(['student', 'subject'])->select('marks.*');
+        $query = $model->with(['student', 'subject'])->select('marks.*');
+
+        // Apply filters
+        if ($this->request()->has('student_filter') && $this->request()->get('student_filter')) {
+            $query->where('student_id', $this->request()->get('student_filter'));
+        }
+
+        if ($this->request()->has('subject_filter') && $this->request()->get('subject_filter')) {
+            $query->where('subject_id', $this->request()->get('subject_filter'));
+        }
+
+        return $query;
     }
 
     public function html(): HtmlBuilder
@@ -124,7 +135,8 @@ class MarkDataTable extends DataTable
                 'autoWidth' => false,
                 'responsive' => true,
                 'rowCallback' => 'function(row, data, index) { if (index % 2 === 0) { $(row).css("background-color", "rgba(0, 0, 0, 0.02)"); } }',
-            ]);
+            ])
+            ->addTableClass('table table-striped table-hover');
     }
 
     protected function getColumns(): array
