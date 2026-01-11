@@ -4,6 +4,134 @@
 
 @section('css')
     @vite(['resources/css/admin/forms.css', 'resources/css/admin/common-forms.css', 'resources/css/components/utilities.css'])
+    <style>
+        /* Face Capture Styles */
+        .face-capture-container {
+            position: relative;
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .face-capture-video {
+            width: 100%;
+            height: 360px;
+            border-radius: 12px;
+            background: #1a1a2e;
+            object-fit: cover;
+            transform: scaleX(-1);
+            /* Mirror the camera */
+        }
+
+        .face-capture-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 250px;
+            border: 3px dashed rgba(76, 175, 80, 0.8);
+            border-radius: 50% 50% 45% 45%;
+            pointer-events: none;
+        }
+
+        .face-capture-overlay.detecting {
+            border-color: #4CAF50;
+            animation: pulse-border 1.5s infinite;
+        }
+
+        .face-capture-overlay.no-face {
+            border-color: #f44336;
+        }
+
+        @keyframes pulse-border {
+
+            0%,
+            100% {
+                opacity: 0.6;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.02);
+            }
+        }
+
+        .face-thumbnails {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            max-height: 150px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .face-thumbnail {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 2px solid #4CAF50;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .face-thumbnail:hover {
+            transform: scale(1.1);
+        }
+
+        .face-progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: #e0e0e0;
+            overflow: hidden;
+        }
+
+        .face-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            transition: width 0.3s ease;
+        }
+
+        .face-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .face-status-ready {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .face-status-capturing {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .face-status-complete {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .face-status-error {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .capture-count {
+            font-size: 28px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -76,15 +204,6 @@
                                                     </div>
                                                     <small class="text-muted" style="margin-left: 8px">Click the edit icon
                                                         to upload a photo</small>
-                                                    
-                                                    <!-- Face Recognition Capture Button -->
-                                                    <button type="button" class="btn btn-primary btn-sm mt-3 w-100" id="faceCaptureBtn">
-                                                        <i class="fas fa-camera me-1"></i>
-                                                        Capture Face for Recognition
-                                                    </button>
-                                                    <small class="text-muted d-block mt-1">
-                                                        <i class="fas fa-info-circle me-1"></i>Captures 5 angles for better accuracy
-                                                    </small>
                                                 </div>
                                             </div>
                                             <div class="col-md-9">
@@ -168,6 +287,107 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+
+                                <!-- Face Recognition Training (Capture 20+ Images) -->
+                                <div class="card mb-4 shadow-sm">
+                                    <div class="card-header bg-gradient-dark">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0 d-flex align-items-center text-white">
+                                                <i class="material-symbols-rounded me-2 icon-size-sm">face</i>
+                                                Face Recognition Training
+                                            </h6>
+                                            <span id="faceStatusBadge" class="face-status-badge face-status-ready">
+                                                <i class="material-symbols-rounded"
+                                                    style="font-size: 16px;">camera_front</i>
+                                                <span id="faceStatusText">Ready to Capture</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="face-capture-container">
+                                                    <video id="faceCaptureVideo" class="face-capture-video" autoplay muted
+                                                        playsinline></video>
+                                                    <div id="faceOverlay" class="face-capture-overlay"></div>
+                                                </div>
+                                                <div class="mt-3 d-flex justify-content-center gap-2">
+                                                    <button type="button" id="startFaceCaptureBtn"
+                                                        class="btn btn-success">
+                                                        <i class="material-symbols-rounded me-1">videocam</i>
+                                                        Start Camera
+                                                    </button>
+                                                    <button type="button" id="stopFaceCaptureBtn" class="btn btn-danger"
+                                                        disabled>
+                                                        <i class="material-symbols-rounded me-1">videocam_off</i>
+                                                        Stop Camera
+                                                    </button>
+                                                    <button type="button" id="autoCaptureFaceBtn"
+                                                        class="btn btn-primary" disabled>
+                                                        <i class="material-symbols-rounded me-1">auto_awesome</i>
+                                                        Auto Capture (30)
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="d-flex flex-column h-100">
+                                                    <div class="mb-3">
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center mb-2">
+                                                            <span class="text-muted">Captured Images</span>
+                                                            <span><span id="captureCount" class="capture-count">0</span> /
+                                                                30</span>
+                                                        </div>
+                                                        <div class="face-progress-bar">
+                                                            <div id="faceProgressFill" class="face-progress-fill"
+                                                                style="width: 0%"></div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="alert alert-info py-2 mb-3" style="font-size: 13px;">
+                                                        <i class="material-symbols-rounded me-1"
+                                                            style="font-size: 16px; vertical-align: middle;">info</i>
+                                                        <strong>Tips for better accuracy:</strong>
+                                                        <ul class="mb-0 mt-1 ps-3">
+                                                            <li>Look straight at the camera</li>
+                                                            <li>Turn your head slightly left and right</li>
+                                                            <li>Ensure good lighting</li>
+                                                            <li>Remove glasses if possible</li>
+                                                        </ul>
+                                                    </div>
+
+                                                    <label class="form-label fw-bold">Captured Face Images</label>
+                                                    <div id="faceThumbnails" class="face-thumbnails flex-grow-1">
+                                                        <div class="text-muted text-center w-100 py-4">
+                                                            <i class="material-symbols-rounded"
+                                                                style="font-size: 32px;">add_a_photo</i>
+                                                            <p class="mb-0 mt-2" style="font-size: 12px;">No face images
+                                                                captured yet</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mt-3 d-flex gap-2">
+                                                        <button type="button" id="clearFaceImagesBtn"
+                                                            class="btn btn-outline-danger btn-sm" disabled>
+                                                            <i class="material-symbols-rounded me-1">delete</i>
+                                                            Clear All
+                                                        </button>
+                                                        <button type="button" id="trainFaceModelBtn"
+                                                            class="btn btn-warning btn-sm" disabled>
+                                                            <i class="material-symbols-rounded me-1">model_training</i>
+                                                            Train Model Now
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Hidden input to store face data status -->
+                                        <input type="hidden" name="face_images_captured" id="faceImagesCaptured"
+                                            value="0">
+                                        <input type="hidden" name="face_data_json" id="faceDataJson" value="">
                                     </div>
                                 </div>
 
@@ -773,9 +993,6 @@
             </div>
         </div>
     </main>
-    
-    <!-- Include Face Capture Modal -->
-    @include('admin.components.face-capture-modal')
 @endsection
 
 @section('js')
@@ -788,117 +1005,447 @@
         window.selectedSubjects = @json(isset($student) ? $student->subjects->pluck('id')->toArray() : []);
         window.initialClassId = @json(old('class_id', $student?->class_id ?? ''));
         window.allClasses = @json($classesArray);
-        window.faceRecognitionApiUrl = '{{ env('FACE_RECOGNITION_API_URL', 'http://localhost:5001') }}';
+        window.faceRecognitionApiUrl = '{{ env('FACE_RECOGNITION_API_URL', 'http://localhost:5004') }}';
+        window.studentId = {{ $id ?? 'null' }};
         window.studentCode = '{{ $student->student_code ?? '' }}';
-        
-        // Face Capture Handler
-        let capturedFaceImages = [];
-        
-        document.getElementById('faceCaptureBtn').addEventListener('click', function() {
-            window.faceCapture.open();
-        });
-        
-        // Listen for captured faces
-        window.addEventListener('facesCaptured', async function(event) {
-            capturedFaceImages = event.detail.images;
-            console.log(`Captured ${capturedFaceImages.length} face images`);
-            
-            // Show success message
-            const alert = document.createElement('div');
-            alert.className = 'alert alert-success alert-dismissible fade show';
-            alert.innerHTML = `
-                <i class="fas fa-check-circle me-2"></i>
-                <strong>Success!</strong> Captured ${capturedFaceImages.length} face angles.
-                Save the student to register for face recognition.
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            document.querySelector('.card-body').prepend(alert);
-            
-            setTimeout(() => alert.remove(), 5000);
-        });
-        
-        // Modified form submission to upload face images
-        const originalFormSubmit = document.getElementById('studentForm').onsubmit;
-        document.getElementById('studentForm').addEventListener('submit', async function(e) {
-            if (capturedFaceImages.length > 0) {
-                e.preventDefault();
-                
-                // Get student code (for edit mode or after generation)
-                let studentCode = window.studentCode || document.querySelector('input[name="student_code"]').value;
-                
-                if (!studentCode || studentCode === '') {
-                    alert('Please ensure student code is generated before capturing face images.');
+    </script>
+
+    <!-- Face Capture JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Face Capture Elements
+            const faceCaptureVideo = document.getElementById('faceCaptureVideo');
+            const faceOverlay = document.getElementById('faceOverlay');
+            const startFaceCaptureBtn = document.getElementById('startFaceCaptureBtn');
+            const stopFaceCaptureBtn = document.getElementById('stopFaceCaptureBtn');
+            const autoCaptureFaceBtn = document.getElementById('autoCaptureFaceBtn');
+            const clearFaceImagesBtn = document.getElementById('clearFaceImagesBtn');
+            const trainFaceModelBtn = document.getElementById('trainFaceModelBtn');
+            const captureCountEl = document.getElementById('captureCount');
+            const faceProgressFill = document.getElementById('faceProgressFill');
+            const faceThumbnails = document.getElementById('faceThumbnails');
+            const faceStatusBadge = document.getElementById('faceStatusBadge');
+            const faceStatusText = document.getElementById('faceStatusText');
+            const faceImagesCapturedInput = document.getElementById('faceImagesCaptured');
+            const faceDataJsonInput = document.getElementById('faceDataJson');
+
+            let faceStream = null;
+            let capturedFaceImages = [];
+            let autoCaptureInterval = null;
+            let isAutoCapturing = false;
+            const MAX_FACE_IMAGES = 40;
+            const MIN_FACE_IMAGES = 30;
+
+            // Update face capture status
+            function updateFaceStatus(status, text) {
+                faceStatusBadge.className = 'face-status-badge face-status-' + status;
+                faceStatusText.textContent = text;
+            }
+
+            // Update capture count display
+            function updateCaptureCount() {
+                const count = capturedFaceImages.length;
+                captureCountEl.textContent = count;
+                faceProgressFill.style.width = Math.min((count / MIN_FACE_IMAGES) * 100, 100) + '%';
+                faceImagesCapturedInput.value = count;
+
+                // Update button states
+                clearFaceImagesBtn.disabled = count === 0;
+                trainFaceModelBtn.disabled = count < MIN_FACE_IMAGES;
+
+                if (count >= MIN_FACE_IMAGES) {
+                    updateFaceStatus('complete', `${count} images captured - Ready to train!`);
+                    faceProgressFill.style.background = 'linear-gradient(90deg, #2196F3, #03A9F4)';
+                }
+            }
+
+            // Add thumbnail to gallery
+            function addFaceThumbnail(imageData, index) {
+                // Clear placeholder if first image
+                if (capturedFaceImages.length === 1) {
+                    faceThumbnails.innerHTML = '';
+                }
+
+                const img = document.createElement('img');
+                img.src = imageData;
+                img.className = 'face-thumbnail';
+                img.title = `Face image ${index + 1}`;
+                img.onclick = function() {
+                    // Remove this image on click
+                    if (confirm('Remove this face image?')) {
+                        capturedFaceImages.splice(index, 1);
+                        renderAllThumbnails();
+                        updateCaptureCount();
+                    }
+                };
+                faceThumbnails.appendChild(img);
+                faceThumbnails.scrollTop = faceThumbnails.scrollHeight;
+            }
+
+            // Render all thumbnails (for refresh after delete)
+            function renderAllThumbnails() {
+                if (capturedFaceImages.length === 0) {
+                    faceThumbnails.innerHTML = `
+                    <div class="text-muted text-center w-100 py-4">
+                        <i class="material-symbols-rounded" style="font-size: 32px;">add_a_photo</i>
+                        <p class="mb-0 mt-2" style="font-size: 12px;">No face images captured yet</p>
+                    </div>`;
                     return;
                 }
-                
-                // Show uploading message
-                const uploadingAlert = document.createElement('div');
-                uploadingAlert.className = 'alert alert-info';
-                uploadingAlert.innerHTML = `
-                    <i class="fas fa-spinner fa-spin me-2"></i>
-                    Uploading face images to recognition system...
-                `;
-                document.querySelector('.card-body').prepend(uploadingAlert);
-                
-                // Upload face images to Face Recognition API
-                let uploadedCount = 0;
-                const studentName = `${document.querySelector('input[name="first_name"]').value} ${document.querySelector('input[name="last_name"]').value}`;
-                
-                for (let i = 0; i < capturedFaceImages.length; i++) {
-                    const formData = new FormData();
-                    formData.append('student_id', studentCode);
-                    formData.append('student_name', studentName);
-                    formData.append('image', capturedFaceImages[i], `face_${i + 1}.jpg`);
-                    
-                    try {
-                        const response = await fetch(`${window.faceRecognitionApiUrl}/students/add`, {
-                            method: 'POST',
-                            body: formData
-                        });
-                        
-                        if (response.ok) {
-                            uploadedCount++;
+
+                faceThumbnails.innerHTML = '';
+                capturedFaceImages.forEach((imgData, index) => {
+                    const img = document.createElement('img');
+                    img.src = imgData;
+                    img.className = 'face-thumbnail';
+                    img.title = `Face image ${index + 1}`;
+                    img.onclick = function() {
+                        if (confirm('Remove this face image?')) {
+                            capturedFaceImages.splice(index, 1);
+                            renderAllThumbnails();
+                            updateCaptureCount();
                         }
-                    } catch (error) {
-                        console.error('Failed to upload face image:', error);
-                    }
-                }
-                
-                uploadingAlert.remove();
-                
-                if (uploadedCount > 0) {
-                    const successAlert = document.createElement('div');
-                    successAlert.className = 'alert alert-success';
-                    successAlert.innerHTML = `
-                        <i class="fas fa-check-circle me-2"></i>
-                        Uploaded ${uploadedCount} face images. Training will start automatically.
-                    `;
-                    document.querySelector('.card-body').prepend(successAlert);
-                    
-                    // Trigger training
-                    setTimeout(async () => {
-                        try {
-                            await fetch(`${window.faceRecognitionApiUrl}/train`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({})
-                            });
-                        } catch (error) {
-                            console.error('Failed to trigger training:', error);
-                        }
-                    }, 1000);
-                    
-                    setTimeout(() => successAlert.remove(), 3000);
-                }
-                
-                // Clear captured images
-                capturedFaceImages = [];
-                
-                // Continue with normal form submission
-                setTimeout(() => {
-                    this.submit();
-                }, 1000);
+                    };
+                    faceThumbnails.appendChild(img);
+                });
             }
+
+            // Start face capture camera
+            startFaceCaptureBtn.addEventListener('click', async function() {
+                try {
+                    faceStream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            width: 640,
+                            height: 480,
+                            facingMode: 'user'
+                        }
+                    });
+                    faceCaptureVideo.srcObject = faceStream;
+
+                    startFaceCaptureBtn.disabled = true;
+                    stopFaceCaptureBtn.disabled = false;
+                    autoCaptureFaceBtn.disabled = false;
+
+                    updateFaceStatus('ready', 'Camera active - Position your face');
+                    faceOverlay.classList.remove('no-face');
+                    faceOverlay.classList.add('detecting');
+
+                } catch (error) {
+                    console.error('Error accessing camera:', error);
+                    updateFaceStatus('error', 'Camera access denied');
+                    alert('Unable to access camera. Please allow camera permissions.');
+                }
+            });
+
+            // Stop face capture camera
+            stopFaceCaptureBtn.addEventListener('click', function() {
+                stopFaceCamera();
+            });
+
+            function stopFaceCamera() {
+                if (faceStream) {
+                    faceStream.getTracks().forEach(track => track.stop());
+                    faceCaptureVideo.srcObject = null;
+                    faceStream = null;
+                }
+
+                stopAutoCapture();
+
+                startFaceCaptureBtn.disabled = false;
+                stopFaceCaptureBtn.disabled = true;
+                autoCaptureFaceBtn.disabled = true;
+
+                if (capturedFaceImages.length >= MIN_FACE_IMAGES) {
+                    updateFaceStatus('complete', `${capturedFaceImages.length} images captured - Ready!`);
+                } else {
+                    updateFaceStatus('ready', 'Camera stopped');
+                }
+                faceOverlay.classList.remove('detecting', 'no-face');
+            }
+
+            // Auto capture faces
+            autoCaptureFaceBtn.addEventListener('click', function() {
+                if (isAutoCapturing) {
+                    stopAutoCapture();
+                } else {
+                    startAutoCapture();
+                }
+            });
+
+            function startAutoCapture() {
+                if (!faceStream) return;
+
+                isAutoCapturing = true;
+                autoCaptureFaceBtn.innerHTML = '<i class="material-symbols-rounded me-1">stop</i> Stop Capture';
+                autoCaptureFaceBtn.classList.remove('btn-primary');
+                autoCaptureFaceBtn.classList.add('btn-warning');
+                updateFaceStatus('capturing', 'Auto-capturing... Move your head slowly');
+
+                // Capture every 500ms
+                autoCaptureInterval = setInterval(async () => {
+                    if (capturedFaceImages.length >= MAX_FACE_IMAGES) {
+                        stopAutoCapture();
+                        updateFaceStatus('complete', 'Maximum images captured!');
+                        return;
+                    }
+
+                    await captureFaceImage();
+                }, 500);
+            }
+
+            function stopAutoCapture() {
+                if (autoCaptureInterval) {
+                    clearInterval(autoCaptureInterval);
+                    autoCaptureInterval = null;
+                }
+                isAutoCapturing = false;
+                autoCaptureFaceBtn.innerHTML =
+                    '<i class="material-symbols-rounded me-1">auto_awesome</i> Auto Capture (30)';
+                autoCaptureFaceBtn.classList.remove('btn-warning');
+                autoCaptureFaceBtn.classList.add('btn-primary');
+
+                if (capturedFaceImages.length >= MIN_FACE_IMAGES) {
+                    updateFaceStatus('complete', `${capturedFaceImages.length} images - Ready to train!`);
+                } else if (faceStream) {
+                    updateFaceStatus('ready',
+                        `${capturedFaceImages.length} images - Need ${MIN_FACE_IMAGES - capturedFaceImages.length} more`
+                        );
+                }
+            }
+
+            // Capture single face image
+            async function captureFaceImage() {
+                if (!faceStream || !faceCaptureVideo.videoWidth) return;
+
+                const canvas = document.createElement('canvas');
+                canvas.width = faceCaptureVideo.videoWidth;
+                canvas.height = faceCaptureVideo.videoHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(faceCaptureVideo, 0, 0);
+
+                const imageData = canvas.toDataURL('image/jpeg', 0.9);
+                capturedFaceImages.push(imageData);
+                addFaceThumbnail(imageData, capturedFaceImages.length - 1);
+                updateCaptureCount();
+
+                // Flash effect
+                faceOverlay.style.borderColor = '#fff';
+                setTimeout(() => {
+                    faceOverlay.style.borderColor = '';
+                }, 100);
+            }
+
+            // Clear all face images
+            clearFaceImagesBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear all captured face images?')) {
+                    capturedFaceImages = [];
+                    renderAllThumbnails();
+                    updateCaptureCount();
+                    updateFaceStatus('ready', 'All images cleared');
+                }
+            });
+
+            // Train face model
+            trainFaceModelBtn.addEventListener('click', async function() {
+                if (capturedFaceImages.length < MIN_FACE_IMAGES) {
+                    alert(`Please capture at least ${MIN_FACE_IMAGES} face images before training.`);
+                    return;
+                }
+
+                const studentNameFirst = document.querySelector('input[name="first_name"]')?.value ||
+                '';
+                const studentNameLast = document.querySelector('input[name="last_name"]')?.value || '';
+                const studentCode = document.querySelector('input[name="student_code"]')?.value || '';
+
+                if (!studentNameFirst || !studentNameLast) {
+                    alert('Please enter student name first.');
+                    return;
+                }
+
+                if (!studentCode) {
+                    alert('Please wait for student code to be generated.');
+                    return;
+                }
+
+                const studentName = `${studentNameFirst} ${studentNameLast}`;
+
+                // Disable buttons during training
+                trainFaceModelBtn.disabled = true;
+                clearFaceImagesBtn.disabled = true;
+
+                // Show training progress
+                const progressContainer = document.createElement('div');
+                progressContainer.id = 'trainingProgressContainer';
+                progressContainer.className = 'mt-3';
+                progressContainer.innerHTML = `
+                <div class="card border-warning">
+                    <div class="card-body py-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="spinner-border spinner-border-sm text-warning me-2" role="status"></div>
+                            <strong id="trainingStepText">Preparing images...</strong>
+                        </div>
+                        <div class="progress" style="height: 20px;">
+                            <div id="trainingProgressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-warning"
+                                 role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                <span id="trainingProgressText">0%</span>
+                            </div>
+                        </div>
+                        <div class="mt-2 small text-muted">
+                            <span id="trainingDetails">Uploading ${capturedFaceImages.length} face images to server...</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+                trainFaceModelBtn.parentNode.appendChild(progressContainer);
+
+                const trainingStepText = document.getElementById('trainingStepText');
+                const trainingProgressBar = document.getElementById('trainingProgressBar');
+                const trainingProgressText = document.getElementById('trainingProgressText');
+                const trainingDetails = document.getElementById('trainingDetails');
+
+                // Update progress function
+                function updateTrainingProgress(percent, step, details) {
+                    trainingProgressBar.style.width = percent + '%';
+                    trainingProgressBar.setAttribute('aria-valuenow', percent);
+                    trainingProgressText.textContent = percent + '%';
+                    if (step) trainingStepText.textContent = step;
+                    if (details) trainingDetails.textContent = details;
+                }
+
+                trainFaceModelBtn.innerHTML =
+                    '<span class="spinner-border spinner-border-sm me-2"></span>Training...';
+                updateFaceStatus('capturing', 'Training in progress...');
+
+                try {
+                    // Step 1: Preparing (0-10%)
+                    updateTrainingProgress(5, 'Preparing images...',
+                        `Processing ${capturedFaceImages.length} captured images`);
+                    await new Promise(r => setTimeout(r, 300));
+
+                    // Step 2: Uploading (10-30%)
+                    updateTrainingProgress(15, 'Uploading to server...',
+                        `Sending ${capturedFaceImages.length} images to Face Recognition API`);
+
+                    // Send face images to Face Recognition API
+                    const response = await fetch(window.faceRecognitionApiUrl +
+                        '/api/students/register', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                student_id: studentCode,
+                                name: studentName,
+                                images: capturedFaceImages
+                            })
+                        });
+
+                    // Step 3: Processing (30-60%)
+                    updateTrainingProgress(40, 'Processing faces...',
+                        'Detecting and extracting face features');
+                    await new Promise(r => setTimeout(r, 500));
+
+                    updateTrainingProgress(60, 'Generating embeddings...',
+                        'Creating face recognition vectors');
+                    await new Promise(r => setTimeout(r, 300));
+
+                    const result = await response.json();
+
+                    // Step 4: Training (60-90%)
+                    updateTrainingProgress(80, 'Training model...',
+                        'Building recognition model for student');
+                    await new Promise(r => setTimeout(r, 400));
+
+                    if (result.success || (response.ok && !result.error)) {
+                        // Step 5: Complete (100%)
+                        updateTrainingProgress(100, 'Training Complete!',
+                            `Successfully trained with ${result.face_count || capturedFaceImages.length} valid faces`
+                            );
+                        trainingProgressBar.classList.remove('bg-warning', 'progress-bar-animated');
+                        trainingProgressBar.classList.add('bg-success');
+
+                        updateFaceStatus('complete', 'Face model trained successfully!');
+                        faceDataJsonInput.value = JSON.stringify({
+                            student_id: studentCode,
+                            images_count: result.face_count || capturedFaceImages.length,
+                            trained: true,
+                            trained_at: new Date().toISOString()
+                        });
+
+                        // Update progress container to success state
+                        setTimeout(() => {
+                            progressContainer.innerHTML = `
+                            <div class="alert alert-success d-flex align-items-center">
+                                <i class="material-symbols-rounded me-2" style="font-size: 32px;">check_circle</i>
+                                <div>
+                                    <strong>Face Recognition Model Trained Successfully!</strong><br>
+                                    <small>Processed ${result.face_count || capturedFaceImages.length} face images.
+                                    ${result.failed_count ? `(${result.failed_count} images failed)` : ''}
+                                    This student can now be recognized for attendance.</small>
+                                </div>
+                            </div>
+                        `;
+                        }, 1000);
+
+                    } else {
+                        throw new Error(result.error || result.message || 'Training failed');
+                    }
+
+                } catch (error) {
+                    console.error('Error training face model:', error);
+
+                    // Show error state
+                    trainingProgressBar.classList.remove('bg-warning', 'progress-bar-animated');
+                    trainingProgressBar.classList.add('bg-danger');
+                    updateTrainingProgress(100, 'Training Failed', error.message);
+
+                    updateFaceStatus('error', 'Training failed - ' + error.message);
+
+                    setTimeout(() => {
+                        progressContainer.innerHTML = `
+                        <div class="alert alert-danger d-flex align-items-center">
+                            <i class="material-symbols-rounded me-2" style="font-size: 32px;">error</i>
+                            <div>
+                                <strong>Training Failed</strong><br>
+                                <small>${error.message}</small>
+                            </div>
+                        </div>
+                    `;
+                    }, 500);
+
+                    clearFaceImagesBtn.disabled = false;
+                } finally {
+                    trainFaceModelBtn.disabled = false;
+                    trainFaceModelBtn.innerHTML =
+                        '<i class="material-symbols-rounded me-1">model_training</i> Train Model Now';
+                }
+            });
+
+            // Update hidden input before form submit
+            const studentForm = document.getElementById('studentForm');
+            if (studentForm) {
+                studentForm.addEventListener('submit', function(e) {
+                    if (capturedFaceImages.length > 0 && capturedFaceImages.length < MIN_FACE_IMAGES) {
+                        if (!confirm(
+                                `You have captured ${capturedFaceImages.length} face images but need at least ${MIN_FACE_IMAGES} for good accuracy. Continue anyway?`
+                                )) {
+                            e.preventDefault();
+                            return false;
+                        }
+                    }
+
+                    // Store face data
+                    faceDataJsonInput.value = JSON.stringify({
+                        images_count: capturedFaceImages.length,
+                        captured_at: new Date().toISOString()
+                    });
+                });
+            }
+
+            // Cleanup on page unload
+            window.addEventListener('beforeunload', function() {
+                stopFaceCamera();
+            });
         });
     </script>
     @vite('resources/js/admin/student-form.js')

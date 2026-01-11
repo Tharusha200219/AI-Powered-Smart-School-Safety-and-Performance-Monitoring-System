@@ -500,24 +500,58 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Dynamic Subject Loading based on Grade Level
-    const gradeLevelSelect = document.querySelector(
-        'select[name="grade_level"]'
-    );
-    const classSelect = document.querySelector('select[name="class_id"]');
+    const gradeLevelSelect = document.getElementById("grade_level");
+    const classSelect = document.getElementById("class_id");
+
+    // Initialize classes - show all classes initially for edit mode
+    if (window.allClasses && window.allClasses.length > 0) {
+        populateClassSelect(window.allClasses, window.initialClassId);
+    }
 
     if (gradeLevelSelect) {
         // Load classes and subjects when grade is changed
         gradeLevelSelect.addEventListener("change", function () {
             const gradeLevel = this.value;
-            loadClassesByGrade(gradeLevel);
+            if (gradeLevel) {
+                loadClassesByGrade(gradeLevel);
+            } else {
+                // If no grade selected, show all classes
+                populateClassSelect(
+                    window.allClasses || [],
+                    window.initialClassId
+                );
+            }
             loadSubjectsByGrade(gradeLevel);
         });
 
         // Load on page load if grade is already selected
-        if (gradeLevelSelect.value) {
-            loadClassesByGrade(gradeLevelSelect.value);
-            loadSubjectsByGrade(gradeLevelSelect.value);
+        const currentGradeValue = gradeLevelSelect.value;
+        if (currentGradeValue) {
+            loadClassesByGrade(currentGradeValue);
+            loadSubjectsByGrade(currentGradeValue);
         }
+    }
+
+    // Initialize selected subjects for edit mode
+    if (
+        isEditMode &&
+        window.selectedSubjects &&
+        Array.isArray(window.selectedSubjects)
+    ) {
+        // Initialize selectedSubjects with existing data
+        selectedSubjects.core = [];
+        selectedSubjects.electives = [];
+        selectedSubjects.streamSubjects = [];
+
+        // The selectedSubjects array contains subject IDs
+        // We'll need to map these to the appropriate categories when subjects are loaded
+        window.selectedSubjects.forEach((subjectId) => {
+            // Store for later use when rendering subjects
+            if (!selectedSubjects.all) {
+                selectedSubjects.all = [];
+            }
+            selectedSubjects.all.push(subjectId);
+        });
     }
 
     // Handle stream selection for Advanced Level
@@ -538,24 +572,83 @@ function loadClassesByGrade(gradeLevel) {
         return;
     }
 
-    // Filter classes from window.allClasses
-    const filteredClasses = window.allClasses
-        ? window.allClasses.filter((c) => c.grade_level == gradeLevel)
+    // Store current selected value, preferring the initial class from window variable
+    const currentValue =
+        window.initialClassId ||
+        classSelect.dataset.initialClass ||
+        classSelect.value;
+
+    // First try to filter from window.allClasses
+    let filteredClasses = window.allClasses
+        ? window.allClasses.filter(
+              (c) => parseInt(c.grade_level) === parseInt(gradeLevel)
+          )
         : [];
+
+    // If no classes found client-side, try AJAX call
+    if (filteredClasses.length === 0) {
+        // Get the URL from window object
+        const url =
+            window.classesByGradeUrl ||
+            "/admin/management/students/classes-by-grade";
+
+        // Get CSRF token
+        const csrfToken =
+            document
+                .querySelector('meta[name="csrf-token"]')
+                ?.getAttribute("content") ||
+            document.querySelector('input[name="_token"]')?.value;
+
+        // Fetch classes from server
+        fetch(`${url}?grade_level=${gradeLevel}`, {
+            method: "GET",
+            headers: {
+                Accept: "application/json",
+                "X-CSRF-TOKEN": csrfToken,
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success && data.classes) {
+                    populateClassSelect(data.classes, currentValue);
+                }
+            })
+            .catch((error) => {
+                console.error("Error loading classes:", error);
+            });
+    } else {
+        // Use client-side filtered data
+        populateClassSelect(filteredClasses, currentValue);
+    }
+}
+
+// Helper function to populate class select
+function populateClassSelect(classes, selectedValue) {
+    const classSelect = document.getElementById("class_id");
+
+    if (!classSelect) return;
 
     // Clear and repopulate
     classSelect.innerHTML = '<option value="">Select Class</option>';
 
-    if (filteredClasses.length === 0) {
+    if (classes.length === 0) {
         classSelect.innerHTML =
             '<option value="">No classes available for this grade</option>';
     } else {
-        filteredClasses.forEach((schoolClass) => {
+        classes.forEach((schoolClass) => {
             const option = document.createElement("option");
             option.value = schoolClass.id;
             option.textContent = `${schoolClass.class_name} (Grade ${schoolClass.grade_level})`;
+            if (schoolClass.id == selectedValue) {
+                option.selected = true;
+            }
             classSelect.appendChild(option);
         });
+    }
+
+    // Set the select value to ensure it's selected
+    if (selectedValue) {
+        classSelect.value = selectedValue;
     }
 }
 
@@ -733,6 +826,41 @@ function renderAdvancedSubjects(data) {
 
     // Store stream subjects for later use
     window.streamSubjectsData = data.subjects.streams;
+
+    // For edit mode, determine the student's stream and pre-select subjects
+    if (
+        window.selectedSubjects &&
+        Array.isArray(window.selectedSubjects) &&
+        window.selectedSubjects.length > 0
+    ) {
+        // Find which stream the selected subjects belong to
+        let studentStream = null;
+        for (const [stream, subjects] of Object.entries(
+            window.streamSubjectsData
+        )) {
+            const streamSubjectIds = subjects.map((s) => s.id);
+            const hasSelectedSubjects = window.selectedSubjects.some((id) =>
+                streamSubjectIds.includes(id)
+            );
+            if (hasSelectedSubjects) {
+                studentStream = stream;
+                break;
+            }
+        }
+
+        if (studentStream) {
+            // Pre-select the stream
+            const streamRadio = document.querySelector(
+                `input[name="stream"][value="${studentStream}"]`
+            );
+            if (streamRadio) {
+                streamRadio.checked = true;
+                selectedSubjects.stream = studentStream;
+                // Trigger the stream selection to show subjects
+                handleStreamSelection(studentStream);
+            }
+        }
+    }
 }
 
 // Generic function to render checkbox/radio groups
@@ -764,6 +892,24 @@ function renderCheckboxGroup(
                 : `subject_${category}[]`;
         input.dataset.category = category;
         input.dataset.maxSelection = maxSelection;
+
+        // Check if this subject should be pre-selected (for edit mode)
+        if (
+            window.selectedSubjects &&
+            Array.isArray(window.selectedSubjects) &&
+            window.selectedSubjects.includes(subject.id)
+        ) {
+            input.checked = true;
+            // Update the selectedSubjects object
+            if (inputType === "radio") {
+                selectedSubjects[category] = subject.id;
+            } else {
+                if (!selectedSubjects[category]) {
+                    selectedSubjects[category] = [];
+                }
+                selectedSubjects[category].push(subject.id);
+            }
+        }
 
         const label = document.createElement("label");
         label.className = "form-check-label";
@@ -827,7 +973,7 @@ function handleSubjectSelection(input, category, inputType, maxSelection) {
             }
             document.getElementById("electiveCount").textContent =
                 selectedSubjects.electives.length;
-        } else if (category === "stream_subject") {
+        } else if (category === "streamSubjects") {
             if (input.checked) {
                 if (selectedSubjects.streamSubjects.length < maxSelection) {
                     selectedSubjects.streamSubjects.push(parseInt(input.value));
@@ -855,8 +1001,11 @@ function handleSubjectSelection(input, category, inputType, maxSelection) {
 
 // Handle stream selection for Advanced Level
 function handleStreamSelection(stream) {
+    // Only reset streamSubjects if switching to a different stream
+    if (selectedSubjects.stream !== stream) {
+        selectedSubjects.streamSubjects = [];
+    }
     selectedSubjects.stream = stream;
-    selectedSubjects.streamSubjects = [];
 
     // Update stream card styling
     document.querySelectorAll(".stream-card").forEach((card) => {
@@ -876,7 +1025,7 @@ function handleStreamSelection(stream) {
         "streamSubjects",
         streamSubjects,
         "checkbox",
-        "stream_subject",
+        "streamSubjects",
         3
     );
 }

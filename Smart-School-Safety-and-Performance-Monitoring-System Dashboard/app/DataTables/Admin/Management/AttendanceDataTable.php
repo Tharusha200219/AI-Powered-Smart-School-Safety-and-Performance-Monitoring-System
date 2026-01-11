@@ -76,6 +76,15 @@ class AttendanceDataTable extends DataTable
                     return '<span class="badge badge-sm bg-gradient-info">' . e($row->device_id ?? 'Unknown') . '</span>';
                 }
             })
+            ->addColumn('method_badge', function ($row) {
+                $badges = [
+                    'rfid' => '<span class="badge badge-sm bg-gradient-primary">RFID</span>',
+                    'face' => '<span class="badge badge-sm bg-gradient-info">Face</span>',
+                    'manual' => '<span class="badge badge-sm bg-gradient-secondary">Manual</span>',
+                ];
+
+                return $badges[$row->method] ?? '<span class="badge badge-sm bg-gradient-secondary">' . ucfirst($row->method ?? 'manual') . '</span>';
+            })
             ->addColumn('action', function ($row) {
                 $items = [];
 
@@ -118,7 +127,7 @@ class AttendanceDataTable extends DataTable
                     '</ul>
                 </div>';
             })
-            ->rawColumns(['student_info', 'class_info', 'status_badge', 'device_badge', 'action'])
+            ->rawColumns(['student_info', 'class_info', 'status_badge', 'device_badge', 'method_badge', 'action'])
             ->orderColumn('attendance_date', function ($query, $order) {
                 $query->orderBy('attendance_date', $order);
             })
@@ -175,6 +184,7 @@ class AttendanceDataTable extends DataTable
             Column::make('check_out_time')->title('CHECK OUT')->addClass('text-center align-middle text-xs'),
             Column::make('duration_display')->title('DURATION')->addClass('text-center align-middle text-xs')->searchable(false),
             Column::make('device_badge')->title('DEVICE')->addClass('text-center align-middle text-xs')->searchable(false),
+            Column::make('method_badge')->title('METHOD')->addClass('text-center align-middle text-xs')->searchable(false),
         ];
 
         if (

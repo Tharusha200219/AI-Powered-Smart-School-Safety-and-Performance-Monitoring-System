@@ -21,7 +21,7 @@ trait CreatesNotifications
             'title' => $this->generateTitle($type, $entityType),
             'message' => $this->generateMessage($type, $entityType, $entityName, $user->name),
             'entity_type' => $entityType,
-            'entity_id' => $entity->id,
+            'entity_id' => $entity->getKey(),
             'user_id' => $user->id,
             'user_name' => $user->name,
             'is_read' => false,
@@ -71,16 +71,16 @@ trait CreatesNotifications
 
         // For students, combine first and last name
         if ($entityType === 'Student' && isset($entity->first_name)) {
-            return trim($entity->first_name.' '.($entity->last_name ?? ''));
+            return trim($entity->first_name . ' ' . ($entity->last_name ?? ''));
         }
 
         // For security staff, use first and last name
         if ($entityType === 'SecurityStaff' && isset($entity->first_name)) {
-            return trim($entity->first_name.' '.($entity->last_name ?? ''));
+            return trim($entity->first_name . ' ' . ($entity->last_name ?? ''));
         }
 
         // Fallback to ID
-        return "#{$entity->id}";
+        return "#{$entity->getKey()}";
     }
 
     protected function notifyCreated(string $entityType, $entity, array $additionalData = [])

@@ -20,6 +20,9 @@
                                 {{ now()->format('l, F j, Y') }}</p>
                         </div>
                         <div>
+                            <a href="{{ route('admin.management.attendance.face') }}" class="btn btn-info btn-sm me-2">
+                                <i class="material-symbols-rounded text-sm">face</i> Face Attendance
+                            </a>
                             <a href="{{ route('admin.management.attendance.create') }}" class="btn btn-primary btn-sm">
                                 <i class="material-symbols-rounded text-sm">add</i> Manual Entry
                             </a>
