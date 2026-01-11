@@ -2,8 +2,10 @@
 Flask API for Student Performance Prediction
 Provides REST API endpoints for the Laravel application
 
+IMPROVED: Now returns 95% confidence intervals with predictions
+
 Endpoints:
-- POST /predict: Predict student performance
+- POST /predict: Predict student performance with confidence intervals
 - GET /health: Health check
 """
 
@@ -38,7 +40,14 @@ def health_check():
     return jsonify({
         'status': 'healthy',
         'service': 'Student Performance Prediction API',
-        'version': '1.0.0'
+        'version': '2.0.0',  # Updated version for improved model
+        'model': 'RandomForestRegressor',
+        'features': [
+            'One-Hot Encoding for subjects',
+            '95% Confidence Intervals',
+            'Feature Engineering (risk_index, etc.)',
+            '5-Fold Cross-Validated'
+        ]
     }), 200
 
 
@@ -46,6 +55,8 @@ def health_check():
 def predict_performance():
     """
     Predict student performance for all subjects
+    
+    IMPROVED: Now returns 95% confidence intervals
     
     Request body:
     {
@@ -61,7 +72,7 @@ def predict_performance():
         ]
     }
     
-    Response:
+    Response (IMPROVED with confidence_interval):
     {
         "student_id": 123,
         "predictions": [
@@ -69,6 +80,11 @@ def predict_performance():
                 "subject": "Mathematics",
                 "current_performance": 78.0,
                 "predicted_performance": 82.5,
+                "confidence_interval": {
+                    "lower_bound": 74.2,
+                    "upper_bound": 90.8,
+                    "confidence_level": 0.95
+                },
                 "prediction_trend": "improving",
                 "confidence": 0.89
             }
@@ -212,11 +228,16 @@ def internal_error(error):
 
 if __name__ == '__main__':
     print("=" * 60)
-    print("STUDENT PERFORMANCE PREDICTION API")
+    print("STUDENT PERFORMANCE PREDICTION API v2.0")
+    print("Model: RandomForestRegressor (improved accuracy)")
     print("=" * 60)
     print(f"Starting API server on {API_HOST}:{API_PORT}")
     print(f"Health check: http://localhost:{API_PORT}/health")
     print(f"Prediction endpoint: http://localhost:{API_PORT}/predict")
+    print("\nNew Features:")
+    print("  - 95% Confidence Intervals")
+    print("  - One-Hot Encoded Subjects")
+    print("  - Feature Engineering")
     print("=" * 60)
     
     app.run(host=API_HOST, port=API_PORT, debug=API_DEBUG)
