@@ -74,17 +74,38 @@ class StudentController extends BaseManagementController
     protected function getFormData($id = null): array
     {
         $classes = $this->classRepository->getAll();
+        $formattedClasses = $classes->mapWithKeys(function ($class) {
+            return [
+                $class->id => $class->class_name . ' (Grade ' . $class->grade_level . ')',
+            ];
+        })->toArray();
+        $classesArray = $classes->map(function ($class) {
+            return [
+                'id' => $class->id,
+                'class_name' => $class->class_name,
+                'grade_level' => $class->grade_level,
+                'section' => $class->section,
+                'full_name' => $class->class_name . ' (Grade ' . $class->grade_level . ')',
+            ];
+        })->toArray();
         $subjects = $this->subjectRepository->getAll();
         $parents = $this->parentRepository->getActive();
         $roles = Role::where('name', 'student')->get();
         $grades = Grade::getOptions(); // Add grades from enum
 
-        return compact('classes', 'subjects', 'parents', 'roles', 'grades');
+        return compact('classes', 'formattedClasses', 'classesArray', 'subjects', 'parents', 'roles', 'grades');
     }
 
     protected function getValidationRules(bool $isUpdate = false, $id = null): array
     {
-        $rules = ValidationRules::getStudentRules($isUpdate, $id);
+        // For updates, we need the user ID, not the student ID
+        $userId = null;
+        if ($isUpdate && $id) {
+            $student = $this->repository->getById($id);
+            $userId = $student ? $student->user_id : null;
+        }
+
+        $rules = ValidationRules::getStudentRules($isUpdate, $userId);
 
         // Add parent validation rules for creation/update
         $parentRules = ValidationRules::getParentArrayRules();
@@ -182,12 +203,16 @@ class StudentController extends BaseManagementController
             throw new \Exception('Student not found.');
         }
 
+        \Log::info('Student update started', ['student_id' => $id, 'request_data' => $request->all()]);
+
         // Update user account
         $user = $student->user;
         $user->update([
             'name' => trim($request->first_name . ' ' . $request->last_name),
             'email' => $request->email,
         ]);
+
+        \Log::info('User updated', ['user_id' => $user->id, 'email' => $request->email]);
 
         // Update password if provided
         if ($request->filled('password')) {
@@ -222,8 +247,12 @@ class StudentController extends BaseManagementController
             'parent_address_line1',
         ]);
 
+        \Log::info('Student data prepared', ['student_data' => $studentData]);
+
         // Handle profile image upload
         if ($request->hasFile('profile_image')) {
+            \Log::info('Profile image upload detected');
+
             // Delete old image if exists
             if ($student->photo_path) {
                 $this->imageService->deleteProfileImage($student->photo_path);
@@ -236,9 +265,13 @@ class StudentController extends BaseManagementController
                 $student->photo_path
             );
             $studentData['photo_path'] = $imagePath;
+
+            \Log::info('Profile image uploaded', ['path' => $imagePath]);
         }
 
-        $this->repository->update($id, $studentData);
+        $updatedStudent = $this->repository->update($id, $studentData);
+
+        \Log::info('Student updated', ['updated_student' => $updatedStudent->toArray()]);
 
         // Handle parent creation and relationships
         $existingParentIds = $request->input('parents', []);
@@ -367,7 +400,9 @@ class StudentController extends BaseManagementController
 
             return response()->json([
                 'success' => true,
-                'data' => $subjectData
+                'education_level' => $subjectData['education_level'],
+                'grade' => $subjectData['grade'],
+                'subjects' => $subjectData['subjects']
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -546,5 +581,26 @@ class StudentController extends BaseManagementController
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error generating predictions: ' . $e->getMessage()], 500);
         }
+    }
+
+    /**
+     * Get education level based on grade
+     *
+     * @param int $grade
+     * @return string
+     */
+    private function getEducationLevel($grade)
+    {
+        $grade = (int) $grade;
+
+        if ($grade >= 1 && $grade <= 5) {
+            return 'Primary Education';
+        } elseif ($grade >= 6 && $grade <= 11) {
+            return 'Secondary Education';
+        } elseif ($grade >= 12 && $grade <= 13) {
+            return 'Advanced Level';
+        }
+
+        return 'Unknown';
     }
 }

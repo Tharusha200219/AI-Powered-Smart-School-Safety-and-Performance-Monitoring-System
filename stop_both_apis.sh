@@ -1,40 +1,52 @@
 #!/bin/bash
 
-# Stop both AI model APIs
+# Stop all AI model APIs
 
 echo "============================================================"
-echo "Stopping AI Model APIs"
+echo "🛑 Stopping All AI Model APIs"
 echo "============================================================"
 
-# Find and kill processes on ports 5002 and 5001
-echo "Looking for running API processes..."
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
 
-PIDS=$(lsof -ti:5002,5001 2>/dev/null)
+# Find and kill processes on AI API ports: 5002, 5003, 5004
+echo "Looking for running AI APIs..."
+
+PIDS=$(lsof -ti:5002,5003,5004 2>/dev/null)
 
 if [ -z "$PIDS" ]; then
-    echo "✓ No API processes found running on ports 5001 or 5002"
+    echo -e "${GREEN}✓ No AI APIs found running on ports 5002, 5003, or 5004${NC}"
     exit 0
 fi
 
 echo "Found processes: $PIDS"
-echo "Stopping APIs..."
+echo "Stopping all AI APIs..."
 
 # Kill the processes
-lsof -ti:5002,5001 | xargs kill -9 2>/dev/null
+lsof -ti:5002,5003,5004 | xargs kill -9 2>/dev/null
 
 # Wait a moment
-sleep 1
+sleep 2
 
 # Verify they're stopped
-REMAINING=$(lsof -ti:5002,5001 2>/dev/null)
+REMAINING=$(lsof -ti:5002,5003,5004 2>/dev/null)
 
 if [ -z "$REMAINING" ]; then
     echo ""
     echo "============================================================"
-    echo "✅ All APIs stopped successfully!"
+    echo -e "${GREEN}✅ All AI APIs stopped successfully!${NC}"
     echo "============================================================"
+    echo ""
+    echo "Stopped APIs:"
+    echo "   📊 Performance Prediction API (Port 5002)"
+    echo "   🪑 Seating Arrangement API (Port 5003)"
+    echo "   👤 Face Recognition API (Port 5004)"
+    echo ""
 else
     echo ""
-    echo "⚠️  Warning: Some processes may still be running"
-    echo "Try: lsof -ti:5002,5001 | xargs kill -9"
+    echo -e "${YELLOW}⚠️  Warning: Some processes may still be running${NC}"
+    echo "Try: lsof -ti:5002,5003,5004 | xargs kill -9"
 fi

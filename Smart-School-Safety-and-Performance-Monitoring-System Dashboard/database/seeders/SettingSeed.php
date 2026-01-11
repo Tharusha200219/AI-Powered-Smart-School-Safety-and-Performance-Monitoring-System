@@ -61,6 +61,13 @@ class SettingSeed extends Seeder
                 'enable_animations' => true,
                 'sidebar_style' => 'modern',
                 'navbar_style' => 'glass',
+
+                // Attendance settings
+                'attendance_rfid_enabled' => true,
+                'attendance_face_enabled' => true,
+                'attendance_two_factor' => false,
+                'face_recognition_api_url' => env('FACE_RECOGNITION_API_URL', 'http://localhost:8001'),
+                'face_recognition_api_key' => env('FACE_RECOGNITION_API_KEY', 'your-api-key'),
             ]);
 
             echo "Settings seeded successfully!\n";

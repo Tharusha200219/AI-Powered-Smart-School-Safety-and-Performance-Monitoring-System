@@ -94,10 +94,10 @@ abstract class BaseManagementController extends Controller
                 return Redirect::route($this->parentRoutePath . 'index');
             }
             $data[$this->getEntityVariableName()] = $entity;
-            $data['id'] = $id;
         } else {
-            $data['id'] = $id;
+            $data[$this->getEntityVariableName()] = null;
         }
+        $data['id'] = $id;
 
         return view($this->parentViewPath . 'form', $data);
     }

@@ -16,10 +16,10 @@
                             <div class="row">
                                 <div class="col-6 d-flex align-items-center">
                                     <a href="{{ route('admin.seating-arrangement.index') }}"
-                                        class="btn btn-sm btn-secondary me-2">
+                                        class="btn btn-sm btn-secondary me-3 mb-0">
                                         <i class="material-symbols-rounded" style="font-size: 18px;">arrow_back</i>
                                     </a>
-                                    <h6 class="mb-0">
+                                    <h6 class="mb-0 d-flex align-items-center">
                                         <i class="material-symbols-rounded me-2">psychology</i>
                                         Generate Seating Arrangement
                                     </h6>
@@ -91,7 +91,7 @@
                                     </div>
                                 </div>
 
-                                <div class="alert alert-info mt-4">
+                                {{-- <div class="alert alert-info mt-4">
                                     <i class="material-symbols-rounded me-2">info</i>
                                     <strong>AI-Powered Seating:</strong> The system will analyze student performance data
                                     and generate an optimal seating arrangement that:
@@ -100,7 +100,7 @@
                                         <li>Considers behavioral patterns and attendance</li>
                                         <li>Optimizes teacher visibility and classroom management</li>
                                     </ul>
-                                </div>
+                                </div> --}}
 
                                 <div class="text-end mt-4">
                                     <a href="{{ route('admin.seating-arrangement.index') }}"

@@ -19,6 +19,7 @@ class Attendance extends Model
         'check_in_time',
         'check_out_time',
         'status',
+        'method',
         'nfc_tag_id',
         'check_in_location',
         'check_out_location',

@@ -102,6 +102,7 @@ class AttendanceRepository implements AttendanceRepositoryInterface
                 $existing->update([
                     'check_in_time' => Carbon::now(),
                     'status' => 'present',
+                    'method' => $data['method'] ?? $existing->method,
                     ...$data
                 ]);
                 return $existing;
@@ -115,6 +116,7 @@ class AttendanceRepository implements AttendanceRepositoryInterface
             'attendance_date' => $today,
             'check_in_time' => Carbon::now(),
             'status' => 'present',
+            'method' => $data['method'] ?? 'manual',
             'is_auto_recorded' => true,
             ...$data
         ]);
