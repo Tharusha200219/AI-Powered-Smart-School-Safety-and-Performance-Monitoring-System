@@ -52,6 +52,7 @@ The **AI-Powered Smart School Safety and Performance Monitoring System** is a co
 
 ### Administrative Excellence
 
+- **Facial Recognition Attendance** - Automated attendance marking using deep learning face recognition
 - **Centralized Dashboard** - Laravel-based web interface for system-wide management
 - **Real-time Alerts** - Multi-channel notifications (Email, Telegram, SMS)
 - **Analytics & Reporting** - Comprehensive performance and safety reports
@@ -70,7 +71,15 @@ The **AI-Powered Smart School Safety and Performance Monitoring System** is a co
 - ✅ **Schedule-aware monitoring** based on school timetables
 - ✅ **Instant alert system** with configurable notification channels
 
-### 📊 Performance & Analytics
+### � Attendance Automation
+
+- ✅ **Facial recognition attendance** using FaceNet deep learning model
+- ✅ **Multi-embedding matching** for high accuracy recognition
+- ✅ **Real-time face detection** using MTCNN
+- ✅ **Automatic attendance marking** with cooldown management
+- ✅ **Dashboard integration** for seamless attendance tracking
+
+### �📊 Performance & Analytics
 
 - ✅ **Predictive analytics** for student performance across all subjects
 - ✅ **Automated homework generation** using NLP and AI
@@ -169,7 +178,16 @@ The system follows a **microservices architecture** with specialized AI/ML modul
 │  │  • Constraint-based optimization                                        │  │
 │  │  • Student relationship analysis                                        │  │
 │  │  • Performance-based grouping                                           │  │
-│  │  Port: 5005                                                             │  │
+│  │  Port: 5003                                                             │  │
+│  └─────────────────────────────────────────────────────────────────────────┘  │
+│                                                                                 │
+│  ┌─────────────────────────────────────────────────────────────────────────┐  │
+│  │  Facial Recognition Attendance (Flask API)                              │  │
+│  │  • MTCNN face detection                                                 │  │
+│  │  • FaceNet 512-D embeddings                                             │  │
+│  │  • Multi-embedding matching (10 per student)                            │  │
+│  │  • Real-time attendance marking                                         │  │
+│  │  Port: 5004                                                             │  │
 │  └─────────────────────────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────────────────────────────┘
                                       │
@@ -178,14 +196,20 @@ The system follows a **microservices architecture** with specialized AI/ML modul
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │                           HARDWARE LAYER (IoT)                                  │
 │                                                                                 │
-│                      ┌──────────────┐  ┌──────────────┐                         │
-│                      │  ESP32-CAM   │  │  ESP32-CAM   │                         │
-│                      │  Classroom   │  │  Library     │                         │
-│                      └──────────────┘  └──────────────┘                         │
+│        ┌──────────────┐  ┌──────────────┐  ┌──────────────┐                    │
+│        │  ESP32-CAM   │  │  ESP32-CAM   │  │  ESP32-CAM   │                    │
+│        │  Classroom   │  │  Library     │  │  Attendance  │                    │
+│        │  (Video)     │  │  (Video)     │  │  (FaceRec)   │                    │
+│        └──────────────┘  └──────────────┘  └──────────────┘                    │
 │                                                                                 │
 │  ┌──────────────────────────────────────────────────────────────────────────┐   │
 │  │                    Microphones (Web Audio API)                           │   │
 │  │         Browser-based audio capture in monitored areas                   │   │
+│  └──────────────────────────────────────────────────────────────────────────┘   │
+│                                                                                 │
+│  ┌──────────────────────────────────────────────────────────────────────────┐   │
+│  │              Built-in Webcam (Testing/Development Only)                  │   │
+│  │              For face recognition testing without ESP32-CAM              │   │
 │  └──────────────────────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────────────────────┘
                                       │
@@ -342,7 +366,34 @@ Intelligent classroom seating optimization:
 - Constraint-based optimization
 - Teacher preference integration
 
-**API Port**: 5005
+**API Port**: 5003
+
+---
+
+### 7. 👤 Facial Recognition Attendance System
+
+**Location**: `Facial Recognition Attendance Systems/`
+
+Automated attendance using deep learning face recognition:
+
+- **MTCNN face detection** - Multi-task Cascaded CNN for accurate face detection
+- **FaceNet embeddings** - 512-dimensional face embeddings using InceptionResnetV1
+- **Multi-embedding matching** - 10 diverse embeddings per student for high accuracy
+- **Real-time recognition** - 60-100ms end-to-end processing
+- **Dashboard integration** - Seamless attendance syncing with Laravel dashboard
+- **Anti-spoofing** - Optional liveness detection
+- **ESP32-CAM support** - IoT camera integration for production deployment
+- **Webcam fallback** - Built-in camera support for testing/development
+
+**Models**: MTCNN (detection), FaceNet/InceptionResnetV1 (recognition)
+
+**API Port**: 5004
+
+**Hardware Options**:
+| Mode | Camera | Use Case |
+|------|--------|----------|
+| Testing | Built-in Webcam | Development & Testing |
+| Production | ESP32-CAM | Classroom Deployment |
 
 ---
 
@@ -375,11 +426,12 @@ Intelligent classroom seating optimization:
 
 ### IoT Hardware
 
-| Component         | Specification                 |
-| ----------------- | ----------------------------- |
-| **Cameras**       | ESP32-CAM modules             |
-| **Communication** | WiFi, MQTT                    |
-| **Audio**         | Web Audio API (browser-based) |
+| Component                    | Specification                 |
+| ---------------------------- | ----------------------------- |
+| **Video Cameras**            | ESP32-CAM modules             |
+| **Face Recognition Cameras** | ESP32-CAM / Built-in Webcam   |
+| **Communication**            | WiFi, MQTT                    |
+| **Audio**                    | Web Audio API (browser-based) |
 
 ### Deployment & Infrastructure
 
@@ -444,6 +496,20 @@ scikit-learn>=1.3.0
 numpy>=1.26.0
 pandas>=2.0.0
 joblib>=1.3.0
+```
+
+#### Facial Recognition Attendance
+
+```
+torch>=2.0.0
+torchvision>=0.15.0
+facenet-pytorch>=2.5.3
+opencv-python>=4.8.0
+flask>=3.0.0
+flask-cors>=4.0.0
+sqlalchemy>=2.0.0
+numpy>=1.24.0
+pillow>=10.0.0
 ```
 
 ### Dashboard Dependencies (Laravel)
@@ -630,7 +696,38 @@ cd api
 python app.py
 ```
 
-API will run on `http://localhost:5005`
+API will run on `http://localhost:5003`
+
+### 8. Set Up Facial Recognition Attendance
+
+```bash
+cd "Facial Recognition Attendance Systems"
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Start the API
+python app.py
+```
+
+API will run on `http://localhost:5004`
+
+**Registration Flow:**
+
+1. Access registration page at `http://localhost:5004/static/register.html`
+2. Capture 40 face images per student
+3. System automatically trains and generates embeddings
+4. Student ready for recognition
+
+**Attendance Flow:**
+
+1. Access attendance page at `http://localhost:5004/static/attendance.html`
+2. System detects and recognizes faces in real-time
+3. Attendance automatically marked and synced to dashboard
 
 ### 8. Start All Services (Automated)
 
@@ -754,7 +851,7 @@ Response:
 }
 ```
 
-### Seating Arrangement API (Port 5005)
+### Seating Arrangement API (Port 5003)
 
 ```http
 POST /api/optimize
@@ -776,6 +873,58 @@ Response:
     {"row": 1, "seat": 2, "student_id": 102}
   ],
   "optimization_score": 0.87
+}
+```
+
+### Facial Recognition API (Port 5004)
+
+```http
+POST /recognize_face
+Content-Type: multipart/form-data
+
+Body: image file (webcam frame)
+
+Response:
+{
+  "success": true,
+  "student_id": "DASH_stu-00000078",
+  "student_name": "John Doe",
+  "confidence": 0.85,
+  "bbox": {"x": 100, "y": 50, "width": 150, "height": 150},
+  "face_detected": true
+}
+```
+
+```http
+POST /register_student
+Content-Type: application/json
+
+{
+  "student_id": "DASH_stu-00000078",
+  "name": "John Doe",
+  "images": ["base64_image_1", "base64_image_2", ...]
+}
+
+Response:
+{
+  "success": true,
+  "student_id": "DASH_stu-00000078",
+  "face_count": 40,
+  "trained": true,
+  "quality_score": 0.92
+}
+```
+
+```http
+POST /retrain_all
+
+Response:
+{
+  "success": true,
+  "total_students": 3,
+  "processed_students": 3,
+  "total_images": 120,
+  "training_time": 36.5
 }
 ```
 
@@ -804,10 +953,18 @@ Response:
 
 #### Deployment Recommendations
 
+**Video Surveillance:**
+
 - 1 camera per classroom
 - 1 camera per hallway/corridor
 - 1 camera for main entrance
 - 1 camera for playground (optional)
+
+**Face Recognition Attendance:**
+
+- 1 ESP32-CAM per classroom entrance (production)
+- Built-in webcam for testing/development
+- Recommended: Good lighting at camera location
 
 **Estimated cost for 20-camera setup**: 100000LKR
 
@@ -822,6 +979,7 @@ Detailed documentation for each component:
 - **Homework Management**: [Homework-Management-and-Performance-Monitoring-System/DOCUMENTATION.md](Homework-Management-and-Performance-Monitoring-System/DOCUMENTATION.md)
 - **Performance Prediction**: [student-performance-prediction-model/README.md](student-performance-prediction-model/README.md)
 - **Seating Arrangement**: [student-seating-arrangement-model/README.md](student-seating-arrangement-model/README.md)
+- **Facial Recognition**: [Facial Recognition Attendance Systems/docs/DOCUMENTATION.md](Facial%20Recognition%20Attendance%20Systems/docs/DOCUMENTATION.md)
 - **Dashboard Setup**: [Smart-School-Safety-and-Performance-Monitoring-System Dashboard/README.md](Smart-School-Safety-and-Performance-Monitoring-System Dashboard/README.md)
 
 ### Additional Resources
@@ -936,12 +1094,13 @@ php artisan migrate:fresh --seed
 
 ## 📊 Performance Benchmarks
 
-| Component                  | Latency | Throughput  | GPU Usage |
-| -------------------------- | ------- | ----------- | --------- |
-| **Audio Detection**        | <100ms  | 30 fps      | N/A       |
-| **Video Detection**        | <50ms   | 25 fps      | 60%       |
-| **Homework Generation**    | 2-5s    | 10 req/min  | N/A       |
-| **Performance Prediction** | <200ms  | 100 req/min | N/A       |
+| Component                  | Latency  | Throughput  | GPU Usage |
+| -------------------------- | -------- | ----------- | --------- |
+| **Audio Detection**        | <100ms   | 30 fps      | N/A       |
+| **Video Detection**        | <50ms    | 25 fps      | 60%       |
+| **Homework Generation**    | 2-5s     | 10 req/min  | N/A       |
+| **Performance Prediction** | <200ms   | 100 req/min | N/A       |
+| **Facial Recognition**     | 60-100ms | 10-15 fps   | 30%       |
 
 _Benchmarks on: Intel i7-10700K, 32GB RAM, RTX 3070_
 
@@ -964,14 +1123,12 @@ _Benchmarks on: Intel i7-10700K, 32GB RAM, RTX 3070_
 - 🔄 Parent portal
 - 🔄 Integration with existing school systems
 
-### Phase 3 - Advanced Features (Planned)
+### Phase 3 - Advanced Features (Completed/Planned)
 
-- 📋 Face recognition for attendance
+- ✅ **Face recognition for attendance** - FaceNet + MTCNN with multi-embedding matching
 - 📋 Emotion detection
 - 📋 Predictive maintenance for equipment
 - 📋 AI-powered tutoring system
-
-
 
 ## 🙏 Acknowledgments
 
@@ -980,8 +1137,6 @@ _Benchmarks on: Intel i7-10700K, 32GB RAM, RTX 3070_
 - **Laravel** - Taylor Otwell and the Laravel community
 - **Transformers** - Hugging Face
 - **OpenCV** - Open Source Computer Vision Library
-
-
 
 <div align="center">
 
