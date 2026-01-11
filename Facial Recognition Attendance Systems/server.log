@@ -1,0 +1,104 @@
+2026-01-11 11:51:07 - __main__ - INFO - Initializing Facial Recognition Attendance System...
+2026-01-11 11:51:07 - __main__ - INFO - Initializing face detection...
+2026-01-11 11:51:09 - core.face_detector - INFO - MTCNN detector initialized on cpu
+2026-01-11 11:51:09 - core.face_detector - INFO - FaceDetector initialized with mtcnn backend
+2026-01-11 11:51:09 - __main__ - INFO - Initializing face recognition...
+2026-01-11 11:51:09 - core.face_recognizer - WARNING - InsightFace not available, falling back to FaceNet
+2026-01-11 11:51:09 - core.face_recognizer - WARNING - arcface failed, falling back to facenet: ArcFace not available
+2026-01-11 11:51:09 - core.face_recognizer - INFO - FaceNet recognizer initialized on cpu
+2026-01-11 11:51:09 - core.face_recognizer - INFO - FaceRecognizer initialized with facenet backend
+2026-01-11 11:51:09 - __main__ - INFO - Initializing face aligner...
+2026-01-11 11:51:09 - core.face_aligner - INFO - FaceAligner initialized with target size (160, 160)
+2026-01-11 11:51:09 - __main__ - INFO - Initializing face database...
+2026-01-11 11:51:09 - database.face_database - INFO - FaceDatabase initialized with 0 faces
+2026-01-11 11:51:09 - __main__ - INFO - Initializing attendance database...
+2026-01-11 11:51:09 - database.attendance_db - INFO - AttendanceDB initialized: sqlite:////Users/tharusha_rashmika/Documents/projects/aleph/reserch/AI-Powered-Smart-School-Safety-and-Performance-Monitoring-System/Facial Recognition Attendance Systems/data/attendance.db
+2026-01-11 11:51:09 - __main__ - INFO - Initializing attendance engine...
+2026-01-11 11:51:09 - core.face_detector - INFO - MTCNN detector initialized on cpu
+2026-01-11 11:51:09 - core.face_detector - INFO - FaceDetector initialized with mtcnn backend
+2026-01-11 11:51:09 - core.face_recognizer - WARNING - InsightFace not available, falling back to FaceNet
+2026-01-11 11:51:09 - core.face_recognizer - WARNING - arcface failed, falling back to facenet: ArcFace not available
+2026-01-11 11:51:09 - core.face_recognizer - INFO - FaceNet recognizer initialized on cpu
+2026-01-11 11:51:09 - core.face_recognizer - INFO - FaceRecognizer initialized with facenet backend
+2026-01-11 11:51:09 - core.face_aligner - INFO - FaceAligner initialized with target size (160, 160)
+2026-01-11 11:51:09 - core.attendance_engine - INFO - AttendanceEngine initialized
+2026-01-11 11:51:09 - __main__ - INFO - Initializing registration service...
+2026-01-11 11:51:09 - __main__ - INFO - Initializing face trainer...
+2026-01-11 11:51:09 - training.face_trainer - INFO - FaceTrainer initialized
+2026-01-11 11:51:09 - __main__ - INFO - Initializing attendance service...
+2026-01-11 11:51:09 - __main__ - INFO - Initializing camera service...
+2026-01-11 11:51:09 - __main__ - INFO - Loaded 0 registered faces
+2026-01-11 11:51:09 - __main__ - INFO - API blueprints registered
+2026-01-11 11:51:09 - __main__ - INFO - Application initialized successfully
+
+    ╔══════════════════════════════════════════════════════════════╗
+    ║     Facial Recognition Attendance System                     ║
+    ║     Version: 1.0.0                                           ║
+    ╠══════════════════════════════════════════════════════════════╣
+    ║     Server: http://0.0.0.0:5004                           ║
+    ║     Debug: True                                              ║
+    ║     Registered Faces: 0                                    ║
+    ╚══════════════════════════════════════════════════════════════╝
+    
+ * Serving Flask app 'app'
+ * Debug mode: on
+2026-01-11 11:51:09 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5004
+ * Running on http://192.168.8.171:5004
+2026-01-11 11:51:09 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-01-11 11:51:09 - werkzeug - INFO -  * Restarting with stat
+2026-01-11 11:51:10 - __main__ - INFO - Initializing Facial Recognition Attendance System...
+2026-01-11 11:51:10 - __main__ - INFO - Initializing face detection...
+2026-01-11 11:51:11 - core.face_detector - INFO - MTCNN detector initialized on cpu
+2026-01-11 11:51:11 - core.face_detector - INFO - FaceDetector initialized with mtcnn backend
+2026-01-11 11:51:11 - __main__ - INFO - Initializing face recognition...
+2026-01-11 11:51:11 - core.face_recognizer - WARNING - InsightFace not available, falling back to FaceNet
+2026-01-11 11:51:11 - core.face_recognizer - WARNING - arcface failed, falling back to facenet: ArcFace not available
+2026-01-11 11:51:11 - core.face_recognizer - INFO - FaceNet recognizer initialized on cpu
+2026-01-11 11:51:11 - core.face_recognizer - INFO - FaceRecognizer initialized with facenet backend
+2026-01-11 11:51:11 - __main__ - INFO - Initializing face aligner...
+2026-01-11 11:51:11 - core.face_aligner - INFO - FaceAligner initialized with target size (160, 160)
+2026-01-11 11:51:11 - __main__ - INFO - Initializing face database...
+2026-01-11 11:51:11 - database.face_database - INFO - FaceDatabase initialized with 0 faces
+2026-01-11 11:51:11 - __main__ - INFO - Initializing attendance database...
+2026-01-11 11:51:11 - database.attendance_db - INFO - AttendanceDB initialized: sqlite:////Users/tharusha_rashmika/Documents/projects/aleph/reserch/AI-Powered-Smart-School-Safety-and-Performance-Monitoring-System/Facial Recognition Attendance Systems/data/attendance.db
+2026-01-11 11:51:11 - __main__ - INFO - Initializing attendance engine...
+2026-01-11 11:51:11 - core.face_detector - INFO - MTCNN detector initialized on cpu
+2026-01-11 11:51:11 - core.face_detector - INFO - FaceDetector initialized with mtcnn backend
+2026-01-11 11:51:11 - core.face_recognizer - WARNING - InsightFace not available, falling back to FaceNet
+2026-01-11 11:51:11 - core.face_recognizer - WARNING - arcface failed, falling back to facenet: ArcFace not available
+2026-01-11 11:51:12 - core.face_recognizer - INFO - FaceNet recognizer initialized on cpu
+2026-01-11 11:51:12 - core.face_recognizer - INFO - FaceRecognizer initialized with facenet backend
+2026-01-11 11:51:12 - core.face_aligner - INFO - FaceAligner initialized with target size (160, 160)
+2026-01-11 11:51:12 - core.attendance_engine - INFO - AttendanceEngine initialized
+2026-01-11 11:51:12 - __main__ - INFO - Initializing registration service...
+2026-01-11 11:51:12 - __main__ - INFO - Initializing face trainer...
+2026-01-11 11:51:12 - training.face_trainer - INFO - FaceTrainer initialized
+2026-01-11 11:51:12 - __main__ - INFO - Initializing attendance service...
+2026-01-11 11:51:12 - __main__ - INFO - Initializing camera service...
+2026-01-11 11:51:12 - __main__ - INFO - Loaded 0 registered faces
+2026-01-11 11:51:12 - __main__ - INFO - API blueprints registered
+2026-01-11 11:51:12 - __main__ - INFO - Application initialized successfully
+
+    ╔══════════════════════════════════════════════════════════════╗
+    ║     Facial Recognition Attendance System                     ║
+    ║     Version: 1.0.0                                           ║
+    ╠══════════════════════════════════════════════════════════════╣
+    ║     Server: http://0.0.0.0:5004                           ║
+    ║     Debug: True                                              ║
+    ║     Registered Faces: 0                                    ║
+    ╚══════════════════════════════════════════════════════════════╝
+    
+2026-01-11 11:51:12 - werkzeug - WARNING -  * Debugger is active!
+2026-01-11 11:51:12 - werkzeug - INFO -  * Debugger PIN: 277-274-484
+2026-01-11 11:51:18 - werkzeug - INFO - 127.0.0.1 - - [11/Jan/2026 11:51:18] "GET / HTTP/1.1" 200 -
+2026-01-11 11:51:25 - werkzeug - INFO - 127.0.0.1 - - [11/Jan/2026 11:51:25] "[31m[1mPOST /api/attendance/recognize_face HTTP/1.1[0m" 400 -
+/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/multiprocessing/resource_tracker.py:324: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown: {'/mp-_v2s1suo'}
+  warnings.warn(
+/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/multiprocessing/resource_tracker.py:324: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown: {'/mp-hn1cfbzd'}
+  warnings.warn(
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     /opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/multiprocessing/resource_tracker.py:324: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown: {'/mp-9cspbdwc'}
+  warnings.warn(
+/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/multiprocessing/resource_tracker.py:324: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown: {'/mp-wneggoho'}
+  warnings.warn(

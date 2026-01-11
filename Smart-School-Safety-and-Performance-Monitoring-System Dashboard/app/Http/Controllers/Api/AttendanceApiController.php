@@ -504,4 +504,265 @@ class AttendanceApiController extends Controller
             ]
         ]);
     }
+
+    /**
+     * Mark attendance via face recognition
+     */
+    public function markFaceAttendance(Request $request): JsonResponse
+    {
+        try {
+            $validated = $request->validate([
+                'student_id' => 'required|integer|exists:students,student_id',
+                'status' => 'required|in:present,late',
+                'check_in_time' => 'required|date_format:H:i:s',
+                'method' => 'required|in:face',
+                'device_id' => 'nullable|string',
+                'check_in_location' => 'nullable|string'
+            ]);
+
+            // Check if student already has attendance today
+            $todayAttendance = $this->attendanceRepository->getTodayAttendance($validated['student_id']);
+
+            if ($todayAttendance && $todayAttendance->status !== 'absent') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Attendance already marked for today'
+                ], 409);
+            }
+
+            // Create attendance record
+            $attendance = $this->attendanceRepository->checkIn($validated['student_id'], [
+                'check_in_time' => $validated['check_in_time'],
+                'status' => $validated['status'],
+                'method' => $validated['method'],
+                'device_id' => $validated['device_id'] ?? 'FACE_RECOG_001',
+                'check_in_location' => $validated['check_in_location'] ?? 'Main Gate',
+                'notes' => 'Face Recognition Attendance'
+            ]);
+
+            Log::info('Face attendance marked', [
+                'student_id' => $validated['student_id'],
+                'method' => $validated['method'],
+                'status' => $validated['status']
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Face attendance marked successfully',
+                'data' => $attendance
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Face attendance marking failed', [
+                'error' => $e->getMessage(),
+                'data' => $request->all()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to mark face attendance'
+            ], 500);
+        }
+    }
+
+    /**
+     * Check if student has attendance today
+     */
+    public function checkAttendanceToday(Request $request, $studentId): JsonResponse
+    {
+        $todayAttendance = $this->attendanceRepository->getTodayAttendance($studentId);
+
+        return response()->json([
+            'has_attendance' => $todayAttendance && $todayAttendance->status !== 'absent',
+            'attendance' => $todayAttendance
+        ]);
+    }
+
+    /**
+     * Automatic face recognition and attendance marking
+     */
+    public function autoFaceRecognition(Request $request): JsonResponse
+    {
+        try {
+            $validated = $request->validate([
+                'image' => 'required|image|mimes:jpeg,png,jpg|max:5120' // 5MB max
+            ]);
+
+            // Get face recognition API settings
+            $faceApiUrl = \App\Models\Setting::first()->face_recognition_api_url ?? 'http://localhost:8001';
+
+            if (!$faceApiUrl) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Face recognition API not configured'
+                ], 500);
+            }
+
+            // Send image to Python API for recognition
+            $client = new \GuzzleHttp\Client();
+            $response = $client->post($faceApiUrl . '/recognize_face', [
+                'multipart' => [
+                    [
+                        'name' => 'image',
+                        'contents' => fopen($request->file('image')->getPathname(), 'r'),
+                        'filename' => $request->file('image')->getClientOriginalName()
+                    ]
+                ],
+                'timeout' => 10
+            ]);
+
+            $result = json_decode($response->getBody(), true);
+
+            if (!$result['success']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Face not recognized',
+                    'recognized' => false,
+                    'student_name' => 'Unknown'
+                ]);
+            }
+
+            // Get student details
+            $student = $this->studentRepository->findByStudentId($result['student_id']);
+            if (!$student) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Student not found in database',
+                    'recognized' => false,
+                    'student_name' => 'Unknown'
+                ]);
+            }
+
+            // Check if student already has attendance today
+            $todayAttendance = $this->attendanceRepository->getTodayAttendance($student->student_id);
+
+            if ($todayAttendance && $todayAttendance->status !== 'absent') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Attendance already marked for today',
+                    'recognized' => true,
+                    'student_name' => $student->first_name . ' ' . $student->last_name,
+                    'already_marked' => true
+                ]);
+            }
+
+            // Determine if late
+            $now = Carbon::now();
+            $schoolStartTime = Carbon::createFromTimeString(\App\Models\Setting::first()->school_start_time ?? '08:00:00');
+            $lateThresholdTime = Carbon::createFromTimeString(\App\Models\Setting::first()->late_threshold_time ?? '08:00:00');
+
+            $status = 'present';
+            if ($now->greaterThan($lateThresholdTime)) {
+                $status = 'late';
+            }
+
+            // Mark attendance automatically
+            $attendance = $this->attendanceRepository->checkIn($student->student_id, [
+                'check_in_time' => $now->format('H:i:s'),
+                'status' => $status,
+                'method' => 'face',
+                'device_id' => 'AUTO_FACE_RECOG_001',
+                'check_in_location' => 'Main Gate',
+                'notes' => 'Automatic Face Recognition Attendance'
+            ]);
+
+            Log::info('Automatic face attendance marked', [
+                'student_id' => $student->student_id,
+                'method' => 'face',
+                'status' => $status,
+                'confidence' => $result['confidence'] ?? 0
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Attendance marked automatically',
+                'recognized' => true,
+                'student_name' => $student->first_name . ' ' . $student->last_name,
+                'status' => $status,
+                'is_late' => $status === 'late',
+                'check_in_time' => $now->format('H:i:s'),
+                'data' => $attendance
+            ]);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            Log::error('Face recognition API request failed', [
+                'error' => $e->getMessage(),
+                'url' => $faceApiUrl ?? 'unknown'
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Face recognition service unavailable',
+                'recognized' => false,
+                'student_name' => 'Unknown'
+            ], 503);
+        } catch (\Exception $e) {
+            Log::error('Automatic face recognition failed', [
+                'error' => $e->getMessage(),
+                'data' => $request->all()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Recognition failed',
+                'recognized' => false,
+                'student_name' => 'Unknown'
+            ], 500);
+        }
+    }
+
+    /**
+     * Register student face (proxy to Python API)
+     */
+    public function registerStudentFace(Request $request): JsonResponse
+    {
+        try {
+            $validated = $request->validate([
+                'student_id' => 'required|integer|exists:students,student_id',
+                'image' => 'required|image|mimes:jpeg,png,jpg|max:5120' // 5MB max
+            ]);
+
+            // Get face recognition API settings
+            $faceApiUrl = \App\Models\Setting::where('key', 'face_recognition_api_url')->value('value');
+            $faceApiKey = \App\Models\Setting::where('key', 'face_recognition_api_key')->value('value');
+
+            if (!$faceApiUrl) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Face recognition API not configured'
+                ], 500);
+            }
+
+            // Forward request to Python API
+            $client = new \GuzzleHttp\Client();
+            $response = $client->post($faceApiUrl . '/register_student', [
+                'multipart' => [
+                    [
+                        'name' => 'student_id',
+                        'contents' => (string)$validated['student_id']
+                    ],
+                    [
+                        'name' => 'image',
+                        'contents' => fopen($request->file('image')->getRealPath(), 'r'),
+                        'filename' => $request->file('image')->getClientOriginalName()
+                    ]
+                ],
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $faceApiKey
+                ]
+            ]);
+
+            $result = json_decode($response->getBody(), true);
+
+            return response()->json($result);
+        } catch (\Exception $e) {
+            Log::error('Student face registration failed', [
+                'error' => $e->getMessage(),
+                'student_id' => $request->get('student_id')
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to register student face'
+            ], 500);
+        }
+    }
 }

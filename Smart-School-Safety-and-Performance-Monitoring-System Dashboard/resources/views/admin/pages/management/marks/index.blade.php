@@ -30,6 +30,41 @@
                             </div>
                         </div>
                         <div class="card-body">
+                            <!-- Filters -->
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="student_filter" class="form-label">Filter by Student</label>
+                                    <select id="student_filter" class="form-select p-2" name="student_filter">
+                                        <option value="">All Students</option>
+                                        @foreach (\App\Models\Student::active()->orderBy('first_name')->get() as $student)
+                                            <option value="{{ $student->student_id }}"
+                                                {{ request('student_filter') == $student->student_id ? 'selected' : '' }}>
+                                                {{ $student->full_name }} ({{ $student->student_code }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="subject_filter" class="form-label">Filter by Subject</label>
+                                    <select id="subject_filter" class="form-select p-2" name="subject_filter">
+                                        <option value="">All Subjects</option>
+                                        @foreach (\App\Models\Subject::orderBy('subject_name')->get() as $subject)
+                                            <option value="{{ $subject->id }}"
+                                                {{ request('subject_filter') == $subject->id ? 'selected' : '' }}>
+                                                {{ $subject->subject_name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-4 d-flex align-items-end">
+                                    <button type="button" id="apply_filters" class="btn btn-primary me-2 mb-0">
+                                        <i class="material-symbols-rounded text-sm me-1">filter_list</i>Apply Filters
+                                    </button>
+                                    <button type="button" id="clear_filters" class="btn btn-outline-secondary mb-0">
+                                        <i class="material-symbols-rounded text-sm me-1">clear</i>Clear
+                                    </button>
+                                </div>
+                            </div>
                             <div class="custom-table-responsive">
                                 {{ $dataTable->table() }}
                             </div>

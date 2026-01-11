@@ -125,6 +125,7 @@ Route::middleware(['auth'])->group(function () {
             Route::prefix('attendance')->name('attendance.')->controller(\App\Http\Controllers\Admin\Management\AttendanceController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::get('/dashboard', 'dashboard')->name('dashboard');
+                Route::get('/face', 'face')->name('face');
                 Route::get('/create', 'create')->name('create');
                 Route::post('/', 'store')->name('store');
                 Route::get('/{attendance}', 'show')->name('show');
@@ -136,6 +137,11 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/search-student', 'searchStudent')->name('search-student');
                 Route::post('/nfc-scan', 'nfcScan')->name('nfc-scan');
                 Route::get('/student/{studentId}/percentage', 'studentPercentage')->name('student-percentage');
+
+                // API-like routes for dashboard functionality
+                Route::get('/api/today', 'getTodayAttendance')->name('api.today');
+                Route::post('/api/face/auto-recognize', 'autoFaceRecognition')->name('api.face.auto-recognize');
+                Route::get('/api/check/{studentId}/{date}', 'checkAttendanceToday')->name('api.check');
 
                 // Device Management
                 Route::get('/devices', 'devicesIndex')->name('devices.index');
@@ -213,6 +219,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/school-info', 'updateSchoolInfo')->name('school-info');
                 Route::post('/theme', 'updateTheme')->name('theme');
                 Route::post('/academic', 'updateAcademic')->name('academic');
+                Route::post('/attendance', 'updateAttendance')->name('attendance');
                 Route::post('/language', [SettingsController::class, 'updateLanguage'])->name('language');
             });
         });
