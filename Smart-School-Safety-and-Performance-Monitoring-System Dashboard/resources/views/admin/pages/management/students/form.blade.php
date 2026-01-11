@@ -76,6 +76,15 @@
                                                     </div>
                                                     <small class="text-muted" style="margin-left: 8px">Click the edit icon
                                                         to upload a photo</small>
+                                                    
+                                                    <!-- Face Recognition Capture Button -->
+                                                    <button type="button" class="btn btn-primary btn-sm mt-3 w-100" id="faceCaptureBtn">
+                                                        <i class="fas fa-camera me-1"></i>
+                                                        Capture Face for Recognition
+                                                    </button>
+                                                    <small class="text-muted d-block mt-1">
+                                                        <i class="fas fa-info-circle me-1"></i>Captures 5 angles for better accuracy
+                                                    </small>
                                                 </div>
                                             </div>
                                             <div class="col-md-9">
@@ -114,7 +123,7 @@
                                                         <x-input name="date_of_birth" type="date" title="Date of Birth"
                                                             :isRequired="true" :value="old(
                                                                 'date_of_birth',
-                                                                $student->date_of_birth ?? '',
+                                                                $student?->date_of_birth?->format('Y-m-d') ?: '',
                                                             )" />
                                                     </div>
                                                     <div class="col-md-3">
@@ -221,10 +230,10 @@
 
                                             <div class="col-md-4">
                                                 <x-input name="class_id" type="select" id="class_id" title="Class"
-                                                    :isRequired="true" placeholder="Select Grade First" :options="[]"
-                                                    :value="old('class_id', $student->class_id ?? '')" />
-                                                <small class="text-muted">Classes will be filtered based on selected
-                                                    grade</small>
+                                                    :isRequired="true" placeholder="Select Class" :options="$formattedClasses"
+                                                    :value="old('class_id', $student?->class_id ?? '')"
+                                                    data-initial-class="{{ old('class_id', $student?->class_id ?? '') }}" />
+                                                <small class="text-muted">Select the class for this student</small>
                                             </div>
 
                                             <div class="col-md-4">
@@ -237,7 +246,7 @@
                                                 <x-input name="enrollment_date" type="date" title="Enrollment Date"
                                                     :isRequired="true" :value="old(
                                                         'enrollment_date',
-                                                        $student->enrollment_date ?? date('Y-m-d'),
+                                                        $student?->enrollment_date?->format('Y-m-d') ?: date('Y-m-d'),
                                                     )" />
                                             </div>
 
@@ -764,6 +773,9 @@
             </div>
         </div>
     </main>
+    
+    <!-- Include Face Capture Modal -->
+    @include('admin.components.face-capture-modal')
 @endsection
 
 @section('js')
@@ -773,8 +785,121 @@
         window.generateCodeUrl = '{{ route('admin.management.students.generate-code') }}';
         window.subjectsByGradeUrl = '{{ route('admin.management.students.subjects-by-grade') }}';
         window.classesByGradeUrl = '{{ route('admin.management.students.classes-by-grade') }}';
-        window.selectedSubjects = @json(old('subjects', isset($student) ? $student->subjects->pluck('id')->toArray() : []));
-        window.allClasses = @json($classes);
+        window.selectedSubjects = @json(isset($student) ? $student->subjects->pluck('id')->toArray() : []);
+        window.initialClassId = @json(old('class_id', $student?->class_id ?? ''));
+        window.allClasses = @json($classesArray);
+        window.faceRecognitionApiUrl = '{{ env('FACE_RECOGNITION_API_URL', 'http://localhost:5001') }}';
+        window.studentCode = '{{ $student->student_code ?? '' }}';
+        
+        // Face Capture Handler
+        let capturedFaceImages = [];
+        
+        document.getElementById('faceCaptureBtn').addEventListener('click', function() {
+            window.faceCapture.open();
+        });
+        
+        // Listen for captured faces
+        window.addEventListener('facesCaptured', async function(event) {
+            capturedFaceImages = event.detail.images;
+            console.log(`Captured ${capturedFaceImages.length} face images`);
+            
+            // Show success message
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success alert-dismissible fade show';
+            alert.innerHTML = `
+                <i class="fas fa-check-circle me-2"></i>
+                <strong>Success!</strong> Captured ${capturedFaceImages.length} face angles.
+                Save the student to register for face recognition.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.querySelector('.card-body').prepend(alert);
+            
+            setTimeout(() => alert.remove(), 5000);
+        });
+        
+        // Modified form submission to upload face images
+        const originalFormSubmit = document.getElementById('studentForm').onsubmit;
+        document.getElementById('studentForm').addEventListener('submit', async function(e) {
+            if (capturedFaceImages.length > 0) {
+                e.preventDefault();
+                
+                // Get student code (for edit mode or after generation)
+                let studentCode = window.studentCode || document.querySelector('input[name="student_code"]').value;
+                
+                if (!studentCode || studentCode === '') {
+                    alert('Please ensure student code is generated before capturing face images.');
+                    return;
+                }
+                
+                // Show uploading message
+                const uploadingAlert = document.createElement('div');
+                uploadingAlert.className = 'alert alert-info';
+                uploadingAlert.innerHTML = `
+                    <i class="fas fa-spinner fa-spin me-2"></i>
+                    Uploading face images to recognition system...
+                `;
+                document.querySelector('.card-body').prepend(uploadingAlert);
+                
+                // Upload face images to Face Recognition API
+                let uploadedCount = 0;
+                const studentName = `${document.querySelector('input[name="first_name"]').value} ${document.querySelector('input[name="last_name"]').value}`;
+                
+                for (let i = 0; i < capturedFaceImages.length; i++) {
+                    const formData = new FormData();
+                    formData.append('student_id', studentCode);
+                    formData.append('student_name', studentName);
+                    formData.append('image', capturedFaceImages[i], `face_${i + 1}.jpg`);
+                    
+                    try {
+                        const response = await fetch(`${window.faceRecognitionApiUrl}/students/add`, {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        if (response.ok) {
+                            uploadedCount++;
+                        }
+                    } catch (error) {
+                        console.error('Failed to upload face image:', error);
+                    }
+                }
+                
+                uploadingAlert.remove();
+                
+                if (uploadedCount > 0) {
+                    const successAlert = document.createElement('div');
+                    successAlert.className = 'alert alert-success';
+                    successAlert.innerHTML = `
+                        <i class="fas fa-check-circle me-2"></i>
+                        Uploaded ${uploadedCount} face images. Training will start automatically.
+                    `;
+                    document.querySelector('.card-body').prepend(successAlert);
+                    
+                    // Trigger training
+                    setTimeout(async () => {
+                        try {
+                            await fetch(`${window.faceRecognitionApiUrl}/train`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({})
+                            });
+                        } catch (error) {
+                            console.error('Failed to trigger training:', error);
+                        }
+                    }, 1000);
+                    
+                    setTimeout(() => successAlert.remove(), 3000);
+                }
+                
+                // Clear captured images
+                capturedFaceImages = [];
+                
+                // Continue with normal form submission
+                setTimeout(() => {
+                    this.submit();
+                }, 1000);
+            }
+        });
     </script>
     @vite('resources/js/admin/student-form.js')
 @endsection
