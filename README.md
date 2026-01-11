@@ -6,7 +6,7 @@
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![PHP](https://img.shields.io/badge/php-8.2+-777BB4.svg)
 ![Laravel](https://img.shields.io/badge/laravel-11.x-FF2D20.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
+
 
 An integrated AI-powered solution designed to enhance school safety, optimize educational outcomes, and automate administrative tasks through cutting-edge machine learning technologies.
 
