@@ -150,7 +150,7 @@ The system follows a **microservices architecture** with specialized AI/ML modul
 │  ┌─────────────────────────────────────────────────────────────────────────┐  │
 │  │  Video Threat & Object Detection (Flask API)                            │  │
 │  │  • Object detection (YOLOv8)                                            │  │
-│  │  • Action recognition (SlowFast/X3D)                                    │  │
+│  │  • Action recognition (SlowFast)                                    │  │
 │  │  • Object tracking (DeepSORT)                                           │  │
 │  │  • Temporal analysis with configurable thresholds                       │  │
 │  │  Port: 5002                                                             │  │
@@ -310,7 +310,7 @@ Dual-purpose video surveillance system:
 - Immediate alerts to principal/teachers
 - Multi-camera support with zone configuration
 
-**Models**: YOLOv8 (object detection), SlowFast/X3D (action recognition), DeepSORT (tracking)
+**Models**: YOLOv8 (object detection), SlowFast (threa detection), DeepSORT (multi-object tracking)
 
 **API Port**: 5002
 
@@ -943,13 +943,27 @@ Response:
 
 ### IoT Hardware
 
+| Item                                                                                      |Price(LKR) |       
+| ------------------------------------------------------------------------------------------|-----------| 
+| **ESP32 OV2640 Camera and Development bord**                                              | 2,880.00  | 
+| **2 SD Card 64GB and MicroSD Card Module**                                                | 3,140.00  | 
+| **Arduino UNO R3 and UNO+WiFi R3**                                                        | 4,110.00  | 
+| **RFID Card Reader/Writer RC522 x 2**                                                     | 800.00    | 
+| **LCD1602 I2C Display Module Blue Green Screen 5V PCF8574 IIC Adapter Llate for Arduino** | 700.00    | 
+| **10pcs 5mm Diffused RGB Common Anode LED Bulb and RTC Real Time Clock Module**           | 396.00    | 
+| **RFID Wristband**                                                                        | 365.00    | 
+| ------------------------------------------------------------------------------------------|-----------|
+| Total                                                                                     | 12,026.00 |
+
+**One-time hardware setup cost per unit without wristband and Hostinger**: 12,026.00
+
 #### ESP32-CAM Specifications
 
 - **Processor**: ESP32-S (dual-core 160MHz)
 - **Camera**: OV2640 (2MP)
 - **WiFi**: 802.11 b/g/n
 - **Memory**: 520KB SRAM + 4MB PSRAM
-- **Cost**: 5000LKR per unit
+- **Estimated cost camera setup**: 5000LKR 
 
 #### Deployment Recommendations
 
@@ -1027,32 +1041,6 @@ cd "Smart-School-Safety-and-Performance-Monitoring-System Dashboard"
 php artisan test
 ```
 
----
-
-## 🤝 Contributing
-
-We welcome contributions! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-### Development Guidelines
-
-- Follow PEP 8 for Python code
-- Use PSR-12 for PHP code
-- Write unit tests for new features
-- Update documentation
-- Maintain backward compatibility
-
----
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
 #### Port Already in Use
 
 ```bash
@@ -1116,19 +1104,6 @@ _Benchmarks on: Intel i7-10700K, 32GB RAM, RTX 3070_
 - ✅ Performance prediction
 - ✅ Dashboard integration
 
-### Phase 2 - Enhancements (In Progress)
-
-- 🔄 Mobile application
-- 🔄 Advanced analytics dashboard
-- 🔄 Parent portal
-- 🔄 Integration with existing school systems
-
-### Phase 3 - Advanced Features (Completed/Planned)
-
-- ✅ **Face recognition for attendance** - FaceNet + MTCNN with multi-embedding matching
-- 📋 Emotion detection
-- 📋 Predictive maintenance for equipment
-- 📋 AI-powered tutoring system
 
 ## 🙏 Acknowledgments
 
