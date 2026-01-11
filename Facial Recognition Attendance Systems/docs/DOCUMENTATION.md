@@ -1259,26 +1259,31 @@ Then open `Model_Accuracy_Analysis.ipynb` in the browser.
 **Analysis Includes:**
 
 1. **Embedding Quality Analysis**
+
    - Intra-class similarity (same person)
    - Inter-class similarity (different persons)
    - Class separation margin
 
 2. **Recognition Accuracy Metrics**
+
    - True Positive Rate (Recall)
    - False Positive Rate
    - Precision and F1 Score
    - Overall Accuracy
 
 3. **Threshold Analysis**
+
    - Accuracy vs Threshold curves
    - ROC Curve
    - Optimal threshold recommendation
 
 4. **Per-Student Analysis**
+
    - Individual embedding quality scores
    - Students needing retraining
 
 5. **Confusion Matrix**
+
    - Visual recognition performance matrix
 
 6. **Recommendations**
