@@ -3861,3 +3861,344 @@ AttributeError: 'RegistrationService' object has no attribute 'complete_session'
 2026-01-11 13:19:33 - __main__ - INFO - Application initialized successfully
 2026-01-11 13:19:33 - werkzeug - WARNING -  * Debugger is active!
 2026-01-11 13:19:33 - werkzeug - INFO -  * Debugger PIN: 277-274-484
+2026-01-13 10:18:21 - __main__ - INFO - Initializing Facial Recognition Attendance System...
+2026-01-13 10:18:21 - __main__ - INFO - Initializing face detection...
+2026-01-13 10:18:24 - core.face_detector - INFO - MTCNN detector initialized on cpu
+2026-01-13 10:18:24 - core.face_detector - INFO - FaceDetector initialized with mtcnn backend
+2026-01-13 10:18:24 - __main__ - INFO - Initializing face recognition...
+2026-01-13 10:18:24 - core.face_recognizer - WARNING - InsightFace not available, falling back to FaceNet
+2026-01-13 10:18:24 - core.face_recognizer - WARNING - arcface failed, falling back to facenet: ArcFace not available
+2026-01-13 10:18:25 - core.face_recognizer - INFO - FaceNet recognizer initialized on cpu
+2026-01-13 10:18:25 - core.face_recognizer - INFO - FaceRecognizer initialized with facenet backend
+2026-01-13 10:18:25 - __main__ - INFO - Initializing face aligner...
+2026-01-13 10:18:25 - core.face_aligner - INFO - FaceAligner initialized with target size (160, 160)
+2026-01-13 10:18:25 - __main__ - INFO - Initializing face database...
+2026-01-13 10:18:25 - database.face_database - INFO - Loaded 3 embeddings from disk
+2026-01-13 10:18:25 - database.face_database - INFO - Loaded multi-embeddings for 3 students
+2026-01-13 10:18:25 - database.face_database - INFO - FaceDatabase initialized with 3 faces
+2026-01-13 10:18:25 - __main__ - INFO - Initializing attendance database...
+2026-01-13 10:18:25 - database.attendance_db - INFO - AttendanceDB initialized: sqlite:////Users/tharusha_rashmika/Documents/projects/aleph/reserch/AI-Powered-Smart-School-Safety-and-Performance-Monitoring-System/Facial Recognition Attendance Systems/data/attendance.db
+2026-01-13 10:18:25 - __main__ - INFO - Initializing attendance engine...
+2026-01-13 10:18:25 - core.face_detector - INFO - MTCNN detector initialized on cpu
+2026-01-13 10:18:25 - core.face_detector - INFO - FaceDetector initialized with mtcnn backend
+2026-01-13 10:18:25 - core.face_recognizer - WARNING - InsightFace not available, falling back to FaceNet
+2026-01-13 10:18:25 - core.face_recognizer - WARNING - arcface failed, falling back to facenet: ArcFace not available
+2026-01-13 10:18:25 - core.face_recognizer - INFO - FaceNet recognizer initialized on cpu
+2026-01-13 10:18:25 - core.face_recognizer - INFO - FaceRecognizer initialized with facenet backend
+2026-01-13 10:18:25 - core.face_aligner - INFO - FaceAligner initialized with target size (160, 160)
+2026-01-13 10:18:25 - core.attendance_engine - INFO - AttendanceEngine initialized
+2026-01-13 10:18:25 - core.attendance_engine - INFO - Loaded 3 faces for matching
+2026-01-13 10:18:25 - core.attendance_engine - INFO - Multi-embeddings available for 3 students
+2026-01-13 10:18:25 - __main__ - INFO - Initializing registration service...
+2026-01-13 10:18:25 - __main__ - INFO - Initializing face trainer...
+2026-01-13 10:18:25 - training.face_trainer - INFO - FaceTrainer initialized
+2026-01-13 10:18:25 - __main__ - INFO - Initializing attendance service...
+2026-01-13 10:18:25 - __main__ - INFO - Initializing camera service...
+2026-01-13 10:18:25 - __main__ - INFO - Loaded 3 registered faces
+2026-01-13 10:18:25 - __main__ - INFO - API blueprints registered
+2026-01-13 10:18:25 - __main__ - INFO - Application initialized successfully
+2026-01-13 10:18:25 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5004
+ * Running on http://192.168.50.96:5004
+2026-01-13 10:18:25 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-01-13 10:18:25 - werkzeug - INFO -  * Restarting with stat
+2026-01-13 10:18:26 - __main__ - INFO - Initializing Facial Recognition Attendance System...
+2026-01-13 10:18:26 - __main__ - INFO - Initializing face detection...
+2026-01-13 10:18:28 - core.face_detector - INFO - MTCNN detector initialized on cpu
+2026-01-13 10:18:28 - core.face_detector - INFO - FaceDetector initialized with mtcnn backend
+2026-01-13 10:18:28 - __main__ - INFO - Initializing face recognition...
+2026-01-13 10:18:28 - core.face_recognizer - WARNING - InsightFace not available, falling back to FaceNet
+2026-01-13 10:18:28 - core.face_recognizer - WARNING - arcface failed, falling back to facenet: ArcFace not available
+2026-01-13 10:18:28 - core.face_recognizer - INFO - FaceNet recognizer initialized on cpu
+2026-01-13 10:18:28 - core.face_recognizer - INFO - FaceRecognizer initialized with facenet backend
+2026-01-13 10:18:28 - __main__ - INFO - Initializing face aligner...
+2026-01-13 10:18:28 - core.face_aligner - INFO - FaceAligner initialized with target size (160, 160)
+2026-01-13 10:18:28 - __main__ - INFO - Initializing face database...
+2026-01-13 10:18:28 - database.face_database - INFO - Loaded 3 embeddings from disk
+2026-01-13 10:18:28 - database.face_database - INFO - Loaded multi-embeddings for 3 students
+2026-01-13 10:18:28 - database.face_database - INFO - FaceDatabase initialized with 3 faces
+2026-01-13 10:18:28 - __main__ - INFO - Initializing attendance database...
+2026-01-13 10:18:28 - database.attendance_db - INFO - AttendanceDB initialized: sqlite:////Users/tharusha_rashmika/Documents/projects/aleph/reserch/AI-Powered-Smart-School-Safety-and-Performance-Monitoring-System/Facial Recognition Attendance Systems/data/attendance.db
+2026-01-13 10:18:28 - __main__ - INFO - Initializing attendance engine...
+2026-01-13 10:18:28 - core.face_detector - INFO - MTCNN detector initialized on cpu
+2026-01-13 10:18:28 - core.face_detector - INFO - FaceDetector initialized with mtcnn backend
+2026-01-13 10:18:28 - core.face_recognizer - WARNING - InsightFace not available, falling back to FaceNet
+2026-01-13 10:18:28 - core.face_recognizer - WARNING - arcface failed, falling back to facenet: ArcFace not available
+2026-01-13 10:18:28 - core.face_recognizer - INFO - FaceNet recognizer initialized on cpu
+2026-01-13 10:18:28 - core.face_recognizer - INFO - FaceRecognizer initialized with facenet backend
+2026-01-13 10:18:28 - core.face_aligner - INFO - FaceAligner initialized with target size (160, 160)
+2026-01-13 10:18:28 - core.attendance_engine - INFO - AttendanceEngine initialized
+2026-01-13 10:18:28 - core.attendance_engine - INFO - Loaded 3 faces for matching
+2026-01-13 10:18:28 - core.attendance_engine - INFO - Multi-embeddings available for 3 students
+2026-01-13 10:18:28 - __main__ - INFO - Initializing registration service...
+2026-01-13 10:18:28 - __main__ - INFO - Initializing face trainer...
+2026-01-13 10:18:28 - training.face_trainer - INFO - FaceTrainer initialized
+2026-01-13 10:18:28 - __main__ - INFO - Initializing attendance service...
+2026-01-13 10:18:28 - __main__ - INFO - Initializing camera service...
+2026-01-13 10:18:28 - __main__ - INFO - Loaded 3 registered faces
+2026-01-13 10:18:28 - __main__ - INFO - API blueprints registered
+2026-01-13 10:18:28 - __main__ - INFO - Application initialized successfully
+2026-01-13 10:18:28 - werkzeug - WARNING -  * Debugger is active!
+2026-01-13 10:18:28 - werkzeug - INFO -  * Debugger PIN: 142-523-261
+2026-01-13 10:18:29 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 10:18:29] "GET /api/health HTTP/1.1" 200 -
+2026-01-13 10:19:47 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 10:19:47] "OPTIONS /api/students/register HTTP/1.1" 200 -
+2026-01-13 10:19:47 - __main__ - INFO - Starting face registration for student: stu-00000080 (Sanduni Rodrigo) with 40 images
+2026-01-13 10:19:47 - services.registration_service - INFO - Started capture session: DASH_stu-00000080_1768279787 for Sanduni Rodrigo
+2026-01-13 10:19:49 - __main__ - INFO - Captured 40 faces, 0 failed for student stu-00000080
+2026-01-13 10:19:49 - __main__ - INFO - Training face model for student stu-00000080...
+2026-01-13 10:19:49 - training.face_trainer - INFO - Training student DASH_stu-00000080 with 40 images
+2026-01-13 10:20:01 - training.embedding_generator - INFO - Filtered 13 outliers (187 remaining)
+2026-01-13 10:20:01 - database.face_database - INFO - Stored 10 embeddings for DASH_stu-00000080
+2026-01-13 10:20:01 - database.face_database - INFO - Saved 3 embeddings to disk
+2026-01-13 10:20:01 - database.face_database - INFO - Added student: DASH_stu-00000080 (Sanduni Rodrigo)
+2026-01-13 10:20:01 - training.face_trainer - INFO - Trained student DASH_stu-00000080: 40 images, 10 embeddings, quality=0.80
+2026-01-13 10:20:01 - services.registration_service - INFO - Registration completed for DASH_stu-00000080: 40 images
+2026-01-13 10:20:01 - core.attendance_engine - INFO - Loaded 3 faces for matching
+2026-01-13 10:20:01 - core.attendance_engine - INFO - Multi-embeddings available for 3 students
+2026-01-13 10:20:01 - __main__ - INFO - ✓ Student stu-00000080 registered and trained successfully with 40 faces
+2026-01-13 10:20:01 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 10:20:01] "POST /api/students/register HTTP/1.1" 200 -
+2026-01-13 10:20:13 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 10:20:13 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.66)
+2026-01-13 10:20:13 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 10:20:13] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 10:20:23 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 10:20:23 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.77)
+2026-01-13 10:20:23 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 10:20:23] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 10:20:29 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 10:20:29] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 10:20:29 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 10:20:29] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 10:20:30 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 10:20:30] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 10:20:30 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 10:20:30 - __main__ - INFO - Face recognized: Sanduni Rodrigo (ID: DASH_stu-00000080, Dashboard: DASH_stu-00000080, Confidence: 0.90)
+2026-01-13 10:20:30 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 10:20:30] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 10:20:41 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 10:20:41 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.77)
+2026-01-13 10:20:41 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 10:20:41] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 10:20:47 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 10:20:47 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.70)
+2026-01-13 10:20:47 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 10:20:47] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:50:35 - __main__ - INFO - Initializing Facial Recognition Attendance System...
+2026-01-13 12:50:35 - __main__ - INFO - Initializing face detection...
+2026-01-13 12:50:37 - core.face_detector - INFO - MTCNN detector initialized on cpu
+2026-01-13 12:50:37 - core.face_detector - INFO - FaceDetector initialized with mtcnn backend
+2026-01-13 12:50:37 - __main__ - INFO - Initializing face recognition...
+2026-01-13 12:50:37 - core.face_recognizer - WARNING - InsightFace not available, falling back to FaceNet
+2026-01-13 12:50:37 - core.face_recognizer - WARNING - arcface failed, falling back to facenet: ArcFace not available
+2026-01-13 12:50:37 - core.face_recognizer - INFO - FaceNet recognizer initialized on cpu
+2026-01-13 12:50:37 - core.face_recognizer - INFO - FaceRecognizer initialized with facenet backend
+2026-01-13 12:50:37 - __main__ - INFO - Initializing face aligner...
+2026-01-13 12:50:37 - core.face_aligner - INFO - FaceAligner initialized with target size (160, 160)
+2026-01-13 12:50:37 - __main__ - INFO - Initializing face database...
+2026-01-13 12:50:37 - database.face_database - INFO - Loaded 3 embeddings from disk
+2026-01-13 12:50:37 - database.face_database - INFO - Loaded multi-embeddings for 3 students
+2026-01-13 12:50:37 - database.face_database - INFO - FaceDatabase initialized with 3 faces
+2026-01-13 12:50:37 - __main__ - INFO - Initializing attendance database...
+2026-01-13 12:50:37 - database.attendance_db - INFO - AttendanceDB initialized: sqlite:////Users/tharusha_rashmika/Documents/projects/aleph/reserch/AI-Powered-Smart-School-Safety-and-Performance-Monitoring-System/Facial Recognition Attendance Systems/data/attendance.db
+2026-01-13 12:50:37 - __main__ - INFO - Initializing attendance engine...
+2026-01-13 12:50:37 - core.face_detector - INFO - MTCNN detector initialized on cpu
+2026-01-13 12:50:37 - core.face_detector - INFO - FaceDetector initialized with mtcnn backend
+2026-01-13 12:50:37 - core.face_recognizer - WARNING - InsightFace not available, falling back to FaceNet
+2026-01-13 12:50:37 - core.face_recognizer - WARNING - arcface failed, falling back to facenet: ArcFace not available
+2026-01-13 12:50:38 - core.face_recognizer - INFO - FaceNet recognizer initialized on cpu
+2026-01-13 12:50:38 - core.face_recognizer - INFO - FaceRecognizer initialized with facenet backend
+2026-01-13 12:50:38 - core.face_aligner - INFO - FaceAligner initialized with target size (160, 160)
+2026-01-13 12:50:38 - core.attendance_engine - INFO - AttendanceEngine initialized
+2026-01-13 12:50:38 - core.attendance_engine - INFO - Loaded 3 faces for matching
+2026-01-13 12:50:38 - core.attendance_engine - INFO - Multi-embeddings available for 3 students
+2026-01-13 12:50:38 - __main__ - INFO - Initializing registration service...
+2026-01-13 12:50:38 - __main__ - INFO - Initializing face trainer...
+2026-01-13 12:50:38 - training.face_trainer - INFO - FaceTrainer initialized
+2026-01-13 12:50:38 - __main__ - INFO - Initializing attendance service...
+2026-01-13 12:50:38 - __main__ - INFO - Initializing camera service...
+2026-01-13 12:50:38 - __main__ - INFO - Loaded 3 registered faces
+2026-01-13 12:50:38 - __main__ - INFO - API blueprints registered
+2026-01-13 12:50:38 - __main__ - INFO - Application initialized successfully
+2026-01-13 12:50:38 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5004
+ * Running on http://192.168.50.96:5004
+2026-01-13 12:50:38 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-01-13 12:50:38 - werkzeug - INFO -  * Restarting with stat
+2026-01-13 12:50:38 - __main__ - INFO - Initializing Facial Recognition Attendance System...
+2026-01-13 12:50:38 - __main__ - INFO - Initializing face detection...
+2026-01-13 12:50:39 - core.face_detector - INFO - MTCNN detector initialized on cpu
+2026-01-13 12:50:39 - core.face_detector - INFO - FaceDetector initialized with mtcnn backend
+2026-01-13 12:50:39 - __main__ - INFO - Initializing face recognition...
+2026-01-13 12:50:39 - core.face_recognizer - WARNING - InsightFace not available, falling back to FaceNet
+2026-01-13 12:50:39 - core.face_recognizer - WARNING - arcface failed, falling back to facenet: ArcFace not available
+2026-01-13 12:50:40 - core.face_recognizer - INFO - FaceNet recognizer initialized on cpu
+2026-01-13 12:50:40 - core.face_recognizer - INFO - FaceRecognizer initialized with facenet backend
+2026-01-13 12:50:40 - __main__ - INFO - Initializing face aligner...
+2026-01-13 12:50:40 - core.face_aligner - INFO - FaceAligner initialized with target size (160, 160)
+2026-01-13 12:50:40 - __main__ - INFO - Initializing face database...
+2026-01-13 12:50:40 - database.face_database - INFO - Loaded 3 embeddings from disk
+2026-01-13 12:50:40 - database.face_database - INFO - Loaded multi-embeddings for 3 students
+2026-01-13 12:50:40 - database.face_database - INFO - FaceDatabase initialized with 3 faces
+2026-01-13 12:50:40 - __main__ - INFO - Initializing attendance database...
+2026-01-13 12:50:40 - database.attendance_db - INFO - AttendanceDB initialized: sqlite:////Users/tharusha_rashmika/Documents/projects/aleph/reserch/AI-Powered-Smart-School-Safety-and-Performance-Monitoring-System/Facial Recognition Attendance Systems/data/attendance.db
+2026-01-13 12:50:40 - __main__ - INFO - Initializing attendance engine...
+2026-01-13 12:50:40 - core.face_detector - INFO - MTCNN detector initialized on cpu
+2026-01-13 12:50:40 - core.face_detector - INFO - FaceDetector initialized with mtcnn backend
+2026-01-13 12:50:40 - core.face_recognizer - WARNING - InsightFace not available, falling back to FaceNet
+2026-01-13 12:50:40 - core.face_recognizer - WARNING - arcface failed, falling back to facenet: ArcFace not available
+2026-01-13 12:50:40 - core.face_recognizer - INFO - FaceNet recognizer initialized on cpu
+2026-01-13 12:50:40 - core.face_recognizer - INFO - FaceRecognizer initialized with facenet backend
+2026-01-13 12:50:40 - core.face_aligner - INFO - FaceAligner initialized with target size (160, 160)
+2026-01-13 12:50:40 - core.attendance_engine - INFO - AttendanceEngine initialized
+2026-01-13 12:50:40 - core.attendance_engine - INFO - Loaded 3 faces for matching
+2026-01-13 12:50:40 - core.attendance_engine - INFO - Multi-embeddings available for 3 students
+2026-01-13 12:50:40 - __main__ - INFO - Initializing registration service...
+2026-01-13 12:50:40 - __main__ - INFO - Initializing face trainer...
+2026-01-13 12:50:40 - training.face_trainer - INFO - FaceTrainer initialized
+2026-01-13 12:50:40 - __main__ - INFO - Initializing attendance service...
+2026-01-13 12:50:40 - __main__ - INFO - Initializing camera service...
+2026-01-13 12:50:40 - __main__ - INFO - Loaded 3 registered faces
+2026-01-13 12:50:40 - __main__ - INFO - API blueprints registered
+2026-01-13 12:50:40 - __main__ - INFO - Application initialized successfully
+2026-01-13 12:50:40 - werkzeug - WARNING -  * Debugger is active!
+2026-01-13 12:50:40 - werkzeug - INFO -  * Debugger PIN: 142-523-261
+2026-01-13 12:50:42 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:50:42] "GET /api/health HTTP/1.1" 200 -
+2026-01-13 12:51:51 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:51:51] "OPTIONS /api/students/register HTTP/1.1" 200 -
+2026-01-13 12:51:51 - __main__ - INFO - Starting face registration for student: stu-00000078 (tharusha Senanayake) with 40 images
+2026-01-13 12:51:51 - services.registration_service - INFO - Started capture session: DASH_stu-00000078_1768288911 for tharusha Senanayake
+2026-01-13 12:51:52 - __main__ - INFO - Captured 40 faces, 0 failed for student stu-00000078
+2026-01-13 12:51:52 - __main__ - INFO - Training face model for student stu-00000078...
+2026-01-13 12:51:52 - training.face_trainer - INFO - Training student DASH_stu-00000078 with 40 images
+2026-01-13 12:52:04 - training.embedding_generator - INFO - Filtered 7 outliers (193 remaining)
+2026-01-13 12:52:04 - database.face_database - INFO - Stored 10 embeddings for DASH_stu-00000078
+2026-01-13 12:52:04 - database.face_database - INFO - Saved 3 embeddings to disk
+2026-01-13 12:52:04 - database.face_database - INFO - Added student: DASH_stu-00000078 (tharusha Senanayake)
+2026-01-13 12:52:04 - training.face_trainer - INFO - Trained student DASH_stu-00000078: 40 images, 10 embeddings, quality=0.80
+2026-01-13 12:52:04 - services.registration_service - INFO - Registration completed for DASH_stu-00000078: 40 images
+2026-01-13 12:52:04 - core.attendance_engine - INFO - Loaded 3 faces for matching
+2026-01-13 12:52:04 - core.attendance_engine - INFO - Multi-embeddings available for 3 students
+2026-01-13 12:52:04 - __main__ - INFO - ✓ Student stu-00000078 registered and trained successfully with 40 faces
+2026-01-13 12:52:04 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:52:04] "POST /api/students/register HTTP/1.1" 200 -
+2026-01-13 12:52:16 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:52:16 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.85)
+2026-01-13 12:52:16 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:52:16] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:52:21 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:52:21 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.87)
+2026-01-13 12:52:21 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:52:21] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:52:27 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:52:27] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:52:27 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:52:27 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.75)
+2026-01-13 12:52:27 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:52:27] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:52:33 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:52:33] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:52:34 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:52:34] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:52:34 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:52:34] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:52:35 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:52:35 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.73)
+2026-01-13 12:52:35 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:52:35] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:52:40 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:52:40 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.84)
+2026-01-13 12:52:40 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:52:40] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:52:46 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:52:46] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:52:46 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:52:46] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:52:47 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:52:47 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.85)
+2026-01-13 12:52:47 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:52:47] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:52:53 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:52:53 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.78)
+2026-01-13 12:52:53 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:52:53] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:52:58 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:52:58 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.78)
+2026-01-13 12:52:58 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:52:58] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:04 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:04] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:04 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:04] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:05 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:05] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:05 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:05] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:06 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:53:06 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.75)
+2026-01-13 12:53:06 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:06] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:12 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:12] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:12 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:12] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:12 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:12] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:13 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:13] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:13 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:13] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:14 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:14] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:14 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:14] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:15 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:15] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:15 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:15] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:16 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:16] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:16 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:16] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:17 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:53:17 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.85)
+2026-01-13 12:53:17 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:17] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:23 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:53:23 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.79)
+2026-01-13 12:53:23 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:23] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:28 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:53:28 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.71)
+2026-01-13 12:53:28 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:28] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:34 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:34] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:35 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:35] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:35 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:35] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:35 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:35] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:36 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:36] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:36 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:36] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:37 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:53:37 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.80)
+2026-01-13 12:53:37 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:37] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:43 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:43] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:43 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:43] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:44 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:53:44 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.79)
+2026-01-13 12:53:44 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:44] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:49 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:53:49 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.82)
+2026-01-13 12:53:49 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:49] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:53:55 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:53:55 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.87)
+2026-01-13 12:53:55 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:53:55] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:01 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:54:01 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.84)
+2026-01-13 12:54:01 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:01] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:07 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:07] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:07 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:54:07 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.82)
+2026-01-13 12:54:07 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:07] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:13 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:54:13 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.89)
+2026-01-13 12:54:13 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:13] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:18 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:54:18 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.85)
+2026-01-13 12:54:18 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:18] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:24 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:54:24 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.82)
+2026-01-13 12:54:24 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:24] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:30 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:54:30 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.83)
+2026-01-13 12:54:30 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:30] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:35 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:35] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:36 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:36] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:36 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:36] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:37 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:37] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:37 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:37] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:38 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:38] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:38 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:54:38 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.86)
+2026-01-13 12:54:38 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:38] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:44 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:54:44 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.67)
+2026-01-13 12:54:44 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:44] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:50 - __main__ - WARNING - Could not get dashboard ID: 'FaceDatabase' object has no attribute 'get_student'
+2026-01-13 12:54:50 - __main__ - INFO - Face recognized: tharusha Senanayake (ID: DASH_stu-00000078, Dashboard: DASH_stu-00000078, Confidence: 0.78)
+2026-01-13 12:54:50 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:50] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:55 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:55] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:56 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:56] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:56 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:56] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:57 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:57] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:57 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:57] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:58 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:58] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:58 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:58] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:59 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:59] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:54:59 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:54:59] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:55:00 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:55:00] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:55:00 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:55:00] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:55:01 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:55:01] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:55:01 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:55:01] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:55:02 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:55:02] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:55:02 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:55:02] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:55:03 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:55:03] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:55:03 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:55:03] "POST /recognize_face HTTP/1.1" 200 -
+2026-01-13 12:55:04 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 12:55:04] "POST /recognize_face HTTP/1.1" 200 -
