@@ -141,9 +141,11 @@ class ArduinoNFCService
             $response = $this->waitForResponse();
 
             // Fallback for legacy firmware/protocol if command was not recognized.
-            if (!$response['success'] &&
+            if (
+                !$response['success'] &&
                 isset($response['message']) &&
-                stripos($response['message'], 'Unknown command') !== false) {
+                stripos($response['message'], 'Unknown command') !== false
+            ) {
 
                 $nfcData = $this->prepareNFCData($studentData);
 
