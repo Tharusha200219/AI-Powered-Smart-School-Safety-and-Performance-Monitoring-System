@@ -38,6 +38,21 @@ class EmbeddingGenerator:
         self.recognizer = face_recognizer
         self.aligner = face_aligner
         self.target_size = target_size
+        self.blur_threshold = 80.0  # Threshold for blur detection
+    
+    @staticmethod
+    def is_image_blurry(image: np.ndarray, threshold: float = 80.0) -> Tuple[bool, float]:
+        """
+        Check if an image is blurry using the Variance of Laplacian method.
+        Higher variance means more sharp details.
+        """
+        if len(image.shape) == 3:
+            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        else:
+            gray = image
+            
+        variance = cv2.Laplacian(gray, cv2.CV_64F).var()
+        return variance < threshold, variance
     
     def generate_from_image(
         self,
@@ -55,6 +70,12 @@ class EmbeddingGenerator:
             Face embedding or None if failed
         """
         try:
+            # Check for blur
+            is_blurry, variance = self.is_image_blurry(image, self.blur_threshold)
+            if is_blurry:
+                logger.warning(f"Skipping blurry image (variance: {variance:.2f})")
+                return None
+
             if preprocess:
                 # Resize if needed
                 if image.shape[:2] != self.target_size:
@@ -85,9 +106,14 @@ class EmbeddingGenerator:
         if not images:
             return []
         
-        # Preprocess all images
+        # Preprocess and filter blurry images
         processed = []
         for img in images:
+            # Skip blurry images in batch
+            is_blurry, _ = self.is_image_blurry(img, self.blur_threshold)
+            if is_blurry:
+                continue
+                
             if img.shape[:2] != self.target_size:
                 img = cv2.resize(img, self.target_size)
             processed.append(img)

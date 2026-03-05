@@ -204,7 +204,7 @@ class FaceRecognizer:
         self,
         backend: str = 'facenet',
         device: str = 'cpu',
-        similarity_threshold: float = 0.55,
+        similarity_threshold: float = 0.65,
         **kwargs
     ):
         """

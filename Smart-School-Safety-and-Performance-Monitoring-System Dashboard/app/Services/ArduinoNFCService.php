@@ -100,6 +100,13 @@ class ArduinoNFCService
             // Wait for Arduino to initialize (it resets on serial connection)
             sleep(2);
 
+            // Clear any pending data in the buffer
+            stream_set_blocking($this->handle, false);
+            while (fgets($this->handle)) {
+                // Just drain the buffer
+            }
+            stream_set_blocking($this->handle, true);
+
             return true;
         } catch (Exception $e) {
             Log::error("Arduino NFC Service - Open Port Error: " . $e->getMessage());
@@ -290,25 +297,31 @@ class ArduinoNFCService
                         continue;
                     }
 
-                    // Check for final response
-                    if (strpos($normalizedLine, 'SUCCESS') !== false) {
+                    // Check for final response using stricter prefix matching
+                    if (preg_match('/^SUCCESS:/i', $line)) {
                         Log::info("Arduino NFC Service - Success response received");
                         return [
                             'success' => true,
                             'message' => 'Student data successfully written to RFID tag!',
                             'details' => implode("\n", $infoMessages)
                         ];
-                    } elseif (strpos($normalizedLine, 'ERROR') !== false) {
-                        $errorMsg = trim(preg_replace('/^\s*ERROR\s*:*/i', '', $line));
+                    } elseif (preg_match('/^ERROR:(.*)/i', $line, $matches)) {
+                        $errorMsg = trim($matches[1]);
+                        if (empty($errorMsg)) {
+                            $errorMsg = "Unknown Arduino error. Ensure no other Serial Monitors (like Arduino IDE) are open. Raw: '{$line}'";
+                        }
                         Log::warning("Arduino NFC Service - Error response: " . $errorMsg);
                         return [
                             'success' => false,
                             'message' => 'Arduino reported an error: ' . $errorMsg,
-                            'details' => implode("\n", $infoMessages)
+                            'details' => "Raw Arduino output: '{$line}'. " . implode("\n", $infoMessages)
                         ];
-                    } elseif (strpos($normalizedLine, 'TIMEOUT') !== false) {
-                        $timeoutMsg = trim(preg_replace('/^\s*TIMEOUT\s*:*/i', '', $line));
-                        Log::warning("Arduino NFC Service - Timeout: " . $timeoutMsg);
+                    } elseif (preg_match('/^TIMEOUT:(.*)/i', $line, $matches)) {
+                        $timeoutMsg = trim($matches[1]);
+                        if (empty($timeoutMsg)) {
+                            $timeoutMsg = "Operation timed out";
+                        }
+                        Log::warning("Arduino NFC Service - Timeout response: " . $timeoutMsg);
                         return [
                             'success' => false,
                             'message' => 'Timeout: ' . $timeoutMsg,

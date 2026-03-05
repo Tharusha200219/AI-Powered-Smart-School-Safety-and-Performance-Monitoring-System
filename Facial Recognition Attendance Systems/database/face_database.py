@@ -421,3 +421,36 @@ class FaceDatabase:
         self.export_embeddings(str(backup_file))
         
         return str(backup_file)
+
+    def clear_database(self) -> bool:
+        """
+        Clear all data from the database, including embeddings and face images.
+        """
+        with self._lock:
+            self._embeddings = {}
+            self._multi_embeddings = {}
+            self._student_info = {}
+            
+            # Remove face images directory and recreate it
+            if self.faces_dir.exists():
+                shutil.rmtree(self.faces_dir)
+            self.faces_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Remove embedding files
+            for f in [self._embeddings_file, self._multi_embeddings_file, self._info_file]:
+                if f.exists():
+                    try:
+                        f.unlink()
+                    except Exception as e:
+                        logger.error(f"Could not delete {f}: {e}")
+                
+                # Also remove backups
+                backup = f.with_suffix('.pkl.bak')
+                if backup.exists():
+                    try:
+                        backup.unlink()
+                    except Exception as e:
+                        logger.error(f"Could not delete backup {backup}: {e}")
+        
+        logger.info("Face database cleared successfully")
+        return True

@@ -42,7 +42,7 @@ class Config:
     DETECTION_MODEL: str = "mtcnn"
     DETECTION_CONFIDENCE: float = 0.95
     MIN_FACE_SIZE: int = 80  # Minimum face size in pixels
-    FACE_DETECTION_SCALE: float = 0.5  # Scale factor for faster detection
+    FACE_DETECTION_SCALE: float = 1.0  # Full scale for better accuracy at distances
     
     # ===========================================
     # Face Recognition Settings
@@ -50,8 +50,8 @@ class Config:
     # Recognition model: 'arcface', 'facenet', 'facenet512'
     RECOGNITION_MODEL: str = "arcface"
     EMBEDDING_SIZE: int = 512  # ArcFace embedding dimension
-    RECOGNITION_THRESHOLD: float = 0.55  # Cosine similarity threshold (lower = stricter)
-    UNKNOWN_THRESHOLD: float = 0.45  # Below this, definitely unknown
+    RECOGNITION_THRESHOLD: float = 0.65  # Cosine similarity threshold (higher = stricter)
+    UNKNOWN_THRESHOLD: float = 0.50  # Below this, definitely unknown
     
     # ===========================================
     # Face Capture Settings
