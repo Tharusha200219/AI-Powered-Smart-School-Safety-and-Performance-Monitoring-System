@@ -72,6 +72,7 @@ echo ""
 echo "🧹 Cleaning up existing processes..."
 
 # Kill existing processes on AI API ports
+kill_port 5001 "Seating Arrangement API (Legacy Port)"
 kill_port 5002 "Performance Prediction API"
 kill_port 5003 "Seating Arrangement API"
 kill_port 5004 "Face Recognition API"

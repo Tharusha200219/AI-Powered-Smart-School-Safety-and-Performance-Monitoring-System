@@ -97,17 +97,28 @@ class StudentPerformancePredictor:
         Returns:
             Prepared feature matrix
         """
-        age = student_data.get('age', 15)
-        grade = student_data.get('grade', 10)
-        subjects = student_data.get('subjects', [])
+        # IMPROVEMENT: Explicitly cast to numeric types to handle potential string inputs from Laravel
+        try:
+            age = float(student_data.get('age', 15))
+            grade = float(student_data.get('grade', 10))
+        except (ValueError, TypeError):
+            age = 15.0
+            grade = 10.0
         
+        subjects = student_data.get('subjects', [])
         features = []
         subject_names = []
         
         for subject in subjects:
             subject_name = subject.get('subject_name', 'Unknown')
-            attendance = subject.get('attendance', 0)
-            marks = subject.get('marks', 0)
+            
+            # IMPROVEMENT: Explicitly cast to numeric types
+            try:
+                attendance = float(subject.get('attendance', 0))
+                marks = float(subject.get('marks', 0))
+            except (ValueError, TypeError):
+                attendance = 0.0
+                marks = 0.0
             
             # Create engineered features (MUST match training)
             eng_features = self._engineer_features(age, grade, attendance, marks)
@@ -209,8 +220,13 @@ class StudentPerformancePredictor:
         subjects = student_data.get('subjects', [])
         
         for i, (subject_name, predicted_performance) in enumerate(zip(subject_names, predictions)):
-            current_marks = subjects[i].get('marks', 0)
-            attendance = subjects[i].get('attendance', 0)
+            # IMPROVEMENT: Explicitly cast to numeric types for downstream processing
+            try:
+                current_marks = float(subjects[i].get('marks', 0))
+                attendance = float(subjects[i].get('attendance', 0))
+            except (ValueError, TypeError):
+                current_marks = 0.0
+                attendance = 0.0
             
             # Calculate 95% confidence interval (IMPROVEMENT)
             lower_bound, upper_bound = self._calculate_confidence_interval(

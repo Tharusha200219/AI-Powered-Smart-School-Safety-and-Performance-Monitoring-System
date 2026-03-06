@@ -250,8 +250,12 @@
                                             <h6 class="mb-0 d-flex align-items-center">
                                                 <i class="material-symbols-rounded me-2 icon-size-sm">trending_up</i>
                                                 Performance Predictions
-                                                @if (isset($predictionApiStatus) && $predictionApiStatus && isset($predictions) && $predictions->count() > 0)
-                                                    <span class="badge bg-gradient-success badge-sm ms-2">Live</span>
+                                                @if (isset($predictionApiStatus) && $predictionApiStatus)
+                                                    @if (isset($predictions) && $predictions->count() > 0)
+                                                        <span class="badge bg-gradient-success badge-sm ms-2">Live</span>
+                                                    @else
+                                                        <span class="badge bg-gradient-warning badge-sm ms-2">No Predictions</span>
+                                                    @endif
                                                 @else
                                                     <span class="badge bg-gradient-danger badge-sm ms-2"> API Not
                                                         Connected</span>
@@ -264,9 +268,9 @@
                                                 <div class="alert alert-danger alert-dismissible fade show"
                                                     role="alert">
                                                     <i class="material-symbols-rounded me-2">error</i>
-                                                    <strong>⚠️ API Not Connected</strong>
-                                                    <p class="mb-2">The performance prediction API is not running.
-                                                        Predictions cannot be generated.</p>
+                                                    <strong>⚠️ Prediction Service Unavailable</strong>
+                                                    <p class="mb-2">The performance prediction service is not responding or encountered an issue.
+                                                        Predictions cannot be displayed at this time.</p>
                                                     {{-- <p class="mb-0"><strong>To start the API:</strong></p> --}}
                                                     {{-- <ol class="mb-2 mt-1">
                                                         <li>Open a new terminal</li>

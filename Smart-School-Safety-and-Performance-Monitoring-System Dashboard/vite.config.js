@@ -24,6 +24,9 @@ export default defineConfig({
                 "resources/css/admin/timetables.css",
                 "resources/css/admin/school-setup.css",
                 "resources/css/admin/settings.css",
+                "resources/css/admin/audio-threat.css",
+                "resources/css/admin/video-threat.css",
+                "resources/css/admin/audio-video-threat.css",
 
                 // Authentication CSS files
                 "resources/css/auth/login.css",
@@ -36,11 +39,13 @@ export default defineConfig({
                 "resources/js/admin/dashboard.js",
                 "resources/js/admin/student-form.js",
                 "resources/js/admin/student-table.js",
-                "resources/js/admin/mark-table.js",
-                "resources/js/admin/attendance-table.js",
-                "resources/js/admin/attendance-dashboard.js",
-                "resources/js/admin/class-form.js",
                 "resources/js/admin/notifications.js",
+                "resources/js/admin/audio-threat.js",
+                "resources/js/admin/video-threat.js",
+                "resources/js/admin/audio-video-threat.js",
+
+                // Student JavaScript files
+                "resources/js/student/homework-attempt.js",
 
                 // Component JavaScript files
                 "resources/js/components/notifications.js",

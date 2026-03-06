@@ -45,21 +45,12 @@
     {{ $dataTable->scripts(attributes: ['type' => 'module', 'class' => 'table table-bordered']) }}
 @endisset
 
-@vite(['resources/css/admin/tables.css', 'resources/js/admin/student-table.js'])
+@vite([
+    'resources/css/admin/tables.css',
+    'resources/js/admin/student-table.js',
+    'resources/js/common/show.js',
+    'resources/js/common/confirm.js',
+    'resources/js/common/delete.js',
+    'resources/js/common/edit.js'
+])
 
-{{-- Include common scripts if they exist --}}
-@if (file_exists(public_path('build/js/common/show.js')))
-    @vite(['resources/js/common/show.js'])
-@endif
-
-@if (file_exists(public_path('build/js/common/confirm.js')))
-    @vite(['resources/js/common/confirm.js'])
-@endif
-
-@if (file_exists(public_path('build/js/common/delete.js')))
-    @vite(['resources/js/common/delete.js'])
-@endif
-
-@if (file_exists(public_path('build/js/common/edit.js')))
-    @vite(['resources/js/common/edit.js'])
-@endif

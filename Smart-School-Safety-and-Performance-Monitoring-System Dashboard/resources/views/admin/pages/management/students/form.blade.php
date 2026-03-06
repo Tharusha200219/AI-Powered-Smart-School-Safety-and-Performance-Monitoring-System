@@ -214,9 +214,9 @@
                                                             :isRequired="true"
                                                             attr="maxlength='50' readonly style='background-color: #f8f9fa; cursor: not-allowed;'"
                                                             :value="old(
-                                                                'student_code',
-                                                                $student->student_code ?? '',
-                                                            )" />
+            'student_code',
+            $student->student_code ?? '',
+        )" />
                                                         @if (!$id)
                                                             <small
                                                                 class="form-text text-muted">{{ __('common.auto_generated') }}</small>
@@ -241,17 +241,17 @@
                                                     <div class="col-md-3">
                                                         <x-input name="date_of_birth" type="date" title="Date of Birth"
                                                             :isRequired="true" :value="old(
-                                                                'date_of_birth',
-                                                                $student?->date_of_birth?->format('Y-m-d') ?: '',
-                                                            )" />
+            'date_of_birth',
+            $student?->date_of_birth?->format('Y-m-d') ?: '',
+        )" />
                                                     </div>
                                                     <div class="col-md-3">
                                                         <x-input name="gender" type="select" title="Gender"
                                                             :isRequired="true" placeholder="Select Gender" :options="[
-                                                                'M' => 'Male',
-                                                                'F' => 'Female',
-                                                                'Other' => 'Other',
-                                                            ]"
+            'M' => 'Male',
+            'F' => 'Female',
+            'Other' => 'Other',
+        ]"
                                                             :value="old('gender', $student->gender ?? '')" />
                                                     </div>
                                                     <div class="col-md-3">
@@ -269,16 +269,16 @@
                                                     <div class="col-md-3">
                                                         <x-input name="home_language" title="Home Language"
                                                             attr="maxlength='50'" :value="old(
-                                                                'home_language',
-                                                                $student->home_language ?? '',
-                                                            )" />
+            'home_language',
+            $student->home_language ?? '',
+        )" />
                                                     </div>
                                                     <div class="col-md-3">
                                                         <x-input name="mobile_phone" title="Mobile Phone"
                                                             attr="maxlength='15'" :value="old(
-                                                                'mobile_phone',
-                                                                $student->mobile_phone ?? '',
-                                                            )" />
+            'mobile_phone',
+            $student->mobile_phone ?? '',
+        )" />
                                                     </div>
                                                     <div class="col-md-3">
                                                         <x-input name="email" type="email" title="Email Address"
@@ -314,8 +314,7 @@
                                                     <div id="faceOverlay" class="face-capture-overlay"></div>
                                                 </div>
                                                 <div class="mt-3 d-flex justify-content-center gap-2">
-                                                    <button type="button" id="startFaceCaptureBtn"
-                                                        class="btn btn-success">
+                                                    <button type="button" id="startFaceCaptureBtn" class="btn btn-success">
                                                         <i class="material-symbols-rounded me-1">videocam</i>
                                                         Start Camera
                                                     </button>
@@ -324,8 +323,8 @@
                                                         <i class="material-symbols-rounded me-1">videocam_off</i>
                                                         Stop Camera
                                                     </button>
-                                                    <button type="button" id="autoCaptureFaceBtn"
-                                                        class="btn btn-primary" disabled>
+                                                    <button type="button" id="autoCaptureFaceBtn" class="btn btn-primary"
+                                                        disabled>
                                                         <i class="material-symbols-rounded me-1">auto_awesome</i>
                                                         Auto Capture (30)
                                                     </button>
@@ -334,8 +333,7 @@
                                             <div class="col-md-6">
                                                 <div class="d-flex flex-column h-100">
                                                     <div class="mb-3">
-                                                        <div
-                                                            class="d-flex justify-content-between align-items-center mb-2">
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
                                                             <span class="text-muted">Captured Images</span>
                                                             <span><span id="captureCount" class="capture-count">0</span> /
                                                                 30</span>
@@ -385,8 +383,7 @@
                                         </div>
 
                                         <!-- Hidden input to store face data status -->
-                                        <input type="hidden" name="face_images_captured" id="faceImagesCaptured"
-                                            value="0">
+                                        <input type="hidden" name="face_images_captured" id="faceImagesCaptured" value="0">
                                         <input type="hidden" name="face_data_json" id="faceDataJson" value="">
                                     </div>
                                 </div>
@@ -402,18 +399,17 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <x-input name="address_line1" title="Address Line 1"
-                                                    attr="maxlength='255'" :value="old('address_line1', $student->address_line1 ?? '')" />
+                                                <x-input name="address_line1" title="Address Line 1" attr="maxlength='255'"
+                                                    :value="old('address_line1', $student->address_line1 ?? '')" />
                                             </div>
                                             <div class="col-md-6">
-                                                <x-input name="address_line2" title="Address Line 2"
-                                                    attr="maxlength='255'" :value="old('address_line2', $student->address_line2 ?? '')" />
+                                                <x-input name="address_line2" title="Address Line 2" attr="maxlength='255'"
+                                                    :value="old('address_line2', $student->address_line2 ?? '')" />
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-3">
-                                                <x-input name="city" title="City" attr="maxlength='100'"
-                                                    :value="old('city', $student->city ?? '')" />
+                                                <x-input name="city" title="City" attr="maxlength='100'" :value="old('city', $student->city ?? '')" />
                                             </div>
                                             <div class="col-md-3">
                                                 <x-input name="state" title="State/Province" attr="maxlength='100'"
@@ -441,38 +437,33 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-6">
                                                 <x-input name="grade_level" type="select" id="grade_level"
-                                                    title="Grade Level" :isRequired="true"
-                                                    placeholder="Select Grade Level" :options="$grades"
-                                                    :value="old('grade_level', $student->grade_level ?? '')" />
+                                                    title="Grade Level" :isRequired="true" placeholder="Select Grade Level"
+                                                    :options="$grades" :value="old('grade_level', $student->grade_level ?? '')" />
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-6">
                                                 <x-input name="class_id" type="select" id="class_id" title="Class"
-                                                    :isRequired="true" placeholder="Select Class" :options="$formattedClasses"
-                                                    :value="old('class_id', $student?->class_id ?? '')"
+                                                    :isRequired="true" placeholder="Select Class"
+                                                    :options="$formattedClasses" :value="old('class_id', $student?->class_id ?? '')"
                                                     data-initial-class="{{ old('class_id', $student?->class_id ?? '') }}" />
                                                 <small class="text-muted">Select the class for this student</small>
                                             </div>
-
-                                            <div class="col-md-4">
-                                                <x-input name="section" title="Section" attr="maxlength='10'"
-                                                    :value="old('section', $student->section ?? '')" />
-                                            </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row mt-3">
                                             <div class="col-md-6">
                                                 <x-input name="enrollment_date" type="date" title="Enrollment Date"
                                                     :isRequired="true" :value="old(
-                                                        'enrollment_date',
-                                                        $student?->enrollment_date?->format('Y-m-d') ?: date('Y-m-d'),
-                                                    )" />
+            'enrollment_date',
+            $student?->enrollment_date?->format('Y-m-d') ?: date('Y-m-d'),
+        )" />
                                             </div>
 
                                             <div class="col-md-6">
                                                 <x-input name="is_active" type="select" title="Active Status"
-                                                    :isRequired="true" :options="['1' => 'Yes', '0' => 'No']" :value="old('is_active', $student->is_active ?? '1')" />
+                                                    :isRequired="true" :options="['1' => 'Yes', '0' => 'No']"
+                                                    :value="old('is_active', $student->is_active ?? '1')" />
                                             </div>
                                         </div>
 
@@ -512,8 +503,8 @@
                                                         <label class="form-label fw-bold">Aesthetic Studies <span
                                                                 class="text-danger">*</span> (Choose 1)</label>
                                                         <div id="aestheticPrimary" class="row g-2"></div>
-                                                        <small class="text-danger d-none"
-                                                            id="aestheticPrimaryError">Please select one aesthetic
+                                                        <small class="text-danger d-none" id="aestheticPrimaryError">Please
+                                                            select one aesthetic
                                                             study</small>
                                                     </div>
 
@@ -547,8 +538,8 @@
                                                         <label class="form-label fw-bold">Religion <span
                                                                 class="text-danger">*</span> (Choose 1)</label>
                                                         <div id="religionSecondary" class="row g-2"></div>
-                                                        <small class="text-danger d-none"
-                                                            id="religionSecondaryError">Please select one religion</small>
+                                                        <small class="text-danger d-none" id="religionSecondaryError">Please
+                                                            select one religion</small>
                                                     </div>
 
                                                     <!-- Core Subjects (Auto-assigned) -->
@@ -565,8 +556,8 @@
                                                         <label class="form-label fw-bold">Elective Subjects <span
                                                                 class="text-danger">*</span> (Choose exactly 3)</label>
                                                         <div id="electiveSecondary" class="row g-2"></div>
-                                                        <small class="text-danger d-none"
-                                                            id="electiveSecondaryError">Please select exactly 3 elective
+                                                        <small class="text-danger d-none" id="electiveSecondaryError">Please
+                                                            select exactly 3 elective
                                                             subjects</small>
                                                         <small class="text-muted d-block mt-1">Selected: <span
                                                                 id="electiveCount" class="fw-bold">0</span>/3</small>
@@ -598,8 +589,7 @@
                                                                 <div class="form-check border rounded p-3 stream-card"
                                                                     data-stream="Commerce">
                                                                     <input class="form-check-input" type="radio"
-                                                                        name="stream" id="streamCommerce"
-                                                                        value="Commerce">
+                                                                        name="stream" id="streamCommerce" value="Commerce">
                                                                     <label class="form-check-label fw-bold"
                                                                         for="streamCommerce">
                                                                         <i
@@ -612,8 +602,7 @@
                                                                 <div class="form-check border rounded p-3 stream-card"
                                                                     data-stream="Science">
                                                                     <input class="form-check-input" type="radio"
-                                                                        name="stream" id="streamScience"
-                                                                        value="Science">
+                                                                        name="stream" id="streamScience" value="Science">
                                                                     <label class="form-check-label fw-bold"
                                                                         for="streamScience">
                                                                         <i class="material-symbols-rounded">science</i>
@@ -640,8 +629,7 @@
                                                     </div>
 
                                                     <!-- Stream Subjects (Choose 3 after stream selection) -->
-                                                    <div class="mb-4" id="streamSubjectsContainer"
-                                                        style="display: none;">
+                                                    <div class="mb-4" id="streamSubjectsContainer" style="display: none;">
                                                         <label class="form-label fw-bold">Stream Subjects <span
                                                                 class="text-danger">*</span> (Choose exactly 3)</label>
                                                         <div id="streamSubjects" class="row g-2"></div>
@@ -655,6 +643,9 @@
                                                 <!-- Hidden inputs to store selected subjects -->
                                                 <input type="hidden" name="subject_ids" id="subject_ids">
                                                 <input type="hidden" name="core_subject_ids" id="core_subject_ids">
+                                                <!-- HIDDEN FIELD FOR RFID HEX -->
+                                                <input type="hidden" name="rfid_hex" id="rfid_hex"
+                                                    value="{{ old('rfid_hex', $student->rfid_hex ?? '') }}">
                                             </div>
                                         </div>
                                     </div>
@@ -672,9 +663,8 @@
                                         <div class="row">
                                             @if (!$id)
                                                 <div class="col-md-6 password-field">
-                                                    <x-input name="password" type="password" title="Password"
-                                                        :isRequired="true" attr="minlength='8'"
-                                                        placeholder="Enter password (min 8 characters)" />
+                                                    <x-input name="password" type="password" title="Password" :isRequired="true"
+                                                        attr="minlength='8'" placeholder="Enter password (min 8 characters)" />
                                                 </div>
                                                 <div class="col-md-6 password-field">
                                                     <x-input name="password_confirmation" type="password"
@@ -684,313 +674,292 @@
                                             @endif
                                         </div>
 
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="input-group input-group-outline mb-3">
-                                                    <select name="roles[]" class="form-control" multiple>
-                                                        @foreach ($roles as $role)
-                                                            <option value="{{ $role->name }}"
-                                                                {{ isset($student) && $student->user && $student->user->hasRole($role->name) ? 'selected' : ($role->name == 'student' ? 'selected' : '') }}>
-                                                                {{ ucfirst($role->name) }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple
-                                                    roles</small>
-                                            </div>
+                                    </div>
+                                </div>
+                        </div>
+
+                        <!-- Parent Information -->
+                        @if (!$id)
+                            <div class="card mb-4 shadow-sm">
+                                <div class="card-header bg-gradient-secondary">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-0 d-flex align-items-center text-white">
+                                            <i class="material-symbols-rounded me-2 icon-size-sm">family_restroom</i>
+                                            Parent Information
+                                        </h6>
+                                        <button type="button" class="btn btn-sm btn-outline-light" id="addParentBtn"
+                                            onclick="addParentForm()">
+                                            <i class="material-symbols-rounded">add</i> Add Parent
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div id="parentContainer">
+                                        <!-- Parent forms will be added here dynamically -->
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        <small class="text-muted">You can add multiple parents for this
+                                            student</small>
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            <!-- Existing Parents for Edit Mode -->
+                            <div class="card mb-4 shadow-sm">
+                                <div class="card-header bg-gradient-secondary">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-0 d-flex align-items-center text-white">
+                                            <i class="material-symbols-rounded me-2 icon-size-sm">family_restroom</i>
+                                            Parent Information
+                                        </h6>
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="btn btn-sm btn-outline-light"
+                                                onclick="addParentForm()">
+                                                <i class="material-symbols-rounded">add</i> Add New Parent
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-light"
+                                                onclick="toggleParentSelector()">
+                                                <i class="material-symbols-rounded">link</i> Link Existing Parent
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="card-body">
+                                    <!-- Existing Parent Details Display -->
+                                    @if (isset($student) && $student->parents && $student->parents->count() > 0)
+                                        <div class="mb-4">
+                                            <h6 class="text-primary mb-3 d-flex align-items-center">
+                                                <i class="material-symbols-rounded me-2">people</i>
+                                                Current Parents ({{ $student->parents->count() }})
+                                            </h6>
 
-                                <!-- Parent Information -->
-                                @if (!$id)
-                                    <div class="card mb-4 shadow-sm">
-                                        <div class="card-header bg-gradient-secondary">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <h6 class="mb-0 d-flex align-items-center text-white">
-                                                    <i
-                                                        class="material-symbols-rounded me-2 icon-size-sm">family_restroom</i>
-                                                    Parent Information
-                                                </h6>
-                                                <button type="button" class="btn btn-sm btn-outline-light"
-                                                    id="addParentBtn" onclick="addParentForm()">
-                                                    <i class="material-symbols-rounded">add</i> Add Parent
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="card-body">
-                                            <div id="parentContainer">
-                                                <!-- Parent forms will be added here dynamically -->
-                                            </div>
-                                            <div class="text-center mt-3">
-                                                <small class="text-muted">You can add multiple parents for this
-                                                    student</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @else
-                                    <!-- Existing Parents for Edit Mode -->
-                                    <div class="card mb-4 shadow-sm">
-                                        <div class="card-header bg-gradient-secondary">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <h6 class="mb-0 d-flex align-items-center text-white">
-                                                    <i
-                                                        class="material-symbols-rounded me-2 icon-size-sm">family_restroom</i>
-                                                    Parent Information
-                                                </h6>
-                                                <div class="d-flex gap-2">
-                                                    <button type="button" class="btn btn-sm btn-outline-light"
-                                                        onclick="addParentForm()">
-                                                        <i class="material-symbols-rounded">add</i> Add New Parent
-                                                    </button>
-                                                    <button type="button" class="btn btn-sm btn-outline-light"
-                                                        onclick="toggleParentSelector()">
-                                                        <i class="material-symbols-rounded">link</i> Link Existing Parent
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="card-body">
-                                            <!-- Existing Parent Details Display -->
-                                            @if (isset($student) && $student->parents && $student->parents->count() > 0)
-                                                <div class="mb-4">
-                                                    <h6 class="text-primary mb-3 d-flex align-items-center">
-                                                        <i class="material-symbols-rounded me-2">people</i>
-                                                        Current Parents ({{ $student->parents->count() }})
-                                                    </h6>
-
-                                                    @foreach ($student->parents as $index => $parent)
-                                                        <div class="card border mb-3"
-                                                            id="existingParent{{ $parent->parent_id }}">
-                                                            <div class="card-header bg-light">
-                                                                <div
-                                                                    class="d-flex justify-content-between align-items-center">
-                                                                    <h6 class="mb-0">
-                                                                        <span
-                                                                            class="badge bg-primary me-2">{{ $parent->parent_code }}</span>
-                                                                        {{ $parent->full_name }}
-                                                                        <small
-                                                                            class="text-muted">({{ ucfirst($parent->relationship_type) }})</small>
-                                                                    </h6>
-                                                                    <button type="button"
-                                                                        class="btn btn-sm btn-outline-danger"
-                                                                        onclick="unlinkParent({{ $parent->parent_id }})">
-                                                                        <i class="material-symbols-rounded">link_off</i>
-                                                                        Unlink
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                            <div class="card-body">
-                                                                <div class="row g-3">
-                                                                    <div class="col-md-3">
-                                                                        <small class="text-muted">Name</small>
-                                                                        <p class="mb-0 fw-medium">{{ $parent->full_name }}
-                                                                        </p>
-                                                                    </div>
-                                                                    <div class="col-md-2">
-                                                                        <small class="text-muted">Gender</small>
-                                                                        <p class="mb-0">
-                                                                            @if ($parent->gender == 'M')
-                                                                                Male
-                                                                            @elseif($parent->gender == 'F')
-                                                                                Female
-                                                                            @else
-                                                                                Other
-                                                                            @endif
-                                                                        </p>
-                                                                    </div>
-                                                                    <div class="col-md-2">
-                                                                        <small class="text-muted">Birth Date</small>
-                                                                        <p class="mb-0">
-                                                                            {{ $parent->date_of_birth ? $parent->date_of_birth->format('M d, Y') : 'N/A' }}
-                                                                        </p>
-                                                                    </div>
-                                                                    <div class="col-md-2">
-                                                                        <small class="text-muted">Relationship</small>
-                                                                        <p class="mb-0">
-                                                                            {{ ucfirst($parent->relationship_type) }}</p>
-                                                                    </div>
-                                                                    <div class="col-md-3">
-                                                                        <small class="text-muted">Mobile Phone</small>
-                                                                        <p class="mb-0">
-                                                                            {{ $parent->mobile_phone ?? 'N/A' }}</p>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row g-3 mt-2">
-                                                                    <div class="col-md-4">
-                                                                        <small class="text-muted">Email</small>
-                                                                        <p class="mb-0">{{ $parent->email ?? 'N/A' }}
-                                                                        </p>
-                                                                    </div>
-                                                                    <div class="col-md-3">
-                                                                        <small class="text-muted">Occupation</small>
-                                                                        <p class="mb-0">
-                                                                            {{ $parent->occupation ?? 'N/A' }}</p>
-                                                                    </div>
-                                                                    <div class="col-md-3">
-                                                                        <small class="text-muted">Workplace</small>
-                                                                        <p class="mb-0">
-                                                                            {{ $parent->workplace ?? 'N/A' }}</p>
-                                                                    </div>
-                                                                    <div class="col-md-2">
-                                                                        <small class="text-muted">Emergency Contact</small>
-                                                                        <p class="mb-0">
-                                                                            @if ($parent->is_emergency_contact)
-                                                                                <span class="badge bg-success">Yes</span>
-                                                                            @else
-                                                                                <span class="badge bg-secondary">No</span>
-                                                                            @endif
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                                @if ($parent->address_line1)
-                                                                    <div class="row g-3 mt-2">
-                                                                        <div class="col-md-12">
-                                                                            <small class="text-muted">Address</small>
-                                                                            <p class="mb-0">{{ $parent->address_line1 }}
-                                                                            </p>
-                                                                        </div>
-                                                                    </div>
-                                                                @endif
-                                                                <!-- Hidden input to maintain parent relationship -->
-                                                                <input type="hidden" name="existing_parents[]"
-                                                                    value="{{ $parent->parent_id }}">
-                                                            </div>
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                            @endif
-
-                                            <!-- Parent Selector (Hidden by default) -->
-                                            <div id="parentSelector" style="display: none;">
-                                                <div class="card border-dashed">
+                                            @foreach ($student->parents as $index => $parent)
+                                                <div class="card border mb-3" id="existingParent{{ $parent->parent_id }}">
                                                     <div class="card-header bg-light">
-                                                        <h6 class="mb-0">Link Existing Parent</h6>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <h6 class="mb-0">
+                                                                <span class="badge bg-primary me-2">{{ $parent->parent_code }}</span>
+                                                                {{ $parent->full_name }}
+                                                                <small
+                                                                    class="text-muted">({{ ucfirst($parent->relationship_type) }})</small>
+                                                            </h6>
+                                                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                                                onclick="unlinkParent({{ $parent->parent_id }})">
+                                                                <i class="material-symbols-rounded">link_off</i>
+                                                                Unlink
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                     <div class="card-body">
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <div class="input-group input-group-outline mb-3">
-                                                                    <select name="parents[]" class="form-control"
-                                                                        multiple>
-                                                                        @foreach ($parents as $parent)
-                                                                            <option value="{{ $parent->parent_id }}"
-                                                                                {{ isset($student) && $student->parents->contains('parent_id', $parent->parent_id) ? 'selected' : '' }}>
-                                                                                {{ $parent->full_name }}
-                                                                                ({{ $parent->parent_code }})
-                                                                                -
-                                                                                {{ ucfirst($parent->relationship_type) }}
-                                                                            </option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </div>
-                                                                <small class="form-text text-muted">Hold Ctrl/Cmd to select
-                                                                    multiple parents</small>
+                                                        <div class="row g-3">
+                                                            <div class="col-md-3">
+                                                                <small class="text-muted">Name</small>
+                                                                <p class="mb-0 fw-medium">{{ $parent->full_name }}
+                                                                </p>
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <small class="text-muted">Gender</small>
+                                                                <p class="mb-0">
+                                                                    @if ($parent->gender == 'M')
+                                                                        Male
+                                                                    @elseif($parent->gender == 'F')
+                                                                        Female
+                                                                    @else
+                                                                        Other
+                                                                    @endif
+                                                                </p>
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <small class="text-muted">Birth Date</small>
+                                                                <p class="mb-0">
+                                                                    {{ $parent->date_of_birth ? $parent->date_of_birth->format('M d, Y') : 'N/A' }}
+                                                                </p>
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <small class="text-muted">Relationship</small>
+                                                                <p class="mb-0">
+                                                                    {{ ucfirst($parent->relationship_type) }}
+                                                                </p>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <small class="text-muted">Mobile Phone</small>
+                                                                <p class="mb-0">
+                                                                    {{ $parent->mobile_phone ?? 'N/A' }}
+                                                                </p>
                                                             </div>
                                                         </div>
+                                                        <div class="row g-3 mt-2">
+                                                            <div class="col-md-4">
+                                                                <small class="text-muted">Email</small>
+                                                                <p class="mb-0">{{ $parent->email ?? 'N/A' }}
+                                                                </p>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <small class="text-muted">Occupation</small>
+                                                                <p class="mb-0">
+                                                                    {{ $parent->occupation ?? 'N/A' }}
+                                                                </p>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <small class="text-muted">Workplace</small>
+                                                                <p class="mb-0">
+                                                                    {{ $parent->workplace ?? 'N/A' }}
+                                                                </p>
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <small class="text-muted">Emergency Contact</small>
+                                                                <p class="mb-0">
+                                                                    @if ($parent->is_emergency_contact)
+                                                                        <span class="badge bg-success">Yes</span>
+                                                                    @else
+                                                                        <span class="badge bg-secondary">No</span>
+                                                                    @endif
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        @if ($parent->address_line1)
+                                                            <div class="row g-3 mt-2">
+                                                                <div class="col-md-12">
+                                                                    <small class="text-muted">Address</small>
+                                                                    <p class="mb-0">{{ $parent->address_line1 }}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        @endif
+                                                        <!-- Hidden input to maintain parent relationship -->
+                                                        <input type="hidden" name="existing_parents[]" value="{{ $parent->parent_id }}">
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
+
+                                    <!-- Parent Selector (Hidden by default) -->
+                                    <div id="parentSelector" style="display: none;">
+                                        <div class="card border-dashed">
+                                            <div class="card-header bg-light">
+                                                <h6 class="mb-0">Link Existing Parent</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="input-group input-group-outline mb-3">
+                                                            <select name="parents[]" class="form-control" multiple>
+                                                                @foreach ($parents as $parent)
+                                                                    <option value="{{ $parent->parent_id }}" {{ isset($student) && $student->parents->contains('parent_id', $parent->parent_id) ? 'selected' : '' }}>
+                                                                        {{ $parent->full_name }}
+                                                                        ({{ $parent->parent_code }})
+                                                                        -
+                                                                        {{ ucfirst($parent->relationship_type) }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                        <small class="form-text text-muted">Hold Ctrl/Cmd to select
+                                                            multiple parents</small>
                                                     </div>
                                                 </div>
                                             </div>
-
-                                            <!-- New Parent Forms Container -->
-                                            <div id="parentContainer">
-                                                <!-- New parent forms will be added here dynamically -->
-                                            </div>
-
-                                            <div class="text-center mt-3">
-                                                <small class="text-muted">You can add new parents or link existing parents
-                                                    to this student</small>
-                                            </div>
                                         </div>
                                     </div>
-                                @endif
 
-                                <!-- Submit Buttons -->
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="col-12 text-end">
-                                            <a href="{{ route('admin.management.students.index') }}"
-                                                class="btn btn-outline-secondary me-2">
-                                                <i class="material-symbols-rounded me-1">cancel</i>Cancel
-                                            </a>
-                                            <button type="button" class="btn btn-outline-warning me-2"
-                                                onclick="document.getElementById('studentForm').reset(); resetForm();">
-                                                <i class="material-symbols-rounded me-1">restart_alt</i>Reset
-                                            </button>
-                                            <button type="submit" class="btn btn-success">
-                                                <i class="material-symbols-rounded me-1">save</i>
-                                                {{ $id ? 'Update' : 'Create' }} Student
-                                            </button>
-                                        </div>
+                                    <!-- New Parent Forms Container -->
+                                    <div id="parentContainer">
+                                        <!-- New parent forms will be added here dynamically -->
+                                    </div>
+
+                                    <div class="text-center mt-3">
+                                        <small class="text-muted">You can add new parents or link existing parents
+                                            to this student</small>
                                     </div>
                                 </div>
-                            </form>
+                            </div>
+                        @endif
+
+                        <!-- Submit Buttons -->
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="col-12 text-end">
+                                    <a href="{{ route('admin.management.students.index') }}"
+                                        class="btn btn-outline-secondary me-2">
+                                        <i class="material-symbols-rounded me-1">cancel</i>Cancel
+                                    </a>
+                                    <button type="button" class="btn btn-outline-warning me-2"
+                                        onclick="document.getElementById('studentForm').reset(); resetForm();">
+                                        <i class="material-symbols-rounded me-1">restart_alt</i>Reset
+                                    </button>
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="material-symbols-rounded me-1">save</i>
+                                        {{ $id ? 'Update' : 'Create' }} Student
+                                    </button>
+                                </div>
+                            </div>
                         </div>
+                        </form>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- NFC Modal -->
-            <div class="modal fade" id="nfcModal" tabindex="-1" aria-labelledby="nfcModalLabel" aria-hidden="true"
-                data-bs-backdrop="static" data-bs-keyboard="false">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header bg-gradient-primary">
-                            <h5 class="modal-title text-white" id="nfcModalLabel">
-                                <i class="material-symbols-rounded me-2">nfc</i>
-                                NFC Wristband Registration
-                            </h5>
-                        </div>
-                        <div class="modal-body text-center py-5">
-                            <div id="nfcWaiting">
-                                <div class="nfc-animation mb-4">
-                                    <i class="material-symbols-rounded text-primary"
-                                        style="font-size: 80px; animation: pulse 2s infinite;">nfc</i>
-                                </div>
-                                <h5 class="mb-3">Put NFC Wristband to Copy Student Data</h5>
-                                <p class="text-muted">Please hold the NFC wristband near your device to write student
-                                    information to the tag.</p>
-                                <div class="spinner-border text-primary mt-3" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
+        <!-- NFC Modal -->
+        <div class="modal fade" id="nfcModal" tabindex="-1" aria-labelledby="nfcModalLabel" aria-hidden="true"
+            data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-gradient-primary">
+                        <h5 class="modal-title text-white" id="nfcModalLabel">
+                            <i class="material-symbols-rounded me-2">nfc</i>
+                            NFC Wristband Registration
+                        </h5>
+                    </div>
+                    <div class="modal-body text-center py-5">
+                        <div id="nfcWaiting">
+                            <div class="nfc-animation mb-4">
+                                <i class="material-symbols-rounded text-primary"
+                                    style="font-size: 80px; animation: pulse 2s infinite;">nfc</i>
                             </div>
-
-                            <div id="nfcSuccess" style="display: none;">
-                                <div class="mb-4">
-                                    <i class="material-symbols-rounded text-success"
-                                        style="font-size: 80px;">check_circle</i>
-                                </div>
-                                <h5 class="text-success mb-3">Data Written Successfully!</h5>
-                                <p class="text-muted">Student data has been successfully written to the NFC wristband.</p>
-                            </div>
-
-                            <div id="nfcError" style="display: none;">
-                                <div class="mb-4">
-                                    <i class="material-symbols-rounded text-danger" style="font-size: 80px;">error</i>
-                                </div>
-                                <h5 class="text-danger mb-3">Error Writing Data</h5>
-                                <p class="text-muted" id="nfcErrorMessage">Failed to write data to NFC tag. Please try
-                                    again.</p>
+                            <h5 class="mb-3">Put NFC Wristband to Register</h5>
+                            <p class="text-muted">Please hold the student's NFC wristband or card near the reader to
+                                link it to their profile.</p>
+                            <div class="spinner-border text-primary mt-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" id="nfcSkipBtn">
-                                <i class="material-symbols-rounded me-1">skip_next</i>
-                                Skip NFC & Submit
-                            </button>
-                            <button type="button" class="btn btn-danger" id="nfcCancelBtn">
-                                <i class="material-symbols-rounded me-1">cancel</i>
-                                Cancel
-                            </button>
-                            <button type="button" class="btn btn-success" id="nfcContinueBtn" style="display: none;">
-                                <i class="material-symbols-rounded me-1">done</i>
-                                Continue & Submit
-                            </button>
+
+                        <div id="nfcSuccess" style="display: none;">
+                            <div class="mb-4">
+                                <i class="material-symbols-rounded text-success" style="font-size: 80px;">check_circle</i>
+                            </div>
+                            <h5 class="text-success mb-3">RFID Tag Read Successfully!</h5>
+                            <p class="text-muted">The student's RFID tag has been successfully captured.</p>
                         </div>
+
+                        <div id="nfcError" style="display: none;">
+                            <div class="mb-4">
+                                <i class="material-symbols-rounded text-danger" style="font-size: 80px;">error</i>
+                            </div>
+                            <h5 class="text-danger mb-3">Error Reading Data</h5>
+                            <p class="text-muted" id="nfcErrorMessage">Failed to read data from NFC tag. Please try
+                                again.</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="nfcSkipBtn">
+                            <i class="material-symbols-rounded me-1">skip_next</i>
+                            Skip NFC & Submit
+                        </button>
+                        <button type="button" class="btn btn-danger" id="nfcCancelBtn">
+                            <i class="material-symbols-rounded me-1">cancel</i>
+                            Cancel
+                        </button>
+                        <button type="button" class="btn btn-success" id="nfcContinueBtn" style="display: none;">
+                            <i class="material-symbols-rounded me-1">done</i>
+                            Continue & Submit
+                        </button>
                     </div>
                 </div>
             </div>
+        </div>
         </div>
     </main>
 @endsection
@@ -1012,7 +981,7 @@
 
     <!-- Face Capture JavaScript -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Face Capture Elements
             const faceCaptureVideo = document.getElementById('faceCaptureVideo');
             const faceOverlay = document.getElementById('faceOverlay');
@@ -1070,7 +1039,7 @@
                 img.src = imageData;
                 img.className = 'face-thumbnail';
                 img.title = `Face image ${index + 1}`;
-                img.onclick = function() {
+                img.onclick = function () {
                     // Remove this image on click
                     if (confirm('Remove this face image?')) {
                         capturedFaceImages.splice(index, 1);
@@ -1086,10 +1055,10 @@
             function renderAllThumbnails() {
                 if (capturedFaceImages.length === 0) {
                     faceThumbnails.innerHTML = `
-                    <div class="text-muted text-center w-100 py-4">
-                        <i class="material-symbols-rounded" style="font-size: 32px;">add_a_photo</i>
-                        <p class="mb-0 mt-2" style="font-size: 12px;">No face images captured yet</p>
-                    </div>`;
+                            <div class="text-muted text-center w-100 py-4">
+                                <i class="material-symbols-rounded" style="font-size: 32px;">add_a_photo</i>
+                                <p class="mb-0 mt-2" style="font-size: 12px;">No face images captured yet</p>
+                            </div>`;
                     return;
                 }
 
@@ -1099,7 +1068,7 @@
                     img.src = imgData;
                     img.className = 'face-thumbnail';
                     img.title = `Face image ${index + 1}`;
-                    img.onclick = function() {
+                    img.onclick = function () {
                         if (confirm('Remove this face image?')) {
                             capturedFaceImages.splice(index, 1);
                             renderAllThumbnails();
@@ -1111,7 +1080,7 @@
             }
 
             // Start face capture camera
-            startFaceCaptureBtn.addEventListener('click', async function() {
+            startFaceCaptureBtn.addEventListener('click', async function () {
                 try {
                     faceStream = await navigator.mediaDevices.getUserMedia({
                         video: {
@@ -1138,7 +1107,7 @@
             });
 
             // Stop face capture camera
-            stopFaceCaptureBtn.addEventListener('click', function() {
+            stopFaceCaptureBtn.addEventListener('click', function () {
                 stopFaceCamera();
             });
 
@@ -1164,7 +1133,7 @@
             }
 
             // Auto capture faces
-            autoCaptureFaceBtn.addEventListener('click', function() {
+            autoCaptureFaceBtn.addEventListener('click', function () {
                 if (isAutoCapturing) {
                     stopAutoCapture();
                 } else {
@@ -1209,7 +1178,7 @@
                 } else if (faceStream) {
                     updateFaceStatus('ready',
                         `${capturedFaceImages.length} images - Need ${MIN_FACE_IMAGES - capturedFaceImages.length} more`
-                        );
+                    );
                 }
             }
 
@@ -1236,7 +1205,7 @@
             }
 
             // Clear all face images
-            clearFaceImagesBtn.addEventListener('click', function() {
+            clearFaceImagesBtn.addEventListener('click', function () {
                 if (confirm('Are you sure you want to clear all captured face images?')) {
                     capturedFaceImages = [];
                     renderAllThumbnails();
@@ -1246,14 +1215,14 @@
             });
 
             // Train face model
-            trainFaceModelBtn.addEventListener('click', async function() {
+            trainFaceModelBtn.addEventListener('click', async function () {
                 if (capturedFaceImages.length < MIN_FACE_IMAGES) {
                     alert(`Please capture at least ${MIN_FACE_IMAGES} face images before training.`);
                     return;
                 }
 
                 const studentNameFirst = document.querySelector('input[name="first_name"]')?.value ||
-                '';
+                    '';
                 const studentNameLast = document.querySelector('input[name="last_name"]')?.value || '';
                 const studentCode = document.querySelector('input[name="student_code"]')?.value || '';
 
@@ -1278,24 +1247,24 @@
                 progressContainer.id = 'trainingProgressContainer';
                 progressContainer.className = 'mt-3';
                 progressContainer.innerHTML = `
-                <div class="card border-warning">
-                    <div class="card-body py-3">
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="spinner-border spinner-border-sm text-warning me-2" role="status"></div>
-                            <strong id="trainingStepText">Preparing images...</strong>
-                        </div>
-                        <div class="progress" style="height: 20px;">
-                            <div id="trainingProgressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-warning"
-                                 role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                                <span id="trainingProgressText">0%</span>
+                        <div class="card border-warning">
+                            <div class="card-body py-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="spinner-border spinner-border-sm text-warning me-2" role="status"></div>
+                                    <strong id="trainingStepText">Preparing images...</strong>
+                                </div>
+                                <div class="progress" style="height: 20px;">
+                                    <div id="trainingProgressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-warning"
+                                         role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                        <span id="trainingProgressText">0%</span>
+                                    </div>
+                                </div>
+                                <div class="mt-2 small text-muted">
+                                    <span id="trainingDetails">Uploading ${capturedFaceImages.length} face images to server...</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="mt-2 small text-muted">
-                            <span id="trainingDetails">Uploading ${capturedFaceImages.length} face images to server...</span>
-                        </div>
-                    </div>
-                </div>
-            `;
+                    `;
                 trainFaceModelBtn.parentNode.appendChild(progressContainer);
 
                 const trainingStepText = document.getElementById('trainingStepText');
@@ -1329,16 +1298,16 @@
                     // Send face images to Face Recognition API
                     const response = await fetch(window.faceRecognitionApiUrl +
                         '/api/students/register', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                student_id: studentCode,
-                                name: studentName,
-                                images: capturedFaceImages
-                            })
-                        });
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            student_id: studentCode,
+                            name: studentName,
+                            images: capturedFaceImages
+                        })
+                    });
 
                     // Step 3: Processing (30-60%)
                     updateTrainingProgress(40, 'Processing faces...',
@@ -1360,7 +1329,7 @@
                         // Step 5: Complete (100%)
                         updateTrainingProgress(100, 'Training Complete!',
                             `Successfully trained with ${result.face_count || capturedFaceImages.length} valid faces`
-                            );
+                        );
                         trainingProgressBar.classList.remove('bg-warning', 'progress-bar-animated');
                         trainingProgressBar.classList.add('bg-success');
 
@@ -1375,16 +1344,16 @@
                         // Update progress container to success state
                         setTimeout(() => {
                             progressContainer.innerHTML = `
-                            <div class="alert alert-success d-flex align-items-center">
-                                <i class="material-symbols-rounded me-2" style="font-size: 32px;">check_circle</i>
-                                <div>
-                                    <strong>Face Recognition Model Trained Successfully!</strong><br>
-                                    <small>Processed ${result.face_count || capturedFaceImages.length} face images.
-                                    ${result.failed_count ? `(${result.failed_count} images failed)` : ''}
-                                    This student can now be recognized for attendance.</small>
-                                </div>
-                            </div>
-                        `;
+                                    <div class="alert alert-success d-flex align-items-center">
+                                        <i class="material-symbols-rounded me-2" style="font-size: 32px;">check_circle</i>
+                                        <div>
+                                            <strong>Face Recognition Model Trained Successfully!</strong><br>
+                                            <small>Processed ${result.face_count || capturedFaceImages.length} face images.
+                                            ${result.failed_count ? `(${result.failed_count} images failed)` : ''}
+                                            This student can now be recognized for attendance.</small>
+                                        </div>
+                                    </div>
+                                `;
                         }, 1000);
 
                     } else {
@@ -1403,14 +1372,14 @@
 
                     setTimeout(() => {
                         progressContainer.innerHTML = `
-                        <div class="alert alert-danger d-flex align-items-center">
-                            <i class="material-symbols-rounded me-2" style="font-size: 32px;">error</i>
-                            <div>
-                                <strong>Training Failed</strong><br>
-                                <small>${error.message}</small>
-                            </div>
-                        </div>
-                    `;
+                                <div class="alert alert-danger d-flex align-items-center">
+                                    <i class="material-symbols-rounded me-2" style="font-size: 32px;">error</i>
+                                    <div>
+                                        <strong>Training Failed</strong><br>
+                                        <small>${error.message}</small>
+                                    </div>
+                                </div>
+                            `;
                     }, 500);
 
                     clearFaceImagesBtn.disabled = false;
@@ -1424,11 +1393,11 @@
             // Update hidden input before form submit
             const studentForm = document.getElementById('studentForm');
             if (studentForm) {
-                studentForm.addEventListener('submit', function(e) {
+                studentForm.addEventListener('submit', function (e) {
                     if (capturedFaceImages.length > 0 && capturedFaceImages.length < MIN_FACE_IMAGES) {
                         if (!confirm(
-                                `You have captured ${capturedFaceImages.length} face images but need at least ${MIN_FACE_IMAGES} for good accuracy. Continue anyway?`
-                                )) {
+                            `You have captured ${capturedFaceImages.length} face images but need at least ${MIN_FACE_IMAGES} for good accuracy. Continue anyway?`
+                        )) {
                             e.preventDefault();
                             return false;
                         }
@@ -1443,7 +1412,7 @@
             }
 
             // Cleanup on page unload
-            window.addEventListener('beforeunload', function() {
+            window.addEventListener('beforeunload', function () {
                 stopFaceCamera();
             });
         });

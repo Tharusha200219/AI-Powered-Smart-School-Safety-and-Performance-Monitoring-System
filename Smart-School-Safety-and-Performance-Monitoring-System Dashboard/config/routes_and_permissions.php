@@ -137,18 +137,48 @@ return [
         'items' => [
             getSideBarElement(
                 'assignment',
-                'Assignments',
-                'admin.assignments.index',
+                'Homework',
+                'admin.management.homework.dashboard',
                 [],
                 [
-                    'admin.assignments.form',
-                    'admin.assignments.show',
-                    'admin.assignments.delete',
-                    'admin.assignments.enroll',
+                    'admin.management.homework.index',
+                    'admin.management.homework.create',
+                    'admin.management.homework.show',
+                    'admin.management.homework.store',
                 ],
                 additional_permissions: [
-                    'admin.assignments.edit',
-                    'admin.assignments.grade',
+                    'admin.management.homework.generate-questions',
+                    'admin.management.homework.schedule-weekly',
+                    'admin.management.homework.assign',
+                ]
+            ),
+            getSideBarElement(
+                'analytics',
+                'Performance',
+                'admin.management.performance.dashboard',
+                [],
+                [
+                    'admin.management.performance.student',
+                    'admin.management.performance.class',
+                ],
+                additional_permissions: [
+                    'admin.management.performance.trends',
+                    'admin.management.performance.heatmap',
+                ]
+            ),
+            getSideBarElement(
+                'summarize',
+                'Monthly Reports',
+                'admin.management.reports.index',
+                [],
+                [
+                    'admin.management.reports.show',
+                    'admin.management.reports.download',
+                ],
+                additional_permissions: [
+                    'admin.management.reports.generate-class',
+                    'admin.management.reports.generate-student',
+                    'admin.management.reports.send-to-parents',
                 ]
             ),
             getSideBarElement(
