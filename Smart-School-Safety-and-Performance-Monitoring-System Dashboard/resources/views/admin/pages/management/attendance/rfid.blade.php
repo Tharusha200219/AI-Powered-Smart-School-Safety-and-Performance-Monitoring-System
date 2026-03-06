@@ -3,168 +3,212 @@
 @section('css')
     @vite(['resources/css/components/utilities.css'])
     <style>
-        .camera-container {
+        .rfid-page-wrapper {
+            background: linear-gradient(135deg, #f0f4ff 0%, #fafbff 100%);
+            min-height: 100vh;
+        }
+
+        .rfid-terminal-card {
+            border: none;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(33, 150, 243, 0.12);
+            overflow: hidden;
+        }
+
+        .rfid-terminal-card .card-header {
+            background: linear-gradient(135deg, #1565C0 0%, #2196F3 100%);
+            color: white;
+            padding: 20px 24px;
+            border: none;
+        }
+
+        .rfid-container {
             position: relative;
             width: 100%;
-            max-width: 640px;
+            max-width: 360px;
             margin: 0 auto;
+            text-align: center;
+            padding: 48px 32px;
+            background: #f8faff;
+            border-radius: 20px;
+            border: 2.5px dashed #90CAF9;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .camera-feed {
-            width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transform: scaleX(-1);
-            /* Mirror the camera */
+        .rfid-container.scanning {
+            border-color: #2196F3;
+            background: linear-gradient(135deg, #E3F2FD, #f0f8ff);
+            box-shadow: 0 0 0 8px rgba(33, 150, 243, 0.08);
         }
 
-        .face-detection-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            /* No mirror transform - we handle coordinates in JS */
-        }
-
-        .face-box {
-            position: absolute;
-            border: 3px solid #4CAF50;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
-            animation: pulse-box 1.5s infinite;
-        }
-
-        .face-box.unknown {
-            border-color: #f44336;
-            box-shadow: 0 0 20px rgba(244, 67, 54, 0.5);
-        }
-
-        .face-box.recognized {
+        .rfid-container.success {
             border-color: #4CAF50;
-            box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+            border-style: solid;
+            background: linear-gradient(135deg, #E8F5E9, #f0fff4);
+            box-shadow: 0 0 0 8px rgba(76, 175, 80, 0.08);
         }
 
-        @keyframes pulse-box {
+        .rfid-container.error {
+            border-color: #f44336;
+            border-style: solid;
+            background: linear-gradient(135deg, #FFEBEE, #fff5f5);
+            box-shadow: 0 0 0 8px rgba(244, 67, 54, 0.08);
+        }
+
+        .rfid-icon-wrap {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            transition: all 0.4s ease;
+        }
+
+        .rfid-container.scanning .rfid-icon-wrap {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            animation: icon-pulse 1.5s ease-in-out infinite;
+        }
+
+        .rfid-container.success .rfid-icon-wrap {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            animation: none;
+        }
+
+        .rfid-container.error .rfid-icon-wrap {
+            background: linear-gradient(135deg, #f44336, #c62828);
+            animation: shake 0.5s;
+        }
+
+        .rfid-icon {
+            font-size: 56px;
+            color: #2196F3;
+            transition: color 0.3s ease;
+        }
+
+        .rfid-container.scanning .rfid-icon,
+        .rfid-container.success .rfid-icon,
+        .rfid-container.error .rfid-icon {
+            color: white;
+        }
+
+        @@keyframes icon-pulse {
 
             0%,
             100% {
-                opacity: 1;
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.4);
             }
 
             50% {
-                opacity: 0.7;
+                transform: scale(1.06);
+                box-shadow: 0 0 0 16px rgba(33, 150, 243, 0);
             }
         }
 
-        .face-label {
-            position: absolute;
-            bottom: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            white-space: nowrap;
-            font-weight: bold;
+        @@keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-6px);
+            }
+
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(6px);
+            }
         }
 
-        .face-label.recognized {
-            background: rgba(76, 175, 80, 0.9);
-        }
-
-        .face-label.unknown {
-            background: rgba(244, 67, 54, 0.9);
-        }
-
-        .confidence-badge {
-            position: absolute;
-            top: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(33, 150, 243, 0.9);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-
-        .status-indicator {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 5px 10px;
-            border-radius: 20px;
-            color: white;
-            font-weight: bold;
-            z-index: 10;
-        }
-
-        .status-success {
-            background-color: #28a745;
-        }
-
-        .status-error {
-            background-color: #dc3545;
-        }
-
-        .recognition-status {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            text-align: center;
-            font-weight: bold;
-            z-index: 10;
-        }
-
-        .recognition-success {
-            background: rgba(25, 135, 84, 0.9);
-        }
-
-        .recognition-error {
-            background: rgba(220, 53, 69, 0.9);
-        }
-
-        .recognition-processing {
-            background: rgba(255, 193, 7, 0.9);
-            color: black;
-        }
-
-        .student-info {
-            margin-top: 10px;
-            font-size: 14px;
-        }
-
-        .late-indicator {
-            color: #ffc107;
-            font-weight: bold;
-        }
-
-        .scanning-line {
-            position: absolute;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #4CAF50, transparent);
-            animation: scan 2s linear infinite;
-        }
-
-        @keyframes scan {
+        @@keyframes scan-line {
             0% {
-                top: 0;
+                transform: translateX(-100%);
             }
 
             100% {
-                top: 100%;
+                transform: translateX(100%);
             }
+        }
+
+        .processing-pulse {
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #2196F3, transparent);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            border-radius: 0 0 20px 20px;
+            animation: scan-line 1.5s linear infinite;
+            display: none;
+        }
+
+        .status-badge {
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 6px 18px;
+            border-radius: 30px;
+            margin-bottom: 12px;
+            display: inline-block;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .student-details {
+            margin-top: 20px;
+            padding: 16px;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            display: none;
+            text-align: left;
+        }
+
+        .recent-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid #f0f0f0;
+            margin-bottom: 8px;
+            background: white;
+            transition: box-shadow 0.2s;
+        }
+
+        .recent-item:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .recent-item-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-right: 12px;
+            font-size: 20px;
+            color: #2196F3;
+        }
+
+        .stat-mini-card {
+            border-radius: 16px;
+            border: none;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
         }
     </style>
 @endsection
@@ -180,40 +224,10 @@
                 <div class="col-12">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div>
-                            <h4 class="mb-0">Smart Attendance Terminal</h4>
-                            <p class="text-sm text-secondary mb-0">Real-time facial recognition and RFID attendance</p>
+                            <h4 class="mb-0">RFID Attendance</h4>
+                            <p class="text-sm text-secondary mb-0">Tap student smart cards to record attendance</p>
                         </div>
                         <div class="d-flex align-items-center gap-3">
-                            <div class="form-group mb-0">
-                                @php
-                                    $faceEnabled = $setting && $setting->attendance_face_enabled;
-                                    $rfidEnabled  = $setting && $setting->attendance_rfid_enabled;
-                                    $bothEnabled  = $faceEnabled && $rfidEnabled;
-                                @endphp
-                                <select id="attendanceMode"
-                                    class="form-select form-select-sm border border-primary px-3 py-1 bg-white"
-                                    style="min-width: 150px; cursor: pointer; border-radius: 8px;"
-                                    {{ !$bothEnabled ? 'disabled' : '' }}>
-                                    @if($bothEnabled)
-                                        <option value="both" selected>Face & RFID Mode</option>
-                                    @endif
-                                    @if($faceEnabled)
-                                        <option value="face" {{ !$bothEnabled ? 'selected' : '' }}>Face Recognition Only</option>
-                                    @endif
-                                    @if($rfidEnabled)
-                                        <option value="rfid" {{ !$bothEnabled ? 'selected' : '' }}>RFID Scanner Only</option>
-                                    @endif
-                                    @if(!$faceEnabled && !$rfidEnabled)
-                                        <option value="none" disabled selected>No Method Enabled</option>
-                                    @endif
-                                </select>
-                            </div>
-                            <button id="startCamera" class="btn btn-success btn-sm mb-0">
-                                <i class="material-symbols-rounded text-sm">videocam</i> Start Camera
-                            </button>
-                            <button id="stopCamera" class="btn btn-danger btn-sm mb-0" disabled>
-                                <i class="material-symbols-rounded text-sm">videocam_off</i> Stop Camera
-                            </button>
                             <a href="{{ route('admin.management.attendance.dashboard') }}"
                                 class="btn btn-outline-secondary btn-sm mb-0">
                                 <i class="material-symbols-rounded text-sm">arrow_back</i> Dashboard
@@ -224,45 +238,87 @@
             </div>
 
             <div class="row">
-                <div class="col-lg-8 mx-auto">
-                    <div class="card">
-                        <div class="card-header">
-                            <h6 class="mb-0">Camera Feed</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="camera-container">
-                                <video id="cameraFeed" class="camera-feed" autoplay muted playsinline></video>
-                                <canvas id="faceDetectionOverlay" class="face-detection-overlay"></canvas>
-                                <div class="scanning-line" id="scanningLine" style="display: none;"></div>
-                                <div id="statusIndicator" class="status-indicator status-success" style="display: none;">
-                                    Ready
-                                </div>
-                                <div id="recognitionStatus" class="recognition-status" style="display: none;">
-                                    <div id="recognitionText">Initializing...</div>
-                                    <div id="studentInfo" class="student-info" style="display: none;"></div>
+                <div class="col-lg-6 mx-auto">
+                    <div class="card rfid-terminal-card mb-4">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="material-symbols-rounded" style="font-size:22px;">contactless</i>
+                                <div>
+                                    <h6 class="mb-0 text-white">RFID Scanner Terminal</h6>
+                                    <p class="text-xs mb-0" style="opacity:0.75;">Tap a student smart card on the reader</p>
                                 </div>
                             </div>
+                            <span class="badge bg-white text-primary fw-semibold px-3 py-2" id="terminalStatusBadge">
+                                <i class="material-symbols-rounded align-middle" style="font-size:14px;">wifi</i> Active
+                            </span>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="rfid-container scanning" id="rfidTerminal">
+                                <div class="processing-pulse" id="scannerPulse"></div>
 
-                            <div class="mt-3 text-center">
-                                <button id="captureBtn" class="btn btn-primary" disabled>
-                                    <i class="material-symbols-rounded">camera</i> Capture & Recognize
-                                </button>
+                                <div class="rfid-icon-wrap" id="rfidIconWrap">
+                                    <i class="material-symbols-rounded rfid-icon" id="rfidIcon">contactless</i>
+                                </div>
+
+                                <div id="statusBadge" class="status-badge bg-primary text-white mb-2">
+                                    Ready to Scan
+                                </div>
+                                <h5 id="statusText" class="mb-1 fw-semibold" style="font-size:1rem;">Tap your smart card on
+                                    the reader</h5>
+                                <p class="text-muted text-sm mb-0" id="subStatusText">Listening for card taps...</p>
+
+                                <div class="student-details" id="studentDetails">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="rfid-icon-wrap me-3" style="width:48px;height:48px;min-width:48px;">
+                                            <i class="material-symbols-rounded"
+                                                style="font-size:24px;color:white;">person</i>
+                                        </div>
+                                        <div class="text-start">
+                                            <h5 id="studentName" class="mb-0 fw-bold">-</h5>
+                                            <div class="d-flex gap-2 text-xs text-secondary mt-1">
+                                                <span><i class="material-symbols-rounded align-middle"
+                                                        style="font-size:13px;">tag</i> <span
+                                                        id="studentCode">-</span></span>
+                                                <span><i class="material-symbols-rounded align-middle"
+                                                        style="font-size:13px;">school</i> <span
+                                                        id="studentClass">-</span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="my-2">
+                                    <div class="d-flex justify-content-around text-center">
+                                        <div>
+                                            <p class="text-xs text-secondary mb-0">Action</p>
+                                            <h6 class="mb-0 fw-bold" id="attendanceAction">-</h6>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-secondary mb-0">Time</p>
+                                            <h6 class="mb-0 fw-bold" id="attendanceTime">-</h6>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="row mt-4">
+            <div class="row mt-2">
                 <div class="col-lg-8 mx-auto">
-                    <div class="card">
-                        <div class="card-header">
-                            <h6 class="mb-0">Recent Attendance</h6>
+                    <div class="card" style="border-radius:20px;border:none;box-shadow:0 8px 32px rgba(0,0,0,0.07);">
+                        <div class="card-header d-flex align-items-center justify-content-between pb-0">
+                            <h6 class="mb-0"><i class="material-symbols-rounded align-middle text-primary me-1"
+                                    style="font-size:18px;">history</i> Recent Scans</h6>
+                            <button class="btn btn-sm btn-outline-primary" onclick="updateRecentAttendance()"
+                                style="border-radius:8px;font-size:12px;">
+                                <i class="material-symbols-rounded" style="font-size:14px;">refresh</i> Refresh
+                            </button>
                         </div>
                         <div class="card-body">
-                            <div id="recentAttendance" class="list-group">
-                                <div class="list-group-item text-center text-muted">
-                                    No recent attendance records
+                            <div id="recentAttendance">
+                                <div class="text-center py-4 text-muted">
+                                    <i class="material-symbols-rounded" style="font-size:40px;opacity:0.3;">nfc</i>
+                                    <p class="mt-2 mb-0">No recent scans yet</p>
                                 </div>
                             </div>
                         </div>
@@ -687,17 +743,30 @@
                     const data = await response.json();
 
                     if (data.success && data.data.length > 0) {
-                        const recent = data.data.slice(0, 5);
+                        const recent = data.data.slice(0, 8);
+                        const methodIcon = (method) => method === 'nfc' ? 'contactless' : method === 'face' || (method || '').includes('FACE') ? 'face' : 'edit_note';
+                        const methodLabel = (method) => method === 'nfc' ? 'RFID' : method === 'face' || (method || '').includes('FACE') ? 'Face' : 'Manual';
                         recentAttendance.innerHTML = recent.map(attendance => `
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>${attendance.student.first_name} ${attendance.student.last_name}</strong>
-                                <br>
-                                <small class="text-muted">${attendance.check_in_time} - ${attendance.method}</small>
-                            </div>
-                            <span class="badge bg-${attendance.status === 'present' ? 'success' : 'warning'}">${attendance.status}</span>
-                        </div>
-                    `).join('');
+                                        <div class="recent-item">
+                                            <div class="recent-item-avatar">
+                                                <i class="material-symbols-rounded">${methodIcon(attendance.device_id)}</i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <strong class="text-sm">${attendance.student.first_name} ${attendance.student.last_name}</strong>
+                                                        <small class="d-block text-muted">${attendance.student.student_code} &bull; ${methodLabel(attendance.device_id)}</small>
+                                                    </div>
+                                                    <div class="text-end">
+                                                        <span class="badge bg-gradient-${attendance.status === 'present' ? 'success' : attendance.status === 'late' ? 'warning' : 'secondary'}">${attendance.status}</span>
+                                                        <small class="d-block text-muted mt-1">${attendance.check_in_time || '-'}</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `).join('');
+                    } else if (data.success) {
+                        recentAttendance.innerHTML = `<div class="text-center py-4 text-muted"><i class="material-symbols-rounded" style="font-size:40px;opacity:0.3;">nfc</i><p class="mt-2 mb-0">No scans yet today</p></div>`;
                     }
                 } catch (error) {
                     console.error('Error updating recent attendance:', error);
@@ -730,8 +799,70 @@
                 }
             });
 
+            // ── Terminal state helpers ─────────────────────────────────────────
+            function setTerminalState(state, title, subtitle) {
+                const terminal = document.getElementById('rfidTerminal');
+                const iconWrap = document.getElementById('rfidIconWrap');
+                const icon = document.getElementById('rfidIcon');
+                const badge = document.getElementById('statusBadge');
+                const titleEl = document.getElementById('statusText');
+                const subtitleEl = document.getElementById('subStatusText');
+                const pulse = document.getElementById('scannerPulse');
+
+                // Remove all state classes
+                terminal.classList.remove('scanning', 'success', 'error');
+
+                if (state === 'scanning') {
+                    terminal.classList.add('scanning');
+                    icon.textContent = 'contactless';
+                    badge.className = 'status-badge bg-primary text-white mb-2';
+                    badge.textContent = 'Ready to Scan';
+                    pulse.style.display = 'none';
+                } else if (state === 'success') {
+                    terminal.classList.add('success');
+                    icon.textContent = 'check_circle';
+                    badge.className = 'status-badge bg-success text-white mb-2';
+                    badge.textContent = 'Success';
+                    pulse.style.display = 'none';
+                } else if (state === 'error') {
+                    terminal.classList.add('error');
+                    icon.textContent = 'wifi_off';
+                    badge.className = 'status-badge bg-danger text-white mb-2';
+                    badge.textContent = 'Error';
+                    pulse.style.display = 'none';
+                }
+
+                if (title) titleEl.textContent = title;
+                if (subtitle) subtitleEl.textContent = subtitle;
+            }
+
+            function showStudentDetail(data, action) {
+                if (!data) return;
+                const details = document.getElementById('studentDetails');
+                document.getElementById('studentName').textContent = data.student || '-';
+                document.getElementById('studentCode').textContent = data.code || '-';
+                document.getElementById('studentClass').textContent = data.class || '-';
+                document.getElementById('attendanceAction').textContent = action === 'check_in' ? '✓ Check In' : '✓ Check Out';
+                document.getElementById('attendanceTime').textContent = data.time || data.check_out || '-';
+
+                // Color the action
+                const actionEl = document.getElementById('attendanceAction');
+                actionEl.className = action === 'check_in' ? 'mb-0 fw-bold text-success' : 'mb-0 fw-bold text-warning';
+
+                details.style.display = 'block';
+            }
+
+            function hideStudentDetail() {
+                const details = document.getElementById('studentDetails');
+                if (details) details.style.display = 'none';
+            }
+            // ──────────────────────────────────────────────────────────────────
+
             function startRfidPolling() {
                 if (rfidInterval) clearInterval(rfidInterval);
+
+                let consecutiveDeviceErrors = 0;
+
                 rfidInterval = setInterval(async () => {
                     if (isRfidPolling) return;
                     isRfidPolling = true;
@@ -745,59 +876,88 @@
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                             }
                         });
+
+                        // HTTP-level error (e.g. 500)
+                        if (!response.ok && response.status !== 404) {
+                            const errText = await response.text();
+                            console.error('[RFID] Server error ' + response.status + ':', errText);
+                            setTerminalState('error', 'Server Error (' + response.status + ')', errText.substring(0, 120));
+                            consecutiveDeviceErrors++;
+                            return;
+                        }
+
                         const data = await response.json();
 
+                        // ── Device not connected ──────────────────────────────────
+                        if (data.device_error) {
+                            consecutiveDeviceErrors++;
+                            console.error('[RFID] Device error:', data.message, '| Port:', data.port ?? 'unknown');
+
+                            if (consecutiveDeviceErrors === 1 || consecutiveDeviceErrors % 10 === 0) {
+                                setTerminalState('error',
+                                    '⚠ RFID Reader Offline',
+                                    (data.message || 'Arduino not connected') + (data.port ? ' (' + data.port + ')' : '')
+                                );
+                                document.getElementById('terminalStatusBadge').innerHTML =
+                                    '<i class="material-symbols-rounded align-middle" style="font-size:14px;">wifi_off</i> Offline';
+                                document.getElementById('terminalStatusBadge').className =
+                                    'badge bg-danger fw-semibold px-3 py-2';
+                            }
+                            return;
+                        }
+
+                        // ── No tag detected this poll (normal) ───────────────────
+                        if (data.no_tag || (!data.success && !data.device_error)) {
+                            consecutiveDeviceErrors = 0;
+                            // Restore online badge if it was in error state
+                            const badge = document.getElementById('terminalStatusBadge');
+                            if (badge.classList.contains('bg-danger')) {
+                                badge.innerHTML = '<i class="material-symbols-rounded align-middle" style="font-size:14px;">wifi</i> Active';
+                                badge.className = 'badge bg-white text-primary fw-semibold px-3 py-2';
+                                setTerminalState('scanning', 'Tap your smart card on the reader', 'Listening for card taps...');
+                            }
+                            return;
+                        }
+
+                        // ── Success ───────────────────────────────────────────────
                         if (data.success) {
-                            showRecognitionStatus('✓ RFID Attendance Marked!', 'success');
-                            showStudentInfo(data.data?.student || 'Student', data.action === 'check_in' ? 'present' : 'checkout', data.data?.is_late, data.data?.time || data.data?.check_out || '');
+                            consecutiveDeviceErrors = 0;
+                            const badge = document.getElementById('terminalStatusBadge');
+                            badge.innerHTML = '<i class="material-symbols-rounded align-middle" style="font-size:14px;">wifi</i> Active';
+                            badge.className = 'badge bg-white text-primary fw-semibold px-3 py-2';
+
+                            const isCheckIn = data.action === 'check_in';
+                            setTerminalState('success',
+                                isCheckIn ? '✓ Checked In!' : '✓ Checked Out!',
+                                (data.data?.student || 'Student') + ' — ' + (data.data?.time || data.data?.check_out || '')
+                            );
+
+                            // Show student detail card
+                            showStudentDetail(data.data, data.action);
                             updateRecentAttendance();
 
-                            // Visual Feedback for RFID Only Mode
-                            if (attendanceModeSelect.value === 'rfid' || (!stream && attendanceModeSelect.value === 'both')) {
-                                faceOverlay.style.border = '5px solid #4CAF50';
-                                setTimeout(() => { faceOverlay.style.border = 'none'; }, 1000);
-                            }
-
-                            // Prevent spamming
+                            // Pause polling for 5 seconds after a successful scan
                             clearInterval(rfidInterval);
                             setTimeout(() => {
                                 if (attendanceModeSelect.value === 'both' || attendanceModeSelect.value === 'rfid') {
+                                    setTerminalState('scanning', 'Tap your smart card on the reader', 'Listening for card taps...');
+                                    hideStudentDetail();
                                     startRfidPolling();
-                                    if (attendanceModeSelect.value === 'rfid' || (!stream && attendanceModeSelect.value === 'both')) {
-                                        showRecognitionStatus('Waiting for RFID Tag...', 'processing');
-                                        hideStudentInfo();
-                                    }
-                                }
-                            }, 5000);
-                        } else if (data.message === 'Student already checked out today' || (data.message && data.message.includes('already checked'))) {
-                            showRecognitionStatus('Already checked out via RFID', 'success');
-                            showStudentInfo('Student', 'checkout', false, 'Already done');
-
-                            // Visual Feedback
-                            if (attendanceModeSelect.value === 'rfid' || (!stream && attendanceModeSelect.value === 'both')) {
-                                faceOverlay.style.border = '5px solid #ff9800';
-                                setTimeout(() => { faceOverlay.style.border = 'none'; }, 1000);
-                            }
-
-                            // Pause briefly
-                            clearInterval(rfidInterval);
-                            setTimeout(() => {
-                                if (attendanceModeSelect.value === 'both' || attendanceModeSelect.value === 'rfid') {
-                                    startRfidPolling();
-                                    if (attendanceModeSelect.value === 'rfid' || (!stream && attendanceModeSelect.value === 'both')) {
-                                        showRecognitionStatus('Waiting for RFID Tag...', 'processing');
-                                        hideStudentInfo();
-                                    }
                                 }
                             }, 5000);
                         }
-                        // We intentionally ignore common fail/timeout messages
+
                     } catch (error) {
-                        // Suppress polling connection errors
+                        // Network / fetch error (e.g. server down, CORS)
+                        consecutiveDeviceErrors++;
+                        console.error('[RFID] Fetch error:', error);
+                        if (consecutiveDeviceErrors % 5 === 1) {
+                            setTerminalState('error', '⚠ Connection Error', 'Cannot reach server: ' + error.message);
+                        }
                     } finally {
                         isRfidPolling = false;
                     }
-                }, 1500);
+                }, 2000); // Poll every 2 seconds
             }
 
             function stopRfidPolling() {
@@ -808,12 +968,8 @@
                 isRfidPolling = false;
             }
 
-            // Initialize based on the mode set by admin settings
-            const initialMode = attendanceModeSelect.value;
-            if (initialMode === 'rfid' || initialMode === 'both') {
-                startRfidPolling();
-            }
-            // If face-only mode, user still needs to click "Start Camera" manually
+            // Start RFID polling automatically on load since default is BOTH
+            startRfidPolling();
 
             // Load initial recent attendance
             updateRecentAttendance();

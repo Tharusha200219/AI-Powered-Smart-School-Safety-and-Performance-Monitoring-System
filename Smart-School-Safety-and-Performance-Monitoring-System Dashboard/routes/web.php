@@ -54,7 +54,6 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('/subjects-by-grade', 'getSubjectsByGrade')->name('subjects-by-grade');
                 Route::get('/classes-by-grade', 'getClassesByGrade')->name('classes-by-grade');
                 Route::post('/write-nfc', 'writeToNFC')->name('write-nfc');
-                Route::get('/read-nfc-enrollment', 'readNFCForEnrollment')->name('read-nfc-enrollment');
                 Route::get('/test-arduino', 'testArduino')->name('test-arduino');
                 Route::post('/{id}/generate-predictions', 'generatePredictions')->name('generate-predictions');
             });
@@ -127,6 +126,8 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::get('/dashboard', 'dashboard')->name('dashboard');
                 Route::get('/face', 'face')->name('face');
+                Route::get('/rfid', 'rfid')->name('rfid');
+                Route::post('/api/nfc/scan', 'nfcScan')->name('api.nfc.scan');
                 Route::get('/create', 'create')->name('create');
                 Route::post('/', 'store')->name('store');
                 Route::get('/{attendance}', 'show')->name('show');

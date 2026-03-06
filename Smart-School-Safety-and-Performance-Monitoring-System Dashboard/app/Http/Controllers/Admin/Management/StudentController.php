@@ -467,20 +467,35 @@ class StudentController extends BaseManagementController
             throw new \Exception('Student not found.');
         }
 
-        // Create notification before deletion
-        $this->notifyDeleted($this->entityName, $student);
+        Log::info('Student delete started', ['student_id' => $id, 'student_code' => $student->student_code]);
 
-        // Delete associated user account
-        if ($student->user) {
-            $student->user->delete();
-        }
+        // Store user reference before deleting student
+        $user = $student->user;
 
         // Delete profile image if exists
         if ($student->photo_path) {
             $this->imageService->deleteProfileImage($student->photo_path);
         }
 
-        return $this->repository->delete($id);
+        // Detach pivot relationships first (parents, subjects)
+        $student->parents()->detach();
+        $student->subjects()->detach();
+
+        // Delete the student record FIRST (before user, to avoid FK constraint)
+        $this->repository->delete($id);
+
+        Log::info('Student record deleted', ['student_id' => $id]);
+
+        // Now safe to delete the associated user account
+        if ($user) {
+            $user->delete();
+            Log::info('User account deleted', ['user_id' => $user->id]);
+        }
+
+        // Notify after successful deletion
+        $this->notifyDeleted($this->entityName, $student);
+
+        return true;
     }
 
     /**

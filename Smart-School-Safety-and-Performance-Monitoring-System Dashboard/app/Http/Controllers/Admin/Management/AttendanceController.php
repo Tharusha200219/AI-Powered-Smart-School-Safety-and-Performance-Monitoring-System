@@ -153,7 +153,10 @@ class AttendanceController extends Controller
             ->sortByDesc('check_in_time')
             ->take(20);
 
-        return view('admin.pages.management.attendance.dashboard', compact('stats', 'recentCheckIns'));
+        // Load attendance method settings to control button visibility
+        $setting = \App\Models\Setting::first();
+
+        return view('admin.pages.management.attendance.dashboard', compact('stats', 'recentCheckIns', 'setting'));
     }
 
     /**
@@ -161,7 +164,18 @@ class AttendanceController extends Controller
      */
     public function face()
     {
-        return view('admin.pages.management.attendance.face');
+        // Pass settings so the face terminal can restrict its mode dropdown
+        $setting = \App\Models\Setting::first();
+        return view('admin.pages.management.attendance.face', compact('setting'));
+    }
+
+    /**
+     * Show RFID attendance interface
+     */
+    public function rfid()
+    {
+        $setting = \App\Models\Setting::first();
+        return view('admin.pages.management.attendance.rfid', compact('setting'));
     }
 
     /**
@@ -313,78 +327,147 @@ class AttendanceController extends Controller
     public function nfcScan(Request $request)
     {
         try {
-            // Read NFC UID
-            $result = $this->arduinoService->readNFCTagUID();
+            Log::info('RFID: Polling for NFC tag scan...');
 
-            if (!$result['success'] || empty($result['uid'])) {
+            // Read NFC tag from Arduino
+            $result = $this->arduinoService->readNFCTag();
+
+            // --- Device not connected / port failure ---
+            if (!$result['success'] && isset($result['message'])) {
+                $msg = strtolower($result['message']);
+                $isDeviceError = str_contains($msg, 'cannot connect')
+                    || str_contains($msg, 'failed to open')
+                    || str_contains($msg, 'no such file')
+                    || str_contains($msg, 'permission denied')
+                    || str_contains($msg, 'timeout')
+                    || str_contains($msg, 'failed to read');
+
+                if ($isDeviceError) {
+                    Log::error('RFID: Arduino device not connected or port unavailable. Port: '
+                        . $this->arduinoService->getSerialPort()
+                        . ' | Message: ' . $result['message']);
+
+                    return response()->json([
+                        'success'      => false,
+                        'device_error' => true,
+                        'message'      => 'RFID reader not connected. Please check the Arduino device on port: '
+                            . $this->arduinoService->getSerialPort(),
+                        'port'         => $this->arduinoService->getSerialPort(),
+                    ]);
+                }
+
+                // No tag was placed on the reader (normal polling "miss")
+                Log::debug('RFID: No tag detected this poll. Message: ' . $result['message']);
+
                 return response()->json([
-                    'success' => false,
-                    'message' => $result['message'] ?? 'Failed to read NFC tag'
+                    'success'    => false,
+                    'no_tag'     => true,
+                    'message'    => $result['message'],
                 ]);
             }
 
-            $rfidHex = $result['uid'];
+            // --- Tag read but no data ---
+            if (!$result['data']) {
+                Log::warning('RFID: Tag detected but data is empty or unrecognised. Raw: '
+                    . ($result['raw'] ?? 'n/a'));
 
-            // Find student by RFID Hex
-            $student = \App\Models\Student::where('rfid_hex', $rfidHex)->first();
-
-            if (!$student) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Unrecognized RFID tag (Hex: ' . $rfidHex . ')'
+                    'message' => 'Tag detected but could not read student data. Please re-enroll the card.',
+                ]);
+            }
+
+            $studentCode = $result['data']['student_code'] ?? null;
+
+            if (!$studentCode) {
+                Log::warning('RFID: Tag read but student_code is missing. Data: ' . json_encode($result['data']));
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tag has no student code stored. Please re-enroll the card.',
+                ]);
+            }
+
+            Log::info('RFID: Tag read successfully. Student code: ' . $studentCode . ' | UID: ' . ($result['uid'] ?? 'n/a'));
+
+            // --- Look up student ---
+            $student = $this->studentRepository->findByCode($studentCode);
+
+            if (!$student) {
+                Log::warning('RFID: Student not found in database for code: ' . $studentCode);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Student not found for code: ' . $studentCode . '. Please check enrolment.',
                 ], 404);
             }
 
-            // Check if already checked in today
+            // --- Check today's attendance ---
             $todayAttendance = $this->attendanceRepository->getTodayAttendance($student->student_id);
 
             if (!$todayAttendance || $todayAttendance->status === 'absent') {
-                // Check in
+                // First tap → Check in
                 $attendance = $this->attendanceRepository->checkIn($student->student_id, [
                     'check_in_time' => now(),
-                    'device_id' => 'nfc',
-                    'nfc_tag_id' => $rfidHex
+                    'device_id'     => 'nfc',
+                    'method'        => 'rfid',
+                    'nfc_tag_id'    => $studentCode,
                 ]);
+
+                Log::info('RFID: Check-in recorded for ' . $student->first_name . ' ' . $student->last_name
+                    . ' | Time: ' . now()->format('H:i:s')
+                    . ' | Attendance ID: ' . $attendance->attendance_id);
 
                 return response()->json([
                     'success' => true,
-                    'action' => 'check_in',
+                    'action'  => 'check_in',
                     'message' => 'Student checked in successfully',
-                    'data' => [
-                        'student' => $student->first_name . ' ' . $student->last_name,
-                        'time' => $attendance->check_in_time->format('H:i:s'),
-                        'is_late' => $attendance->is_late
-                    ]
+                    'data'    => [
+                        'student'  => $student->first_name . ' ' . $student->last_name,
+                        'code'     => $studentCode,
+                        'time'     => $attendance->check_in_time->format('H:i:s'),
+                        'is_late'  => $attendance->isLate(),
+                    ],
                 ]);
+
             } elseif ($todayAttendance->status === 'present' && !$todayAttendance->check_out_time) {
-                // Check out
+                // Second tap → Check out
                 $attendance = $this->attendanceRepository->checkOut($student->student_id, [
-                    'check_out_time' => now()
+                    'check_out_time' => now(),
                 ]);
+
+                Log::info('RFID: Check-out recorded for ' . $student->first_name . ' ' . $student->last_name
+                    . ' | Check-in was at: ' . $todayAttendance->check_in_time
+                    . ' | Method originally used: ' . ($todayAttendance->device_id ?? 'unknown'));
 
                 return response()->json([
                     'success' => true,
-                    'action' => 'check_out',
+                    'action'  => 'check_out',
                     'message' => 'Student checked out successfully',
-                    'data' => [
-                        'student' => $student->first_name . ' ' . $student->last_name,
-                        'check_in' => $attendance->check_in_time->format('H:i:s'),
-                        'check_out' => $attendance->check_out_time->format('H:i:s'),
-                        'duration' => $attendance->duration
-                    ]
+                    'data'    => [
+                        'student'   => $student->first_name . ' ' . $student->last_name,
+                        'check_in'  => $todayAttendance->check_in_time->format('H:i:s'),
+                        'check_out' => now()->format('H:i:s'),
+                        'duration'  => $attendance ? $attendance->duration : null,
+                    ],
                 ]);
+
             } else {
+                Log::info('RFID: Student ' . $student->first_name . ' ' . $student->last_name . ' already fully recorded today.');
                 return response()->json([
                     'success' => false,
-                    'message' => 'Student already checked out today'
+                    'message' => 'Student already checked in and out today.',
                 ]);
             }
+
         } catch (\Exception $e) {
-            Log::error('NFC scan error: ' . $e->getMessage());
+            Log::error('RFID: Unexpected exception in nfcScan(). Message: ' . $e->getMessage());
+            Log::error('RFID: Stack trace: ' . $e->getTraceAsString());
 
             return response()->json([
-                'success' => false,
-                'message' => 'Error processing NFC scan: ' . $e->getMessage()
+                'success'      => false,
+                'device_error' => str_contains(strtolower($e->getMessage()), 'serial')
+                    || str_contains(strtolower($e->getMessage()), 'port')
+                    || str_contains(strtolower($e->getMessage()), 'arduino'),
+                'message'      => 'RFID scan error: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -684,9 +767,17 @@ class AttendanceController extends Controller
             $todayAttendance = $this->attendanceRepository->getTodayAttendance($student->student_id);
 
             if ($todayAttendance && $todayAttendance->status !== 'absent') {
+                // Determine which method originally marked the attendance
+                $markedVia = match(true) {
+                    $todayAttendance->device_id === 'nfc' => 'RFID',
+                    str_contains((string)($todayAttendance->device_id ?? ''), 'FACE') => 'Face Recognition',
+                    $todayAttendance->device_id === 'manual' => 'Manual Entry',
+                    default => $todayAttendance->method ?? 'another method',
+                };
+
                 return response()->json([
                     'success' => false,
-                    'message' => 'Attendance already marked for today',
+                    'message' => 'Attendance already marked today via ' . $markedVia,
                     'recognized' => true,
                     'student_name' => $student->first_name . ' ' . $student->last_name,
                     'already_marked' => true,
