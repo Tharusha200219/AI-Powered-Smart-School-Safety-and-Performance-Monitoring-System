@@ -6,7 +6,7 @@ import os
 
 # API Configuration
 API_HOST = os.getenv('SEATING_API_HOST', '0.0.0.0')
-API_PORT = int(os.getenv('SEATING_API_PORT', 5001))  # Different port from performance prediction
+API_PORT = int(os.getenv('SEATING_API_PORT', 5003))  # Different port from performance prediction
 API_DEBUG = os.getenv('SEATING_API_DEBUG', 'False').lower() == 'true'
 
 # Model Configuration

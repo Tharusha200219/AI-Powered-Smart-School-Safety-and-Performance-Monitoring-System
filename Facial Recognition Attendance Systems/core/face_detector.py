@@ -100,9 +100,9 @@ class MTCNNDetector(BaseFaceDetector):
             self._detector = MTCNN(
                 image_size=160,
                 margin=20,
-                min_face_size=40,  # Smaller min face for distance detection
-                thresholds=[0.5, 0.6, 0.6],  # Lower thresholds for faster detection
-                factor=0.85,  # Higher factor for faster pyramid scaling
+                min_face_size=self.min_face_size,  # Using consistent min face size
+                thresholds=[0.7, 0.8, 0.9],  # Stricter thresholds for better accuracy
+                factor=0.709,  # Standard factor for better image pyramid resolution
                 post_process=False,
                 device=device,
                 keep_all=True

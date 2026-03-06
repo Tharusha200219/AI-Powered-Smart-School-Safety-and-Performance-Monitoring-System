@@ -65,7 +65,7 @@ class AttendanceEngine:
         detection_backend: str = 'mtcnn',
         recognition_backend: str = 'facenet',
         device: str = 'cpu',
-        recognition_threshold: float = 0.45,  # Lower threshold for better matching
+        recognition_threshold: float = 0.65,  # Higher threshold for better accuracy
         enable_anti_spoof: bool = False,  # Disable for faster processing
         attendance_cooldown: int = 300  # seconds
     ):
@@ -89,7 +89,7 @@ class AttendanceEngine:
         # Initialize components
         self.detector = FaceDetector(
             backend=detection_backend,
-            confidence_threshold=0.85,  # Lower threshold for better distance detection
+            confidence_threshold=0.90,  # Stricter threshold for better precision
             device=device
         )
         
@@ -274,41 +274,58 @@ class AttendanceEngine:
     ) -> Tuple[Optional[str], Optional[str], float]:
         """
         Find best matching student using multi-embedding matching.
-        Uses max similarity across all stored embeddings per student.
+        Uses top-3 mean similarity across stored embeddings per student for robustness.
         """
         if self._embedding_matrix is None or len(self._embedding_matrix) == 0:
             return None, None, 0.0
         
-        best_student_id = None
-        best_confidence = 0.0
-        
         # Normalize input embedding
-        embedding = embedding / np.linalg.norm(embedding)
+        norm = np.linalg.norm(embedding)
+        if norm > 0:
+            embedding = embedding / norm
         
-        # Try multi-embedding matching first (more accurate)
-        if self._multi_embeddings:
+        # Collect all potential matches
+        student_scores = defaultdict(list)
+        
+        # 1. Multi-embedding matching (Robust)
+        if hasattr(self, '_multi_embeddings') and self._multi_embeddings:
             for student_id, multi_embs in self._multi_embeddings.items():
                 if multi_embs:
-                    # Compute max similarity across all embeddings for this student
-                    max_sim = 0.0
-                    for stored_emb in multi_embs:
-                        sim = np.dot(embedding, stored_emb)
-                        max_sim = max(max_sim, sim)
+                    # Compute all similarities for this student
+                    sims = [np.dot(embedding, stored_emb) for stored_emb in multi_embs]
+                    sims.sort(reverse=True)
                     
-                    if max_sim > best_confidence:
-                        best_confidence = max_sim
-                        best_student_id = student_id
+                    # Top-3 mean similarity
+                    top_n = min(len(sims), 3)
+                    mean_sim = np.mean(sims[:top_n])
+                    student_scores[student_id].append(mean_sim)
         
-        # Fall back to single embedding matching
-        if best_confidence < self.recognition_threshold:
-            # Fast vectorized matching with primary embeddings
-            similarities = np.dot(self._embedding_matrix, embedding)
-            best_idx = np.argmax(similarities)
-            single_confidence = similarities[best_idx]
+        # 2. Vectorized single-embedding matching (Fast fallback)
+        similarities = np.dot(self._embedding_matrix, embedding)
+        for idx, sim in enumerate(similarities):
+            student_id = self._student_ids[idx]
+            student_scores[student_id].append(float(sim))
             
-            if single_confidence > best_confidence:
-                best_confidence = single_confidence
-                best_student_id = self._student_ids[best_idx]
+        if not student_scores:
+            return None, None, 0.0
+            
+        # Get best score for each student
+        final_matches = []
+        for student_id, scores in student_scores.items():
+            final_matches.append((student_id, max(scores)))
+            
+        # Sort by score descending
+        final_matches.sort(key=lambda x: x[1], reverse=True)
+        
+        best_student_id, best_confidence = final_matches[0]
+        
+        # Check for ambiguity (Top 2 matches too close)
+        if len(final_matches) > 1:
+            second_student_id, second_confidence = final_matches[1]
+            if (best_confidence - second_confidence) < 0.05:
+                # Potential ambiguity: penalize confidence
+                best_confidence *= 0.95
+                logger.debug(f"Possible ambiguity between {best_student_id} and {second_student_id}")
         
         if best_student_id and best_confidence >= self.recognition_threshold:
             student_name = self.face_database.get_student_name(best_student_id)

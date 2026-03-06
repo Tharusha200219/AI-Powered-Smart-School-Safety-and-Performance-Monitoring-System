@@ -23,6 +23,7 @@ use App\Services\SeatingArrangementService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Spatie\Permission\Models\Role;
 
@@ -127,6 +128,8 @@ class StudentController extends BaseManagementController
         // Assign roles to user
         if ($request->has('roles')) {
             $user->assignRole($request->roles);
+        } else {
+            $user->assignRole('student');
         }
 
         // Prepare student data
@@ -203,7 +206,7 @@ class StudentController extends BaseManagementController
             throw new \Exception('Student not found.');
         }
 
-        \Log::info('Student update started', ['student_id' => $id, 'request_data' => $request->all()]);
+        Log::info('Student update started', ['student_id' => $id, 'request_data' => $request->all()]);
 
         // Update user account
         $user = $student->user;
@@ -212,7 +215,7 @@ class StudentController extends BaseManagementController
             'email' => $request->email,
         ]);
 
-        \Log::info('User updated', ['user_id' => $user->id, 'email' => $request->email]);
+        Log::info('User updated', ['user_id' => $user->id, 'email' => $request->email]);
 
         // Update password if provided
         if ($request->filled('password')) {
@@ -247,11 +250,11 @@ class StudentController extends BaseManagementController
             'parent_address_line1',
         ]);
 
-        \Log::info('Student data prepared', ['student_data' => $studentData]);
+        Log::info('Student data prepared', ['student_data' => $studentData]);
 
         // Handle profile image upload
         if ($request->hasFile('profile_image')) {
-            \Log::info('Profile image upload detected');
+            Log::info('Profile image upload detected');
 
             // Delete old image if exists
             if ($student->photo_path) {
@@ -266,12 +269,12 @@ class StudentController extends BaseManagementController
             );
             $studentData['photo_path'] = $imagePath;
 
-            \Log::info('Profile image uploaded', ['path' => $imagePath]);
+            Log::info('Profile image uploaded', ['path' => $imagePath]);
         }
 
         $updatedStudent = $this->repository->update($id, $studentData);
 
-        \Log::info('Student updated', ['updated_student' => $updatedStudent->toArray()]);
+        Log::info('Student updated', ['updated_student' => $updatedStudent->toArray()]);
 
         // Handle parent creation and relationships
         $existingParentIds = $request->input('parents', []);
@@ -336,7 +339,7 @@ class StudentController extends BaseManagementController
                     ->get();
             } catch (\Exception $e) {
                 // Log error but continue
-                \Log::error('Failed to generate live predictions for student ' . $id . ': ' . $e->getMessage());
+                Log::error('Failed to generate live predictions for student ' . $id . ': ' . $e->getMessage());
             }
         }
 
@@ -400,9 +403,11 @@ class StudentController extends BaseManagementController
 
             return response()->json([
                 'success' => true,
-                'education_level' => $subjectData['education_level'],
-                'grade' => $subjectData['grade'],
-                'subjects' => $subjectData['subjects']
+                'data' => [
+                    'education_level' => $subjectData['education_level'],
+                    'grade' => $subjectData['grade'],
+                    'subjects' => $subjectData['subjects']
+                ]
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -462,20 +467,35 @@ class StudentController extends BaseManagementController
             throw new \Exception('Student not found.');
         }
 
-        // Create notification before deletion
-        $this->notifyDeleted($this->entityName, $student);
+        Log::info('Student delete started', ['student_id' => $id, 'student_code' => $student->student_code]);
 
-        // Delete associated user account
-        if ($student->user) {
-            $student->user->delete();
-        }
+        // Store user reference before deleting student
+        $user = $student->user;
 
         // Delete profile image if exists
         if ($student->photo_path) {
             $this->imageService->deleteProfileImage($student->photo_path);
         }
 
-        return $this->repository->delete($id);
+        // Detach pivot relationships first (parents, subjects)
+        $student->parents()->detach();
+        $student->subjects()->detach();
+
+        // Delete the student record FIRST (before user, to avoid FK constraint)
+        $this->repository->delete($id);
+
+        Log::info('Student record deleted', ['student_id' => $id]);
+
+        // Now safe to delete the associated user account
+        if ($user) {
+            $user->delete();
+            Log::info('User account deleted', ['user_id' => $user->id]);
+        }
+
+        // Notify after successful deletion
+        $this->notifyDeleted($this->entityName, $student);
+
+        return true;
     }
 
     /**
@@ -515,6 +535,24 @@ class StudentController extends BaseManagementController
             return response()->json([
                 'success' => false,
                 'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Read NFC UID for enrollment process.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function readNFCForEnrollment()
+    {
+        try {
+            $result = $this->arduinoNFCService->readNFCTagUID();
+            return response()->json($result);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error reading NFC UID: ' . $e->getMessage()
             ], 500);
         }
     }

@@ -180,19 +180,43 @@
                 <div class="col-12">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div>
-                            <h4 class="mb-0">Face Recognition Attendance</h4>
-                            <p class="text-sm text-secondary mb-0">Real-time facial recognition for attendance</p>
+                            <h4 class="mb-0">Smart Attendance Terminal</h4>
+                            <p class="text-sm text-secondary mb-0">Real-time facial recognition and RFID attendance</p>
                         </div>
-                        <div>
-                            <button id="startCamera" class="btn btn-success btn-sm">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="form-group mb-0">
+                                @php
+                                    $faceEnabled = $setting && $setting->attendance_face_enabled;
+                                    $rfidEnabled  = $setting && $setting->attendance_rfid_enabled;
+                                    $bothEnabled  = $faceEnabled && $rfidEnabled;
+                                @endphp
+                                <select id="attendanceMode"
+                                    class="form-select form-select-sm border border-primary px-3 py-1 bg-white"
+                                    style="min-width: 150px; cursor: pointer; border-radius: 8px;"
+                                    {{ !$bothEnabled ? 'disabled' : '' }}>
+                                    @if($bothEnabled)
+                                        <option value="both" selected>Face & RFID Mode</option>
+                                    @endif
+                                    @if($faceEnabled)
+                                        <option value="face" {{ !$bothEnabled ? 'selected' : '' }}>Face Recognition Only</option>
+                                    @endif
+                                    @if($rfidEnabled)
+                                        <option value="rfid" {{ !$bothEnabled ? 'selected' : '' }}>RFID Scanner Only</option>
+                                    @endif
+                                    @if(!$faceEnabled && !$rfidEnabled)
+                                        <option value="none" disabled selected>No Method Enabled</option>
+                                    @endif
+                                </select>
+                            </div>
+                            <button id="startCamera" class="btn btn-success btn-sm mb-0">
                                 <i class="material-symbols-rounded text-sm">videocam</i> Start Camera
                             </button>
-                            <button id="stopCamera" class="btn btn-danger btn-sm" disabled>
+                            <button id="stopCamera" class="btn btn-danger btn-sm mb-0" disabled>
                                 <i class="material-symbols-rounded text-sm">videocam_off</i> Stop Camera
                             </button>
                             <a href="{{ route('admin.management.attendance.dashboard') }}"
-                                class="btn btn-outline-secondary btn-sm">
-                                <i class="material-symbols-rounded text-sm">arrow_back</i> Back to Dashboard
+                                class="btn btn-outline-secondary btn-sm mb-0">
+                                <i class="material-symbols-rounded text-sm">arrow_back</i> Dashboard
                             </a>
                         </div>
                     </div>
@@ -251,7 +275,7 @@
 
 @section('js')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const cameraFeed = document.getElementById('cameraFeed');
             const faceOverlay = document.getElementById('faceDetectionOverlay');
             const scanningLine = document.getElementById('scanningLine');
@@ -263,16 +287,19 @@
             const recognitionText = document.getElementById('recognitionText');
             const studentInfo = document.getElementById('studentInfo');
             const recentAttendance = document.getElementById('recentAttendance');
+            const attendanceModeSelect = document.getElementById('attendanceMode');
 
             let stream = null;
             let isCapturing = false;
             let recognitionInterval = null;
+            let rfidInterval = null;
             let isAutoRecognizing = false;
+            let isRfidPolling = false;
             let lastRecognizedStudent = null;
             let faceBoxData = null;
 
             // Start camera
-            startCameraBtn.addEventListener('click', async function() {
+            startCameraBtn.addEventListener('click', async function () {
                 try {
                     stream = await navigator.mediaDevices.getUserMedia({
                         video: {
@@ -294,11 +321,13 @@
                         faceOverlay.height = cameraFeed.videoHeight;
                     };
 
-                    showStatus('Camera started - Auto recognition active', 'success');
+                    showStatus('Camera started', 'success');
                     showRecognitionStatus('Scanning for faces...', 'processing');
 
-                    // Start automatic recognition
-                    startAutoRecognition();
+                    // Start automatic recognition if mode allows
+                    if (attendanceModeSelect.value === 'both' || attendanceModeSelect.value === 'face') {
+                        startAutoRecognition();
+                    }
 
                 } catch (error) {
                     console.error('Error accessing camera:', error);
@@ -308,7 +337,7 @@
             });
 
             // Stop camera
-            stopCameraBtn.addEventListener('click', function() {
+            stopCameraBtn.addEventListener('click', function () {
                 if (stream) {
                     stream.getTracks().forEach(track => track.stop());
                     cameraFeed.srcObject = null;
@@ -326,10 +355,16 @@
 
                 showStatus('Camera stopped', 'error');
                 hideRecognitionStatus();
+
+                // Keep RFID polling if the mode is rfid or both
+                if (attendanceModeSelect.value === 'both' || attendanceModeSelect.value === 'rfid') {
+                    showStatus('RFID Scanner Active', 'success');
+                    showRecognitionStatus('Waiting for RFID Tag...', 'processing');
+                }
             });
 
             // Manual capture (disabled in auto mode)
-            captureBtn.addEventListener('click', function() {
+            captureBtn.addEventListener('click', function () {
                 showStatus('Manual capture disabled - Auto recognition active', 'error');
             });
 
@@ -508,6 +543,11 @@
             async function performAutoRecognition() {
                 if (isAutoRecognizing) return;
 
+                if (attendanceModeSelect.value === 'rfid') {
+                    isAutoRecognizing = false;
+                    return; // Skip face recognition in RFID-only mode
+                }
+
                 isAutoRecognizing = true;
 
                 try {
@@ -524,20 +564,20 @@
                     ctx.drawImage(cameraFeed, 0, 0);
 
                     // Convert to blob with higher quality
-                    canvas.toBlob(async function(blob) {
+                    canvas.toBlob(async function (blob) {
                         const formData = new FormData();
                         formData.append('image', blob, 'auto_capture.jpg');
 
                         // Send to auto recognition API
                         const response = await fetch(
                             '/admin/management/attendance/api/face/auto-recognize', {
-                                method: 'POST',
-                                body: formData,
-                                headers: {
-                                    'X-CSRF-TOKEN': document.querySelector(
-                                        'meta[name="csrf-token"]').getAttribute('content')
-                                }
-                            });
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector(
+                                    'meta[name="csrf-token"]').getAttribute('content')
+                            }
+                        });
 
                         const result = await response.json();
 
@@ -649,20 +689,131 @@
                     if (data.success && data.data.length > 0) {
                         const recent = data.data.slice(0, 5);
                         recentAttendance.innerHTML = recent.map(attendance => `
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <strong>${attendance.student.first_name} ${attendance.student.last_name}</strong>
-                            <br>
-                            <small class="text-muted">${attendance.check_in_time} - ${attendance.method}</small>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>${attendance.student.first_name} ${attendance.student.last_name}</strong>
+                                <br>
+                                <small class="text-muted">${attendance.check_in_time} - ${attendance.method}</small>
+                            </div>
+                            <span class="badge bg-${attendance.status === 'present' ? 'success' : 'warning'}">${attendance.status}</span>
                         </div>
-                        <span class="badge bg-${attendance.status === 'present' ? 'success' : 'warning'}">${attendance.status}</span>
-                    </div>
-                `).join('');
+                    `).join('');
                     }
                 } catch (error) {
                     console.error('Error updating recent attendance:', error);
                 }
             }
+
+            // Mode selection handler
+            attendanceModeSelect.addEventListener('change', function () {
+                const mode = this.value;
+
+                if (mode === 'rfid' || mode === 'both') {
+                    if (!rfidInterval) startRfidPolling();
+                    if (mode === 'rfid') {
+                        if (stream) stopCameraBtn.click();
+                        showStatus('RFID Scanner Active', 'success');
+                        showRecognitionStatus('Waiting for RFID Tag...', 'processing');
+                    }
+                } else {
+                    stopRfidPolling();
+                }
+
+                if (mode === 'face' || mode === 'both') {
+                    if (stream && cameraFeed.srcObject) {
+                        startAutoRecognition();
+                        showStatus('Camera Feed Active', 'success');
+                        showRecognitionStatus('Scanning for faces...', 'processing');
+                    }
+                } else {
+                    stopAutoRecognition();
+                }
+            });
+
+            function startRfidPolling() {
+                if (rfidInterval) clearInterval(rfidInterval);
+                rfidInterval = setInterval(async () => {
+                    if (isRfidPolling) return;
+                    isRfidPolling = true;
+
+                    try {
+                        const response = await fetch('/admin/management/attendance/api/nfc/scan', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            }
+                        });
+                        const data = await response.json();
+
+                        if (data.success) {
+                            showRecognitionStatus('✓ RFID Attendance Marked!', 'success');
+                            showStudentInfo(data.data?.student || 'Student', data.action === 'check_in' ? 'present' : 'checkout', data.data?.is_late, data.data?.time || data.data?.check_out || '');
+                            updateRecentAttendance();
+
+                            // Visual Feedback for RFID Only Mode
+                            if (attendanceModeSelect.value === 'rfid' || (!stream && attendanceModeSelect.value === 'both')) {
+                                faceOverlay.style.border = '5px solid #4CAF50';
+                                setTimeout(() => { faceOverlay.style.border = 'none'; }, 1000);
+                            }
+
+                            // Prevent spamming
+                            clearInterval(rfidInterval);
+                            setTimeout(() => {
+                                if (attendanceModeSelect.value === 'both' || attendanceModeSelect.value === 'rfid') {
+                                    startRfidPolling();
+                                    if (attendanceModeSelect.value === 'rfid' || (!stream && attendanceModeSelect.value === 'both')) {
+                                        showRecognitionStatus('Waiting for RFID Tag...', 'processing');
+                                        hideStudentInfo();
+                                    }
+                                }
+                            }, 5000);
+                        } else if (data.message === 'Student already checked out today' || (data.message && data.message.includes('already checked'))) {
+                            showRecognitionStatus('Already checked out via RFID', 'success');
+                            showStudentInfo('Student', 'checkout', false, 'Already done');
+
+                            // Visual Feedback
+                            if (attendanceModeSelect.value === 'rfid' || (!stream && attendanceModeSelect.value === 'both')) {
+                                faceOverlay.style.border = '5px solid #ff9800';
+                                setTimeout(() => { faceOverlay.style.border = 'none'; }, 1000);
+                            }
+
+                            // Pause briefly
+                            clearInterval(rfidInterval);
+                            setTimeout(() => {
+                                if (attendanceModeSelect.value === 'both' || attendanceModeSelect.value === 'rfid') {
+                                    startRfidPolling();
+                                    if (attendanceModeSelect.value === 'rfid' || (!stream && attendanceModeSelect.value === 'both')) {
+                                        showRecognitionStatus('Waiting for RFID Tag...', 'processing');
+                                        hideStudentInfo();
+                                    }
+                                }
+                            }, 5000);
+                        }
+                        // We intentionally ignore common fail/timeout messages
+                    } catch (error) {
+                        // Suppress polling connection errors
+                    } finally {
+                        isRfidPolling = false;
+                    }
+                }, 1500);
+            }
+
+            function stopRfidPolling() {
+                if (rfidInterval) {
+                    clearInterval(rfidInterval);
+                    rfidInterval = null;
+                }
+                isRfidPolling = false;
+            }
+
+            // Initialize based on the mode set by admin settings
+            const initialMode = attendanceModeSelect.value;
+            if (initialMode === 'rfid' || initialMode === 'both') {
+                startRfidPolling();
+            }
+            // If face-only mode, user still needs to click "Start Camera" manually
 
             // Load initial recent attendance
             updateRecentAttendance();

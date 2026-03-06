@@ -161,3 +161,16 @@ CAMERA_FPS = 30
 ## 📄 License
 
 MIT License - See LICENSE file for details.
+
+
+
+
+# Navigate to the project directory
+cd "Facial Recognition Attendance Systems"
+
+# Remove all captured face images
+rm -rf data/faces/*
+
+# Remove all stored embeddings and student info
+rm -rf data/embeddings/*.pkl
+rm -rf data/embeddings/*.pkl.bak
