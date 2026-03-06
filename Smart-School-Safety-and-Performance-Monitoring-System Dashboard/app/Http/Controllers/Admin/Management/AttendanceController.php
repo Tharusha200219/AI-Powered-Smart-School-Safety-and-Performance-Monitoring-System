@@ -313,25 +313,25 @@ class AttendanceController extends Controller
     public function nfcScan(Request $request)
     {
         try {
-            // Read NFC tag
-            $result = $this->arduinoService->readNFCTag();
+            // Read NFC UID
+            $result = $this->arduinoService->readNFCTagUID();
 
-            if (!$result['success'] || !$result['data']) {
+            if (!$result['success'] || empty($result['uid'])) {
                 return response()->json([
                     'success' => false,
-                    'message' => $result['message']
+                    'message' => $result['message'] ?? 'Failed to read NFC tag'
                 ]);
             }
 
-            $studentCode = $result['data']['student_code'];
+            $rfidHex = $result['uid'];
 
-            // Find student
-            $student = $this->studentRepository->findByCode($studentCode);
+            // Find student by RFID Hex
+            $student = \App\Models\Student::where('rfid_hex', $rfidHex)->first();
 
             if (!$student) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Student not found in database'
+                    'message' => 'Unrecognized RFID tag (Hex: ' . $rfidHex . ')'
                 ], 404);
             }
 
@@ -343,7 +343,7 @@ class AttendanceController extends Controller
                 $attendance = $this->attendanceRepository->checkIn($student->student_id, [
                     'check_in_time' => now(),
                     'device_id' => 'nfc',
-                    'nfc_tag_id' => $studentCode
+                    'nfc_tag_id' => $rfidHex
                 ]);
 
                 return response()->json([

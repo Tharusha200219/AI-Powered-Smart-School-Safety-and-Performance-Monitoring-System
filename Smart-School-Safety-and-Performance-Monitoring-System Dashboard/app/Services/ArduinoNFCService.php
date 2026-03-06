@@ -344,6 +344,71 @@ class ArduinoNFCService
     }
 
     /**
+     * Read just the UID of the NFC tag via Arduino
+     *
+     * @return array ['success' => bool, 'message' => string, 'uid' => string|null]
+     */
+    public function readNFCTagUID(): array
+    {
+        try {
+            // Open serial port
+            $this->openPort();
+
+            // New sketch read UID command
+            $command = "READ_UID\n";
+            fwrite($this->handle, $command);
+            fflush($this->handle);
+
+            Log::info("Arduino NFC Service - Sent READ_UID command");
+
+            $startTime = time();
+            while ((time() - $startTime) < $this->timeout) {
+                if (feof($this->handle)) break;
+
+                $read = [$this->handle];
+                $write = null;
+                $except = null;
+
+                if (stream_select($read, $write, $except, 0, 100000) > 0) {
+                    $line = fgets($this->handle);
+                    if ($line !== false) {
+                        $line = trim($line);
+                        
+                        if (strpos($line, 'DATA:UID:') === 0) {
+                            $uid = substr($line, 9);
+                            Log::info("Arduino NFC Service - Read UID: " . $uid);
+                            $this->closePort();
+                            return [
+                                'success' => true,
+                                'message' => 'NFC tag UID read successfully',
+                                'uid' => $uid,
+                                'data' => ['rfid_hex' => $uid, 'student_code' => $uid] // temporary fallback
+                            ];
+                        }
+                    }
+                }
+            }
+
+            $this->closePort();
+            Log::warning("Arduino NFC Service - Read UID timeout");
+            return [
+                'success' => false,
+                'message' => 'Timeout waiting for NFC tag. Please place tag on reader.',
+                'uid' => null
+            ];
+        } catch (Exception $e) {
+            $this->closePort();
+            Log::error("Arduino NFC Service - Read UID Error: " . $e->getMessage());
+
+            return [
+                'success' => false,
+                'message' => 'Failed to read NFC tag UID: ' . $e->getMessage(),
+                'uid' => null
+            ];
+        }
+    }
+
+    /**
      * Read student data from NFC tag via Arduino
      *
      * @return array ['success' => bool, 'message' => string, 'data' => array|null]
@@ -400,8 +465,18 @@ class ArduinoNFCService
                 $line = trim($line);
                 $normalized = strtoupper($line);
 
-                // Current sketch data response: DATA:<UID>:<content>
-                if (strpos($normalized, 'DATA:') === 0) {
+                // Current sketch data response: DATA:<UID>:<content> or DATA:UID:<hex>
+                if (strpos($normalized, 'DATA:UID:') === 0) {
+                    $uid = substr($line, 9);
+                    Log::info("Arduino NFC Service - Read UID: {$uid}");
+                    return [
+                        'success' => true,
+                        'message' => 'NFC tag read successfully',
+                        'data' => ['rfid_hex' => $uid, 'student_code' => $uid],
+                        'raw' => $uid,
+                        'uid' => $uid,
+                    ];
+                } elseif (strpos($normalized, 'DATA:') === 0) {
                     $firstColon = strpos($line, ':');
                     $secondColon = strpos($line, ':', $firstColon + 1);
 
@@ -522,7 +597,16 @@ class ArduinoNFCService
                 if ($line !== false) {
                     $line = trim($line);
 
-                    if (stripos($line, 'DATA:') === 0) {
+                    if (stripos($line, 'DATA:UID:') === 0) {
+                        $uid = substr($line, 9);
+                        Log::info("Arduino NFC Service - Continuous read UID: " . $uid);
+                        return [
+                            'success' => true,
+                            'message' => 'NFC tag detected',
+                            'data' => ['rfid_hex' => $uid, 'student_code' => $uid],
+                            'uid' => $uid
+                        ];
+                    } elseif (stripos($line, 'DATA:') === 0) {
                         $parts = explode(':', $line, 3);
                         $data = $parts[2] ?? '';
                     } elseif (stripos($line, 'NFC_DATA:') === 0) {

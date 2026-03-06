@@ -41,6 +41,7 @@ class Student extends Model
         'home_phone',
         'mobile_phone',
         'email',
+        'rfid_hex',
     ];
 
     protected $casts = [
@@ -62,7 +63,9 @@ class Student extends Model
 
     public function parents(): BelongsToMany
     {
-        return $this->belongsToMany(ParentModel::class, 'parent_student', 'student_id', 'parent_id');
+        return $this->belongsToMany(ParentModel::class, 'parent_student', 'student_id', 'parent_id')
+            ->withPivot('is_primary_contact')
+            ->withTimestamps();
     }
 
     public function subjects(): BelongsToMany
