@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserType;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\Management\ParentController;
 use App\Http\Controllers\Admin\Management\SchoolClassController;
@@ -21,8 +22,20 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes(['register' => true, 'verify' => false]);
 
+// Home route - redirect based on user type
 Route::get('/', function () {
-    return Redirect::to('/admin/dashboard/');
+    if (Auth::check()) {
+        $user = Auth::user();
+        // usertype is cast to UserType enum
+        return match ($user->usertype) {
+            UserType::STUDENT => Redirect::to('/student/dashboard'),
+            UserType::TEACHER => Redirect::to('/teacher/dashboard'),
+            UserType::PARENT => Redirect::to('/parent/dashboard'),
+            UserType::SECURITY => Redirect::to('/security/dashboard'),
+            default => Redirect::to('/admin/dashboard'),
+        };
+    }
+    return Redirect::to('/login');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -102,6 +115,28 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/enroll', 'enroll')->name('enroll');
             });
 
+                // Video Threat Detection
+            Route::prefix('video-threat')->name('video-threat.')->controller(\App\Http\Controllers\Admin\Management\VideoThreatController::class)->group(function () {
+                Route::get('/', 'dashboard')->name('dashboard');
+                Route::get('/status', 'status')->name('status');
+                Route::post('/detect-objects', 'detectObjects')->name('detect-objects');
+                Route::post('/detect-threats', 'detectThreats')->name('detect-threats');
+                Route::post('/process-frame', 'processFrame')->name('process-frame');
+            });
+
+            // Audio & Video Combined Threat Detection
+            Route::prefix('audio-video-threat')->name('audio-video-threat.')->controller(\App\Http\Controllers\Admin\Management\AudioVideoThreatController::class)->group(function () {
+                Route::get('/', 'dashboard')->name('dashboard');
+                Route::get('/audio-status', 'audioStatus')->name('audio-status');
+                Route::get('/video-status', 'videoStatus')->name('video-status');
+                Route::post('/analyze-audio', 'analyzeAudio')->name('analyze-audio');
+                Route::post('/calibrate-audio', 'calibrateAudio')->name('calibrate-audio');
+                Route::post('/start-audio-session', 'startAudioSession')->name('start-audio-session');
+                Route::post('/stop-audio-session', 'stopAudioSession')->name('stop-audio-session');
+                Route::post('/process-frame', 'processFrame')->name('process-frame');
+                Route::post('/send-combined-alert', 'sendCombinedAlert')->name('send-combined-alert');
+            });
+
             // Timetables Management
             Route::prefix('timetables')->name('timetables.')->controller(TimetableController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
@@ -119,6 +154,71 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/quick-assign', 'quickAssign')->name('quick-assign');
                 Route::delete('/bulk-delete', 'bulkDelete')->name('bulk-delete');
                 Route::delete('/delete-time-slot/{timeSlot}', 'deleteTimeSlot')->name('delete-time-slot');
+            });
+
+             Route::prefix('lessons')->name('lessons.')->controller(\App\Http\Controllers\Admin\Management\LessonController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/create', 'create')->name('create');
+                Route::post('/', 'store')->name('store');
+                Route::get('/{lesson}', 'show')->name('show');
+                Route::get('/{lesson}/edit', 'edit')->name('edit');
+                Route::put('/{lesson}', 'update')->name('update');
+                Route::delete('/{lesson}', 'destroy')->name('destroy');
+                Route::get('/by-subject/{subject}', 'getBySubject')->name('by-subject');
+            });
+
+            // Homework Management
+            Route::prefix('homework')->name('homework.')->controller(\App\Http\Controllers\Admin\Management\HomeworkController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/dashboard', 'dashboard')->name('dashboard');
+                Route::get('/create', 'create')->name('create');
+                Route::post('/', 'store')->name('store');
+                Route::get('/{homework}', 'show')->name('show');
+                Route::get('/{homework}/edit', 'edit')->name('edit');
+                Route::put('/{homework}', 'update')->name('update');
+                Route::post('/generate-questions', 'generateQuestions')->name('generate-questions');
+                Route::post('/schedule-weekly', 'scheduleWeekly')->name('schedule-weekly');
+                Route::post('/toggle-auto-homework', 'toggleAutoHomework')->name('toggle-auto-homework');
+                Route::post('/{homework}/assign', 'assignToStudents')->name('assign');
+
+                // Submissions
+                Route::get('/{homework}/submissions', [\App\Http\Controllers\Admin\Management\HomeworkSubmissionController::class, 'index'])->name('submissions.index');
+                Route::get('/submissions/{submission}', [\App\Http\Controllers\Admin\Management\HomeworkSubmissionController::class, 'show'])->name('submissions.show');
+                Route::post('/submissions/{submission}/submit', [\App\Http\Controllers\Admin\Management\HomeworkSubmissionController::class, 'submit'])->name('submissions.submit');
+                Route::post('/{homework}/batch-grade', [\App\Http\Controllers\Admin\Management\HomeworkSubmissionController::class, 'batchGrade'])->name('batch-grade');
+                Route::post('/evaluate-answer', [\App\Http\Controllers\Admin\Management\HomeworkSubmissionController::class, 'evaluateAnswer'])->name('evaluate-answer');
+            });
+
+             // Performance Tracking
+            Route::prefix('performance')->name('performance.')->controller(\App\Http\Controllers\Admin\Management\PerformanceController::class)->group(function () {
+                Route::get('/', 'dashboard')->name('dashboard');
+                Route::get('/student/{student}', 'studentPerformance')->name('student');
+                Route::get('/class/{class}', 'classPerformance')->name('class');
+                Route::post('/trends', 'trends')->name('trends');
+                Route::post('/heatmap', 'heatmap')->name('heatmap');
+                Route::post('/weak-areas', 'weakAreas')->name('weak-areas');
+            });
+
+            // Monthly Reports
+            Route::prefix('reports')->name('reports.')->controller(\App\Http\Controllers\Admin\Management\MonthlyReportController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/{report}', 'show')->name('show');
+                Route::post('/generate-class', 'generateForClass')->name('generate-class');
+                Route::post('/generate-student', 'generateForStudent')->name('generate-student');
+                Route::post('/send-to-parents', 'sendToParents')->name('send-to-parents');
+                Route::post('/{report}/acknowledge', 'markAcknowledged')->name('acknowledge');
+                Route::get('/{report}/download', 'downloadPdf')->name('download');
+                Route::get('/statistics', 'statistics')->name('statistics');
+            });
+
+            // Audio Threat Detection
+            Route::prefix('audio-threat')->name('audio-threat.')->controller(\App\Http\Controllers\Admin\Management\AudioThreatController::class)->group(function () {
+                Route::get('/', 'dashboard')->name('dashboard');
+                Route::get('/status', 'status')->name('status');
+                Route::post('/analyze', 'analyze')->name('analyze');
+                Route::post('/calibrate', 'calibrate')->name('calibrate');
+                Route::post('/start-session', 'startSession')->name('start-session');
+                Route::post('/stop-session', 'stopSession')->name('stop-session');
             });
 
             // Attendance Management
@@ -152,6 +252,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/devices/sync', 'devicesSync')->name('devices.sync');
                 Route::delete('/devices/remove', 'devicesRemove')->name('devices.remove');
             });
+
 
             // Marks Management
             Route::prefix('marks')->name('marks.')->controller(MarkController::class)->group(function () {
