@@ -187,25 +187,16 @@
                             <div class="form-group mb-0">
                                 @php
                                     $faceEnabled = $setting && $setting->attendance_face_enabled;
-                                    $rfidEnabled  = $setting && $setting->attendance_rfid_enabled;
-                                    $bothEnabled  = $faceEnabled && $rfidEnabled;
+                                    $rfidEnabled = $setting && $setting->attendance_rfid_enabled;
+                                    $bothEnabled = $faceEnabled && $rfidEnabled;
                                 @endphp
-                                <select id="attendanceMode"
-                                    class="form-select form-select-sm border border-primary px-3 py-1 bg-white"
-                                    style="min-width: 150px; cursor: pointer; border-radius: 8px;"
-                                    {{ !$bothEnabled ? 'disabled' : '' }}>
-                                    @if($bothEnabled)
-                                        <option value="both" selected>Face & RFID Mode</option>
-                                    @endif
-                                    @if($faceEnabled)
-                                        <option value="face" {{ !$bothEnabled ? 'selected' : '' }}>Face Recognition Only</option>
-                                    @endif
-                                    @if($rfidEnabled)
-                                        <option value="rfid" {{ !$bothEnabled ? 'selected' : '' }}>RFID Scanner Only</option>
-                                    @endif
-                                    @if(!$faceEnabled && !$rfidEnabled)
-                                        <option value="none" disabled selected>No Method Enabled</option>
-                                    @endif
+                                @if($faceEnabled)
+                                    <option value="face" selected>Face Recognition Only</option>
+                                @endif
+
+                                @if(!$faceEnabled && !$rfidEnabled)
+                                    <option value="none" disabled selected>No Method Enabled</option>
+                                @endif
                                 </select>
                             </div>
                             <button id="startCamera" class="btn btn-success btn-sm mb-0">
@@ -294,7 +285,7 @@
             let recognitionInterval = null;
             let rfidInterval = null;
             let isAutoRecognizing = false;
-            let isRfidPolling = false;
+
             let lastRecognizedStudent = null;
             let faceBoxData = null;
 
@@ -689,15 +680,15 @@
                     if (data.success && data.data.length > 0) {
                         const recent = data.data.slice(0, 5);
                         recentAttendance.innerHTML = recent.map(attendance => `
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>${attendance.student.first_name} ${attendance.student.last_name}</strong>
-                                <br>
-                                <small class="text-muted">${attendance.check_in_time} - ${attendance.method}</small>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>${attendance.student.first_name} ${attendance.student.last_name}</strong>
+                                    <br>
+                                    <small class="text-muted">${attendance.check_in_time} - ${attendance.method}</small>
+                                </div>
+                                <span class="badge bg-${attendance.status === 'present' ? 'success' : 'warning'}">${attendance.status}</span>
                             </div>
-                            <span class="badge bg-${attendance.status === 'present' ? 'success' : 'warning'}">${attendance.status}</span>
-                        </div>
-                    `).join('');
+                        `).join('');
                     }
                 } catch (error) {
                     console.error('Error updating recent attendance:', error);

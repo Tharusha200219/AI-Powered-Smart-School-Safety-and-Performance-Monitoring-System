@@ -747,24 +747,24 @@
                         const methodIcon = (method) => method === 'nfc' ? 'contactless' : method === 'face' || (method || '').includes('FACE') ? 'face' : 'edit_note';
                         const methodLabel = (method) => method === 'nfc' ? 'RFID' : method === 'face' || (method || '').includes('FACE') ? 'Face' : 'Manual';
                         recentAttendance.innerHTML = recent.map(attendance => `
-                                        <div class="recent-item">
-                                            <div class="recent-item-avatar">
-                                                <i class="material-symbols-rounded">${methodIcon(attendance.device_id)}</i>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <div class="d-flex justify-content-between align-items-start">
-                                                    <div>
-                                                        <strong class="text-sm">${attendance.student.first_name} ${attendance.student.last_name}</strong>
-                                                        <small class="d-block text-muted">${attendance.student.student_code} &bull; ${methodLabel(attendance.device_id)}</small>
+                                                <div class="recent-item">
+                                                    <div class="recent-item-avatar">
+                                                        <i class="material-symbols-rounded">${methodIcon(attendance.device_id)}</i>
                                                     </div>
-                                                    <div class="text-end">
-                                                        <span class="badge bg-gradient-${attendance.status === 'present' ? 'success' : attendance.status === 'late' ? 'warning' : 'secondary'}">${attendance.status}</span>
-                                                        <small class="d-block text-muted mt-1">${attendance.check_in_time || '-'}</small>
+                                                    <div class="flex-grow-1">
+                                                        <div class="d-flex justify-content-between align-items-start">
+                                                            <div>
+                                                                <strong class="text-sm">${attendance.student.first_name} ${attendance.student.last_name}</strong>
+                                                                <small class="d-block text-muted">${attendance.student.student_code} &bull; ${methodLabel(attendance.device_id)}</small>
+                                                            </div>
+                                                            <div class="text-end">
+                                                                <span class="badge bg-gradient-${attendance.status === 'present' ? 'success' : attendance.status === 'late' ? 'warning' : 'secondary'}">${attendance.status}</span>
+                                                                <small class="d-block text-muted mt-1">${attendance.check_in_time || '-'}</small>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    `).join('');
+                                            `).join('');
                     } else if (data.success) {
                         recentAttendance.innerHTML = `<div class="text-center py-4 text-muted"><i class="material-symbols-rounded" style="font-size:40px;opacity:0.3;">nfc</i><p class="mt-2 mb-0">No scans yet today</p></div>`;
                     }
@@ -877,8 +877,21 @@
                             }
                         });
 
-                        // HTTP-level error (e.g. 500)
-                        if (!response.ok && response.status !== 404) {
+                        // HTTP-level error
+                        if (!response.ok) {
+                            if (response.status === 404) {
+                                consecutiveDeviceErrors = 0;
+                                const data = await response.json();
+                                setTerminalState('error', 'Student Not Found', data.message || 'Tag is not enrolled');
+                                // Reset after 3 seconds
+                                setTimeout(() => {
+                                    if (attendanceModeSelect.value === 'both' || attendanceModeSelect.value === 'rfid') {
+                                        setTerminalState('scanning', 'Tap your smart card on the reader', 'Listening for card taps...');
+                                    }
+                                }, 3000);
+                                return;
+                            }
+
                             const errText = await response.text();
                             console.error('[RFID] Server error ' + response.status + ':', errText);
                             setTerminalState('error', 'Server Error (' + response.status + ')', errText.substring(0, 120));
@@ -918,6 +931,7 @@
                             }
                             return;
                         }
+
 
                         // ── Success ───────────────────────────────────────────────
                         if (data.success) {

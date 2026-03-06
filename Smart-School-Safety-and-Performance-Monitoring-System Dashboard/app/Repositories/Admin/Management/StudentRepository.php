@@ -196,4 +196,16 @@ class StudentRepository implements StudentRepositoryInterface
             ->where('student_code', $studentCode)
             ->first();
     }
+
+    /**
+     * Find student by RFID hex
+     */
+    public function findByRfidHex(string $rfidHex): ?Student
+    {
+        return $this->model->with(['user', 'schoolClass', 'parents'])
+            ->where('rfid_hex', strtoupper(trim($rfidHex)))
+            ->first();
+    }
+
 }
+

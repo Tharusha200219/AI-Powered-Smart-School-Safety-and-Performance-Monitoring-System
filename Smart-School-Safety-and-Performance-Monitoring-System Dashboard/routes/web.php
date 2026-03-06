@@ -66,10 +66,12 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('/generate-code', 'generateCode')->name('generate-code');
                 Route::get('/subjects-by-grade', 'getSubjectsByGrade')->name('subjects-by-grade');
                 Route::get('/classes-by-grade', 'getClassesByGrade')->name('classes-by-grade');
+                Route::get('/read-nfc-enrollment', 'readNFCForEnrollment')->name('read-nfc-enrollment');
                 Route::post('/write-nfc', 'writeToNFC')->name('write-nfc');
                 Route::get('/test-arduino', 'testArduino')->name('test-arduino');
                 Route::post('/{id}/generate-predictions', 'generatePredictions')->name('generate-predictions');
             });
+
 
             // Teachers Management
             Route::prefix('teachers')->name('teachers.')->controller(TeacherController::class)->group(function () {
