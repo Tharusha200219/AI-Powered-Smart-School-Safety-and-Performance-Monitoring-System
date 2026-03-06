@@ -1,0 +1,29 @@
+# Python compiled files
+*.pyc
+__pycache__/
+
+# Virtual Environment
+venv/
+.env/
+ENV/
+
+# Logs
+*.log
+
+# Python package files
+*.pth
+
+# AI / ML Models
+*.h5
+*.bin
+*.pt
+*.pth
+
+# Audio files
+*.wav
+*.mp3
+*.ogg
+*.flac
+
+# Dataset
+Non Speech Dataset/
