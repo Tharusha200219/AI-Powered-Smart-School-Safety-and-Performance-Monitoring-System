@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
 
         // Student data enrichment
         $this->call(StudentSubjectSeeder::class); // Assign subjects to students
-        $this->call(MarkSeederEnhanced::class); // Generate marks for students
+        // $this->call(MarkSeederEnhanced::class); // Generate marks for students
         $this->call(AttendanceSeeder::class); // Generate attendance records
     }
 }
