@@ -45,9 +45,21 @@ Route::prefix('attendance')->name('api.attendance.')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     // Attendance management
     Route::prefix('attendance')->name('api.attendance.')->controller(AttendanceApiController::class)->group(function () {
-        Route::get('/today', 'getTodayAttendance')->name('today');
         Route::get('/statistics', 'getStatistics')->name('statistics');
         Route::get('/report', 'getReport')->name('report');
         Route::get('/student/{studentId}', 'getStudentAttendance')->name('student');
+    });
+});
+
+// Dashboard API routes (session-based auth, no sanctum required)
+Route::middleware(['web', 'auth'])->group(function () {
+    Route::prefix('attendance')->name('api.attendance.')->controller(AttendanceApiController::class)->group(function () {
+        Route::get('/today', 'getTodayAttendance')->name('today');
+
+        // Face recognition routes
+        Route::post('/face/mark', 'markFaceAttendance')->name('face.mark');
+        Route::post('/face/auto-recognize', 'autoFaceRecognition')->name('face.auto-recognize');
+        Route::get('/check/{studentId}/{date}', 'checkAttendanceToday')->name('check');
+        Route::post('/face/register', 'registerStudentFace')->name('face.register');
     });
 });

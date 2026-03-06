@@ -18,13 +18,15 @@ return [
             getSideBarElement('security', 'Security Staff', 'admin.management.security.index'),
             getSideBarElement('fact_check', 'Attendance', 'admin.management.attendance.dashboard'),
             getSideBarElement('assessment', 'Marks', 'admin.management.marks.index'),
-            getSideBarElement('event_seat', 'Seat Arrangement', 'admin.seating-arrangement.index'),
         ],
     ],
     [
         'name' => 'Academic Operations',
         'items' => [
-            getSideBarElement('assignment', 'Assignments', 'admin.assignments.index'),
+            getSideBarElement('menu_book', 'Lessons', 'admin.management.lessons.index'),
+            getSideBarElement('assignment', 'Homework', 'admin.management.homework.dashboard'),
+            getSideBarElement('analytics', 'Performance', 'admin.management.performance.dashboard'),
+            getSideBarElement('summarize', 'Monthly Reports', 'admin.management.reports.index'),
             getSideBarElement('grade', 'Grades', 'admin.grades.index'),
             getSideBarElement('schedule', 'Timetable Viewer', 'admin.timetable-viewer.index'),
         ],
@@ -32,6 +34,9 @@ return [
     [
         'name' => 'Security',
         'items' => [
+            getSideBarElement('mic', 'Audio Threat Detection', 'admin.management.audio-threat.dashboard'),
+            getSideBarElement('videocam', 'Left behind object Detection', 'admin.management.video-threat.dashboard'),
+            getSideBarElement('sensors', 'Audio & Video Threat Detection', 'admin.management.audio-video-threat.dashboard'),
             getSideBarElement('person_add', 'Visitors', 'admin.security.visitors.index'),
             getSideBarElement('report_problem', 'Incidents', 'admin.security.incidents.index'),
         ],

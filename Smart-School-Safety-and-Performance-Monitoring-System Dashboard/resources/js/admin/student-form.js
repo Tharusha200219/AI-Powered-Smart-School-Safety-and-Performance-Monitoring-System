@@ -37,102 +37,128 @@ window.addParentForm = function () {
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-3">
-                        <div class="input-group input-group-outline mb-3">
-                            <label class="form-label">First Name *</label>
-                            <input type="text" name="parent_first_name[]" class="form-control" required maxlength="50">
+                        <div class="mt-2">
+                            <small class="text-xs">First Name <span class="text-danger text-md">*</span></small>
+                            <div class="input-group input-group-outline my-1">
+                                <input type="text" name="parent_first_name[]" class="form-control" required maxlength="50">
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="input-group input-group-outline mb-3">
-                            <label class="form-label">Middle Name</label>
-                            <input type="text" name="parent_middle_name[]" class="form-control" maxlength="50">
+                        <div class="mt-2">
+                            <small class="text-xs">Middle Name</small>
+                            <div class="input-group input-group-outline my-1">
+                                <input type="text" name="parent_middle_name[]" class="form-control" maxlength="50">
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="input-group input-group-outline mb-3">
-                            <label class="form-label">Last Name *</label>
-                            <input type="text" name="parent_last_name[]" class="form-control" required maxlength="50">
+                        <div class="mt-2">
+                            <small class="text-xs">Last Name <span class="text-danger text-md">*</span></small>
+                            <div class="input-group input-group-outline my-1">
+                                <input type="text" name="parent_last_name[]" class="form-control" required maxlength="50">
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="input-group input-group-outline mb-3">
-                            <select name="parent_gender[]" class="form-control" required>
-                                <option value="">Select Gender</option>
-                                <option value="M">Male</option>
-                                <option value="F">Female</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="input-group input-group-outline mb-3">
-                            <label class="form-label">Date of Birth</label>
-                            <input type="date" name="parent_date_of_birth[]" class="form-control">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="input-group input-group-outline mb-3">
-                            <select name="parent_relationship_type[]" class="form-control" required>
-                                <option value="">Select Relationship</option>
-                                <option value="Father">Father</option>
-                                <option value="Mother">Mother</option>
-                                <option value="Guardian">Guardian</option>
-                                <option value="Stepfather">Stepfather</option>
-                                <option value="Stepmother">Stepmother</option>
-                                <option value="Grandfather">Grandfather</option>
-                                <option value="Grandmother">Grandmother</option>
-                                <option value="Uncle">Uncle</option>
-                                <option value="Aunt">Aunt</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="input-group input-group-outline mb-3">
-                            <label class="form-label">Mobile Phone *</label>
-                            <input type="text" name="parent_mobile_phone[]" class="form-control" required maxlength="15">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="input-group input-group-outline mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" name="parent_email[]" class="form-control" maxlength="100">
+                        <div class="mt-2">
+                            <small class="text-xs">Gender <span class="text-danger text-md">*</span></small>
+                            <div class="input-group input-group-outline my-1">
+                                <select name="parent_gender[]" class="form-control" required>
+                                    <option value="">Select Gender</option>
+                                    <option value="M">Male</option>
+                                    <option value="F">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-3">
-                        <div class="input-group input-group-outline mb-3">
-                            <label class="form-label">Occupation</label>
-                            <input type="text" name="parent_occupation[]" class="form-control" maxlength="100">
+                        <div class="mt-2">
+                            <small class="text-xs">Date of Birth</small>
+                            <div class="input-group input-group-outline my-1">
+                                <input type="date" name="parent_date_of_birth[]" class="form-control">
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="input-group input-group-outline mb-3">
-                            <label class="form-label">Workplace</label>
-                            <input type="text" name="parent_workplace[]" class="form-control" maxlength="100">
+                        <div class="mt-2">
+                            <small class="text-xs">Relationship <span class="text-danger text-md">*</span></small>
+                            <div class="input-group input-group-outline my-1">
+                                <select name="parent_relationship_type[]" class="form-control" required>
+                                    <option value="">Select Relationship</option>
+                                    <option value="Father">Father</option>
+                                    <option value="Mother">Mother</option>
+                                    <option value="Guardian">Guardian</option>
+                                    <option value="Stepfather">Stepfather</option>
+                                    <option value="Stepmother">Stepmother</option>
+                                    <option value="Grandfather">Grandfather</option>
+                                    <option value="Grandmother">Grandmother</option>
+                                    <option value="Uncle">Uncle</option>
+                                    <option value="Aunt">Aunt</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="input-group input-group-outline mb-3">
-                            <label class="form-label">Work Phone</label>
-                            <input type="text" name="parent_work_phone[]" class="form-control" maxlength="15">
+                        <div class="mt-2">
+                            <small class="text-xs">Mobile Phone <span class="text-danger text-md">*</span></small>
+                            <div class="input-group input-group-outline my-1">
+                                <input type="text" name="parent_mobile_phone[]" class="form-control" required maxlength="15">
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="form-check form-switch pt-3">
+                        <div class="mt-2">
+                            <small class="text-xs">Email</small>
+                            <div class="input-group input-group-outline my-1">
+                                <input type="email" name="parent_email[]" class="form-control" maxlength="100">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="mt-2">
+                            <small class="text-xs">Occupation</small>
+                            <div class="input-group input-group-outline my-1">
+                                <input type="text" name="parent_occupation[]" class="form-control" maxlength="100">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mt-2">
+                            <small class="text-xs">Workplace</small>
+                            <div class="input-group input-group-outline my-1">
+                                <input type="text" name="parent_workplace[]" class="form-control" maxlength="100">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mt-2">
+                            <small class="text-xs">Work Phone</small>
+                            <div class="input-group input-group-outline my-1">
+                                <input type="text" name="parent_work_phone[]" class="form-control" maxlength="15">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-center">
+                        <div class="form-check form-switch mt-4">
                             <input class="form-check-input" type="checkbox" name="parent_is_emergency_contact[]" value="1">
-                            <label class="form-check-label">Emergency Contact</label>
+                            <label class="form-check-label ms-2">Emergency Contact</label>
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row mt-2">
                     <div class="col-md-12">
-                        <div class="input-group input-group-outline mb-3">
-                            <label class="form-label">Address</label>
-                            <textarea name="parent_address_line1[]" class="form-control" rows="2" maxlength="255"></textarea>
+                        <div class="mt-2">
+                            <small class="text-xs">Address</small>
+                            <div class="input-group input-group-outline my-1">
+                                <textarea name="parent_address_line1[]" class="form-control" rows="2" maxlength="255"></textarea>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -177,7 +203,7 @@ window.unlinkParent = function (parentId) {
         confirm("Are you sure you want to unlink this parent from the student?")
     ) {
         const parentElement = document.getElementById(
-            `existingParent${parentId}`
+            `existingParent${parentId}`,
         );
         if (parentElement) {
             // Add fade out animation
@@ -190,7 +216,7 @@ window.unlinkParent = function (parentId) {
 
                 // Remove from existing_parents input array
                 const existingParentsInputs = document.querySelectorAll(
-                    'input[name="existing_parents[]"]'
+                    'input[name="existing_parents[]"]',
                 );
                 existingParentsInputs.forEach((input) => {
                     if (input.value == parentId) {
@@ -224,7 +250,7 @@ window.toggleParentSelector = function () {
 
 window.generateStudentCode = function () {
     const studentCodeInput = document.querySelector(
-        'input[name="student_code"]'
+        'input[name="student_code"]',
     );
 
     // This will be set by the blade template
@@ -290,8 +316,8 @@ function showNFCModal() {
 
     nfcModalInstance.show();
 
-    // Start NFC writing process
-    writeToNFC();
+    // Start NFC reading process
+    readNFCForEnrollment();
 }
 
 function hideNFCModal() {
@@ -300,56 +326,53 @@ function hideNFCModal() {
     }
 }
 
-async function writeToNFC() {
+let isNfcPolling = false;
+
+async function readNFCForEnrollment() {
+    if (isNfcPolling) return;
+    isNfcPolling = true;
+
     try {
-        // Prepare student data to send to backend
-        const studentData = {
-            student_code:
-                document.querySelector('input[name="student_code"]')?.value ||
-                "",
-            first_name:
-                document.querySelector('input[name="first_name"]')?.value || "",
-            last_name:
-                document.querySelector('input[name="last_name"]')?.value || "",
-            grade_level:
-                document.querySelector('select[name="grade_level"]')?.value ||
-                "",
-            class_id:
-                document.querySelector('select[name="class_id"]')?.value || "",
-            enrollment_date:
-                document.querySelector('input[name="enrollment_date"]')
-                    ?.value || "",
-        };
-
-        // Get CSRF token
-        const csrfToken =
-            document
-                .querySelector('meta[name="csrf-token"]')
-                ?.getAttribute("content") ||
-            document.querySelector('input[name="_token"]')?.value;
-
-        // Send AJAX request to backend to write NFC via Arduino
-        const response = await fetch("/admin/management/students/write-nfc", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": csrfToken,
-                Accept: "application/json",
+        const response = await fetch(
+            "/admin/management/students/read-nfc-enrollment",
+            {
+                method: "GET",
+                headers: {
+                    Accept: "application/json",
+                    "X-Requested-With": "XMLHttpRequest",
+                },
             },
-            body: JSON.stringify(studentData),
-        });
+        );
 
         const result = await response.json();
+        isNfcPolling = false;
 
-        if (result.success) {
+        if (result.success && result.uid) {
+            // Store the UID in the hidden input
+            const rfidInput = document.getElementById("rfid_hex");
+            if (rfidInput) {
+                rfidInput.value = result.uid;
+            }
+
             showNFCSuccess();
+
+            // Automatically submit after success
+            setTimeout(() => {
+                hideNFCModal();
+                submitStudentFormDirectly();
+            }, 1000);
         } else {
-            showNFCError(result.message || "Failed to write data to NFC tag.");
+            showNFCError(
+                result.message ||
+                    result.error ||
+                    "Failed to read data from NFC tag.",
+            );
         }
     } catch (error) {
-        console.error("NFC Write Error:", error);
+        isNfcPolling = false;
+        console.error("NFC Read Error:", error);
         showNFCError(
-            `Error communicating with server: ${error.message}. Please ensure the Arduino is connected.`
+            `Error communicating with server: ${error.message}. Please ensure the Arduino is connected.`,
         );
     }
 }
@@ -406,7 +429,7 @@ function handleFormSubmit(event) {
 document.addEventListener("DOMContentLoaded", function () {
     // Auto-generate student code if creating new student
     const studentCodeInput = document.querySelector(
-        'input[name="student_code"]'
+        'input[name="student_code"]',
     );
     const isEditMode = window.isEditMode || false;
 
@@ -430,7 +453,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     ?.classList.add("is-focused");
             }
         },
-        true
+        true,
     );
 
     document.addEventListener(
@@ -448,7 +471,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
         },
-        true
+        true,
     );
 
     // Profile Image Preview
@@ -500,24 +523,58 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Dynamic Subject Loading based on Grade Level
-    const gradeLevelSelect = document.querySelector(
-        'select[name="grade_level"]'
-    );
-    const classSelect = document.querySelector('select[name="class_id"]');
+    const gradeLevelSelect = document.getElementById("grade_level");
+    const classSelect = document.getElementById("class_id");
+
+    // Initialize classes - show all classes initially for edit mode
+    if (window.allClasses && window.allClasses.length > 0) {
+        populateClassSelect(window.allClasses, window.initialClassId);
+    }
 
     if (gradeLevelSelect) {
         // Load classes and subjects when grade is changed
         gradeLevelSelect.addEventListener("change", function () {
             const gradeLevel = this.value;
-            loadClassesByGrade(gradeLevel);
+            if (gradeLevel) {
+                loadClassesByGrade(gradeLevel);
+            } else {
+                // If no grade selected, show all classes
+                populateClassSelect(
+                    window.allClasses || [],
+                    window.initialClassId,
+                );
+            }
             loadSubjectsByGrade(gradeLevel);
         });
 
         // Load on page load if grade is already selected
-        if (gradeLevelSelect.value) {
-            loadClassesByGrade(gradeLevelSelect.value);
-            loadSubjectsByGrade(gradeLevelSelect.value);
+        const currentGradeValue = gradeLevelSelect.value;
+        if (currentGradeValue) {
+            loadClassesByGrade(currentGradeValue);
+            loadSubjectsByGrade(currentGradeValue);
         }
+    }
+
+    // Initialize selected subjects for edit mode
+    if (
+        isEditMode &&
+        window.selectedSubjects &&
+        Array.isArray(window.selectedSubjects)
+    ) {
+        // Initialize selectedSubjects with existing data
+        selectedSubjects.core = [];
+        selectedSubjects.electives = [];
+        selectedSubjects.streamSubjects = [];
+
+        // The selectedSubjects array contains subject IDs
+        // We'll need to map these to the appropriate categories when subjects are loaded
+        window.selectedSubjects.forEach((subjectId) => {
+            // Store for later use when rendering subjects
+            if (!selectedSubjects.all) {
+                selectedSubjects.all = [];
+            }
+            selectedSubjects.all.push(subjectId);
+        });
     }
 
     // Handle stream selection for Advanced Level
@@ -538,24 +595,83 @@ function loadClassesByGrade(gradeLevel) {
         return;
     }
 
-    // Filter classes from window.allClasses
-    const filteredClasses = window.allClasses
-        ? window.allClasses.filter((c) => c.grade_level == gradeLevel)
+    // Store current selected value, preferring the initial class from window variable
+    const currentValue =
+        window.initialClassId ||
+        classSelect.dataset.initialClass ||
+        classSelect.value;
+
+    // First try to filter from window.allClasses
+    let filteredClasses = window.allClasses
+        ? window.allClasses.filter(
+              (c) => parseInt(c.grade_level) === parseInt(gradeLevel),
+          )
         : [];
+
+    // If no classes found client-side, try AJAX call
+    if (filteredClasses.length === 0) {
+        // Get the URL from window object
+        const url =
+            window.classesByGradeUrl ||
+            "/admin/management/students/classes-by-grade";
+
+        // Get CSRF token
+        const csrfToken =
+            document
+                .querySelector('meta[name="csrf-token"]')
+                ?.getAttribute("content") ||
+            document.querySelector('input[name="_token"]')?.value;
+
+        // Fetch classes from server
+        fetch(`${url}?grade_level=${gradeLevel}`, {
+            method: "GET",
+            headers: {
+                Accept: "application/json",
+                "X-CSRF-TOKEN": csrfToken,
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success && data.classes) {
+                    populateClassSelect(data.classes, currentValue);
+                }
+            })
+            .catch((error) => {
+                console.error("Error loading classes:", error);
+            });
+    } else {
+        // Use client-side filtered data
+        populateClassSelect(filteredClasses, currentValue);
+    }
+}
+
+// Helper function to populate class select
+function populateClassSelect(classes, selectedValue) {
+    const classSelect = document.getElementById("class_id");
+
+    if (!classSelect) return;
 
     // Clear and repopulate
     classSelect.innerHTML = '<option value="">Select Class</option>';
 
-    if (filteredClasses.length === 0) {
+    if (classes.length === 0) {
         classSelect.innerHTML =
             '<option value="">No classes available for this grade</option>';
     } else {
-        filteredClasses.forEach((schoolClass) => {
+        classes.forEach((schoolClass) => {
             const option = document.createElement("option");
             option.value = schoolClass.id;
             option.textContent = `${schoolClass.class_name} (Grade ${schoolClass.grade_level})`;
+            if (schoolClass.id == selectedValue) {
+                option.selected = true;
+            }
             classSelect.appendChild(option);
         });
+    }
+
+    // Set the select value to ensure it's selected
+    if (selectedValue) {
+        classSelect.value = selectedValue;
     }
 }
 
@@ -615,9 +731,8 @@ function renderSubjectSelection(data) {
     document.getElementById("advancedSubjects").style.display = "none";
 
     // Update info text
-    document.getElementById(
-        "educationLevelText"
-    ).textContent = `${data.education_level} - Grade ${data.grade}`;
+    document.getElementById("educationLevelText").textContent =
+        `${data.education_level} - Grade ${data.grade}`;
 
     // Reset selections
     resetSubjectSelections();
@@ -642,7 +757,7 @@ function renderPrimarySubjects(data) {
             "firstLanguagePrimary",
             data.subjects.first_language,
             "radio",
-            "first_language"
+            "first_language",
         );
     }
 
@@ -652,7 +767,7 @@ function renderPrimarySubjects(data) {
             "religionPrimary",
             data.subjects.religion,
             "radio",
-            "religion"
+            "religion",
         );
     }
 
@@ -662,7 +777,7 @@ function renderPrimarySubjects(data) {
             "aestheticPrimary",
             data.subjects.aesthetic,
             "radio",
-            "aesthetic"
+            "aesthetic",
         );
     }
 
@@ -689,7 +804,7 @@ function renderSecondarySubjects(data) {
             "firstLanguageSecondary",
             data.subjects.first_language,
             "radio",
-            "first_language"
+            "first_language",
         );
     }
 
@@ -699,7 +814,7 @@ function renderSecondarySubjects(data) {
             "religionSecondary",
             data.subjects.religion,
             "radio",
-            "religion"
+            "religion",
         );
     }
 
@@ -722,7 +837,7 @@ function renderSecondarySubjects(data) {
             data.subjects.elective,
             "checkbox",
             "elective",
-            3
+            3,
         );
     }
 }
@@ -733,6 +848,41 @@ function renderAdvancedSubjects(data) {
 
     // Store stream subjects for later use
     window.streamSubjectsData = data.subjects.streams;
+
+    // For edit mode, determine the student's stream and pre-select subjects
+    if (
+        window.selectedSubjects &&
+        Array.isArray(window.selectedSubjects) &&
+        window.selectedSubjects.length > 0
+    ) {
+        // Find which stream the selected subjects belong to
+        let studentStream = null;
+        for (const [stream, subjects] of Object.entries(
+            window.streamSubjectsData,
+        )) {
+            const streamSubjectIds = subjects.map((s) => s.id);
+            const hasSelectedSubjects = window.selectedSubjects.some((id) =>
+                streamSubjectIds.includes(id),
+            );
+            if (hasSelectedSubjects) {
+                studentStream = stream;
+                break;
+            }
+        }
+
+        if (studentStream) {
+            // Pre-select the stream
+            const streamRadio = document.querySelector(
+                `input[name="stream"][value="${studentStream}"]`,
+            );
+            if (streamRadio) {
+                streamRadio.checked = true;
+                selectedSubjects.stream = studentStream;
+                // Trigger the stream selection to show subjects
+                handleStreamSelection(studentStream);
+            }
+        }
+    }
 }
 
 // Generic function to render checkbox/radio groups
@@ -741,7 +891,7 @@ function renderCheckboxGroup(
     subjects,
     inputType,
     category,
-    maxSelection = 1
+    maxSelection = 1,
 ) {
     const container = document.getElementById(containerId);
     container.innerHTML = "";
@@ -764,6 +914,24 @@ function renderCheckboxGroup(
                 : `subject_${category}[]`;
         input.dataset.category = category;
         input.dataset.maxSelection = maxSelection;
+
+        // Check if this subject should be pre-selected (for edit mode)
+        if (
+            window.selectedSubjects &&
+            Array.isArray(window.selectedSubjects) &&
+            window.selectedSubjects.includes(subject.id)
+        ) {
+            input.checked = true;
+            // Update the selectedSubjects object
+            if (inputType === "radio") {
+                selectedSubjects[category] = subject.id;
+            } else {
+                if (!selectedSubjects[category]) {
+                    selectedSubjects[category] = [];
+                }
+                selectedSubjects[category].push(subject.id);
+            }
+        }
 
         const label = document.createElement("label");
         label.className = "form-check-label";
@@ -816,32 +984,32 @@ function handleSubjectSelection(input, category, inputType, maxSelection) {
                 } else {
                     input.checked = false;
                     alert(
-                        `You can only select ${maxSelection} elective subjects`
+                        `You can only select ${maxSelection} elective subjects`,
                     );
                     return;
                 }
             } else {
                 selectedSubjects.electives = selectedSubjects.electives.filter(
-                    (id) => id !== parseInt(input.value)
+                    (id) => id !== parseInt(input.value),
                 );
             }
             document.getElementById("electiveCount").textContent =
                 selectedSubjects.electives.length;
-        } else if (category === "stream_subject") {
+        } else if (category === "streamSubjects") {
             if (input.checked) {
                 if (selectedSubjects.streamSubjects.length < maxSelection) {
                     selectedSubjects.streamSubjects.push(parseInt(input.value));
                 } else {
                     input.checked = false;
                     alert(
-                        `You can only select ${maxSelection} subjects from your stream`
+                        `You can only select ${maxSelection} subjects from your stream`,
                     );
                     return;
                 }
             } else {
                 selectedSubjects.streamSubjects =
                     selectedSubjects.streamSubjects.filter(
-                        (id) => id !== parseInt(input.value)
+                        (id) => id !== parseInt(input.value),
                     );
             }
             document.getElementById("streamSubjectCount").textContent =
@@ -855,8 +1023,11 @@ function handleSubjectSelection(input, category, inputType, maxSelection) {
 
 // Handle stream selection for Advanced Level
 function handleStreamSelection(stream) {
+    // Only reset streamSubjects if switching to a different stream
+    if (selectedSubjects.stream !== stream) {
+        selectedSubjects.streamSubjects = [];
+    }
     selectedSubjects.stream = stream;
-    selectedSubjects.streamSubjects = [];
 
     // Update stream card styling
     document.querySelectorAll(".stream-card").forEach((card) => {
@@ -876,8 +1047,8 @@ function handleStreamSelection(stream) {
         "streamSubjects",
         streamSubjects,
         "checkbox",
-        "stream_subject",
-        3
+        "streamSubjects",
+        3,
     );
 }
 
@@ -904,7 +1075,7 @@ function updateSubjectHiddenInputs() {
 
     document.getElementById("subject_ids").value = JSON.stringify(allSubjects);
     document.getElementById("core_subject_ids").value = JSON.stringify(
-        selectedSubjects.core
+        selectedSubjects.core,
     );
 }
 
@@ -1012,7 +1183,7 @@ function validateSubjectSelections() {
                 .getElementById("streamSubjectsError")
                 .classList.remove("d-none");
             errors.push(
-                "Please select exactly 3 subjects from your chosen stream"
+                "Please select exactly 3 subjects from your chosen stream",
             );
             isValid = false;
         } else {
@@ -1025,7 +1196,7 @@ function validateSubjectSelections() {
     if (!isValid) {
         alert(
             "Please complete all required subject selections:\n\n" +
-                errors.join("\n")
+                errors.join("\n"),
         );
     }
 

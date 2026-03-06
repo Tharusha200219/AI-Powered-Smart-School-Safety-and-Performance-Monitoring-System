@@ -20,7 +20,7 @@ class ArduinoNFCService
      * @param int $timeout Read timeout in seconds (default: 10)
      */
     public function __construct(
-        string $port = null,
+        ?string $port = null,
         int $baudRate = 9600,
         int $timeout = 10
     ) {
@@ -100,6 +100,13 @@ class ArduinoNFCService
             // Wait for Arduino to initialize (it resets on serial connection)
             sleep(2);
 
+            // Clear any pending data in the buffer
+            stream_set_blocking($this->handle, false);
+            while (fgets($this->handle)) {
+                // Just drain the buffer
+            }
+            stream_set_blocking($this->handle, true);
+
             return true;
         } catch (Exception $e) {
             Log::error("Arduino NFC Service - Open Port Error: " . $e->getMessage());
@@ -130,27 +137,35 @@ class ArduinoNFCService
             // Open serial port
             $this->openPort();
 
-            // Prepare data packet for Arduino
-            $nfcData = $this->prepareNFCData($studentData);
-
-            // Send command to Arduino
-            $command = "WRITE_NFC\n";
-            fwrite($this->handle, $command);
-            usleep(100000); // Wait 100ms
-
-            // Send data length
-            $dataLength = strlen($nfcData);
-            fwrite($this->handle, $dataLength . "\n");
-            usleep(100000);
-
-            // Send actual data
-            fwrite($this->handle, $nfcData . "\n");
+            // Preferred protocol for current sketch: single WRITE line.
+            $writeCommand = $this->prepareWriteCommand($studentData);
+            fwrite($this->handle, $writeCommand . "\n");
             fflush($this->handle);
 
-            Log::info("Arduino NFC Service - Sent data: " . $nfcData);
+            Log::info("Arduino NFC Service - Sent command: " . $writeCommand);
 
             // Wait for Arduino response
             $response = $this->waitForResponse();
+
+            // Fallback for legacy firmware/protocol if command was not recognized.
+            if (
+                !$response['success'] &&
+                isset($response['message']) &&
+                stripos($response['message'], 'Unknown command') !== false
+            ) {
+
+                $nfcData = $this->prepareNFCData($studentData);
+
+                fwrite($this->handle, "WRITE_NFC\n");
+                usleep(100000);
+                fwrite($this->handle, strlen($nfcData) . "\n");
+                usleep(100000);
+                fwrite($this->handle, $nfcData . "\n");
+                fflush($this->handle);
+
+                Log::info("Arduino NFC Service - Fallback legacy payload sent: " . $nfcData);
+                $response = $this->waitForResponse();
+            }
 
             $this->closePort();
 
@@ -190,6 +205,54 @@ class ArduinoNFCService
         }
 
         return $nfcData;
+    }
+
+    /**
+     * Prepare WRITE command in the format expected by latest Arduino sketch:
+     * WRITE:student_id:full_name:grade:admission_number:nfc_tag_id
+     */
+    private function prepareWriteCommand(array $studentData): string
+    {
+        $studentId = trim((string) (
+            $studentData['student_id']
+            ?? $studentData['id']
+            ?? $studentData['student_code']
+            ?? ''
+        ));
+
+        $fullName = trim((string) (
+            $studentData['full_name']
+            ?? (($studentData['first_name'] ?? '') . ' ' . ($studentData['last_name'] ?? ''))
+        ));
+
+        $grade = trim((string) (
+            $studentData['grade']
+            ?? $studentData['grade_level']
+            ?? ''
+        ));
+
+        $admissionNumber = trim((string) (
+            $studentData['admission_number']
+            ?? $studentData['admission_no']
+            ?? $studentData['class_id']
+            ?? ''
+        ));
+
+        $nfcTagId = trim((string) (
+            $studentData['nfc_tag_id']
+            ?? $studentData['student_code']
+            ?? $studentId
+        ));
+
+        // Avoid delimiter collision with ':' in protocol fields.
+        $sanitize = fn(string $value): string => str_replace(':', '-', trim($value));
+
+        return 'WRITE:'
+            . $sanitize($studentId) . ':'
+            . $sanitize($fullName) . ':'
+            . $sanitize($grade) . ':'
+            . $sanitize($admissionNumber) . ':'
+            . $sanitize($nfcTagId);
     }
 
     /**
@@ -234,25 +297,31 @@ class ArduinoNFCService
                         continue;
                     }
 
-                    // Check for final response
-                    if (strpos($normalizedLine, 'SUCCESS') !== false) {
+                    // Check for final response using stricter prefix matching
+                    if (preg_match('/^SUCCESS:/i', $line)) {
                         Log::info("Arduino NFC Service - Success response received");
                         return [
                             'success' => true,
                             'message' => 'Student data successfully written to RFID tag!',
                             'details' => implode("\n", $infoMessages)
                         ];
-                    } elseif (strpos($normalizedLine, 'ERROR') !== false) {
-                        $errorMsg = trim(preg_replace('/^\s*ERROR\s*:*/i', '', $line));
+                    } elseif (preg_match('/^ERROR:(.*)/i', $line, $matches)) {
+                        $errorMsg = trim($matches[1]);
+                        if (empty($errorMsg)) {
+                            $errorMsg = "Unknown Arduino error. Ensure no other Serial Monitors (like Arduino IDE) are open. Raw: '{$line}'";
+                        }
                         Log::warning("Arduino NFC Service - Error response: " . $errorMsg);
                         return [
                             'success' => false,
                             'message' => 'Arduino reported an error: ' . $errorMsg,
-                            'details' => implode("\n", $infoMessages)
+                            'details' => "Raw Arduino output: '{$line}'. " . implode("\n", $infoMessages)
                         ];
-                    } elseif (strpos($normalizedLine, 'TIMEOUT') !== false) {
-                        $timeoutMsg = trim(preg_replace('/^\s*TIMEOUT\s*:*/i', '', $line));
-                        Log::warning("Arduino NFC Service - Timeout: " . $timeoutMsg);
+                    } elseif (preg_match('/^TIMEOUT:(.*)/i', $line, $matches)) {
+                        $timeoutMsg = trim($matches[1]);
+                        if (empty($timeoutMsg)) {
+                            $timeoutMsg = "Operation timed out";
+                        }
+                        Log::warning("Arduino NFC Service - Timeout response: " . $timeoutMsg);
                         return [
                             'success' => false,
                             'message' => 'Timeout: ' . $timeoutMsg,
@@ -275,6 +344,71 @@ class ArduinoNFCService
     }
 
     /**
+     * Read just the UID of the NFC tag via Arduino
+     *
+     * @return array ['success' => bool, 'message' => string, 'uid' => string|null]
+     */
+    public function readNFCTagUID(): array
+    {
+        try {
+            // Open serial port
+            $this->openPort();
+
+            // New sketch read UID command
+            $command = "READ_UID\n";
+            fwrite($this->handle, $command);
+            fflush($this->handle);
+
+            Log::info("Arduino NFC Service - Sent READ_UID command");
+
+            $startTime = time();
+            while ((time() - $startTime) < $this->timeout) {
+                if (feof($this->handle)) break;
+
+                $read = [$this->handle];
+                $write = null;
+                $except = null;
+
+                if (stream_select($read, $write, $except, 0, 100000) > 0) {
+                    $line = fgets($this->handle);
+                    if ($line !== false) {
+                        $line = trim($line);
+                        
+                        if (strpos($line, 'DATA:UID:') === 0) {
+                            $uid = substr($line, 9);
+                            Log::info("Arduino NFC Service - Read UID: " . $uid);
+                            $this->closePort();
+                            return [
+                                'success' => true,
+                                'message' => 'NFC tag UID read successfully',
+                                'uid' => $uid,
+                                'data' => ['rfid_hex' => $uid, 'student_code' => $uid] // temporary fallback
+                            ];
+                        }
+                    }
+                }
+            }
+
+            $this->closePort();
+            Log::warning("Arduino NFC Service - Read UID timeout");
+            return [
+                'success' => false,
+                'message' => 'Timeout waiting for NFC tag. Please place tag on reader.',
+                'uid' => null
+            ];
+        } catch (Exception $e) {
+            $this->closePort();
+            Log::error("Arduino NFC Service - Read UID Error: " . $e->getMessage());
+
+            return [
+                'success' => false,
+                'message' => 'Failed to read NFC tag UID: ' . $e->getMessage(),
+                'uid' => null
+            ];
+        }
+    }
+
+    /**
      * Read student data from NFC tag via Arduino
      *
      * @return array ['success' => bool, 'message' => string, 'data' => array|null]
@@ -285,12 +419,12 @@ class ArduinoNFCService
             // Open serial port
             $this->openPort();
 
-            // Send read command to Arduino
-            $command = "READ_NFC\n";
+            // Current sketch read command
+            $command = "READ\n";
             fwrite($this->handle, $command);
             fflush($this->handle);
 
-            Log::info("Arduino NFC Service - Sent READ_NFC command");
+            Log::info("Arduino NFC Service - Sent READ command");
 
             // Wait for Arduino response
             $response = $this->waitForReadResponse();
@@ -329,38 +463,67 @@ class ArduinoNFCService
             if ($line !== false) {
                 $response .= $line;
                 $line = trim($line);
+                $normalized = strtoupper($line);
 
-                // Check for success response with data
-                if (strpos($line, 'NFC_DATA:') === 0) {
-                    $data = substr($line, 9); // Remove "NFC_DATA:" prefix
-                    Log::info("Arduino NFC Service - Read data: " . $data);
+                // Current sketch data response: DATA:<UID>:<content> or DATA:UID:<hex>
+                if (strpos($normalized, 'DATA:UID:') === 0) {
+                    $uid = substr($line, 9);
+                    Log::info("Arduino NFC Service - Read UID: {$uid}");
+                    return [
+                        'success' => true,
+                        'message' => 'NFC tag read successfully',
+                        'data' => ['rfid_hex' => $uid, 'student_code' => $uid],
+                        'raw' => $uid,
+                        'uid' => $uid,
+                    ];
+                } elseif (strpos($normalized, 'DATA:') === 0) {
+                    $firstColon = strpos($line, ':');
+                    $secondColon = strpos($line, ':', $firstColon + 1);
 
-                    $studentData = $this->parseNFCData($data);
+                    $uid = '';
+                    $data = '';
+                    if ($secondColon !== false) {
+                        $uid = substr($line, $firstColon + 1, $secondColon - ($firstColon + 1));
+                        $data = substr($line, $secondColon + 1);
+                    }
 
-                    if ($studentData) {
-                        return [
-                            'success' => true,
-                            'message' => 'NFC tag read successfully',
-                            'data' => $studentData
-                        ];
-                    } else {
+                    Log::info("Arduino NFC Service - Read UID: {$uid}, data: {$data}");
+
+                    if (strtoupper($data) === 'EMPTY' || trim($data) === '') {
                         return [
                             'success' => false,
-                            'message' => 'Invalid data format on NFC tag',
+                            'message' => 'NFC tag is empty.',
                             'data' => null
                         ];
                     }
-                } elseif (strpos($line, 'ERROR') !== false) {
+
+                    $studentData = $this->parseNFCData($data);
+
+                    return [
+                        'success' => $studentData !== null,
+                        'message' => $studentData ? 'NFC tag read successfully' : 'Tag read, but data format is not recognized',
+                        'data' => $studentData,
+                        'raw' => $data,
+                        'uid' => $uid,
+                    ];
+                }
+
+                // Legacy response format support
+                if (strpos($line, 'NFC_DATA:') === 0) {
+                    $data = substr($line, 9);
+                    $studentData = $this->parseNFCData($data);
+                    return [
+                        'success' => $studentData !== null,
+                        'message' => $studentData ? 'NFC tag read successfully' : 'Invalid data format on NFC tag',
+                        'data' => $studentData
+                    ];
+                }
+
+                if (strpos($normalized, 'ERROR:') === 0) {
                     Log::warning("Arduino NFC Service - Read error: " . $line);
                     return [
                         'success' => false,
-                        'message' => 'Arduino reported an error: ' . $line,
-                        'data' => null
-                    ];
-                } elseif (strpos($line, 'NO_TAG') !== false) {
-                    return [
-                        'success' => false,
-                        'message' => 'No NFC tag detected. Please place tag on reader.',
+                        'message' => 'Arduino reported an error: ' . preg_replace('/^ERROR\s*:\s*/i', '', $line),
                         'data' => null
                     ];
                 }
@@ -434,8 +597,25 @@ class ArduinoNFCService
                 if ($line !== false) {
                     $line = trim($line);
 
-                    if (strpos($line, 'NFC_DATA:') === 0) {
+                    if (stripos($line, 'DATA:UID:') === 0) {
+                        $uid = substr($line, 9);
+                        Log::info("Arduino NFC Service - Continuous read UID: " . $uid);
+                        return [
+                            'success' => true,
+                            'message' => 'NFC tag detected',
+                            'data' => ['rfid_hex' => $uid, 'student_code' => $uid],
+                            'uid' => $uid
+                        ];
+                    } elseif (stripos($line, 'DATA:') === 0) {
+                        $parts = explode(':', $line, 3);
+                        $data = $parts[2] ?? '';
+                    } elseif (stripos($line, 'NFC_DATA:') === 0) {
                         $data = substr($line, 9);
+                    } else {
+                        $data = null;
+                    }
+
+                    if ($data !== null) {
                         Log::info("Arduino NFC Service - Continuous read data: " . $data);
 
                         $studentData = $this->parseNFCData($data);

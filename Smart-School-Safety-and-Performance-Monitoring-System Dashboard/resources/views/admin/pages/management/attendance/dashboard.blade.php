@@ -20,7 +20,25 @@
                                 {{ now()->format('l, F j, Y') }}</p>
                         </div>
                         <div>
-                            <a href="{{ route('admin.management.attendance.create') }}" class="btn btn-primary btn-sm">
+                            @if($setting && $setting->attendance_face_enabled)
+                                <a href="{{ route('admin.management.attendance.face') }}" class="btn btn-info btn-sm me-2">
+                                    <i class="material-symbols-rounded text-sm">face</i> Face Attendance
+                                </a>
+                            @endif
+
+                            @if($setting && $setting->attendance_rfid_enabled)
+                                <a href="{{ route('admin.management.attendance.rfid') }}" class="btn btn-warning btn-sm me-2">
+                                    <i class="material-symbols-rounded text-sm">nfc</i> RFID Attendance
+                                </a>
+                            @endif
+
+                            @if(!$setting || (!$setting->attendance_face_enabled && !$setting->attendance_rfid_enabled))
+                                <span class="btn btn-secondary btn-sm me-2 disabled">
+                                    <i class="material-symbols-rounded text-sm">block</i> No Method Enabled
+                                </span>
+                            @endif
+
+                            <a href="{{ route('admin.management.attendance.create') }}" class="btn btn-primary btn-sm me-2">
                                 <i class="material-symbols-rounded text-sm">add</i> Manual Entry
                             </a>
                             <a href="{{ route('admin.management.attendance.index') }}"

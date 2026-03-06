@@ -30,7 +30,7 @@
                         <div class="card-header">
                             <div class="row">
                                 <div class="col-6 d-flex align-items-center">
-                                    <h6 class="mb-0">
+                                    <h6 class="mb-0 d-flex align-items-center">
                                         <i class="material-symbols-rounded me-2">event_seat</i>
                                         Seating Arrangements
                                         @if ($apiStatus)
@@ -145,12 +145,34 @@
                                                             class="text-xs text-secondary">{{ $arrangement->created_at->format('M d, Y') }}</span>
                                                     </td>
                                                     <td class="align-middle">
-                                                        <div class="dropdown">
-                                                            <button class="btn btn-link text-secondary mb-0" type="button"
-                                                                data-bs-toggle="dropdown">
-                                                                <i class="material-symbols-rounded">more_vert</i>
+                                                        <a href="{{ route('admin.seating-arrangement.show', $arrangement->id) }}"
+                                                            class="btn btn-link text-secondary mb-0 px-2"
+                                                            title="View Details">
+                                                            <i class="material-symbols-rounded">visibility</i>
+                                                        </a>
+
+                                                        <form
+                                                            action="{{ route('admin.seating-arrangement.destroy', $arrangement->id) }}"
+                                                            method="POST" class="d-inline"
+                                                            onsubmit="return confirm('Are you sure you want to delete this seating arrangement?');">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit"
+                                                                class="btn btn-link text-danger mb-0 px-2"
+                                                                title="Delete Arrangement">
+                                                                <i class="material-symbols-rounded">delete</i>
                                                             </button>
-                                                            <ul class="dropdown-menu">
+                                                        </form>
+
+                                                        <div class="dropdown d-inline">
+                                                            {{-- <button class="btn btn-link text-secondary mb-0 px-2"
+                                                                type="button" id="dropdownMenu{{ $arrangement->id }}"
+                                                                data-bs-toggle="dropdown" aria-expanded="false"
+                                                                title="More Actions">
+                                                                <i class="material-symbols-rounded">more_vert</i>
+                                                            </button> --}}
+                                                            <ul class="dropdown-menu dropdown-menu-end"
+                                                                aria-labelledby="dropdownMenu{{ $arrangement->id }}">
                                                                 <li>
                                                                     <a class="dropdown-item"
                                                                         href="{{ route('admin.seating-arrangement.show', $arrangement->id) }}">
@@ -215,3 +237,16 @@
         </div>
     </main>
 @endsection
+
+@push('scripts')
+    <script>
+        // Ensure dropdowns work properly
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Bootstrap dropdowns manually if needed
+            var dropdownElementList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
+            var dropdownList = dropdownElementList.map(function(dropdownToggleEl) {
+                return new bootstrap.Dropdown(dropdownToggleEl);
+            });
+        });
+    </script>
+@endpush

@@ -94,10 +94,10 @@ abstract class BaseManagementController extends Controller
                 return Redirect::route($this->parentRoutePath . 'index');
             }
             $data[$this->getEntityVariableName()] = $entity;
-            $data['id'] = $id;
         } else {
-            $data['id'] = $id;
+            $data[$this->getEntityVariableName()] = null;
         }
+        $data['id'] = $id;
 
         return view($this->parentViewPath . 'form', $data);
     }
@@ -176,18 +176,23 @@ abstract class BaseManagementController extends Controller
                     $this->notifyDeleted($this->entityName, $entity);
                 }
 
-                // Delete user account if exists
-                if (isset($entity->user)) {
-                    $entity->user->delete();
-                }
+                // Store user reference before deleting entity
+                $user = $entity->user ?? null;
 
                 // Delete profile image if exists
                 if (isset($entity->photo_path) && $entity->photo_path && $this->imageService) {
                     $this->imageService->deleteProfileImage($entity->photo_path);
                 }
 
-                // Delete entity
-                return $this->repository->delete($id);
+                // Delete entity FIRST (before user, to avoid FK constraint on user_id)
+                $result = $this->repository->delete($id);
+
+                // Now safe to delete the associated user account
+                if ($user) {
+                    $user->delete();
+                }
+
+                return $result;
             },
             $this->entityName
         );

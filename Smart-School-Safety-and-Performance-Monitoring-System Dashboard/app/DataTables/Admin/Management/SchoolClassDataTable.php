@@ -85,11 +85,11 @@ class SchoolClassDataTable extends DataTable
                 return '<span class="text-secondary fw-bold">'.$row->class_code.'</span>';
             })
             ->addColumn('class_teacher', function ($row) {
-                return $row->classTeacher ? 
+                return $row->classTeacher ?
                     '<div class="d-flex align-items-center">
                         <span class="badge bg-gradient-success badge-sm me-2">CT</span>
                         <span>' . $row->classTeacher->full_name . '</span>
-                    </div>' : 
+                    </div>' :
                     '<span class="text-muted">No class teacher</span>';
             })
             ->addColumn('students_count', function ($row) {
@@ -105,8 +105,8 @@ class SchoolClassDataTable extends DataTable
                 return '<span class="badge bg-gradient-'.$color.' badge-sm">'.$count.' subject'.($count != 1 ? 's' : '').'</span>';
             })
             ->addColumn('room_number', function ($row) {
-                return $row->room_number ? 
-                    '<span class="badge bg-gradient-primary badge-sm">Room ' . $row->room_number . '</span>' : 
+                return $row->room_number ?
+                    '<span class="badge bg-gradient-primary badge-sm">Room ' . $row->room_number . '</span>' :
                     '<span class="text-muted">No room</span>';
             })
             ->addColumn('capacity', function ($row) {
@@ -188,7 +188,7 @@ class SchoolClassDataTable extends DataTable
             Column::make('subjects_count')->title('SUBJECTS')->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
             Column::make('room_number')->title('ROOM')->addClass('text-center align-middle text-xs')->searchable(true),
             Column::make('capacity')->title('CAPACITY')->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
-            Column::make('status')->title('STATUS')->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
+            // Column::make('status')->title('STATUS')->addClass('text-center align-middle text-xs')->searchable(false)->orderable(false),
             Column::make('modified')->title('MODIFIED')->addClass('text-start align-middle text-xs')->searchable(false),
         ];
 

@@ -50,6 +50,12 @@ class Setting extends Model
         'enable_animations',
         'sidebar_style',
         'navbar_style',
+        // Attendance settings
+        'attendance_rfid_enabled',
+        'attendance_face_enabled',
+        'attendance_two_factor',
+        'face_recognition_api_url',
+        'face_recognition_api_key',
     ];
 
     protected $casts = [
@@ -59,6 +65,9 @@ class Setting extends Model
         'total_capacity' => 'integer',
         'school_start_time' => 'datetime:H:i',
         'school_end_time' => 'datetime:H:i',
+        'attendance_rfid_enabled' => 'boolean',
+        'attendance_face_enabled' => 'boolean',
+        'attendance_two_factor' => 'boolean',
     ];
 
     protected $attributes = [
@@ -79,6 +88,11 @@ class Setting extends Model
         'academic_year_end' => 'December',
         'school_start_time' => '08:00:00',
         'school_end_time' => '15:00:00',
+        'attendance_rfid_enabled' => true,
+        'attendance_face_enabled' => false,
+        'attendance_two_factor' => false,
+        'face_recognition_api_url' => 'http://localhost:5000',
+        'face_recognition_api_key' => 'your-api-key',
     ];
 
     protected static function active()
