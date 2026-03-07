@@ -64,7 +64,7 @@ install_requirements "Student Seating Arrangement API" "$SCRIPT_DIR/student-seat
 echo ""
 
 # 5. Facial Recognition Attendance API
-install_requirements "Facial Recognition Attendance API" "$SCRIPT_DIR/Facial\ Recognition\ Attendance\ Systems"
+install_requirements "Facial Recognition Attendance API" "$SCRIPT_DIR/Facial Recognition Attendance Systems"
 echo ""
 
 cd "$SCRIPT_DIR"
