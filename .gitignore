@@ -1,0 +1,32 @@
+# Dataset files - too large for GitHub
+Audio-Based_Threat_Detection/Non Speech Dataset/
+Video_Based_Left_Behind_Object_and_Threat_Detection/datasets/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+
+
