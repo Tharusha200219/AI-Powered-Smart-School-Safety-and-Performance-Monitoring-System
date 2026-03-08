@@ -11,8 +11,8 @@ werkzeug>=2.3.0
 SQLAlchemy>=2.0.0
 
 # Image Processing
-opencv-python>=4.8.0
-opencv-python-headless>=4.8.0  # Use this for servers without display
+opencv-python>=4.8.0,<4.11.0
+opencv-python-headless>=4.8.0,<4.11.0  # Use this for servers without display
 numpy>=1.24.0
 Pillow>=10.0.0
 scikit-image>=0.21.0

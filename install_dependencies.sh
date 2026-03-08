@@ -47,6 +47,18 @@ install_requirements() {
 echo "Checking and installing Python dependencies for all services..."
 echo ""
 
+# 0. Global Dependencies (Recommended for first run to resolve conflicts)
+if [ -f "$SCRIPT_DIR/ALL_REQUIREMENTS.txt" ]; then
+    echo -e "${YELLOW}Installing global dependencies from ALL_REQUIREMENTS.txt...${NC}"
+    python3 -m pip install --break-system-packages -q -r "$SCRIPT_DIR/ALL_REQUIREMENTS.txt"
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}✓ Global dependencies installed successfully${NC}"
+    else
+        echo -e "${YELLOW}⚠️  Some global dependencies failed, continuing with individual services...${NC}"
+    fi
+    echo ""
+fi
+
 # 1. Homework Management API
 install_requirements "Homework Management API" "$SCRIPT_DIR/AI-POWERED_HOMEWORK_MANAGEMENT_AND_PERFORMANCE_MONITORING"
 echo ""
