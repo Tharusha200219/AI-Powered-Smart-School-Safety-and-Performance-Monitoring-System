@@ -15,9 +15,9 @@ class ValidationRules
 
     public const EMAIL_RULES = 'required|email|max:255';
 
-    public const PASSWORD_RULES = 'required|min:8|confirmed';
+    public const PASSWORD_RULES = 'nullable|string|min:8';
 
-    public const OPTIONAL_PASSWORD_RULES = 'nullable|min:8|confirmed';
+    public const OPTIONAL_PASSWORD_RULES = 'nullable|string|min:8';
 
     public const PHONE_RULES = 'nullable|max:15';
 
