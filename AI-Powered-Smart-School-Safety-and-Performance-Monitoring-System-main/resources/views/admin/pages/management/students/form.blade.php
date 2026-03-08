@@ -114,7 +114,7 @@
                                                         <x-input name="date_of_birth" type="date" title="Date of Birth"
                                                             :isRequired="true" :value="old(
                                                                 'date_of_birth',
-                                                                $student->date_of_birth ?? '',
+                                                                isset($student) && $student->date_of_birth ? $student->date_of_birth->format('Y-m-d') : '',
                                                             )" />
                                                     </div>
                                                     <div class="col-md-3">
@@ -265,7 +265,10 @@
                                 <div class="d-flex align-items-center gap-3 flex-wrap">
                                     @php
                                         $hasFaceData = false;
-                                        // Future: query Flask or a local flag; for now use student meta if available.
+                                        if (isset($student) && $student->student_id) {
+                                            $faceDataPath = storage_path('app/face_data/' . $student->student_id);
+                                            $hasFaceData = file_exists($faceDataPath . '/model.pkl') || file_exists($faceDataPath . '/model.pkl.gz');
+                                        }
                                     @endphp
                                     <span class="badge fs-6 px-3 py-2 {{ $hasFaceData ? 'bg-success' : 'bg-secondary' }}"
                                         id="faceRegStatusBadge">
@@ -375,7 +378,7 @@
                                         <x-input name="enrollment_date" type="date" title="Enrollment Date"
                                             :isRequired="true" :value="old(
                                                 'enrollment_date',
-                                                $student->enrollment_date ?? date('Y-m-d'),
+                                                isset($student) && $student->enrollment_date ? $student->enrollment_date->format('Y-m-d') : date('Y-m-d'),
                                             )" />
                                     </div>
 
@@ -586,18 +589,12 @@
 
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <div class="input-group input-group-outline mb-3">
-                                            <select name="roles[]" class="form-control" multiple>
-                                                @foreach ($roles as $role)
-                                                    <option value="{{ $role->name }}"
-                                                        {{ isset($student) && $student->user && $student->user->hasRole($role->name) ? 'selected' : ($role->name == 'student' ? 'selected' : '') }}>
-                                                        {{ ucfirst($role->name) }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
+                                        <!-- Automatically assign student role -->
+                                        <input type="hidden" name="roles[]" value="student">
+                                        <div class="alert alert-info mb-0">
+                                            <i class="material-symbols-rounded align-middle me-2" style="font-size: 1.2rem;">info</i>
+                                            <strong>Role:</strong> Student role will be automatically assigned
                                         </div>
-                                        <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple
-                                            roles</small>
                                     </div>
                                 </div>
                             </div>

@@ -74,6 +74,8 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/rfid/enrollment-start', 'startRfidEnrollment')->name('rfid.enrollment-start');
                 Route::post('/rfid/assign', 'assignRfid')->name('rfid.assign');
                 Route::delete('/{studentId}/rfid', 'removeRfid')->name('rfid.remove');
+                // Face Recognition Management
+                Route::get('/{studentId}/remove-face', 'removeFaceData')->name('remove-face');
             });
 
             // Teachers Management

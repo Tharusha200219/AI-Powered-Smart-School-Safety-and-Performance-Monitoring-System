@@ -34,7 +34,7 @@
                     {{-- Camera column --}}
                     <div class="col-md-7 face-camera-col position-relative">
                         <video id="faceCamVideo" class="w-100 d-block" autoplay playsinline
-                            style="object-fit:cover;height:360px;background:#111;"></video>
+                            style="object-fit:cover;height:360px;background:#111;transform:scaleX(-1);"></video>
                         <canvas id="faceCamCanvas" class="d-none"></canvas>
 
                         {{-- Face overlay guide --}}
@@ -464,7 +464,10 @@
             const canvas = _el('faceCamCanvas');
             canvas.width = video.videoWidth || 640;
             canvas.height = video.videoHeight || 480;
-            canvas.getContext('2d').drawImage(video, 0, 0);
+            const ctx = canvas.getContext('2d');
+            // Flip horizontally to match what user sees
+            ctx.scale(-1, 1);
+            ctx.drawImage(video, -canvas.width, 0);
 
             // Flash effect
             const flash = _el('faceFlash');
