@@ -35,8 +35,12 @@ class StudentPerformancePredictor:
         self.scaler = None
         self.subject_encoder = None  # Changed from label_encoder to subject_encoder
         self.feature_order = None
-        self.numerical_features = ['age', 'grade', 'attendance', 'marks']
-        self.engineered_features = ['attendance_score', 'grade_marks_ratio', 'risk_index']
+        self.numerical_features = ['age', 'grade', 'attendance', 'term1_marks', 'term2_marks', 'term3_marks']
+        self.engineered_features = [
+            'attendance_score', 'grade_marks_ratio', 'marks_avg', 
+            'marks_delta', 'marks_slope', 'marks_volatility', 
+            'is_crashing', 'performance_momentum', 'attendance_marks_interaction'
+        ]
         self.load_models()
         
     def load_models(self):
@@ -53,30 +57,42 @@ class StudentPerformancePredictor:
             feature_order_path = os.path.join(MODELS_DIR, 'feature_order.pkl')
             self.feature_order = joblib.load(feature_order_path)
             
-            print("✓ Models loaded successfully (RandomForest + OneHotEncoder)")
+            print("✓ Models loaded successfully (XGBoost + OneHotEncoder)")
         except Exception as e:
             print(f"Error loading models: {e}")
             raise
     
-    def _engineer_features(self, age, grade, attendance, marks):
+    def _engineer_features(self, age, grade, attendance, term1_marks, term2_marks, term3_marks):
         """
-        Apply feature engineering to create derived features
-        
-        MUST match the same features created during training for consistency
-        
-        Args:
-            age: Student age
-            grade: Grade level  
-            attendance: Attendance percentage
-            marks: Current marks
-            
-        Returns:
-            Dictionary with engineered features
+        Create engineered features for a single subject
         """
+        # Base mark is the latest one
+        marks = term3_marks
+        attendance_score = attendance / 100.0
+        
+        # Temporal Features
+        marks_avg = (term1_marks + term2_marks + term3_marks) / 3.0
+        marks_delta = term3_marks - term2_marks
+        marks_slope = (term3_marks - term1_marks) / 2.0
+        
+        # Standard deviation manually for predictability
+        marks_list = [term1_marks, term2_marks, term3_marks]
+        avg = sum(marks_list) / 3.0
+        variance = sum((x - avg) ** 2 for x in marks_list) / 2.0 # Sample variance
+        marks_volatility = variance ** 0.5
+        
+        is_crashing = 1 if (term2_marks - term3_marks) > 30 else 0
+        
         return {
-            'attendance_score': attendance / 100.0,
+            'attendance_score': attendance_score,
             'grade_marks_ratio': marks / max(grade, 1),
-            'risk_index': ((100 - attendance) * (100 - marks)) / 100.0
+            'marks_avg': marks_avg,
+            'marks_delta': marks_delta,
+            'marks_slope': marks_slope,
+            'marks_volatility': marks_volatility,
+            'is_crashing': is_crashing,
+            'performance_momentum': (marks * attendance_score) / 100.0,
+            'attendance_marks_interaction': attendance_score * marks
         }
             
     def prepare_input(self, student_data):
@@ -115,20 +131,31 @@ class StudentPerformancePredictor:
             # IMPROVEMENT: Explicitly cast to numeric types
             try:
                 attendance = float(subject.get('attendance', 0))
-                marks = float(subject.get('marks', 0))
+                # Extract marks for each term (default to current if missing)
+                t1 = float(subject.get('term1_marks', subject.get('marks', 0)))
+                t2 = float(subject.get('term2_marks', subject.get('marks', 0)))
+                t3 = float(subject.get('term3_marks', subject.get('marks', 0)))
             except (ValueError, TypeError):
                 attendance = 0.0
-                marks = 0.0
+                t1 = 0.0
+                t2 = 0.0
+                t3 = 0.0
             
-            # Create engineered features (MUST match training)
-            eng_features = self._engineer_features(age, grade, attendance, marks)
+            # Engineer features
+            eng_features = self._engineer_features(age, grade, attendance, t1, t2, t3)
             
             # Base numerical features
             numerical_values = [
-                age, grade, attendance, marks,
+                age, grade, attendance, t1, t2, t3,
                 eng_features['attendance_score'],
                 eng_features['grade_marks_ratio'],
-                eng_features['risk_index']
+                eng_features['marks_avg'],
+                eng_features['marks_delta'],
+                eng_features['marks_slope'],
+                eng_features['marks_volatility'],
+                eng_features['is_crashing'],
+                eng_features['performance_momentum'],
+                eng_features['attendance_marks_interaction']
             ]
             
             # One-Hot encode subject
@@ -222,25 +249,54 @@ class StudentPerformancePredictor:
         for i, (subject_name, predicted_performance) in enumerate(zip(subject_names, predictions)):
             # IMPROVEMENT: Explicitly cast to numeric types for downstream processing
             try:
-                current_marks = float(subjects[i].get('marks', 0))
+                current_marks = float(subjects[i].get('term3_marks', subjects[i].get('marks', 0))) # Use term3 as current
                 attendance = float(subjects[i].get('attendance', 0))
             except (ValueError, TypeError):
                 current_marks = 0.0
                 attendance = 0.0
             
+            # Re-engineer features for this specific subject to get the temporal features for trend analysis
+            # This is a bit redundant but ensures we have the same engineered features as the model input
+            age = float(student_data.get('age', 15))
+            grade = float(student_data.get('grade', 10))
+            t1 = float(subjects[i].get('term1_marks', subjects[i].get('marks', 0)))
+            t2 = float(subjects[i].get('term2_marks', subjects[i].get('marks', 0)))
+            t3 = float(subjects[i].get('term3_marks', subjects[i].get('marks', 0)))
+            pred_output = self._engineer_features(age, grade, attendance, t1, t2, t3)
+
             # Calculate 95% confidence interval (IMPROVEMENT)
             lower_bound, upper_bound = self._calculate_confidence_interval(
                 predicted_performance, attendance, current_marks
             )
             
-            # Determine trend based on prediction vs current
-            diff = predicted_performance - current_marks
-            if diff > 5:
-                trend = "improving"
-            elif diff < -5:
+            # Analyze trend using slope and volatility
+            slope = pred_output.get('marks_slope', 0)
+            volatility = pred_output.get('marks_volatility', 0)
+            is_crashing = pred_output.get('is_crashing', 0)
+            
+            if is_crashing:
                 trend = "declining"
+            elif slope < -10:
+                trend = "declining"
+            elif slope > 10:
+                trend = "improving"
+            elif volatility > 15: # Priority for large fluctuations
+                trend = "fluctuating"
+            elif slope < -3:
+                trend = "declining"
+            elif slope > 3:
+                trend = "improving"
             else:
                 trend = "stable"
+            
+            # Final mapping to user-expected labels
+            trend_map = {
+                "declining": "Declining",
+                "improving": "Improving",
+                "stable": "Stable",
+                "fluctuating": "Fluctuating"
+            }
+            trend = trend_map.get(trend, "Stable")
             
             # Calculate confidence score (for backwards compatibility)
             # Higher confidence when CI is narrower
@@ -259,6 +315,12 @@ class StudentPerformancePredictor:
             
             result = {
                 'subject': subject_name,
+                # Individual term marks for UI display
+                'attendance': round(float(attendance), 2),
+                'term1_marks': round(float(t1), 2),
+                'term2_marks': round(float(t2), 2),
+                'term3_marks': round(float(t3), 2),
+                # Current and predicted performance
                 'current_performance': round(float(current_marks), 2),
                 'current_attendance': round(float(attendance), 2),
                 'predicted_performance': round(float(predicted_performance), 2),
@@ -315,7 +377,7 @@ def test_predictor():
     """Test the predictor with sample data"""
     print("=" * 60)
     print("TESTING STUDENT PERFORMANCE PREDICTOR")
-    print("(RandomForest + One-Hot Encoding + Confidence Intervals)")
+    print("(XGBoost + One-Hot Encoding + Confidence Intervals)")
     print("=" * 60)
     
     predictor = StudentPerformancePredictor()

@@ -1,9 +1,9 @@
-<!-- Performance Prediction Card -->
+<!-- Performance Prediction Card - Enhanced UI with Attendance & Term Marks -->
 <div class="card mb-4" id="performancePredictionCard">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h6 class="mb-0 d-flex align-items-center">
             <i class="material-symbols-rounded me-2 icon-size-sm">trending_up</i>
-            Performance Prediction 
+            AI Performance Prediction
         </h6>
         <span class="badge bg-gradient-info badge-sm">Live Prediction</span>
     </div>
@@ -28,41 +28,11 @@
         <div id="predictionContent" style="display: none;">
             <!-- Overall Summary -->
             <div class="row mb-4" id="predictionSummary">
-                <div class="col-md-12">
-                    <div class="alert  alert-with-icon" role="alert">
-                        {{-- <span class="alert-icon text-white"><i class="material-symbols-rounded">info</i></span>
-                        <span class="alert-text">
-                            <strong>Prediction Summary:</strong> Based on current marks and attendance, the AI model
-                            predicts student's performance trajectory for next term.
-                        </span> --}}
-                    </div>
-                </div>
+                <!-- Summary stats populated by JavaScript -->
             </div>
 
-            <!-- Predictions Table -->
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead>
-                        <tr>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 p-0">Subject</th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 p-0">Current</th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 p-0">Predicted
-                            </th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 p-0">Improvement
-                            </th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 p-0">Confidence
-                            </th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 p-0">Trend</th>
-                        </tr>
-                    </thead>
-                    <tbody id="predictionTableBody">
-                        <!-- Populated by JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Detailed View -->
-            <div class="row mt-4" id="detailedPredictions">
+            <!-- Detailed Subject Cards -->
+            <div class="row" id="detailedPredictions">
                 <!-- Individual prediction cards populated by JavaScript -->
             </div>
         </div>
@@ -70,108 +40,304 @@
 </div>
 
 <style>
-    .alert-gradient-info {
-        background: linear-gradient(90deg, #3a86ff 0%, #5a9dff 100%);
-        color: white;
-        border: none;
-    }
-
-    .alert-gradient-info .alert-icon {
-        background-color: rgba(255, 255, 255, 0.2);
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .prediction-card {
-        border-left: 4px solid #3a86ff;
+    /* Subject Performance Cards */
+    .subject-performance-card {
+        border: 1px solid #e3e6f0;
+        border-radius: 12px;
         transition: all 0.3s ease;
+        overflow: hidden;
+        background: white;
     }
 
-    .prediction-card:hover {
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        transform: translateY(-2px);
+    .subject-performance-card:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        transform: translateY(-4px);
     }
 
-    .trend-badge {
-        display: inline-block;
-        padding: 0.35rem 0.65rem;
-        border-radius: 0.25rem;
-        font-size: 0.75rem;
+    .subject-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .subject-header h5 {
+        margin: 0;
+        font-size: 1.1rem;
         font-weight: 600;
     }
 
+    .attendance-badge {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(10px);
+        padding: 0.35rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .attendance-badge.high {
+        background: rgba(16, 185, 129, 0.9);
+        border-color: #10b981;
+    }
+
+    .attendance-badge.medium {
+        background: rgba(251, 191, 36, 0.9);
+        border-color: #fbbf24;
+    }
+
+    .attendance-badge.low {
+        background: rgba(239, 68, 68, 0.9);
+        border-color: #ef4444;
+    }
+
+    /* Term Marks Section */
+    .term-marks-section {
+        padding: 1.25rem;
+        background: #f9fafb;
+        border-bottom: 1px solid #e3e6f0;
+    }
+
+    .term-marks-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.75rem;
+    }
+
+    .term-mark-item {
+        text-align: center;
+        padding: 1rem;
+        background: white;
+        border-radius: 8px;
+        border: 2px solid #e3e6f0;
+        transition: all 0.2s ease;
+    }
+
+    .term-mark-item:hover {
+        border-color: #667eea;
+        transform: scale(1.05);
+    }
+
+    .term-mark-label {
+        display: block;
+        font-size: 0.75rem;
+        color: #6b7280;
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+        letter-spacing: 0.5px;
+    }
+
+    .term-mark-value {
+        display: block;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1f2937;
+        line-height: 1;
+    }
+
+    /* Prediction Section */
+    .prediction-section {
+        padding: 1.25rem;
+    }
+
+    .predicted-score-box {
+        text-align: center;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        border: 2px solid #667eea;
+    }
+
+    .predicted-label {
+        font-size: 0.85rem;
+        color: #6b7280;
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+    }
+
+    .predicted-value {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #667eea;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+    }
+
+    .confidence-range {
+        font-size: 0.85rem;
+        color: #6b7280;
+        font-weight: 500;
+    }
+
+    /* Trend and Category Badges */
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .info-item {
+        padding: 0.75rem;
+        background: #f9fafb;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+    .info-label {
+        display: block;
+        font-size: 0.75rem;
+        color: #6b7280;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+    }
+
+    .trend-badge-large {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .trend-badge-large i {
+        font-size: 1.2rem;
+    }
+
     .trend-improving {
-        background-color: #d4edda;
+        background: #d4edda;
         color: #155724;
     }
 
     .trend-declining {
-        background-color: #f8d7da;
+        background: #f8d7da;
         color: #721c24;
     }
 
     .trend-stable {
-        background-color: #d1ecf1;
+        background: #d1ecf1;
         color: #0c5460;
     }
 
-    .confidence-bar {
-        height: 6px;
-        background-color: #e9ecef;
-        border-radius: 3px;
+    .category-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .category-excellent {
+        background: #059669;
+        color: white;
+    }
+
+    .category-good {
+        background: #10b981;
+        color: white;
+    }
+
+    .category-average {
+        background: #fbbf24;
+        color: white;
+    }
+
+    .category-needs-improvement {
+        background: #dc2626;
+        color: white;
+    }
+
+    /* Recommendation Section */
+    .recommendation-box {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: #fef3c7;
+        border-left: 4px solid #f59e0b;
+        border-radius: 6px;
+    }
+
+    .recommendation-box .icon {
+        color: #f59e0b;
+        font-size: 1.2rem;
+        vertical-align: middle;
+    }
+
+    .recommendation-text {
+        font-size: 0.9rem;
+        color: #92400e;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    /* Summary Cards */
+    .summary-stat-card {
+        text-align: center;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 12px;
+        border: 2px solid #e3e6f0;
+        transition: all 0.2s ease;
+    }
+
+    .summary-stat-card:hover {
+        border-color: #667eea;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .summary-stat-card .icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .summary-stat-card h6 {
+        font-size: 0.85rem;
+        color: #6b7280;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+    }
+
+    .summary-stat-card .value {
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    /* Attendance Progress Bar */
+    .attendance-progress {
+        height: 8px;
+        background: #e3e6f0;
+        border-radius: 10px;
         overflow: hidden;
         margin-top: 0.5rem;
     }
 
-    .confidence-fill {
+    .attendance-progress-fill {
         height: 100%;
-        background: linear-gradient(90deg, #3a86ff, #5a9dff);
+        background: linear-gradient(90deg, #10b981 0%, #059669 100%);
         transition: width 0.3s ease;
     }
 
-    .performance-metric {
-        text-align: center;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        background-color: #f7f8fa;
+    .attendance-progress-fill.medium {
+        background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%);
     }
 
-    .performance-value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin: 0.5rem 0;
-    }
-
-    .improvement-badge {
-        display: inline-block;
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.25rem;
-        font-size: 0.75rem;
-        font-weight: 500;
-    }
-
-    .improvement-positive {
-        background-color: #d4edda;
-        color: #155724;
-    }
-
-    .improvement-negative {
-        background-color: #f8d7da;
-        color: #721c24;
-    }
-
-    .improvement-neutral {
-        background-color: #e2e3e5;
-        color: #383d41;
+    .attendance-progress-fill.low {
+        background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
     }
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         loadPerformancePrediction({{ $student->student_id }});
     });
 
@@ -187,15 +353,15 @@
 
         // Fetch prediction from API
         fetch(`/api/students/${studentId}/prediction`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
-            },
-            credentials: 'same-origin'
-        })
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                },
+                credentials: 'same-origin'
+            })
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -227,132 +393,124 @@
             return;
         }
 
-        const tableBody = document.getElementById('predictionTableBody');
+        const summaryContainer = document.getElementById('predictionSummary');
         const detailedContainer = document.getElementById('detailedPredictions');
 
-        tableBody.innerHTML = '';
+        summaryContainer.innerHTML = '';
         detailedContainer.innerHTML = '';
 
+        // Calculate stats
         let totalImprovement = 0;
         let improvingSubjects = 0;
+        let avgAttendance = 0;
 
-        data.predictions.forEach((pred, index) => {
-            // Add table row
-            const row = createTableRow(pred);
-            tableBody.appendChild(row);
-
-            // Add detailed card
-            const card = createDetailCard(pred);
-            detailedContainer.appendChild(card);
-
-            // Calculate stats
-            if (pred.improvement > 0) {
-                improvingSubjects++;
-            }
-            totalImprovement += pred.improvement;
+        data.predictions.forEach(pred => {
+            if (pred.improvement > 0) improvingSubjects++;
+            totalImprovement += pred.improvement || 0;
+            avgAttendance += pred.attendance || 0;
         });
 
+        avgAttendance = avgAttendance / data.predictions.length || 0;
+
         // Display summary stats
-        displaySummaryStats(data, totalImprovement, improvingSubjects);
+        displaySummaryStats(data, totalImprovement, improvingSubjects, avgAttendance);
+
+        // Create detailed cards for each subject
+        data.predictions.forEach(pred => {
+            const card = createEnhancedSubjectCard(pred);
+            detailedContainer.appendChild(card);
+        });
     }
 
-    function createTableRow(prediction) {
-        const row = document.createElement('tr');
-
-        const improvementColor = prediction.improvement > 0 ? 'text-success' :
-            prediction.improvement < 0 ? 'text-danger' : 'text-secondary';
-
-        const trendColor = prediction.prediction_trend === 'improving' ? 'trend-improving' :
-            prediction.prediction_trend === 'declining' ? 'trend-declining' : 'trend-stable';
-
-        row.innerHTML = `
-            <td>
-                <span class="text-xs font-weight-bold">${prediction.subject}</span>
-            </td>
-            <td>
-                <span class="text-xs">${prediction.current_performance.toFixed(1)}</span>
-            </td>
-            <td>
-                <span class="text-xs font-weight-bold">${prediction.predicted_performance.toFixed(1)}</span>
-            </td>
-            <td>
-                <span class="text-xs ${improvementColor} font-weight-bold">
-                    ${prediction.improvement > 0 ? '+' : ''}${prediction.improvement.toFixed(1)}
-                </span>
-            </td>
-            <td>
-                <div class="d-flex align-items-center">
-                    <span class="text-xs me-2">${prediction.confidence.toFixed(0)}%</span>
-                    <div class="confidence-bar" style="width: 60px;">
-                        <div class="confidence-fill" style="width: ${Math.min(prediction.confidence, 100)}%"></div>
-                    </div>
-                </div>
-            </td>
-            <td>
-                <span class="trend-badge ${trendColor}">
-                    <i class="material-symbols-rounded align-middle" style="font-size: 0.9rem;">
-                        ${prediction.prediction_trend === 'improving' ? 'trending_up' :
-                prediction.prediction_trend === 'declining' ? 'trending_down' : 'trending_flat'}
-                    </i>
-                    ${prediction.prediction_trend.charAt(0).toUpperCase() + prediction.prediction_trend.slice(1)}
-                </span>
-            </td>
-        `;
-
-        return row;
-    }
-
-    function createDetailCard(prediction) {
+    function createEnhancedSubjectCard(prediction) {
         const card = document.createElement('div');
-        card.className = 'col-md-6 mb-3';
+        card.className = 'col-lg-6 col-md-12 mb-4';
 
-        const improvementClass = prediction.improvement > 0 ? 'improvement-positive' :
-            prediction.improvement < 0 ? 'improvement-negative' : 'improvement-neutral';
+        // Determine attendance level
+        const attendance = prediction.attendance || 0;
+        const attendanceClass = attendance >= 80 ? 'high' : attendance >= 60 ? 'medium' : 'low';
+        const attendanceProgressClass = attendance >= 80 ? '' : attendance >= 60 ? 'medium' : 'low';
+
+        // Trend icons and colors
+        const trendClass = prediction.prediction_trend === 'Improving' ? 'trend-improving' :
+            prediction.prediction_trend === 'Declining' ? 'trend-declining' : 'trend-stable';
+        const trendIcon = prediction.prediction_trend === 'Improving' ? 'trending_up' :
+            prediction.prediction_trend === 'Declining' ? 'trending_down' : 'trending_flat';
+
+        // Category badge
+        const category = prediction.performance_category || 'Average';
+        const categoryClass = category === 'Excellent' ? 'category-excellent' :
+            category === 'Good' ? 'category-good' :
+            category === 'Average' ? 'category-average' : 'category-needs-improvement';
 
         card.innerHTML = `
-            <div class="card prediction-card">
-                <div class="card-body p-3">
-                    <h6 class="mb-2">${prediction.subject}</h6>
+            <div class="subject-performance-card">
+                <!-- Subject Header with Attendance -->
+                <div class="subject-header">
+                    <h5>📚 ${prediction.subject}</h5>
+                    <div class="attendance-badge ${attendanceClass}">
+                        📊 ${attendance.toFixed(1)}%
+                    </div>
+                </div>
 
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <div class="performance-metric">
-                                <small class="text-muted">Current</small>
-                                <div class="performance-value text-primary">${prediction.current_performance.toFixed(1)}</div>
-                            </div>
+                <!-- Term Marks Section -->
+                <div class="term-marks-section">
+                    <h6 class="mb-3" style="color: #6b7280; font-size: 0.85rem; font-weight: 600;">TERM MARKS</h6>
+                    <div class="term-marks-grid">
+                        <div class="term-mark-item">
+                            <span class="term-mark-label">Term 1</span>
+                            <span class="term-mark-value">${(prediction.term1_marks || 0).toFixed(0)}</span>
                         </div>
-                        <div class="col-6">
-                            <div class="performance-metric">
-                                <small class="text-muted">Predicted</small>
-                                <div class="performance-value text-info">${prediction.predicted_performance.toFixed(1)}</div>
-                            </div>
+                        <div class="term-mark-item">
+                            <span class="term-mark-label">Term 2</span>
+                            <span class="term-mark-value">${(prediction.term2_marks || 0).toFixed(0)}</span>
                         </div>
-                        <div class="col-12">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <small class="text-muted">Improvement:</small>
-                                <span class="improvement-badge ${improvementClass}">
-                                    ${prediction.improvement > 0 ? '+' : ''}${prediction.improvement.toFixed(1)} points
-                                </span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <small class="text-muted">Confidence:</small>
-                                <span class="text-sm font-weight-bold">${prediction.confidence.toFixed(0)}%</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted">Trend:</small>
-                                <span class="trend-badge ${prediction.prediction_trend === 'improving' ? 'trend-improving' :
-                prediction.prediction_trend === 'declining' ? 'trend-declining' : 'trend-stable'}">
-                                    ${prediction.prediction_trend.charAt(0).toUpperCase() + prediction.prediction_trend.slice(1)}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="col-12 mt-2 p-2 bg-light rounded">
-                            <small class="text-muted d-block mb-1">95% Confidence Range:</small>
-                            <small class="text-dark font-weight-bold">
-                                ${prediction.confidence_interval.lower_bound.toFixed(1)} - ${prediction.confidence_interval.upper_bound.toFixed(1)}
-                            </small>
+                        <div class="term-mark-item">
+                            <span class="term-mark-label">Term 3</span>
+                            <span class="term-mark-value">${(prediction.term3_marks || 0).toFixed(0)}</span>
                         </div>
                     </div>
+                    <div class="attendance-progress">
+                        <div class="attendance-progress-fill ${attendanceProgressClass}"
+                             style="width: ${Math.min(attendance, 100)}%"></div>
+                    </div>
+                </div>
+
+                <!-- Prediction Section -->
+                <div class="prediction-section">
+                    <div class="predicted-score-box">
+                        <div class="predicted-label">🎯 Predicted Performance</div>
+                        <div class="predicted-value">${prediction.predicted_performance.toFixed(1)}</div>
+                        <div class="confidence-range">
+                            95% CI: [${prediction.confidence_interval.lower_bound.toFixed(1)},
+                            ${prediction.confidence_interval.upper_bound.toFixed(1)}]
+                        </div>
+                    </div>
+
+                    <!-- Trend and Category -->
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Trend</span>
+                            <div class="trend-badge-large ${trendClass}">
+                                <i class="material-symbols-rounded">${trendIcon}</i>
+                                ${prediction.prediction_trend}
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Category</span>
+                            <div class="category-badge ${categoryClass}">
+                                ⭐ ${category}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recommendation -->
+                    ${prediction.recommendation ? `
+                        <div class="recommendation-box">
+                            <i class="material-symbols-rounded icon">lightbulb</i>
+                            <p class="recommendation-text"><strong>💡 Recommendation:</strong> ${prediction.recommendation}</p>
+                        </div>
+                    ` : ''}
                 </div>
             </div>
         `;
@@ -360,50 +518,42 @@
         return card;
     }
 
-    function displaySummaryStats(data, totalImprovement, improvingSubjects) {
+    function displaySummaryStats(data, totalImprovement, improvingSubjects, avgAttendance) {
         const summary = document.getElementById('predictionSummary');
-        const statsHtml = `
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <i class="material-symbols-rounded text-primary mb-2" style="font-size: 2rem;">school</i>
-                        <h6 class="mb-1">Total Subjects</h6>
-                        <h3 class="text-primary">${data.total_subjects}</h3>
-                    </div>
+        const avgImprovementValue = (totalImprovement / (data.total_subjects || 1)).toFixed(1);
+        const improvementColor = avgImprovementValue > 0 ? 'text-success' :
+            avgImprovementValue < 0 ? 'text-danger' : 'text-secondary';
+
+        summary.innerHTML = `
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="summary-stat-card">
+                    <i class="material-symbols-rounded icon text-primary">school</i>
+                    <h6>Total Subjects</h6>
+                    <div class="value text-primary">${data.total_subjects || 0}</div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <i class="material-symbols-rounded text-success mb-2" style="font-size: 2rem;">trending_up</i>
-                        <h6 class="mb-1">Improving</h6>
-                        <h3 class="text-success">${improvingSubjects}/${data.total_subjects}</h3>
-                    </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="summary-stat-card">
+                    <i class="material-symbols-rounded icon text-success">trending_up</i>
+                    <h6>Improving</h6>
+                    <div class="value text-success">${improvingSubjects}/${data.total_subjects || 0}</div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <i class="material-symbols-rounded text-info mb-2" style="font-size: 2rem;">auto_graph</i>
-                        <h6 class="mb-1">Avg. Improvement</h6>
-                        <h3 class="text-info">${(totalImprovement / data.total_subjects).toFixed(1)}</h3>
-                    </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="summary-stat-card">
+                    <i class="material-symbols-rounded icon ${improvementColor}">auto_graph</i>
+                    <h6>Avg. Change</h6>
+                    <div class="value ${improvementColor}">${avgImprovementValue > 0 ? '+' : ''}${avgImprovementValue}</div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <i class="material-symbols-rounded text-warning mb-2" style="font-size: 2rem;">psychology</i>
-                        <h6 class="mb-1">AI Model</h6>
-                        <h3 class="text-warning">v2.0</h3>
-                    </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="summary-stat-card">
+                    <i class="material-symbols-rounded icon text-info">event_available</i>
+                    <h6>Avg. Attendance</h6>
+                    <div class="value text-info">${avgAttendance.toFixed(1)}%</div>
                 </div>
             </div>
         `;
-
-        // Insert after the info alert
-        const infoAlert = summary.querySelector('.alert');
-        infoAlert.insertAdjacentHTML('afterend', `<div class="row g-3 mt-3">${statsHtml}</div>`);
     }
 
     function showError(message) {

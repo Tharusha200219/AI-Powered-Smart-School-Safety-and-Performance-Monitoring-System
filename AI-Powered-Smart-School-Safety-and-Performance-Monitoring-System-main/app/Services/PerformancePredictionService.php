@@ -66,11 +66,21 @@ class PerformancePredictionService
      */
     protected function buildStudentData(Student $student): array
     {
-        $marks = Mark::where('student_id', $student->student_id)
+        // Get all marks for the student
+        $allMarks = Mark::where('student_id', $student->student_id)
             ->with('subject')
+            ->orderBy('academic_year', 'desc')
             ->orderBy('term', 'desc')
-            ->get()
-            ->groupBy('subject_id');
+            ->get();
+
+        if ($allMarks->isEmpty()) {
+            return ['student_id' => $student->student_id, 'subjects' => []];
+        }
+
+        // Detect the most recent academic year that has data for this student
+        $academicYear = $allMarks->first()->academic_year;
+
+        $marks = $allMarks->groupBy('subject_id');
 
         $attendance = $this->calculateAttendancePercentage($student->student_id);
 
@@ -79,12 +89,19 @@ class PerformancePredictionService
             $latestMark = $subjectMarks->first();
             $subject = $latestMark->subject;
 
+            // Group marks by term for this academic year
+            $termMarks = $subjectMarks->filter(function ($m) use ($academicYear) {
+                return $m->academic_year === $academicYear;
+            })->pluck('marks', 'term')->toArray();
+
             $subjects[] = [
                 'subject_name' => $subject->subject_name,
                 'subject_id' => $subjectId,
-                'marks' => (float) $latestMark->marks,
-                'attendance' => $attendance[$subjectId] ?? 85.0,
-                'trend' => $this->calculateMarksTrend($subjectMarks)
+                'term1_marks' => (float) ($termMarks[1] ?? $latestMark->marks),
+                'term2_marks' => (float) ($termMarks[2] ?? $latestMark->marks),
+                'term3_marks' => (float) ($termMarks[3] ?? $latestMark->marks),
+                'marks' => (float) $latestMark->marks, // Fallback for old API compatibility
+                'attendance' => $attendance[$subjectId] ?? 85.0
             ];
         }
 
@@ -171,9 +188,16 @@ class PerformancePredictionService
             'predictions' => collect($prediction['predictions'] ?? [])
                 ->map(fn($pred) => [
                     'subject' => $pred['subject'] ?? 'Unknown',
+                    // Individual term marks for UI display
+                    'attendance' => round($pred['attendance'] ?? 0, 2),
+                    'term1_marks' => round($pred['term1_marks'] ?? 0, 2),
+                    'term2_marks' => round($pred['term2_marks'] ?? 0, 2),
+                    'term3_marks' => round($pred['term3_marks'] ?? 0, 2),
+                    // Current and predicted performance
                     'current_performance' => round($pred['current_performance'] ?? 0, 2),
                     'predicted_performance' => round($pred['predicted_performance'] ?? 0, 2),
-                    'prediction_trend' => $pred['prediction_trend'] ?? 'stable',
+                    'prediction_trend' => $pred['prediction_trend'] ?? 'Stable',
+                    'performance_category' => $pred['performance_category'] ?? 'Average',
                     'confidence' => round(($pred['confidence'] ?? 0) * 100, 1),
                     'confidence_interval' => [
                         'lower_bound' => round($pred['confidence_interval']['lower_bound'] ?? 0, 2),
@@ -183,7 +207,8 @@ class PerformancePredictionService
                     'improvement' => round(
                         ($pred['predicted_performance'] ?? 0) - ($pred['current_performance'] ?? 0),
                         2
-                    )
+                    ),
+                    'recommendation' => $pred['recommendation'] ?? null
                 ])
                 ->toArray(),
             'status' => 'success'

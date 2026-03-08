@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Event;
+use App\Models\EventAttendance;
 use App\Models\Setting;
+use App\Models\Student;
 use App\Repositories\Interfaces\Admin\Management\AttendanceRepositoryInterface;
 use App\Repositories\Interfaces\Admin\Management\StudentRepositoryInterface;
 use Carbon\Carbon;
@@ -66,7 +69,13 @@ class RfidController extends Controller
             ]);
         }
 
-        // ── 2. Treat as attendance scan ───────────────────────────────────────
+        // ── 2. Check for an active event scanning session ───────────────────
+        $activeEventId = Cache::get('active_event_id');
+        if ($activeEventId) {
+            return $this->processEventScan($uid, $deviceId, $activeEventId);
+        }
+
+        // ── 3. Treat as attendance scan ───────────────────────────────────────
         return $this->processAttendanceScan($uid, $deviceId);
     }
 
@@ -246,5 +255,109 @@ class RfidController extends Controller
         ];
 
         Cache::put('rfid_last_scan', $result, now()->addMinutes(10));
+    }
+
+    private function processEventScan(string $uid, string $deviceId, int $eventId): JsonResponse
+    {
+        $student = $this->studentRepository->findByRfidUid($uid);
+
+        if (!$student) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Student not found',
+                'uid' => $uid,
+            ], 404);
+        }
+
+        $studentName = $student->first_name . ' ' . $student->last_name;
+        $now = now();
+        $scanId = microtime(true);
+
+        try {
+            // 1. Get current attendance status
+            $attendance = EventAttendance::where('event_id', $eventId)
+                ->where('student_id', $student->student_id)
+                ->first();
+
+            $status = 'success';
+            $message = '';
+            $type = '';
+            $canWriteToDb = true;
+
+            // 2. Determine state and message
+            if (!$attendance) {
+                $message = "Check-in Successful";
+                $type = 'in';
+            } else {
+                if ($attendance->check_out_time) {
+                    $status = 'error';
+                    $message = "Already checked out";
+                    $type = 'complete';
+                    $canWriteToDb = false; 
+                } else {
+                    $minutesSinceCheckIn = $attendance->check_in_time->diffInMinutes($now);
+                    if ($minutesSinceCheckIn < 10) {
+                        $status = 'error';
+                        $message = "Already checked in (Wait " . round(10 - $minutesSinceCheckIn, 1) . " min)";
+                        $type = 'in';
+                        $canWriteToDb = false;
+                    } else {
+                        $message = "Check-out Successful";
+                        $type = 'out';
+                    }
+                }
+            }
+
+            // 3. Prepare data for UI polling (DO THIS BEFORE DB DEBOUNCE)
+            $result = [
+                'event_id' => $eventId,
+                'student_id' => $student->student_id,
+                'student_name' => $studentName,
+                'student_code' => $student->student_code,
+                'grade' => $student->grade->name ?? 'N/A',
+                'class' => $student->schoolClass->class_name ?? 'N/A',
+                'check_in' => $attendance ? $attendance->check_in_time->format('h:i:s A') : $now->format('h:i:s A'),
+                'check_out' => ($attendance && $attendance->check_out_time) ? $attendance->check_out_time->format('h:i:s A') : ($type == 'out' ? $now->format('h:i:s A') : null),
+                'time' => $now->format('h:i:s A'),
+                'type' => $type,
+                'message' => $message,
+                'status' => $status,
+                'scan_id' => $scanId,
+            ];
+
+            // Always update the cache so UI pings
+            Cache::put('rfid_last_event_scan', $result, now()->addMinutes(10));
+
+            // 4. DB Operation with Debounce
+            if ($canWriteToDb) {
+                $debounceKey = "event_db_write_{$eventId}_{$student->student_id}";
+                if (!Cache::has($debounceKey)) {
+                    if (!$attendance) {
+                        EventAttendance::create([
+                            'event_id' => $eventId,
+                            'student_id' => $student->student_id,
+                            'nfc_tag_id' => $uid,
+                            'check_in_time' => $now,
+                        ]);
+                    } else {
+                        $attendance->update(['check_out_time' => $now]);
+                    }
+                    Cache::put($debounceKey, true, now()->addSeconds(5)); 
+                }
+            }
+
+            return response()->json([
+                'success' => $status === 'success',
+                'message' => $message,
+                'student_name' => $studentName,
+                'data' => $result,
+            ], $status === 'success' ? 200 : 400);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'System error: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 }

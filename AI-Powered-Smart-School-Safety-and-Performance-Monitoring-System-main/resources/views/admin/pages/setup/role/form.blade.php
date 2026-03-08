@@ -52,10 +52,11 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <x-input name="status" type="select" title="Status"
-                                                    placeholder="Select Status" :options="App\Enums\Status::options()" :value="old(
-                                                        'status',
-                                                        $role->status ?? App\Enums\Status::ACTIVE->value,
-                                                    )" />
+                                                    placeholder="Select Status"
+                                                    :options="array_flip(App\Enums\Status::options())" :value="old(
+            'status',
+            $role->status ?? App\Enums\Status::ACTIVE->value,
+        )" />
                                             </div>
                                         </div>
                                     </div>
@@ -84,8 +85,7 @@
                                                         <div class="col-md-12 mb-3">
                                                             <div class="card border">
                                                                 <div class="card-header bg-light py-2">
-                                                                    <h6
-                                                                        class="mb-0 fw-bold text-dark d-flex align-items-center">
+                                                                    <h6 class="mb-0 fw-bold text-dark d-flex align-items-center">
                                                                         <i
                                                                             class="material-symbols-rounded me-2 icon-size-md">{{ $modulePermissions[0]['icon'] }}</i>
                                                                         {{ $moduleName }}
@@ -98,8 +98,8 @@
                                                                                 @php continue; @endphp
                                                                             @endif
                                                                             <div class="form-check">
-                                                                                <input class="form-check-input"
-                                                                                    type="checkbox" name="permissions[]"
+                                                                                <input class="form-check-input" type="checkbox"
+                                                                                    name="permissions[]"
                                                                                     value="{{ $permission['name'] }}"
                                                                                     id="permission_{{ \Illuminate\Support\Str::slug($permission['name']) }}"
                                                                                     {{ in_array($permission['name'], $rolePermissions ?? []) ? 'checked' : '' }}>
