@@ -100,7 +100,7 @@ class ValidationRules
             'subjects.*' => 'exists:subjects,id',
             'parents' => 'nullable|array',
             'parents.*' => 'exists:parents,parent_id',
-            'roles' => 'required|array',
+            'roles' => 'nullable|array',
             'roles.*' => 'exists:roles,name',
         ]);
     }

@@ -32,9 +32,9 @@ class MarkSeeder extends Seeder
             foreach ($student->subjects as $subject) {
                 // Create marks for each term
                 foreach ($terms as $term) {
-                    // Generate random marks (between 40-100)
+                    // Generate random marks (between 0-98)
                     $totalMarks = 100;
-                    $obtainedMarks = rand(40, 100);
+                    $obtainedMarks = rand(0, 98);
 
                     // Create mark entry
                     Mark::create([
