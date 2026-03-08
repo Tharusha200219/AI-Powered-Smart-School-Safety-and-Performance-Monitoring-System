@@ -177,7 +177,7 @@ window.unlinkParent = function (parentId) {
         confirm("Are you sure you want to unlink this parent from the student?")
     ) {
         const parentElement = document.getElementById(
-            `existingParent${parentId}`
+            `existingParent${parentId}`,
         );
         if (parentElement) {
             // Add fade out animation
@@ -190,7 +190,7 @@ window.unlinkParent = function (parentId) {
 
                 // Remove from existing_parents input array
                 const existingParentsInputs = document.querySelectorAll(
-                    'input[name="existing_parents[]"]'
+                    'input[name="existing_parents[]"]',
                 );
                 existingParentsInputs.forEach((input) => {
                     if (input.value == parentId) {
@@ -224,7 +224,7 @@ window.toggleParentSelector = function () {
 
 window.generateStudentCode = function () {
     const studentCodeInput = document.querySelector(
-        'input[name="student_code"]'
+        'input[name="student_code"]',
     );
 
     // This will be set by the blade template
@@ -349,7 +349,7 @@ async function writeToNFC() {
     } catch (error) {
         console.error("NFC Write Error:", error);
         showNFCError(
-            `Error communicating with server: ${error.message}. Please ensure the Arduino is connected.`
+            `Error communicating with server: ${error.message}. Please ensure the Arduino is connected.`,
         );
     }
 }
@@ -406,7 +406,7 @@ function handleFormSubmit(event) {
 document.addEventListener("DOMContentLoaded", function () {
     // Auto-generate student code if creating new student
     const studentCodeInput = document.querySelector(
-        'input[name="student_code"]'
+        'input[name="student_code"]',
     );
     const isEditMode = window.isEditMode || false;
 
@@ -430,7 +430,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     ?.classList.add("is-focused");
             }
         },
-        true
+        true,
     );
 
     document.addEventListener(
@@ -448,7 +448,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
         },
-        true
+        true,
     );
 
     // Profile Image Preview
@@ -501,7 +501,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Dynamic Subject Loading based on Grade Level
     const gradeLevelSelect = document.querySelector(
-        'select[name="grade_level"]'
+        'select[name="grade_level"]',
     );
     const classSelect = document.querySelector('select[name="class_id"]');
 
@@ -555,7 +555,10 @@ function loadClassesByGrade(gradeLevel) {
             option.value = schoolClass.id;
             option.textContent = `${schoolClass.class_name} (Grade ${schoolClass.grade_level})`;
             // Pre-select if editing and matches selectedClassId
-            if (window.selectedClassId && window.selectedClassId == schoolClass.id) {
+            if (
+                window.selectedClassId &&
+                window.selectedClassId == schoolClass.id
+            ) {
                 option.selected = true;
             }
             classSelect.appendChild(option);
@@ -619,9 +622,8 @@ function renderSubjectSelection(data) {
     document.getElementById("advancedSubjects").style.display = "none";
 
     // Update info text
-    document.getElementById(
-        "educationLevelText"
-    ).textContent = `${data.education_level} - Grade ${data.grade}`;
+    document.getElementById("educationLevelText").textContent =
+        `${data.education_level} - Grade ${data.grade}`;
 
     // Reset selections
     resetSubjectSelections();
@@ -634,6 +636,9 @@ function renderSubjectSelection(data) {
     } else if (data.education_level === "Advanced Level") {
         renderAdvancedSubjects(data);
     }
+
+    // Pre-select existing subjects if in edit mode
+    preSelectExistingSubjects();
 }
 
 // Render Primary Education subjects
@@ -641,12 +646,15 @@ function renderPrimarySubjects(data) {
     document.getElementById("primarySubjects").style.display = "block";
 
     // First Language
-    if (data.subjects.first_language && data.subjects.first_language.length > 0) {
+    if (
+        data.subjects.first_language &&
+        data.subjects.first_language.length > 0
+    ) {
         renderCheckboxGroup(
             "firstLanguagePrimary",
             data.subjects.first_language,
             "radio",
-            "first_language"
+            "first_language",
         );
     }
 
@@ -656,7 +664,7 @@ function renderPrimarySubjects(data) {
             "religionPrimary",
             data.subjects.religion,
             "radio",
-            "religion"
+            "religion",
         );
     }
 
@@ -666,7 +674,7 @@ function renderPrimarySubjects(data) {
             "aestheticPrimary",
             data.subjects.aesthetic,
             "radio",
-            "aesthetic"
+            "aesthetic",
         );
     }
 
@@ -688,12 +696,15 @@ function renderSecondarySubjects(data) {
     document.getElementById("secondarySubjects").style.display = "block";
 
     // First Language
-    if (data.subjects.first_language && data.subjects.first_language.length > 0) {
+    if (
+        data.subjects.first_language &&
+        data.subjects.first_language.length > 0
+    ) {
         renderCheckboxGroup(
             "firstLanguageSecondary",
             data.subjects.first_language,
             "radio",
-            "first_language"
+            "first_language",
         );
     }
 
@@ -703,7 +714,7 @@ function renderSecondarySubjects(data) {
             "religionSecondary",
             data.subjects.religion,
             "radio",
-            "religion"
+            "religion",
         );
     }
 
@@ -726,7 +737,7 @@ function renderSecondarySubjects(data) {
             data.subjects.elective,
             "checkbox",
             "elective",
-            3
+            3,
         );
     }
 }
@@ -745,7 +756,7 @@ function renderCheckboxGroup(
     subjects,
     inputType,
     category,
-    maxSelection = 1
+    maxSelection = 1,
 ) {
     const container = document.getElementById(containerId);
     container.innerHTML = "";
@@ -797,6 +808,68 @@ function renderCheckboxGroup(
     });
 }
 
+// Pre-select existing subjects in edit mode
+function preSelectExistingSubjects() {
+    if (!window.isEditMode || !window.selectedSubjects || !currentSubjectData) {
+        return;
+    }
+
+    const subjectIds = window.selectedSubjects;
+    if (!Array.isArray(subjectIds) || subjectIds.length === 0) {
+        return;
+    }
+
+    // Get all subject checkboxes
+    const allCheckboxes = document.querySelectorAll(
+        'input[type="radio"], input[type="checkbox"][name*="subject_"]',
+    );
+
+    // Pre-select the existing subjects
+    allCheckboxes.forEach((checkbox) => {
+        const subjectId = parseInt(checkbox.value);
+
+        if (subjectIds.includes(subjectId)) {
+            checkbox.checked = true;
+            updateSubjectCheckboxStyles(checkbox);
+
+            // Trigger the selection handler to update selectedSubjects object
+            const category = checkbox.dataset.category;
+            const inputType = checkbox.type;
+            const maxSelection = checkbox.dataset.maxSelection;
+
+            if (inputType === "radio") {
+                // Radio selection
+                if (category === "first_language") {
+                    selectedSubjects.firstLanguage = subjectId;
+                } else if (category === "religion") {
+                    selectedSubjects.religion = subjectId;
+                } else if (category === "aesthetic") {
+                    selectedSubjects.aesthetic = subjectId;
+                }
+            } else if (category === "elective") {
+                // Elective selection
+                if (!selectedSubjects.electives.includes(subjectId)) {
+                    selectedSubjects.electives.push(subjectId);
+                }
+            } else if (category === "stream_subject") {
+                // Stream subject selection
+                if (!selectedSubjects.streamSubjects.includes(subjectId)) {
+                    selectedSubjects.streamSubjects.push(subjectId);
+                }
+            }
+        }
+    });
+
+    // Update counters
+    document.getElementById("electiveCount").textContent =
+        selectedSubjects.electives.length;
+    document.getElementById("streamSubjectCount").textContent =
+        selectedSubjects.streamSubjects.length;
+
+    // Update hidden inputs
+    updateSubjectHiddenInputs();
+}
+
 // Handle subject selection
 function handleSubjectSelection(input, category, inputType, maxSelection) {
     if (inputType === "radio") {
@@ -823,13 +896,13 @@ function handleSubjectSelection(input, category, inputType, maxSelection) {
                 } else {
                     input.checked = false;
                     alert(
-                        `You can only select ${maxSelection} elective subjects`
+                        `You can only select ${maxSelection} elective subjects`,
                     );
                     return;
                 }
             } else {
                 selectedSubjects.electives = selectedSubjects.electives.filter(
-                    (id) => id !== parseInt(input.value)
+                    (id) => id !== parseInt(input.value),
                 );
             }
             document.getElementById("electiveCount").textContent =
@@ -841,14 +914,14 @@ function handleSubjectSelection(input, category, inputType, maxSelection) {
                 } else {
                     input.checked = false;
                     alert(
-                        `You can only select ${maxSelection} subjects from your stream`
+                        `You can only select ${maxSelection} subjects from your stream`,
                     );
                     return;
                 }
             } else {
                 selectedSubjects.streamSubjects =
                     selectedSubjects.streamSubjects.filter(
-                        (id) => id !== parseInt(input.value)
+                        (id) => id !== parseInt(input.value),
                     );
             }
             document.getElementById("streamSubjectCount").textContent =
@@ -884,7 +957,7 @@ function handleStreamSelection(stream) {
         streamSubjects,
         "checkbox",
         "stream_subject",
-        3
+        3,
     );
 }
 
@@ -911,7 +984,7 @@ function updateSubjectHiddenInputs() {
 
     document.getElementById("subject_ids").value = JSON.stringify(allSubjects);
     document.getElementById("core_subject_ids").value = JSON.stringify(
-        selectedSubjects.core
+        selectedSubjects.core,
     );
 }
 
@@ -1019,7 +1092,7 @@ function validateSubjectSelections() {
                 .getElementById("streamSubjectsError")
                 .classList.remove("d-none");
             errors.push(
-                "Please select exactly 3 subjects from your chosen stream"
+                "Please select exactly 3 subjects from your chosen stream",
             );
             isValid = false;
         } else {
@@ -1032,7 +1105,7 @@ function validateSubjectSelections() {
     if (!isValid) {
         alert(
             "Please complete all required subject selections:\n\n" +
-                errors.join("\n")
+                errors.join("\n"),
         );
     }
 

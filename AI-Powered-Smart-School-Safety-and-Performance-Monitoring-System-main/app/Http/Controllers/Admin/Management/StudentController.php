@@ -78,7 +78,14 @@ class StudentController extends BaseManagementController
 
     protected function getValidationRules(bool $isUpdate = false, $id = null): array
     {
-        $rules = ValidationRules::getStudentRules($isUpdate, $id);
+        // For updates, convert student_id to user_id
+        $userId = null;
+        if ($isUpdate && $id) {
+            $student = $this->repository->getById($id);
+            $userId = $student ? $student->user_id : null;
+        }
+
+        $rules = ValidationRules::getStudentRules($isUpdate, $userId);
 
         // Add parent validation rules for creation/update
         $parentRules = ValidationRules::getParentArrayRules();
@@ -97,10 +104,8 @@ class StudentController extends BaseManagementController
             'status' => Status::ACTIVE->value,
         ]);
 
-        // Assign roles to user
-        if ($request->has('roles')) {
-            $user->assignRole($request->roles);
-        }
+        // Assign student role (automatically assigned)
+        $user->assignRole('student');
 
         // Prepare student data
         $studentData = $request->except([
@@ -515,5 +520,34 @@ class StudentController extends BaseManagementController
             'success' => true,
             'message' => 'RFID wristband removed.',
         ]);
+    }
+
+    /**
+     * Remove the face recognition data for a student.
+     */
+    public function removeFaceData(int $studentId)
+    {
+        try {
+            $faceDataPath = storage_path('app/face_data/' . $studentId);
+
+            // Remove the entire face data directory if it exists
+            if (is_dir($faceDataPath)) {
+                // Remove all files in the directory
+                $files = glob($faceDataPath . '/*');
+                foreach ($files as $file) {
+                    if (is_file($file)) {
+                        unlink($file);
+                    }
+                }
+                // Remove the directory itself
+                rmdir($faceDataPath);
+            }
+
+            return redirect()->route('admin.management.students.show', $studentId)
+                ->with('success', 'Face recognition data removed successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.management.students.show', $studentId)
+                ->with('error', 'Failed to remove face recognition data: ' . $e->getMessage());
+        }
     }
 }
