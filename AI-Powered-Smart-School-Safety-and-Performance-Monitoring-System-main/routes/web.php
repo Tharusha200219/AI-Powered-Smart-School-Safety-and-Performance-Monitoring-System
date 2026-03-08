@@ -187,6 +187,19 @@ Route::middleware(['auth'])->group(function () {
                 Route::delete('/devices/remove', 'devicesRemove')->name('devices.remove');
             });
 
+            // Events Management
+            Route::prefix('events')->name('events.')->controller(\App\Http\Controllers\Admin\Management\EventController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/create', 'create')->name('create');
+                Route::post('/', 'store')->name('store');
+                Route::get('/{event}/edit', 'edit')->name('edit');
+                Route::put('/{event}', 'update')->name('update');
+                Route::delete('/{event}', 'destroy')->name('destroy');
+                Route::get('/{event}/attendance', 'attendance')->name('attendance');
+                Route::get('/{event}/poll-scans', 'pollScans')->name('poll-scans');
+                Route::post('/stop-scanning', 'stopScanning')->name('stop-scanning');
+            });
+
             // Marks Management
             Route::prefix('marks')->name('marks.')->controller(MarkController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
