@@ -326,7 +326,6 @@ Route::middleware(['auth'])->group(function () {
 
                 // AJAX endpoints for settings page
                 Route::post('/school-info', 'updateSchoolInfo')->name('school-info');
-                Route::post('/theme', 'updateTheme')->name('theme');
                 Route::post('/academic', 'updateAcademic')->name('academic');
                 Route::post('/language', [SettingsController::class, 'updateLanguage'])->name('language');
                 Route::post('/attendance-mode', 'updateAttendanceMode')->name('attendance-mode');
@@ -337,10 +336,8 @@ Route::middleware(['auth'])->group(function () {
         // Dashboard Settings Routes
         Route::prefix('settings')->name('settings.')->controller(SettingsController::class)->group(function () {
             Route::post('/update-school-info', 'updateSchoolInfo')->name('update-school-info');
-            Route::post('/update-theme', 'updateTheme')->name('update-theme');
             Route::post('/update-academic', 'updateAcademic')->name('update-academic');
             Route::post('/update-social-media', 'updateSocialMedia')->name('update-social-media');
-            Route::get('/theme-colors', 'getThemeColors')->name('theme-colors');
         });
 
         // Notification API routes
