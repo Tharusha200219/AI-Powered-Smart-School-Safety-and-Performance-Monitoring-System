@@ -816,10 +816,39 @@ function preSelectExistingSubjects() {
 
     const subjectIds = window.selectedSubjects;
     if (!Array.isArray(subjectIds) || subjectIds.length === 0) {
+        // Even if no subjects, we might need to select the stream
+        if (
+            currentSubjectData.education_level === "Advanced Level" &&
+            window.selectedStream
+        ) {
+            handleStreamSelection(window.selectedStream);
+            const streamRadio = document.querySelector(
+                `input[name="stream"][value="${window.selectedStream}"]`,
+            );
+            if (streamRadio) {
+                streamRadio.checked = true;
+                streamRadio.closest(".stream-card")?.classList.add("active");
+            }
+        }
         return;
     }
 
-    // Get all subject checkboxes
+    // Special handling for Advanced Level stream selection first
+    if (
+        currentSubjectData.education_level === "Advanced Level" &&
+        window.selectedStream
+    ) {
+        handleStreamSelection(window.selectedStream);
+        const streamRadio = document.querySelector(
+            `input[name="stream"][value="${window.selectedStream}"]`,
+        );
+        if (streamRadio) {
+            streamRadio.checked = true;
+            streamRadio.closest(".stream-card")?.classList.add("active");
+        }
+    }
+
+    // Get all subject checkboxes (now they should be rendered if it was A-Level)
     const allCheckboxes = document.querySelectorAll(
         'input[type="radio"], input[type="checkbox"][name*="subject_"]',
     );
@@ -934,7 +963,7 @@ function handleSubjectSelection(input, category, inputType, maxSelection) {
 }
 
 // Handle stream selection for Advanced Level
-function handleStreamSelection(stream) {
+window.handleStreamSelection = function (stream) {
     selectedSubjects.stream = stream;
     selectedSubjects.streamSubjects = [];
 
@@ -959,7 +988,7 @@ function handleStreamSelection(stream) {
         "stream_subject",
         3,
     );
-}
+};
 
 // Update checkbox visual styles
 function updateSubjectCheckboxStyles(input) {

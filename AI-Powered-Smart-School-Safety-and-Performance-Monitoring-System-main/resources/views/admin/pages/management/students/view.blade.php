@@ -243,7 +243,7 @@
                                             @endphp
                                             
                                             <div class="d-flex align-items-center mb-3">
-                                                <div class="icon icon-shape icon-md shadow border-radius-sm {{ $hasFaceData ? 'bg-gradient-success' : 'bg-gradient-secondary' }} text-center me-3 d-flex align-items-center justify-content-center">
+                                                <div class="icon icon-shape icon-md shadow border-radius-sm {{ $hasFaceData ? 'bg-gradient-success' : 'bg-gradient-secondary' }} text-center me-3 d-flex  justify-content-center">
                                                     <i class="material-symbols-rounded opacity-10 text-white">face_retouching_natural</i>
                                                 </div>
                                                 <div>
@@ -273,7 +273,7 @@
                                     <div class="card shadow-none border">
                                         <div class="card-body p-3">
                                             <div class="d-flex align-items-center">
-                                                <div class="icon icon-shape icon-md shadow border-radius-sm bg-gradient-info text-center me-3 d-flex align-items-center justify-content-center">
+                                                <div class="icon icon-shape icon-md shadow border-radius-sm bg-gradient-info text-center me-3 d-flex justify-content-center">
                                                     <i class="material-symbols-rounded opacity-10 text-white">how_to_reg</i>
                                                 </div>
                                                 <div>
@@ -295,15 +295,16 @@
                 <div class="col-12">
                     <h5 class="mb-3">AI Analytics & Insights</h5>
                 </div>
+                <!-- Seating Arrangement -->
+                <div class="col-lg-16 mb-4">
+                    @include('admin.pages.management.students.partials.seating_card')
+                </div>
                 <!-- Performance Prediction -->
-                <div class="col-lg-8 mb-4">
+                <div class="col-lg-16 mb-4">
                     @include('admin.pages.management.students.partials.performance_prediction')
                 </div>
                 
-                <!-- Seating Arrangement -->
-                <div class="col-lg-4 mb-4">
-                    @include('admin.pages.management.students.partials.seating_card')
-                </div>
+                
             </div>
 
         </div>

@@ -3,7 +3,7 @@
     <div class="card-header d-flex justify-content-between align-items-center">
         <h6 class="mb-0 d-flex align-items-center">
             <i class="material-symbols-rounded me-2 icon-size-sm">trending_up</i>
-            Performance Prediction (AI Powered)
+            Performance Prediction 
         </h6>
         <span class="badge bg-gradient-info badge-sm">Live Prediction</span>
     </div>
@@ -29,12 +29,12 @@
             <!-- Overall Summary -->
             <div class="row mb-4" id="predictionSummary">
                 <div class="col-md-12">
-                    <div class="alert alert-gradient-info alert-with-icon" role="alert">
-                        <span class="alert-icon text-white"><i class="material-symbols-rounded">info</i></span>
+                    <div class="alert  alert-with-icon" role="alert">
+                        {{-- <span class="alert-icon text-white"><i class="material-symbols-rounded">info</i></span>
                         <span class="alert-text">
                             <strong>Prediction Summary:</strong> Based on current marks and attendance, the AI model
                             predicts student's performance trajectory for next term.
-                        </span>
+                        </span> --}}
                     </div>
                 </div>
             </div>
@@ -44,15 +44,15 @@
                 <table class="table table-hover mb-0">
                     <thead>
                         <tr>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Subject</th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Current</th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Predicted
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 p-0">Subject</th>
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 p-0">Current</th>
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 p-0">Predicted
                             </th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Improvement
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 p-0">Improvement
                             </th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Confidence
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 p-0">Confidence
                             </th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Trend</th>
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 p-0">Trend</th>
                         </tr>
                     </thead>
                     <tbody id="predictionTableBody">
