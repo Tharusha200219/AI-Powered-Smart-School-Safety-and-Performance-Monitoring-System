@@ -126,45 +126,6 @@ class SettingsController extends Controller
         }
     }
 
-    // AJAX endpoint for theme updates
-    public function updateTheme(Request $request)
-    {
-        try {
-            $validator = Validator::make($request->all(), [
-                'primary_color' => ['required', 'string', 'size:7', 'regex:~^#[0-9a-fA-F]{6}$~'],
-                'secondary_color' => ['required', 'string', 'size:7', 'regex:~^#[0-9a-fA-F]{6}$~'],
-                'accent_color' => ['required', 'string', 'size:7', 'regex:~^#[0-9a-fA-F]{6}$~'],
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors(),
-                ], 422);
-            }
-
-            $setting = Setting::first() ?? new Setting;
-
-            $setting->fill([
-                'primary_color' => $request->primary_color,
-                'secondary_color' => $request->secondary_color,
-                'accent_color' => $request->accent_color,
-            ]);
-
-            $setting->save();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Theme updated successfully',
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error updating theme: ' . $e->getMessage(),
-            ], 500);
-        }
-    }
 
     // AJAX endpoint for academic settings
     public function updateAcademic(Request $request)

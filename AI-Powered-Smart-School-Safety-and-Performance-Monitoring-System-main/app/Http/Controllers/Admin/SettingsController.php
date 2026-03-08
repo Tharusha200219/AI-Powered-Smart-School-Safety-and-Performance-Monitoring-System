@@ -63,46 +63,6 @@ class SettingsController extends Controller
         }
     }
 
-    public function updateTheme(Request $request)
-    {
-        try {
-            $validator = Validator::make($request->all(), [
-                'primary_color' => ['required', 'string', 'size:7', 'regex:~^#[0-9a-fA-F]{6}$~'],
-                'secondary_color' => ['required', 'string', 'size:7', 'regex:~^#[0-9a-fA-F]{6}$~'],
-                'accent_color' => ['required', 'string', 'size:7', 'regex:~^#[0-9a-fA-F]{6}$~'],
-                'theme_mode' => 'nullable|in:light,dark,auto',
-                'enable_animations' => 'nullable|boolean',
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors(),
-                ], 422);
-            }
-
-            $settings = Setting::first() ?? new Setting;
-
-            $settings->update([
-                'primary_color' => $request->primary_color,
-                'secondary_color' => $request->secondary_color,
-                'accent_color' => $request->accent_color,
-                'theme_mode' => $request->theme_mode,
-                'enable_animations' => $request->boolean('enable_animations'),
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Theme updated successfully',
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error updating theme: ' . $e->getMessage(),
-            ], 500);
-        }
-    }
 
     public function updateAcademic(Request $request)
     {
@@ -180,23 +140,6 @@ class SettingsController extends Controller
         }
     }
 
-    public function getThemeColors()
-    {
-        try {
-            $settings = Setting::first() ?? new Setting;
-
-            return response()->json([
-                'success' => true,
-                'colors' => $settings->theme_colors,
-                'css_variables' => $settings->css_variables,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error fetching theme colors: ' . $e->getMessage(),
-            ], 500);
-        }
-    }
 
     public function updateLanguage(Request $request)
     {
