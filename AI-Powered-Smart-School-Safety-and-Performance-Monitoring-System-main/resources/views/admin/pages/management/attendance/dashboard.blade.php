@@ -21,7 +21,7 @@
                         </div>
                         <div>
                             <a href="{{ route('admin.management.attendance.create') }}" class="btn btn-primary btn-sm">
-                                <i class="material-symbols-rounded text-sm">add</i> Manual Entry
+                                <i class="material-symbols-rounded text-sm">add</i> Attendance Marking
                             </a>
                             <a href="{{ route('admin.management.attendance.index') }}"
                                 class="btn btn-outline-secondary btn-sm">
