@@ -171,7 +171,7 @@
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         loadPerformancePrediction({{ $student->student_id }});
     });
 
@@ -187,15 +187,15 @@
 
         // Fetch prediction from API
         fetch(`/api/students/${studentId}/prediction`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
-                },
-                credentials: 'same-origin'
-            })
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+            },
+            credentials: 'same-origin'
+        })
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -292,7 +292,7 @@
                 <span class="trend-badge ${trendColor}">
                     <i class="material-symbols-rounded align-middle" style="font-size: 0.9rem;">
                         ${prediction.prediction_trend === 'improving' ? 'trending_up' :
-                          prediction.prediction_trend === 'declining' ? 'trending_down' : 'trending_flat'}
+                prediction.prediction_trend === 'declining' ? 'trending_down' : 'trending_flat'}
                     </i>
                     ${prediction.prediction_trend.charAt(0).toUpperCase() + prediction.prediction_trend.slice(1)}
                 </span>
@@ -341,7 +341,7 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <small class="text-muted">Trend:</small>
                                 <span class="trend-badge ${prediction.prediction_trend === 'improving' ? 'trend-improving' :
-                                                          prediction.prediction_trend === 'declining' ? 'trend-declining' : 'trend-stable'}">
+                prediction.prediction_trend === 'declining' ? 'trend-declining' : 'trend-stable'}">
                                     ${prediction.prediction_trend.charAt(0).toUpperCase() + prediction.prediction_trend.slice(1)}
                                 </span>
                             </div>
@@ -384,7 +384,7 @@
             <div class="col-md-3">
                 <div class="card">
                     <div class="card-body text-center">
-                        <i class="material-symbols-rounded text-info mb-2" style="font-size: 2rem;">average</i>
+                        <i class="material-symbols-rounded text-info mb-2" style="font-size: 2rem;">auto_graph</i>
                         <h6 class="mb-1">Avg. Improvement</h6>
                         <h3 class="text-info">${(totalImprovement / data.total_subjects).toFixed(1)}</h3>
                     </div>

@@ -9,433 +9,303 @@
         @include('admin.layouts.navbar')
 
         <div class="container-fluid pt-2">
-            <div class="row">
+            @include('admin.layouts.flash')
+            
+            <div class="row mb-4">
                 <div class="col-12">
-                    @include('admin.layouts.flash')
-                    <div class="card my-4">
-                        <div class="card-header">
-                            <div class="row">
-                                <div class="col-6 d-flex align-items-center">
-                                    <h6 class="mb-0">{{ pageTitle() }}</h6>
+                    <div class="card bg-gradient-dark">
+                        <div class="card-body p-3">
+                            <div class="row align-items-center">
+                                <div class="col-8">
+                                    <h6 class="text-white mb-0 d-flex align-items-center">
+                                        <i class="material-symbols-rounded me-2">engineering</i>
+                                        {{ pageTitle() }}
+                                    </h6>
+                                    <p class="text-sm text-white opacity-8 mb-0">Detailed student analytics and information dashboard</p>
                                 </div>
-                                <div class="col-6 text-end">
-                                    <a class="btn btn-outline-dark mb-0 btn-back-auto"
-                                        href="{{ route('admin.management.students.index') }}">
-                                        <i class="material-symbols-rounded me-1 icon-size-md">arrow_back</i>Back
+                                <div class="col-4 text-end">
+                                    <a class="btn btn-outline-white mb-0 btn-sm" href="{{ route('admin.management.students.index') }}">
+                                        <i class="material-symbols-rounded me-1" style="font-size: 1rem;">arrow_back</i> Back to List
                                     </a>
                                 </div>
                             </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-16">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h6 class="mb-0 d-flex align-items-center">
-                                                <i class="material-symbols-rounded me-2 icon-size-sm">person</i>
-                                                Student Profile
-                                            </h6>
-                                        </div>
-                                        <div class="card-body text-center">
-                                            <div class="avatar avatar-xl rounded-circle bg-gradient-primary mx-auto mb-3">
-                                                <span
-                                                    class="text-white text-lg">{{ strtoupper(substr($student->first_name, 0, 1) . substr($student->last_name, 0, 1)) }}</span>
-                                            </div>
-                                            <h5 class="mb-1">{{ $student->full_name }}</h5>
-                                            <p class="text-secondary mb-2">{{ $student->student_code }}</p>
-                                            <span
-                                                class="badge {{ $student->is_active ? 'bg-gradient-success' : 'bg-gradient-danger' }} badge-sm">
-                                                {{ $student->is_active ? 'Active' : 'Inactive' }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-16">
-                                    <div class="card mb-4">
-                                        <div class="card-header">
-                                            <h6 class="mb-0 d-flex align-items-center">
-                                                <i class="material-symbols-rounded me-2 icon-size-sm">info</i>
-                                                Personal Information
-                                            </h6>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-sm-6">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Full Name:</label>
-                                                        <p class="text-dark font-weight-bold">{{ $student->full_name }}</p>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Student Code:</label>
-                                                        <p class="text-dark font-weight-bold">{{ $student->student_code }}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Date of Birth:</label>
-                                                        <p class="text-dark font-weight-bold">
-                                                            {{ $student->date_of_birth ? $student->date_of_birth->format('M d, Y') : 'Not provided' }}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Gender:</label>
-                                                        <p class="text-dark font-weight-bold">
-                                                            {{ $student->gender ?? 'Not specified' }}</p>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Phone:</label>
-                                                        <p class="text-dark font-weight-bold">
-                                                            @if ($student->mobile_phone)
-                                                                <a href="tel:{{ $student->mobile_phone }}"
-                                                                    class="text-decoration-none">
-                                                                    {{ $student->mobile_phone }}
-                                                                </a>
-                                                            @else
-                                                                <span class="text-muted">Not provided</span>
-                                                            @endif
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">NIC Number:</label>
-                                                        <p class="text-dark font-weight-bold">
-                                                            {{ $student->nic_number ?? 'Not provided' }}</p>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Address:</label>
-                                                        <p class="text-dark font-weight-bold">
-                                                            @if ($student->address_line1)
-                                                                <small class="text-muted">
-                                                                    {{ $student->address_line1 }}
-                                                                    @if ($student->address_line2)
-                                                                        , {{ $student->address_line2 }}
-                                                                    @endif
-                                                                    @if ($student->city)
-                                                                        <br>{{ $student->city }}
-                                                                    @endif
-                                                                    @if ($student->state)
-                                                                        , {{ $student->state }}
-                                                                    @endif
-                                                                    @if ($student->postal_code)
-                                                                        {{ $student->postal_code }}
-                                                                    @endif
-                                                                    @if ($student->country)
-                                                                        <br>{{ $student->country }}
-                                                                    @endif
-                                                                </small>
-                                                            @else
-                                                                <span class="text-muted">Not provided</span>
-                                                            @endif
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="card mb-4">
-                                        <div class="card-header">
-                                            <h6 class="mb-0 d-flex align-items-center">
-                                                <i class="material-symbols-rounded me-2 icon-size-sm">school</i>
-                                                Academic Information
-                                            </h6>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-sm-6">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Grade Level:</label>
-                                                        <p class="text-dark font-weight-bold">
-                                                            <span class="badge bg-gradient-primary badge-sm">Grade
-                                                                {{ $student->grade_level }}</span>
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Class:</label>
-                                                        <p class="text-dark font-weight-bold">
-                                                            @if ($student->schoolClass)
-                                                                {{ $student->schoolClass->class_name }}
-                                                                @if ($student->schoolClass->classTeacher)
-                                                                    <br><small class="text-secondary">Class Teacher:
-                                                                        {{ $student->schoolClass->classTeacher->full_name }}</small>
-                                                                @endif
-                                                            @else
-                                                                <span class="text-muted">Not assigned</span>
-                                                            @endif
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Admission Date:</label>
-                                                        <p class="text-dark font-weight-bold">
-                                                            {{ $student->admission_date ? $student->admission_date->format('M d, Y') : 'Not provided' }}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Email:</label>
-                                                        <p class="text-dark font-weight-bold">
-                                                            {{ $student->user->email ?? 'Not provided' }}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    @if ($student->parents->count() > 0)
-                                        <div class="card mb-4">
-                                            <div class="card-header">
-                                                <h6 class="mb-0 d-flex align-items-center">
-                                                    <i
-                                                        class="material-symbols-rounded me-2 icon-size-sm">family_restroom</i>
-                                                    Parent Information
-                                                    <span
-                                                        class="badge bg-gradient-info badge-sm ms-2">{{ $student->parents->count() }}
-                                                        Parent{{ $student->parents->count() > 1 ? 's' : '' }}</span>
-                                                </h6>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    @foreach ($student->parents as $index => $parent)
-                                                        <div class="col-md-6 mb-4">
-                                                            <div class="card border">
-                                                                <div class="card-header bg-light">
-                                                                    <div
-                                                                        class="d-flex justify-content-between align-items-center">
-                                                                        <h6 class="mb-0">{{ $parent->full_name }}</h6>
-                                                                        @if ($parent->is_emergency_contact)
-                                                                            <span
-                                                                                class="badge bg-gradient-warning badge-sm">Emergency
-                                                                                Contact</span>
-                                                                        @endif
-                                                                    </div>
-                                                                </div>
-                                                                <div class="card-body">
-                                                                    <div class="row">
-                                                                        <div class="col-12 mb-2">
-                                                                            <strong>Parent Code:</strong>
-                                                                            {{ $parent->parent_code }}
-                                                                        </div>
-                                                                        <div class="col-12 mb-2">
-                                                                            <strong>Relationship:</strong>
-                                                                            <span
-                                                                                class="badge bg-gradient-primary badge-sm">{{ $parent->relationship_type }}</span>
-                                                                        </div>
-                                                                        <div class="col-12 mb-2">
-                                                                            <strong>Gender:</strong>
-                                                                            @if ($parent->gender == 'M')
-                                                                                <span
-                                                                                    class="badge bg-gradient-info badge-sm">Male</span>
-                                                                            @elseif($parent->gender == 'F')
-                                                                                <span
-                                                                                    class="badge bg-gradient-pink badge-sm">Female</span>
-                                                                            @else
-                                                                                <span
-                                                                                    class="badge bg-gradient-secondary badge-sm">{{ $parent->gender }}</span>
-                                                                            @endif
-                                                                        </div>
-                                                                        @if ($parent->date_of_birth)
-                                                                            <div class="col-12 mb-2">
-                                                                                <strong>Date of Birth:</strong>
-                                                                                {{ $parent->date_of_birth->format('M d, Y') }}
-                                                                            </div>
-                                                                        @endif
-                                                                        @if ($parent->mobile_phone)
-                                                                            <div class="col-12 mb-2">
-                                                                                <strong>Mobile:</strong>
-                                                                                <a href="tel:{{ $parent->mobile_phone }}"
-                                                                                    class="text-decoration-none">
-                                                                                    {{ $parent->mobile_phone }}
-                                                                                </a>
-                                                                            </div>
-                                                                        @endif
-                                                                        @if ($parent->email)
-                                                                            <div class="col-12 mb-2">
-                                                                                <strong>Email:</strong>
-                                                                                <a href="mailto:{{ $parent->email }}"
-                                                                                    class="text-decoration-none">
-                                                                                    {{ $parent->email }}
-                                                                                </a>
-                                                                            </div>
-                                                                        @endif
-                                                                        @if ($parent->occupation)
-                                                                            <div class="col-12 mb-2">
-                                                                                <strong>Occupation:</strong>
-                                                                                {{ $parent->occupation }}
-                                                                            </div>
-                                                                        @endif
-                                                                        @if ($parent->workplace)
-                                                                            <div class="col-12 mb-2">
-                                                                                <strong>Workplace:</strong>
-                                                                                {{ $parent->workplace }}
-                                                                            </div>
-                                                                        @endif
-                                                                        @if ($parent->work_phone)
-                                                                            <div class="col-12 mb-2">
-                                                                                <strong>Work Phone:</strong>
-                                                                                <a href="tel:{{ $parent->work_phone }}"
-                                                                                    class="text-decoration-none">
-                                                                                    {{ $parent->work_phone }}
-                                                                                </a>
-                                                                            </div>
-                                                                        @endif
-                                                                        @if ($parent->address_line1)
-                                                                            <div class="col-12">
-                                                                                <strong>Address:</strong><br>
-                                                                                <small class="text-muted">
-                                                                                    {{ $parent->address_line1 }}
-                                                                                    @if ($parent->address_line2)
-                                                                                        , {{ $parent->address_line2 }}
-                                                                                    @endif
-                                                                                    @if ($parent->city)
-                                                                                        <br>{{ $parent->city }}
-                                                                                    @endif
-                                                                                    @if ($parent->state)
-                                                                                        , {{ $parent->state }}
-                                                                                    @endif
-                                                                                    @if ($parent->postal_code)
-                                                                                        {{ $parent->postal_code }}
-                                                                                    @endif
-                                                                                    @if ($parent->country)
-                                                                                        <br>{{ $parent->country }}
-                                                                                    @endif
-                                                                                </small>
-                                                                            </div>
-                                                                        @endif
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif
-
-                                    @if ($student->subjects->count() > 0)
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h6 class="mb-0 d-flex align-items-center">
-                                                    <i class="material-symbols-rounded me-2 icon-size-sm">subject</i>
-                                                    Enrolled Subjects
-                                                </h6>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    @foreach ($student->subjects as $subject)
-                                                        <div class="col-md-4 mb-3">
-                                                            <div class="border rounded p-3 text-center">
-                                                                <h6 class="mb-2">{{ $subject->subject_name }}</h6>
-                                                                <p class="mb-1"><strong>Code:</strong>
-                                                                    {{ $subject->subject_code }}</p>
-                                                                <span
-                                                                    class="badge bg-gradient-info badge-sm">{{ $subject->category }}</span>
-                                                                @if ($subject->credits)
-                                                                    <br><small
-                                                                        class="text-secondary">{{ $subject->credits }}
-                                                                        Credits</small>
-                                                                @endif
-                                                            </div>
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif
-
-                                    <!-- Face Recognition Section -->
-                                    <div class="card mb-4">
-                                        <div class="card-header"
-                                            style="background: linear-gradient(45deg, #1a3a6e, #2563eb);">
-                                            <h6 class="mb-0 d-flex align-items-center text-white">
-                                                <i
-                                                    class="material-symbols-rounded me-2 icon-size-sm">face_retouching_natural</i>
-                                                Face Recognition Status
-                                            </h6>
-                                        </div>
-                                        <div class="card-body">
-                                            @php
-                                                $faceDataPath = 'face_data/' . $student->student_id;
-                                                $hasFaceData = file_exists(
-                                                    storage_path('app/' . $faceDataPath . '/model.pkl'),
-                                                );
-                                            @endphp
-
-                                            <div class="d-flex align-items-center gap-3 flex-wrap">
-                                                <span
-                                                    class="badge fs-6 px-3 py-2 {{ $hasFaceData ? 'bg-success' : 'bg-secondary' }}">
-                                                    <i class="material-symbols-rounded me-1"
-                                                        style="font-size:1rem;vertical-align:middle">face</i>
-                                                    {{ $hasFaceData ? 'Registered' : 'Not Registered' }}
-                                                </span>
-
-                                                @if ($hasFaceData)
-                                                    <button type="button" class="btn btn-sm btn-warning"
-                                                        onclick="if(confirm('Are you sure you want to remove the face recognition data?')) { window.location.href='{{ route('admin.management.students.remove-face', $student->student_id) }}'; }">
-                                                        <i class="material-symbols-rounded me-1"
-                                                            style="font-size:1rem">delete</i>
-                                                        Remove Face Data
-                                                    </button>
-                                                    <button type="button" class="btn btn-sm btn-primary"
-                                                        onclick="alert('Please go to Edit Student page to re-capture face data')">
-                                                        <i class="material-symbols-rounded me-1"
-                                                            style="font-size:1rem">photo_camera</i>
-                                                        Re-capture
-                                                    </button>
-                                                @endif
-                                            </div>
-
-                                            @if ($hasFaceData)
-                                                <p class="text-muted small mt-3 mb-0">
-                                                    <i class="material-symbols-rounded align-middle me-1"
-                                                        style="font-size:.85rem">check_circle</i>
-                                                    Face data successfully registered and trained
-                                                </p>
-                                            @else
-                                                <p class="text-muted small mt-3 mb-0">
-                                                    <i class="material-symbols-rounded align-middle me-1"
-                                                        style="font-size:.85rem">info</i>
-                                                    Go to Edit Student to set up face recognition for this student
-                                                </p>
-                                            @endif
-                                        </div>
-                                    </div>
-
-                                    <!-- Performance Prediction Section -->
-                                    @include('admin.pages.management.students.partials.performance_prediction')
-
-                                    <!-- Seating Arrangement Section -->
-                                    @include('admin.pages.management.students.partials.seating_card')
-
-                                </div>
-                            </div>
-
-                            @if (checkPermission('admin.management.students.edit'))
-                                <div class="text-end mt-4">
-                                    <a href="{{ route('admin.management.students.form', ['id' => $student->student_id]) }}"
-                                        class="btn btn-primary">
-                                        <i class="material-symbols-rounded me-1">edit</i>Edit Student
-                                    </a>
-                                </div>
-                            @endif
                         </div>
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                <!-- Left Sidebar: Profile Summary -->
+                <div class="col-lg-4 col-md-5 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center p-4">
+                            <!-- Avatar -->
+                            <div class="avatar avatar-xxl rounded-circle bg-gradient-primary mx-auto mb-3 shadow">
+                                <span class="text-white h3 m-0">{{ strtoupper(substr($student->first_name, 0, 1) . substr($student->last_name, 0, 1)) }}</span>
+                            </div>
+                            
+                            <!-- Basic Details -->
+                            <h4 class="mb-1">{{ $student->full_name }}</h4>
+                            <p class="text-secondary font-weight-bold mb-2">{{ $student->student_code }}</p>
+                            
+                            <div class="d-flex justify-content-center gap-2 mb-4">
+                                <span class="badge {{ $student->is_active ? 'bg-gradient-success' : 'bg-gradient-danger' }} badge-sm">
+                                    {{ $student->is_active ? 'Active' : 'Inactive' }}
+                                </span>
+                                <span class="badge bg-gradient-info badge-sm">Grade {{ $student->grade_level }}</span>
+                            </div>
+
+                            <hr class="horizontal dark my-4">
+                            
+                            <!-- Quick Info -->
+                            <div class="text-start">
+                                <p class="text-sm mb-2 text-dark font-weight-bold">QUICK INFORMATION</p>
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="icon icon-shape icon-sm shadow border-radius-sm bg-gradient-primary text-center me-2 d-flex align-items-center justify-content-center">
+                                        <i class="material-symbols-rounded opacity-10 text-white" style="font-size:16px;">class</i>
+                                    </div>
+                                    <div class="text-sm">
+                                        <h6 class="mb-0 text-sm">Class</h6>
+                                        <p class="mb-0 text-xs text-secondary">{{ $student->schoolClass ? $student->schoolClass->class_name : 'Not assigned' }}</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="icon icon-shape icon-sm shadow border-radius-sm bg-gradient-primary text-center me-2 d-flex align-items-center justify-content-center">
+                                        <i class="material-symbols-rounded opacity-10 text-white" style="font-size:16px;">calendar_today</i>
+                                    </div>
+                                    <div class="text-sm">
+                                        <h6 class="mb-0 text-sm">Admission Date</h6>
+                                        <p class="mb-0 text-xs text-secondary">{{ $student->admission_date ? $student->admission_date->format('M d, Y') : 'Not provided' }}</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="icon icon-shape icon-sm shadow border-radius-sm bg-gradient-primary text-center me-2 d-flex align-items-center justify-content-center">
+                                        <i class="material-symbols-rounded opacity-10 text-white" style="font-size:16px;">phone</i>
+                                    </div>
+                                    <div class="text-sm">
+                                        <h6 class="mb-0 text-sm">Phone</h6>
+                                        <p class="mb-0 text-xs text-secondary">{{ $student->mobile_phone ?: 'Not provided' }}</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="icon icon-shape icon-sm shadow border-radius-sm bg-gradient-primary text-center me-2 d-flex align-items-center justify-content-center">
+                                        <i class="material-symbols-rounded opacity-10 text-white" style="font-size:16px;">email</i>
+                                    </div>
+                                    <div class="text-sm">
+                                        <h6 class="mb-0 text-sm">Email</h6>
+                                        <p class="mb-0 text-xs text-secondary">{{ $student->user->email ?? 'Not provided' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            @if (checkPermission('admin.management.students.edit'))
+                                <hr class="horizontal dark my-4">
+                                <a href="{{ route('admin.management.students.form', ['id' => $student->student_id]) }}" class="btn btn-outline-primary w-100 mb-0">
+                                    <i class="material-symbols-rounded me-1" style="font-size: 1rem;">edit</i> Edit Student Settings
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Content: Tabbed Interface -->
+                <div class="col-lg-8 col-md-7 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header pb-0 p-3">
+                            <div class="nav-wrapper position-relative end-0">
+                                <ul class="nav nav-pills nav-fill p-1" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link mb-0 px-0 py-1 active" data-bs-toggle="tab" href="#personal-info" role="tab" aria-selected="true">
+                                            <i class="material-symbols-rounded align-middle me-1">person</i>
+                                            <span class="ms-1">Details</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link mb-0 px-0 py-1" data-bs-toggle="tab" href="#academics" role="tab" aria-selected="false">
+                                            <i class="material-symbols-rounded align-middle me-1">school</i>
+                                            <span class="ms-1">Academics</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link mb-0 px-0 py-1" data-bs-toggle="tab" href="#parents" role="tab" aria-selected="false">
+                                            <i class="material-symbols-rounded align-middle me-1">family_restroom</i>
+                                            <span class="ms-1">Parents</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link mb-0 px-0 py-1" data-bs-toggle="tab" href="#security" role="tab" aria-selected="false">
+                                            <i class="material-symbols-rounded align-middle me-1">security</i>
+                                            <span class="ms-1">Security</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="tab-content" id="v-pills-tabContent">
+                                <!-- Personal Info Tab -->
+                                <div class="tab-pane fade show active" id="personal-info" role="tabpanel">
+                                    <h6 class="mb-3 text-uppercase text-body text-xs font-weight-bolder">Personal Information</h6>
+                                    <ul class="list-group">
+                                        <li class="list-group-item border-0 ps-0 pt-0 text-sm"><strong class="text-dark">Full Name:</strong> &nbsp; {{ $student->full_name }}</li>
+                                        <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Date of Birth:</strong> &nbsp; {{ $student->date_of_birth ? $student->date_of_birth->format('M d, Y') : 'Not provided' }}</li>
+                                        <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Gender:</strong> &nbsp; {{ $student->gender ?? 'Not specified' }}</li>
+                                        <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">NIC Number:</strong> &nbsp; {{ $student->nic_number ?? 'Not provided' }}</li>
+                                        <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Address:</strong> &nbsp; 
+                                            @if ($student->address_line1)
+                                                {{ $student->address_line1 }}
+                                                @if ($student->address_line2), {{ $student->address_line2 }}@endif
+                                                @if ($student->city), {{ $student->city }}@endif
+                                                @if ($student->state), {{ $student->state }}@endif
+                                                @if ($student->postal_code) {{ $student->postal_code }}@endif
+                                                @if ($student->country), {{ $student->country }}@endif
+                                            @else
+                                                <span class="text-muted">Not provided</span>
+                                            @endif
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <!-- Academics Tab -->
+                                <div class="tab-pane fade" id="academics" role="tabpanel">
+                                    <h6 class="mb-3 text-uppercase text-body text-xs font-weight-bolder">Enrolled Subjects</h6>
+                                    @if ($student->subjects->count() > 0)
+                                        <div class="row">
+                                            @foreach ($student->subjects as $subject)
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="card shadow-none border h-100">
+                                                        <div class="card-body p-3">
+                                                            <div class="d-flex align-items-center">
+                                                                <div class="icon icon-shape icon-sm shadow border-radius-sm bg-gradient-info text-center me-3 d-flex align-items-center justify-content-center">
+                                                                    <i class="material-symbols-rounded opacity-10 text-white" style="font-size:16px;">library_books</i>
+                                                                </div>
+                                                                <div>
+                                                                    <h6 class="mb-0 text-sm">{{ $subject->subject_name }}</h6>
+                                                                    <span class="text-xs text-secondary">{{ $subject->subject_code }} | {{ $subject->category }}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <div class="alert alert-light" role="alert">
+                                            No subjects enrolled.
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <!-- Parents Tab -->
+                                <div class="tab-pane fade" id="parents" role="tabpanel">
+                                    <h6 class="mb-3 text-uppercase text-body text-xs font-weight-bolder">Parent Information</h6>
+                                    @if ($student->parents->count() > 0)
+                                        <div class="row">
+                                            @foreach ($student->parents as $index => $parent)
+                                                <div class="col-md-12 mb-3">
+                                                    <div class="card shadow-none border">
+                                                        <div class="card-body p-3">
+                                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                                <h6 class="mb-0 d-flex align-items-center">
+                                                                    <i class="material-symbols-rounded me-2 text-primary" style="font-size: 1.2rem;">escalator_warning</i>
+                                                                    {{ $parent->full_name }}
+                                                                </h6>
+                                                                @if ($parent->is_emergency_contact)
+                                                                    <span class="badge bg-gradient-warning badge-sm">Emergency</span>
+                                                                @endif
+                                                            </div>
+                                                            <div class="row text-sm">
+                                                                <div class="col-sm-6 mb-2"><strong>Relationship:</strong> <span class="badge bg-gradient-primary badge-sm ms-1">{{ $parent->relationship_type }}</span></div>
+                                                                <div class="col-sm-6 mb-2"><strong>Phone:</strong> <a href="tel:{{ $parent->mobile_phone }}" class="text-secondary">{{ $parent->mobile_phone ?: 'N/A' }}</a></div>
+                                                                <div class="col-sm-6 mb-2"><strong>Email:</strong> <a href="mailto:{{ $parent->email }}" class="text-secondary">{{ $parent->email ?: 'N/A' }}</a></div>
+                                                                <div class="col-sm-6 mb-2"><strong>Workplace:</strong> <span class="text-secondary">{{ $parent->workplace ?: 'N/A' }}</span></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <div class="alert alert-light" role="alert">
+                                            No parent information available.
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <!-- Security Tab -->
+                                <div class="tab-pane fade" id="security" role="tabpanel">
+                                    <h6 class="mb-3 text-uppercase text-body text-xs font-weight-bolder">Face Recognition Status</h6>
+                                    <div class="card shadow-none border mb-4">
+                                        <div class="card-body p-3">
+                                            @php
+                                                $faceDataPath = 'face_data/' . $student->student_id;
+                                                $hasFaceData = file_exists(storage_path('app/' . $faceDataPath . '/model.pkl'));
+                                            @endphp
+                                            
+                                            <div class="d-flex align-items-center mb-3">
+                                                <div class="icon icon-shape icon-md shadow border-radius-sm {{ $hasFaceData ? 'bg-gradient-success' : 'bg-gradient-secondary' }} text-center me-3 d-flex align-items-center justify-content-center">
+                                                    <i class="material-symbols-rounded opacity-10 text-white">face_retouching_natural</i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-0">{{ $hasFaceData ? 'Registered successfully' : 'Not registered' }}</h6>
+                                                    <p class="text-sm mb-0 text-secondary">
+                                                        {{ $hasFaceData ? 'Face data is stored securely and ready for attendance.' : 'No face data captured yet. Register in the edit menu.' }}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            @if ($hasFaceData)
+                                                <div class="d-flex gap-2">
+                                                    <button type="button" class="btn btn-sm btn-outline-warning mb-0"
+                                                        onclick="if(confirm('Are you sure you want to remove the face recognition data?')) { window.location.href='{{ route('admin.management.students.remove-face', $student->student_id) }}'; }">
+                                                        Remove Data
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-outline-primary mb-0"
+                                                        onclick="alert('Please go to Edit Student page to re-capture face data')">
+                                                        Re-capture
+                                                    </button>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    
+                                    <h6 class="mb-3 text-uppercase text-body text-xs font-weight-bolder">System Access</h6>
+                                    <div class="card shadow-none border">
+                                        <div class="card-body p-3">
+                                            <div class="d-flex align-items-center">
+                                                <div class="icon icon-shape icon-md shadow border-radius-sm bg-gradient-info text-center me-3 d-flex align-items-center justify-content-center">
+                                                    <i class="material-symbols-rounded opacity-10 text-white">how_to_reg</i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-0">User Account</h6>
+                                                    <p class="text-sm mb-0 text-secondary">Student portal access is {{ $student->is_active ? 'active' : 'revoked' }}.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI Analytics Section (Full Width Bottom) -->
+            <div class="row">
+                <div class="col-12">
+                    <h5 class="mb-3">AI Analytics & Insights</h5>
+                </div>
+                <!-- Performance Prediction -->
+                <div class="col-lg-8 mb-4">
+                    @include('admin.pages.management.students.partials.performance_prediction')
+                </div>
+                
+                <!-- Seating Arrangement -->
+                <div class="col-lg-4 mb-4">
+                    @include('admin.pages.management.students.partials.seating_card')
+                </div>
+            </div>
+
         </div>
     </main>
 @endsection
