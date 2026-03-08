@@ -48,7 +48,9 @@ mediapipe>=0.10.0
 # ─── Face Recognition ──────────────────────────────────────────────────────────────
 facenet-pytorch>=2.5.3
 mtcnn>=0.1.1
-
+# ─── RFID Bridge & Hardware Communication ──────────────────────────────────────────
+pyserial>=3.5
+requests>=2.32.5
 # ─── Data Processing & ML Utilities ────────────────────────────────────────────────
 numpy>=1.26.0
 pandas>=2.0.0

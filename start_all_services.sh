@@ -73,26 +73,23 @@ echo "   ✓ Facial Recognition API started (PID: $!)"
 sleep 2
 
 # 7. Start RFID Serial Bridge (Arduino UNO R3 + RC522)
-echo "7. Starting RFID Serial Bridge..."
-VENV_PY="$SCRIPT_DIR/rfid_venv/bin/python3"
-RFID_SCRIPT="$SCRIPT_DIR/AI-Powered-Smart-School-Safety-and-Performance-Monitoring-System-main/arduino/rfid_bridge.py"
-if [ -f "$VENV_PY" ] && [ -f "$RFID_SCRIPT" ]; then
+echo "7. Starting RFID Serial Bridge (Arduino + RC522)..."
+RFID_SCRIPT="$SCRIPT_DIR/rfid bridge/rfid_bridge.py"
+if [ -f "$RFID_SCRIPT" ]; then
     # Auto-detect Arduino port (prefer usbserial, skip WiFi/Bluetooth ports)
     ARDUINO_PORT=$(ls /dev/cu.usbserial-* /dev/cu.usbmodem* 2>/dev/null | head -1)
     if [ -z "$ARDUINO_PORT" ]; then
         ARDUINO_PORT=$(ls /dev/tty.usbserial-* /dev/tty.usbmodem* 2>/dev/null | head -1)
     fi
-    RFID_ENV="SERVER_URL=http://127.0.0.1:8000"
     if [ -n "$ARDUINO_PORT" ]; then
-        RFID_ENV="$RFID_ENV RFID_PORT=$ARDUINO_PORT"
         echo "   📡 Arduino detected on $ARDUINO_PORT"
     else
         echo "   ⚠ Arduino port not found — bridge will attempt auto-detect"
     fi
-    env SERVER_URL="http://127.0.0.1:8000" RFID_PORT="${ARDUINO_PORT:-}" "$VENV_PY" "$RFID_SCRIPT" > "$LOGS_DIR/rfid_bridge.log" 2>&1 &
+    env SERVER_URL="http://127.0.0.1:8000" RFID_PORT="${ARDUINO_PORT:-}" python3 "$RFID_SCRIPT" > "$LOGS_DIR/rfid_bridge.log" 2>&1 &
     echo "   ✓ RFID Bridge started (PID: $!) — watching for Arduino on USB"
 else
-    echo "   ⚠ RFID Bridge skipped (venv or script not found — this is optional)"
+    echo "   ⚠ RFID Bridge skipped (script not found at $RFID_SCRIPT — this is optional)"
 fi
 sleep 1
 

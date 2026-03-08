@@ -50,6 +50,18 @@ $facialPath = Join-Path $scriptDir "Facial Recognition Attendance Systems"
 Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$facialPath'; Write-Host '👤 Facial Recognition Attendance API' -ForegroundColor Cyan; Write-Host 'Port: 5004' -ForegroundColor Green; Write-Host ''; python app.py"
 Start-Sleep -Seconds 2
 
+# Start RFID Serial Bridge
+Write-Host "7. Starting RFID Serial Bridge (Arduino + RC522)..." -ForegroundColor White
+$rfidPath = Join-Path $scriptDir "rfid bridge"
+$rfidScript = Join-Path $rfidPath "rfid_bridge.py"
+if (Test-Path $rfidScript) {
+    $env:SERVER_URL = "http://127.0.0.1:8000"
+    Start-Process powershell -ArgumentList "-NoExit", "-Command", "`$rfidPath = '$rfidPath'; cd `$rfidPath; Write-Host '📡 RFID Serial Bridge (Arduino RC522)' -ForegroundColor Cyan; Write-Host 'Server: http://127.0.0.1:8000' -ForegroundColor Green; Write-Host ''; `$env:SERVER_URL='http://127.0.0.1:8000'; python rfid_bridge.py"
+    Start-Sleep -Seconds 2
+} else {
+    Write-Host "⚠️  RFID Bridge not found - skipping (optional)" -ForegroundColor Yellow
+}
+
 Write-Host ""
 Write-Host "⏳ Waiting for services to start..." -ForegroundColor Yellow
 Start-Sleep -Seconds 8

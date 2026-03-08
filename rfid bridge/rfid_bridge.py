@@ -163,7 +163,7 @@ def read_loop(port: str) -> None:
 
             log.info("Card scanned: UID=%s  device=%s", uid, device_id)
             # Run the HTTP call in a daemon thread so serial reading resumes
-            # immediately — the Arduino won’t miss a quick second tap while
+            # immediately — the Arduino won't miss a quick second tap while
             # waiting for the server response.
             threading.Thread(
                 target=forward_to_server, args=(uid, device_id), daemon=True

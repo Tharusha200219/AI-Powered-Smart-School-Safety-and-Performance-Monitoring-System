@@ -69,11 +69,8 @@ echo ""
 
 # 6. RFID Serial Bridge
 echo -e "${YELLOW}Installing RFID Serial Bridge dependencies...${NC}"
-RFID_BRIDGE_DIR="$SCRIPT_DIR/AI-Powered-Smart-School-Safety-and-Performance-Monitoring-System-main/arduino"
+RFID_BRIDGE_DIR="$SCRIPT_DIR/rfid bridge"
 if [ -d "$RFID_BRIDGE_DIR" ] && [ -f "$RFID_BRIDGE_DIR/rfid_bridge.py" ]; then
-    echo "pyserial>=3.5" > "$RFID_BRIDGE_DIR/requirements.txt"
-    echo "requests>=2.32.5" >> "$RFID_BRIDGE_DIR/requirements.txt"
-    
     python3 -m pip install --break-system-packages -q pyserial requests
     
     if [ $? -eq 0 ]; then
@@ -82,7 +79,7 @@ if [ -d "$RFID_BRIDGE_DIR" ] && [ -f "$RFID_BRIDGE_DIR/rfid_bridge.py" ]; then
         echo -e "${RED}✗ Failed to install RFID Serial Bridge dependencies${NC}"
     fi
 else
-    echo -e "${YELLOW}⚠️  RFID Bridge directory or script not found (optional)${NC}"
+    echo -e "${YELLOW}⚠️  RFID Bridge not found at $RFID_BRIDGE_DIR (optional)${NC}"
 fi
 echo ""
 
