@@ -50,8 +50,8 @@ class Config:
     # Recognition model: 'arcface', 'facenet', 'facenet512'
     RECOGNITION_MODEL: str = "arcface"
     EMBEDDING_SIZE: int = 512  # ArcFace embedding dimension
-    RECOGNITION_THRESHOLD: float = 0.58  # Tuned: 0.65 was too strict for webcam quality images
-    UNKNOWN_THRESHOLD: float = 0.42  # Below this, definitely unknown
+    RECOGNITION_THRESHOLD: float = 0.55  # Tuned: lowered to 0.55 for more instant recognition
+    UNKNOWN_THRESHOLD: float = 0.40  # Below this, definitely unknown
     
     # ===========================================
     # Face Capture Settings

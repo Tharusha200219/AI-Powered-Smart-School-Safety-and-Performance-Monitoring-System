@@ -28,26 +28,48 @@ class MarkSeeder extends Seeder
         $marksCreated = 0;
 
         foreach ($students as $student) {
+            $studentSubjects = $student->subjects;
+
+            // If the student doesn't have any subjects, assign some random ones
+            if ($studentSubjects->isEmpty()) {
+                // Try to get subjects for their grade level, otherwise just get any random subjects
+                if ($student->grade_level) {
+                    $randomSubjects = \App\Models\Subject::where('grade_level', $student->grade_level)->inRandomOrder()->take(5)->get();
+                } else {
+                    $randomSubjects = \App\Models\Subject::inRandomOrder()->take(5)->get();
+                }
+
+                if ($randomSubjects->isNotEmpty()) {
+                    $student->subjects()->sync($randomSubjects->pluck('id')->toArray());
+                    // Reload subjects to get the newly attached ones
+                    $studentSubjects = $student->fresh()->subjects;
+                }
+            }
+
             // Create marks for each subject the student is enrolled in
-            foreach ($student->subjects as $subject) {
+            foreach ($studentSubjects as $subject) {
                 // Create marks for each term
                 foreach ($terms as $term) {
                     // Generate random marks (between 0-98)
                     $totalMarks = 100;
                     $obtainedMarks = rand(0, 98);
 
-                    // Create mark entry
-                    Mark::create([
-                        'student_id' => $student->student_id,
-                        'subject_id' => $subject->id,
-                        'grade_level' => $student->grade_level,
-                        'academic_year' => $academicYear,
-                        'term' => $term,
-                        'marks' => $obtainedMarks,
-                        'total_marks' => $totalMarks,
-                        'remarks' => $this->generateRemark($obtainedMarks, $totalMarks),
-                        'entered_by' => $enteredBy ? $enteredBy->id : null,
-                    ]);
+                    // Create or update mark entry
+                    Mark::updateOrCreate(
+                        [
+                            'student_id' => $student->student_id,
+                            'subject_id' => $subject->id,
+                            'academic_year' => $academicYear,
+                            'term' => $term,
+                        ],
+                        [
+                            'grade_level' => $student->grade_level,
+                            'marks' => $obtainedMarks,
+                            'total_marks' => $totalMarks,
+                            'remarks' => $this->generateRemark($obtainedMarks, $totalMarks),
+                            'entered_by' => $enteredBy ? $enteredBy->id : null,
+                        ]
+                    );
 
                     $marksCreated++;
                 }

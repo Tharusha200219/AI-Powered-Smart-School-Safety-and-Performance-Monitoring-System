@@ -53,17 +53,13 @@
                                             <label class="form-label">School Type</label>
                                             <select class="form-control" name="school_type">
                                                 <option value="">Select School Type</option>
-                                                <option value="Primary"
-                                                    {{ ($setting->school_type ?? '') === 'Primary' ? 'selected' : '' }}>
+                                                <option value="Primary" {{ ($setting->school_type ?? '') === 'Primary' ? 'selected' : '' }}>
                                                     Primary School</option>
-                                                <option value="Secondary"
-                                                    {{ ($setting->school_type ?? '') === 'Secondary' ? 'selected' : '' }}>
+                                                <option value="Secondary" {{ ($setting->school_type ?? '') === 'Secondary' ? 'selected' : '' }}>
                                                     Secondary School</option>
-                                                <option value="Combined"
-                                                    {{ ($setting->school_type ?? '') === 'Combined' ? 'selected' : '' }}>
+                                                <option value="Combined" {{ ($setting->school_type ?? '') === 'Combined' ? 'selected' : '' }}>
                                                     Combined School</option>
-                                                <option value="International"
-                                                    {{ ($setting->school_type ?? '') === 'International' ? 'selected' : '' }}>
+                                                <option value="International" {{ ($setting->school_type ?? '') === 'International' ? 'selected' : '' }}>
                                                     International School</option>
                                             </select>
                                         </div>
@@ -86,8 +82,7 @@
                                         <div class="input-group input-group-outline mb-3">
                                             <label class="form-label">Established Year</label>
                                             <input type="number" class="form-control" name="established_year"
-                                                value="{{ $setting->established_year ?? '' }}" min="1800"
-                                                max="2030">
+                                                value="{{ $setting->established_year ?? '' }}" min="1800" max="2030">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -127,8 +122,7 @@
                                                                 @if ($setting->logo ?? '')
                                                                     <img id="logo-preview"
                                                                         src="{{ asset('storage/' . $setting->logo) }}"
-                                                                        alt="School Logo Preview"
-                                                                        class="logo-preview-image">
+                                                                        alt="School Logo Preview" class="logo-preview-image">
                                                                     <div class="logo-overlay">
                                                                         <i class="material-symbols-rounded">edit</i>
                                                                     </div>
@@ -145,8 +139,7 @@
                                                     </div>
                                                     <div class="col-md-8">
                                                         <div class="upload-controls">
-                                                            <input type="file" name="logo" id="logo"
-                                                                class="d-none"
+                                                            <input type="file" name="logo" id="logo" class="d-none"
                                                                 accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
                                                                 onchange="handleLogoUpload(event)">
 
@@ -158,8 +151,7 @@
                                                                     Choose Logo
                                                                 </button>
                                                                 @if ($setting->logo ?? '')
-                                                                    <button type="button"
-                                                                        class="btn btn-outline-danger ms-2"
+                                                                    <button type="button" class="btn btn-outline-danger ms-2"
                                                                         onclick="removeLogo()">
                                                                         <i class="material-symbols-rounded me-1">delete</i>
                                                                         Remove
@@ -317,8 +309,8 @@
                                                         style="background: {{ $setting->primary_color ?? '#06C167' }};"
                                                         onclick="document.getElementById('primary_color').click()"></div>
                                                     <div class="color-inputs">
-                                                        <input type="color" class="color-input-hidden"
-                                                            id="primary_color" name="primary_color"
+                                                        <input type="color" class="color-input-hidden" id="primary_color"
+                                                            name="primary_color"
                                                             value="{{ $setting->primary_color ?? '#06C167' }}"
                                                             onchange="updateThemePreview()">
                                                         <input type="text" class="form-control color-hex-input"
@@ -343,8 +335,8 @@
                                                         style="background: {{ $setting->secondary_color ?? '#10B981' }};"
                                                         onclick="document.getElementById('secondary_color').click()"></div>
                                                     <div class="color-inputs">
-                                                        <input type="color" class="color-input-hidden"
-                                                            id="secondary_color" name="secondary_color"
+                                                        <input type="color" class="color-input-hidden" id="secondary_color"
+                                                            name="secondary_color"
                                                             value="{{ $setting->secondary_color ?? '#10B981' }}"
                                                             onchange="updateThemePreview()">
                                                         <input type="text" class="form-control color-hex-input"
@@ -369,8 +361,8 @@
                                                         style="background: {{ $setting->accent_color ?? '#F0FDF4' }};"
                                                         onclick="document.getElementById('accent_color').click()"></div>
                                                     <div class="color-inputs">
-                                                        <input type="color" class="color-input-hidden"
-                                                            id="accent_color" name="accent_color"
+                                                        <input type="color" class="color-input-hidden" id="accent_color"
+                                                            name="accent_color"
                                                             value="{{ $setting->accent_color ?? '#F0FDF4' }}"
                                                             onchange="updateThemePreview()">
                                                         <input type="text" class="form-control color-hex-input"
@@ -409,8 +401,8 @@
                                                         style="background: {{ $setting->success_color ?? '#10B981' }};"
                                                         onclick="document.getElementById('success-color').click()"></div>
                                                     <div class="color-inputs">
-                                                        <input type="color" class="color-input-hidden"
-                                                            id="success-color" name="success_color"
+                                                        <input type="color" class="color-input-hidden" id="success-color"
+                                                            name="success_color"
                                                             value="{{ $setting->success_color ?? '#10B981' }}"
                                                             onchange="updateThemePreview()">
                                                         <input type="text" class="form-control color-hex-input"
@@ -457,8 +449,8 @@
                                                         style="background: {{ $setting->warning_color ?? '#F59E0B' }};"
                                                         onclick="document.getElementById('warning-color').click()"></div>
                                                     <div class="color-inputs">
-                                                        <input type="color" class="color-input-hidden"
-                                                            id="warning-color" name="warning_color"
+                                                        <input type="color" class="color-input-hidden" id="warning-color"
+                                                            name="warning_color"
                                                             value="{{ $setting->warning_color ?? '#F59E0B' }}"
                                                             onchange="updateThemePreview()">
                                                         <input type="text" class="form-control color-hex-input"
@@ -481,8 +473,8 @@
                                                         style="background: {{ $setting->danger_color ?? '#EF4444' }};"
                                                         onclick="document.getElementById('danger-color').click()"></div>
                                                     <div class="color-inputs">
-                                                        <input type="color" class="color-input-hidden"
-                                                            id="danger-color" name="danger_color"
+                                                        <input type="color" class="color-input-hidden" id="danger-color"
+                                                            name="danger_color"
                                                             value="{{ $setting->danger_color ?? '#EF4444' }}"
                                                             onchange="updateThemePreview()">
                                                         <input type="text" class="form-control color-hex-input"
@@ -529,8 +521,7 @@
                                                                         name="primary_gradient_start"
                                                                         value="{{ $setting->primary_gradient_start ?? '#06C167' }}"
                                                                         onchange="updateGradientPreview('primary')">
-                                                                    <input type="text"
-                                                                        class="form-control color-hex-input"
+                                                                    <input type="text" class="form-control color-hex-input"
                                                                         id="primary-gradient-start-text"
                                                                         name="primary_gradient_start_text"
                                                                         value="{{ $setting->primary_gradient_start ?? '#06C167' }}"
@@ -552,8 +543,7 @@
                                                                         name="primary_gradient_end"
                                                                         value="{{ $setting->primary_gradient_end ?? '#10B981' }}"
                                                                         onchange="updateGradientPreview('primary')">
-                                                                    <input type="text"
-                                                                        class="form-control color-hex-input"
+                                                                    <input type="text" class="form-control color-hex-input"
                                                                         id="primary-gradient-end-text"
                                                                         name="primary_gradient_end_text"
                                                                         value="{{ $setting->primary_gradient_end ?? '#10B981' }}"
@@ -592,8 +582,7 @@
                                                                         name="secondary_gradient_start"
                                                                         value="{{ $setting->secondary_gradient_start ?? '#8B5CF6' }}"
                                                                         onchange="updateGradientPreview('secondary')">
-                                                                    <input type="text"
-                                                                        class="form-control color-hex-input"
+                                                                    <input type="text" class="form-control color-hex-input"
                                                                         id="secondary-gradient-start-text"
                                                                         name="secondary_gradient_start_text"
                                                                         value="{{ $setting->secondary_gradient_start ?? '#8B5CF6' }}"
@@ -615,8 +604,7 @@
                                                                         name="secondary_gradient_end"
                                                                         value="{{ $setting->secondary_gradient_end ?? '#EC4899' }}"
                                                                         onchange="updateGradientPreview('secondary')">
-                                                                    <input type="text"
-                                                                        class="form-control color-hex-input"
+                                                                    <input type="text" class="form-control color-hex-input"
                                                                         id="secondary-gradient-end-text"
                                                                         name="secondary_gradient_end_text"
                                                                         value="{{ $setting->secondary_gradient_end ?? '#EC4899' }}"
@@ -680,10 +668,10 @@
                                                 <select class="form-control" name="academic_year_start"
                                                     id="academic_year_start" required>
                                                     <option value="" disabled selected>
-                                                        {{ __('school.academic_year_starts') }}</option>
+                                                        {{ __('school.academic_year_starts') }}
+                                                    </option>
                                                     @foreach (['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] as $month)
-                                                        <option value="{{ $month }}"
-                                                            {{ ($setting->academic_year_start ?? 'January') === $month ? 'selected' : '' }}>
+                                                        <option value="{{ $month }}" {{ ($setting->academic_year_start ?? 'January') === $month ? 'selected' : '' }}>
                                                             {{ __('settings.' . strtolower($month)) }}
                                                         </option>
                                                     @endforeach
@@ -696,13 +684,13 @@
                                             <label for="academic_year_end"
                                                 class="form-label">{{ __('school.academic_year_ends') }}</label>
                                             <div class="input-group input-group-outline">
-                                                <select class="form-control" name="academic_year_end"
-                                                    id="academic_year_end" required>
+                                                <select class="form-control" name="academic_year_end" id="academic_year_end"
+                                                    required>
                                                     <option value="" disabled selected>
-                                                        {{ __('school.academic_year_ends') }}</option>
+                                                        {{ __('school.academic_year_ends') }}
+                                                    </option>
                                                     @foreach (['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] as $month)
-                                                        <option value="{{ $month }}"
-                                                            {{ ($setting->academic_year_end ?? 'December') === $month ? 'selected' : '' }}>
+                                                        <option value="{{ $month }}" {{ ($setting->academic_year_end ?? 'December') === $month ? 'selected' : '' }}>
                                                             {{ __('settings.' . strtolower($month)) }}
                                                         </option>
                                                     @endforeach
@@ -722,6 +710,24 @@
                                             <label class="form-label">{{ __('school.school_end_time') }}</label>
                                             <input type="time" class="form-control" name="school_end_time" required
                                                 value="{{ $setting->school_end_time ? \Carbon\Carbon::parse($setting->school_end_time)->format('H:i') : '15:00' }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label for="timezone" class="form-label">Timezone</label>
+                                            <div class="input-group input-group-outline">
+                                                <select class="form-control" name="timezone" id="timezone" required>
+                                                    <option value="" disabled selected>Select Timezone</option>
+                                                    <option value="Asia/Colombo" {{ ($setting->timezone ?? 'Asia/Colombo') === 'Asia/Colombo' ? 'selected' : '' }}>Sri Lanka
+                                                        (Asia/Colombo)</option>
+                                                    <option value="America/New_York" {{ ($setting->timezone ?? '') === 'America/New_York' ? 'selected' : '' }}>USA - Eastern
+                                                        (America/New_York)</option>
+                                                    <option value="America/Chicago" {{ ($setting->timezone ?? '') === 'America/Chicago' ? 'selected' : '' }}>USA - Central
+                                                        (America/Chicago)</option>
+                                                    <option value="America/Los_Angeles" {{ ($setting->timezone ?? '') === 'America/Los_Angeles' ? 'selected' : '' }}>USA - Pacific
+                                                        (America/Los_Angeles)</option>
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -756,11 +762,10 @@
                                 <div class="col-md-6">
                                     <label
                                         class="atm-card d-flex align-items-start gap-3 p-3 rounded-3 border cursor-pointer
-                                        {{ ($setting->attendance_mode ?? 'rfid') === 'rfid' ? 'atm-card--active border-primary' : 'border' }}"
+                                            {{ ($setting->attendance_mode ?? 'rfid') === 'rfid' ? 'atm-card--active border-primary' : 'border' }}"
                                         for="atm-rfid" id="atm-card-rfid">
                                         <input type="radio" id="atm-rfid" name="attendance_mode" value="rfid"
-                                            class="atm-radio d-none"
-                                            {{ ($setting->attendance_mode ?? 'rfid') === 'rfid' ? 'checked' : '' }}>
+                                            class="atm-radio d-none" {{ ($setting->attendance_mode ?? 'rfid') === 'rfid' ? 'checked' : '' }}>
                                         <div class="atm-card-icon flex-shrink-0 rounded-3 d-flex align-items-center justify-content-center"
                                             style="width:52px;height:52px;background:#f3e8ff;">
                                             <i class="material-symbols-rounded"
@@ -787,11 +792,10 @@
                                 <div class="col-md-6">
                                     <label
                                         class="atm-card d-flex align-items-start gap-3 p-3 rounded-3 border cursor-pointer
-                                        {{ ($setting->attendance_mode ?? 'rfid') === 'face_recognition' ? 'atm-card--active border-primary' : 'border' }}"
+                                            {{ ($setting->attendance_mode ?? 'rfid') === 'face_recognition' ? 'atm-card--active border-primary' : 'border' }}"
                                         for="atm-face" id="atm-card-face">
-                                        <input type="radio" id="atm-face" name="attendance_mode"
-                                            value="face_recognition" class="atm-radio d-none"
-                                            {{ ($setting->attendance_mode ?? 'rfid') === 'face_recognition' ? 'checked' : '' }}>
+                                        <input type="radio" id="atm-face" name="attendance_mode" value="face_recognition"
+                                            class="atm-radio d-none" {{ ($setting->attendance_mode ?? 'rfid') === 'face_recognition' ? 'checked' : '' }}>
                                         <div class="atm-card-icon flex-shrink-0 rounded-3 d-flex align-items-center justify-content-center"
                                             style="width:52px;height:52px;background:#dbeafe;">
                                             <i class="material-symbols-rounded"
@@ -861,9 +865,8 @@
                                     <div class="col-md-4">
                                         <div class="input-group input-group-outline mb-3">
                                             <label class="form-label">Grace Period (minutes)</label>
-                                            <input type="number" class="form-control" name="late_after_minutes"
-                                                min="0" max="480" required
-                                                value="{{ $setting->late_after_minutes ?? 15 }}">
+                                            <input type="number" class="form-control" name="late_after_minutes" min="0"
+                                                max="480" required value="{{ $setting->late_after_minutes ?? 15 }}">
                                         </div>
                                         <small class="text-muted">
                                             Students arriving more than this many minutes after the check-in
@@ -907,12 +910,10 @@
                                             <select class="form-control" name="language" required
                                                 onchange="previewLanguageChange(this.value)">
                                                 <option value="">{{ __('settings.select_language') }}</option>
-                                                <option value="en"
-                                                    {{ ($setting->language ?? 'en') === 'en' ? 'selected' : '' }}>
+                                                <option value="en" {{ ($setting->language ?? 'en') === 'en' ? 'selected' : '' }}>
                                                     {{ __('settings.english') }}
                                                 </option>
-                                                <option value="si"
-                                                    {{ ($setting->language ?? 'en') === 'si' ? 'selected' : '' }}>
+                                                <option value="si" {{ ($setting->language ?? 'en') === 'si' ? 'selected' : '' }}>
                                                     {{ __('settings.sinhala') }}
                                                 </option>
                                             </select>
@@ -920,8 +921,7 @@
                                         <small class="text-muted">{{ __('common.preview_below') }}</small>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="language-preview p-3"
-                                            style="background: #f8f9fa; border-radius: 8px;">
+                                        <div class="language-preview p-3" style="background: #f8f9fa; border-radius: 8px;">
                                             <h6 class="mb-2" id="preview-title">{{ __('settings.language') }}</h6>
                                             <p class="mb-1 text-sm" id="preview-dashboard">{{ __('common.dashboard') }}
                                             </p>
@@ -945,527 +945,527 @@
     </main>
 
     <script>
-        /* Enhanced Theme Customization Styles */
-        .theme - customization - card {
-                background: rgba(255, 255, 255, 0.98);
-                backdrop - filter: blur(20 px);
-                border: 1 px solid rgba(255, 255, 255, 0.3);
-                box - shadow: 0 12 px 40 px rgba(0, 0, 0, 0.08);
-                border - radius: 16 px;
-                overflow: hidden;
-            }
+            /* Enhanced Theme Customization Styles */
+            .theme - customization - card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop - filter: blur(20 px);
+            border: 1 px solid rgba(255, 255, 255, 0.3);
+            box - shadow: 0 12 px 40 px rgba(0, 0, 0, 0.08);
+            border - radius: 16 px;
+            overflow: hidden;
+        }
 
-            .icon - circle - gradient {
-                width: 48 px;
-                height: 48 px;
-                background: linear - gradient(135 deg, #06C167, # 10 B981);
-                border - radius: 12 px;
-                display: flex;
-                align - items: center;
-                justify - content: center;
-                color: white;
-                font - size: 24 px;
-            }
+                .icon - circle - gradient {
+            width: 48 px;
+            height: 48 px;
+            background: linear - gradient(135 deg, #06C167, # 10 B981);
+            border - radius: 12 px;
+            display: flex;
+            align - items: center;
+            justify - content: center;
+            color: white;
+            font - size: 24 px;
+        }
 
-            .theme - section {
-                position: relative;
-                padding: 24 px;
-                background: rgba(248, 250, 252, 0.6);
-                border - radius: 12 px;
-                border: 1 px solid rgba(226, 232, 240, 0.8);
-            }
+                .theme - section {
+            position: relative;
+            padding: 24 px;
+            background: rgba(248, 250, 252, 0.6);
+            border - radius: 12 px;
+            border: 1 px solid rgba(226, 232, 240, 0.8);
+        }
 
-            .section - header {
-                text - align: center;
-                margin - bottom: 24 px;
-            }
+                .section - header {
+            text - align: center;
+            margin - bottom: 24 px;
+        }
 
-            .section - title {
-                font - size: 18 px;
-                font - weight: 600;
-                color: #1e293b;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        margin-bottom: 8px;
-                    }
+                .section - title {
+            font - size: 18 px;
+            font - weight: 600;
+            color: #1e293b;
+            display: flex;
+            align - items: center;
+            justify - content: center;
+            margin - bottom: 8px;
+        }
 
-                    .section-subtitle {
-                        color: # 64748 b;
-                margin: 0;
-                font - size: 14 px;
-            }
+                        .section - subtitle {
+            color: # 64748 b;
+            margin: 0;
+            font - size: 14 px;
+        }
 
-            /* Preset Grid */
-            .preset - grid {
-                display: grid;
-                grid - template - columns: repeat(auto - fit, minmax(160 px, 1 fr));
-                gap: 16 px;
-            }
+                /* Preset Grid */
+                .preset - grid {
+            display: grid;
+            grid - template - columns: repeat(auto - fit, minmax(160 px, 1 fr));
+            gap: 16 px;
+        }
 
-            .preset - card {
-                background: white;
-                border - radius: 12 px;
-                padding: 16 px;
-                border: 2 px solid transparent;
-                cursor: pointer;
-                transition: all 0.3 s cubic - bezier(0.4, 0, 0.2, 1);
-                box - shadow: 0 4 px 12 px rgba(0, 0, 0, 0.05);
-            }
+                .preset - card {
+            background: white;
+            border - radius: 12 px;
+            padding: 16 px;
+            border: 2 px solid transparent;
+            cursor: pointer;
+            transition: all 0.3 s cubic - bezier(0.4, 0, 0.2, 1);
+            box - shadow: 0 4 px 12 px rgba(0, 0, 0, 0.05);
+        }
 
-            .preset - card: hover {
-                transform: translateY(-4 px);
-                box - shadow: 0 12 px 32 px rgba(0, 0, 0, 0.12);
-                border - color: #06C167;
-                    }
+                .preset - card: hover {
+            transform: translateY(-4 px);
+            box - shadow: 0 12 px 32 px rgba(0, 0, 0, 0.12);
+            border - color: #06C167;
+        }
 
-                    .preset-preview {
-                        display: flex;
-                        height: 40px;
-                        border-radius: 8px;
-                        overflow: hidden;
-                        margin-bottom: 12px;
-                    }
+                        .preset - preview {
+            display: flex;
+            height: 40px;
+            border - radius: 8px;
+            overflow: hidden;
+            margin - bottom: 12px;
+        }
 
-                    .color-strip {
-                        flex: 1;
-                        transition: transform 0.3s ease;
-                    }
+                        .color - strip {
+            flex: 1;
+            transition: transform 0.3s ease;
+        }
 
-                    .preset-card:hover .color-strip {
-                        transform: scale(1.05);
-                    }
+                        .preset - card: hover.color - strip {
+            transform: scale(1.05);
+        }
 
-                    .preset-name {
-                        font-weight: 500;
-                        color: # 374151;
-                font - size: 14 px;
-                text - align: center;
-                display: block;
-            }
+                        .preset - name {
+            font - weight: 500;
+            color: # 374151;
+            font - size: 14 px;
+            text - align: center;
+            display: block;
+        }
 
-            /* Enhanced Color Inputs */
-            .color - input - card {
-                background: white;
-                border - radius: 12 px;
-                padding: 20 px;
-                border: 1 px solid rgba(226, 232, 240, 0.8);
-                transition: all 0.3 s ease;
-                height: 100 % ;
-            }
+                /* Enhanced Color Inputs */
+                .color - input - card {
+            background: white;
+            border - radius: 12 px;
+            padding: 20 px;
+            border: 1 px solid rgba(226, 232, 240, 0.8);
+            transition: all 0.3 s ease;
+            height: 100 % ;
+        }
 
-            .color - input - card: hover {
-                border - color: #06C167;
-                        box-shadow: 0 8px 24px rgba(6, 193, 103, 0.12);
-                    }
+                .color - input - card: hover {
+            border - color: #06C167;
+            box - shadow: 0 8px 24px rgba(6, 193, 103, 0.12);
+        }
 
-                    .color-label {
-                        font-weight: 600;
-                        color: # 1e293 b;
-                margin - bottom: 16 px;
-                display: flex;
-                align - items: center;
-                font - size: 14 px;
-            }
+                        .color - label {
+            font - weight: 600;
+            color: # 1e293 b;
+            margin - bottom: 16 px;
+            display: flex;
+            align - items: center;
+            font - size: 14 px;
+        }
 
-            .color - picker - enhanced {
-                display: flex;
-                align - items: center;
-                gap: 12 px;
-                margin - bottom: 12 px;
-            }
+                .color - picker - enhanced {
+            display: flex;
+            align - items: center;
+            gap: 12 px;
+            margin - bottom: 12 px;
+        }
 
-            .color - picker - enhanced.mini {
-                gap: 8 px;
-                margin - bottom: 8 px;
-            }
+                .color - picker - enhanced.mini {
+            gap: 8 px;
+            margin - bottom: 8 px;
+        }
 
-            .color - preview - circle {
-                width: 48 px;
-                height: 48 px;
-                border - radius: 50 % ;
-                border: 3 px solid white;
-                box - shadow: 0 4 px 12 px rgba(0, 0, 0, 0.15),
+                .color - preview - circle {
+            width: 48 px;
+            height: 48 px;
+            border - radius: 50 % ;
+            border: 3 px solid white;
+            box - shadow: 0 4 px 12 px rgba(0, 0, 0, 0.15),
                 inset 0 0 0 1 px rgba(0, 0, 0, 0.1);
-                cursor: pointer;
-                transition: all 0.3 s ease;
-                position: relative;
-            }
+            cursor: pointer;
+            transition: all 0.3 s ease;
+            position: relative;
+        }
 
-            .color - picker - enhanced.mini.color - preview - circle {
-                width: 36 px;
-                height: 36 px;
-            }
+                .color - picker - enhanced.mini.color - preview - circle {
+            width: 36 px;
+            height: 36 px;
+        }
 
-            .color - preview - circle: hover {
-                transform: scale(1.1);
-                box - shadow: 0 6 px 20 px rgba(0, 0, 0, 0.2),
+                .color - preview - circle: hover {
+            transform: scale(1.1);
+            box - shadow: 0 6 px 20 px rgba(0, 0, 0, 0.2),
                 inset 0 0 0 1 px rgba(0, 0, 0, 0.1);
-            }
+        }
 
-            .color - input - hidden {
-                display: none;
-            }
+                .color - input - hidden {
+            display: none;
+        }
 
-            .color - inputs {
-                flex: 1;
-            }
+                .color - inputs {
+            flex: 1;
+        }
 
-            .color - hex - input {
-                font - family: 'JetBrains Mono', 'Monaco', monospace;
-                font - size: 12 px;
-                text - transform: uppercase;
-                font - weight: 500;
-                border: 1 px solid #e2e8f0;
-                border - radius: 8 px;
-                padding: 8 px 12 px;
-                background: #f8fafc;
-                transition: all 0.3 s ease;
-            }
+                .color - hex - input {
+            font - family: 'JetBrains Mono', 'Monaco', monospace;
+            font - size: 12 px;
+            text - transform: uppercase;
+            font - weight: 500;
+            border: 1 px solid #e2e8f0;
+            border - radius: 8 px;
+            padding: 8 px 12 px;
+            background: #f8fafc;
+            transition: all 0.3 s ease;
+        }
 
-            .color - hex - input: focus {
-                border - color: #06C167;
-                        box-shadow: 0 0 0 3px rgba(6, 193, 103, 0.1);
-                        background: white;
-                    }
+                .color - hex - input: focus {
+            border - color: #06C167;
+            box - shadow: 0 0 0 3px rgba(6, 193, 103, 0.1);
+            background: white;
+        }
 
-                    .color-description {
-                        color: # 64748 b;
-                font - size: 12 px;
-                line - height: 1.4;
-            }
+                        .color - description {
+            color: # 64748 b;
+            font - size: 12 px;
+            line - height: 1.4;
+        }
 
-            /* Status Color Cards */
-            .status - color - card {
-                background: white;
-                border - radius: 12 px;
-                padding: 16 px;
-                border: 1 px solid rgba(226, 232, 240, 0.8);
-                transition: all 0.3 s ease;
-                height: 100 % ;
-            }
+                /* Status Color Cards */
+                .status - color - card {
+            background: white;
+            border - radius: 12 px;
+            padding: 16 px;
+            border: 1 px solid rgba(226, 232, 240, 0.8);
+            transition: all 0.3 s ease;
+            height: 100 % ;
+        }
 
-            .status - color - card: hover {
-                transform: translateY(-2 px);
-                box - shadow: 0 8 px 24 px rgba(0, 0, 0, 0.08);
-            }
+                .status - color - card: hover {
+            transform: translateY(-2 px);
+            box - shadow: 0 8 px 24 px rgba(0, 0, 0, 0.08);
+        }
 
-            .status - color - card.success - theme: hover {
-                border - color: #10B981;
-                        box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
-                    }
+                .status - color - card.success - theme: hover {
+            border - color: #10B981;
+            box - shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+        }
 
-                    .status-color-card.info-theme:hover {
-                        border-color: # 3 B82F6;
-                box - shadow: 0 8 px 24 px rgba(59, 130, 246, 0.15);
-            }
+                        .status - color - card.info - theme:hover {
+            border - color: # 3 B82F6;
+            box - shadow: 0 8 px 24 px rgba(59, 130, 246, 0.15);
+        }
 
-            .status - color - card.warning - theme: hover {
-                border - color: #F59E0B;
-                box - shadow: 0 8 px 24 px rgba(245, 158, 11, 0.15);
-            }
+                .status - color - card.warning - theme: hover {
+            border - color: #F59E0B;
+            box - shadow: 0 8 px 24 px rgba(245, 158, 11, 0.15);
+        }
 
-            .status - color - card.danger - theme: hover {
-                border - color: #EF4444;
-                box - shadow: 0 8 px 24 px rgba(239, 68, 68, 0.15);
-            }
+                .status - color - card.danger - theme: hover {
+            border - color: #EF4444;
+            box - shadow: 0 8 px 24 px rgba(239, 68, 68, 0.15);
+        }
 
-            .status - header {
-                display: flex;
-                align - items: center;
-                gap: 8 px;
-                margin - bottom: 16 px;
-                font - weight: 600;
-                color: #374151;
-                    }
+                .status - header {
+            display: flex;
+            align - items: center;
+            gap: 8 px;
+            margin - bottom: 16 px;
+            font - weight: 600;
+            color: #374151;
+        }
 
-                    /* Gradient Configuration Cards */
-                    .gradient-config-card {
-                        background: white;
-                        border-radius: 12px;
-                        padding: 20px;
-                        border: 1px solid rgba(226, 232, 240, 0.8);
-                        transition: all 0.3s ease;
-                        height: 100%;
-                    }
+                        /* Gradient Configuration Cards */
+                        .gradient - config - card {
+            background: white;
+            border - radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            transition: all 0.3s ease;
+            height: 100 %;
+        }
 
-                    .gradient-config-card:hover {
-                        transform: translateY(-2px);
-                        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-                        border-color: # 06 C167;
-            }
+                        .gradient - config - card:hover {
+            transform: translateY(-2px);
+            box - shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            border - color: # 06 C167;
+        }
 
-            .gradient - header {
-                margin - bottom: 20 px;
-            }
+                .gradient - header {
+            margin - bottom: 20 px;
+        }
 
-            .gradient - title {
-                font - weight: 600;
-                color: #1e293b;
-                        margin-bottom: 4px;
-                    }
+                .gradient - title {
+            font - weight: 600;
+            color: #1e293b;
+            margin - bottom: 4px;
+        }
 
-                    .gradient-controls {
-                        margin-bottom: 20px;
-                    }
+                        .gradient - controls {
+            margin - bottom: 20px;
+        }
 
-                    .gradient-label {
-                        font-size: 12px;
-                        font-weight: 500;
-                        color: # 64748 b;
-                margin - bottom: 8 px;
-                display: block;
-            }
+                        .gradient - label {
+            font - size: 12px;
+            font - weight: 500;
+            color: # 64748 b;
+            margin - bottom: 8 px;
+            display: block;
+        }
 
-            .gradient - preview - enhanced {
-                height: 60 px;
-                border - radius: 12 px;
-                display: flex;
-                align - items: center;
-                justify - content: center;
-                color: white;
-                font - weight: 600;
-                text - shadow: 0 2 px 4 px rgba(0, 0, 0, 0.3);
-                box - shadow: 0 4 px 12 px rgba(0, 0, 0, 0.15);
-                transition: all 0.3 s ease;
-                position: relative;
-                overflow: hidden;
-            }
+                .gradient - preview - enhanced {
+            height: 60 px;
+            border - radius: 12 px;
+            display: flex;
+            align - items: center;
+            justify - content: center;
+            color: white;
+            font - weight: 600;
+            text - shadow: 0 2 px 4 px rgba(0, 0, 0, 0.3);
+            box - shadow: 0 4 px 12 px rgba(0, 0, 0, 0.15);
+            transition: all 0.3 s ease;
+            position: relative;
+            overflow: hidden;
+        }
 
-            .gradient - preview - enhanced: hover {
-                transform: scale(1.02);
-                box - shadow: 0 8 px 24 px rgba(0, 0, 0, 0.2);
-            }
+                .gradient - preview - enhanced: hover {
+            transform: scale(1.02);
+            box - shadow: 0 8 px 24 px rgba(0, 0, 0, 0.2);
+        }
 
-            .gradient - preview - text {
-                font - size: 14 px;
-                z - index: 2;
-                position: relative;
-            }
+                .gradient - preview - text {
+            font - size: 14 px;
+            z - index: 2;
+            position: relative;
+        }
 
-            /* Enhanced Buttons */
-            .btn - gradient {
-                background: linear - gradient(135 deg, #06C167, # 10 B981);
-                border: none;
-                color: white;
-                font - weight: 600;
-                padding: 12 px 24 px;
-                border - radius: 8 px;
-                transition: all 0.3 s ease;
-            }
+                /* Enhanced Buttons */
+                .btn - gradient {
+            background: linear - gradient(135 deg, #06C167, # 10 B981);
+            border: none;
+            color: white;
+            font - weight: 600;
+            padding: 12 px 24 px;
+            border - radius: 8 px;
+            transition: all 0.3 s ease;
+        }
 
-            .btn - gradient: hover {
-                transform: translateY(-2 px);
-                box - shadow: 0 8 px 24 px rgba(6, 193, 103, 0.3);
-                background: linear - gradient(135 deg, #059669, # 047857);
-            }
+                .btn - gradient: hover {
+            transform: translateY(-2 px);
+            box - shadow: 0 8 px 24 px rgba(6, 193, 103, 0.3);
+            background: linear - gradient(135 deg, #059669, # 047857);
+        }
 
-            /* Legacy color picker styles */
-            .color - picker - group {
-                display: flex;
-                gap: 8 px;
-                align - items: center;
-            }
+                /* Legacy color picker styles */
+                .color - picker - group {
+            display: flex;
+            gap: 8 px;
+            align - items: center;
+        }
 
-            .color - picker {
-                width: 60 px;
-                height: 40 px;
-                border: none;
-                border - radius: 8 px;
-                cursor: pointer;
-                padding: 0;
-            }
+                .color - picker {
+            width: 60 px;
+            height: 40 px;
+            border: none;
+            border - radius: 8 px;
+            cursor: pointer;
+            padding: 0;
+        }
 
-            .color - text {
-                flex: 1;
-                font - family: monospace;
-                text - transform: uppercase;
-            }
+                .color - text {
+            flex: 1;
+            font - family: monospace;
+            text - transform: uppercase;
+        }
 
-            .color - presets {
-                margin - top: 8 px;
-            }
+                .color - presets {
+            margin - top: 8 px;
+        }
 
-            .color - preset {
-                border: 2 px solid transparent;
-                border - radius: 8 px;
-                color: white;
-                font - weight: 500;
-                text - shadow: 0 1 px 2 px rgba(0, 0, 0, 0.3);
-                transition: all 0.3 s ease;
-            }
+                .color - preset {
+            border: 2 px solid transparent;
+            border - radius: 8 px;
+            color: white;
+            font - weight: 500;
+            text - shadow: 0 1 px 2 px rgba(0, 0, 0, 0.3);
+            transition: all 0.3 s ease;
+        }
 
-            .color - preset: hover {
-                transform: translateY(-2 px);
-                box - shadow: 0 4 px 12 px rgba(0, 0, 0, 0.2);
-            }
+                .color - preset: hover {
+            transform: translateY(-2 px);
+            box - shadow: 0 4 px 12 px rgba(0, 0, 0, 0.2);
+        }
 
-            .glassmorphism - card {
-                background: rgba(255, 255, 255, 0.95);
-                backdrop - filter: blur(20 px);
-                border: 1 px solid rgba(255, 255, 255, 0.2);
-                box - shadow: 0 8 px 32 px rgba(0, 0, 0, 0.1);
-            }
+                .glassmorphism - card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop - filter: blur(20 px);
+            border: 1 px solid rgba(255, 255, 255, 0.2);
+            box - shadow: 0 8 px 32 px rgba(0, 0, 0, 0.1);
+        }
 
         /* Responsive Design */
         @media(max - width: 768 px) {
-            .preset - grid {
-                    grid - template - columns: repeat(2, 1 fr);
-                }
+                .preset - grid {
+                grid - template - columns: repeat(2, 1 fr);
+            }
 
-                .color - preview - circle {
-                    width: 40 px;
-                    height: 40 px;
-                }
+                    .color - preview - circle {
+                width: 40 px;
+                height: 40 px;
+            }
 
-                .color - picker - enhanced.mini.color - preview - circle {
-                    width: 32 px;
-                    height: 32 px;
-                }
+                    .color - picker - enhanced.mini.color - preview - circle {
+                width: 32 px;
+                height: 32 px;
+            }
 
-                .theme - section {
-                    padding: 16 px;
-                }
+                    .theme - section {
+                padding: 16 px;
+            }
         }
 
         /* Animation for smooth transitions */
         @keyframes fadeInUp {
-            from {
+                from {
                 opacity: 0;
                 transform: translateY(20 px);
             }
 
-            to {
+                to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        .theme - section {
-                animation: fadeInUp 0.6 s ease - out;
-            } <
-            script >
-            // Logo preview callback for immediate sidebar update
+            .theme - section {
+            animation: fadeInUp 0.6 s ease - out;
+        } <
+                script >
+                // Logo preview callback for immediate sidebar update
             window.onFilePreviewLogo = function(dataUrl, file) {
-                // Update sidebar logo immediately with preview
-                const sidebarLogo = document.querySelector('.sidebar-logo');
-                if (sidebarLogo) {
-                    sidebarLogo.src = dataUrl;
-                }
-            };
+                    // Update sidebar logo immediately with preview
+                    const sidebarLogo = document.querySelector('.sidebar-logo');
+            if (sidebarLogo) {
+                sidebarLogo.src = dataUrl;
+                    }
+                };
 
-        // Beautiful logo upload handler
-        function handleLogoUpload(event) {
-            const file = event.target.files[0];
+            // Beautiful logo upload handler
+            function handleLogoUpload(event) {
+                const file = event.target.files[0];
             const previewWrapper = document.getElementById('logo-preview-wrapper');
             const maxSize = 2048 * 1024; // 2MB in bytes
             const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
 
             if (!file) return;
 
-            // Validate file size
-            if (file.size > maxSize) {
+                // Validate file size
+                if (file.size > maxSize) {
                 showNotification('File size must be less than 2MB', 'error');
-                event.target.value = '';
-                return;
-            }
+            event.target.value = '';
+            return;
+                }
 
             // Validate file type
             if (!allowedTypes.includes(file.type)) {
                 showNotification('Please select a valid image file (JPG, PNG, GIF, WebP)', 'error');
-                event.target.value = '';
-                return;
-            }
+            event.target.value = '';
+            return;
+                }
 
             // Show loading state
             previewWrapper.innerHTML = `
-                <div class="logo-placeholder">
-                    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <p class="logo-placeholder-text mt-2">Uploading...</p>
+            <div class="logo-placeholder">
+                <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                    <span class="visually-hidden">Loading...</span>
                 </div>
+                <p class="logo-placeholder-text mt-2">Uploading...</p>
+            </div>
             `;
 
             const reader = new FileReader();
             reader.onload = function(e) {
                 // Create new preview with image
                 previewWrapper.innerHTML = `
-                    <img id="logo-preview" src="${e.target.result}"
-                         alt="School Logo Preview" class="logo-preview-image upload-success">
-                    <div class="logo-overlay">
-                        <i class="material-symbols-rounded">edit</i>
-                    </div>
-                `;
+                        <img id="logo-preview" src="${e.target.result}"
+                             alt="School Logo Preview" class="logo-preview-image upload-success">
+                        <div class="logo-overlay">
+                            <i class="material-symbols-rounded">edit</i>
+                        </div>
+                    `;
 
-                // Add click handler to preview for re-upload
-                previewWrapper.onclick = function() {
-                    document.getElementById('logo').click();
+            // Add click handler to preview for re-upload
+            previewWrapper.onclick = function() {
+                document.getElementById('logo').click();
+                    };
+
+            // Update sidebar logo immediately
+            const sidebarLogo = document.querySelector('.sidebar-logo');
+            if (sidebarLogo) {
+                sidebarLogo.src = e.target.result;
+                    }
+
+            // Show success notification
+            showNotification('Logo uploaded successfully!', 'success');
                 };
-
-                // Update sidebar logo immediately
-                const sidebarLogo = document.querySelector('.sidebar-logo');
-                if (sidebarLogo) {
-                    sidebarLogo.src = e.target.result;
-                }
-
-                // Show success notification
-                showNotification('Logo uploaded successfully!', 'success');
-            };
 
             reader.onerror = function() {
                 showNotification('Error reading file', 'error');
-                resetLogoPlaceholder();
-            };
+            resetLogoPlaceholder();
+                };
 
             reader.readAsDataURL(file);
-        }
-
-        // Remove logo function
-        function removeLogo() {
-            if (confirm('Are you sure you want to remove the school logo?')) {
-                document.getElementById('logo').value = '';
-                resetLogoPlaceholder();
-
-                // Reset sidebar logo to default
-                const sidebarLogo = document.querySelector('.sidebar-logo');
-                if (sidebarLogo) {
-                    sidebarLogo.src = '{{ asset('assets/img/default-logo.png') }}'; // Add your default logo path
-                }
-
-                showNotification('Logo removed successfully!', 'success');
             }
-        }
 
-        // Reset logo placeholder
-        function resetLogoPlaceholder() {
-            const previewWrapper = document.getElementById('logo-preview-wrapper');
+            // Remove logo function
+            function removeLogo() {
+                if (confirm('Are you sure you want to remove the school logo?')) {
+                document.getElementById('logo').value = '';
+            resetLogoPlaceholder();
+
+            // Reset sidebar logo to default
+            const sidebarLogo = document.querySelector('.sidebar-logo');
+            if (sidebarLogo) {
+                sidebarLogo.src = '{{ asset('assets/img/default-logo.png') }}'; // Add your default logo path
+                    }
+
+            showNotification('Logo removed successfully!', 'success');
+                }
+            }
+
+            // Reset logo placeholder
+            function resetLogoPlaceholder() {
+                const previewWrapper = document.getElementById('logo-preview-wrapper');
             previewWrapper.innerHTML = `
-                <div class="logo-placeholder" id="logo-placeholder">
-                    <i class="material-symbols-rounded logo-placeholder-icon">add_photo_alternate</i>
-                    <p class="logo-placeholder-text">Click to upload logo</p>
-                </div>
+            <div class="logo-placeholder" id="logo-placeholder">
+                <i class="material-symbols-rounded logo-placeholder-icon">add_photo_alternate</i>
+                <p class="logo-placeholder-text">Click to upload logo</p>
+            </div>
             `;
 
             // Add click handler to placeholder
             previewWrapper.onclick = function() {
                 document.getElementById('logo').click();
-            };
-        }
-
-        // Add click handler to logo preview wrapper on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const previewWrapper = document.getElementById('logo-preview-wrapper');
-            if (previewWrapper) {
-                previewWrapper.onclick = function() {
-                    document.getElementById('logo').click();
                 };
             }
-        });
 
-        // Theme customization functions
-        function updateThemePreview() {
-            const primaryColor = document.getElementById("primary_color").value;
+            // Add click handler to logo preview wrapper on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                const previewWrapper = document.getElementById('logo-preview-wrapper');
+            if (previewWrapper) {
+                previewWrapper.onclick = function () {
+                    document.getElementById('logo').click();
+                };
+                }
+            });
+
+            // Theme customization functions
+            function updateThemePreview() {
+                const primaryColor = document.getElementById("primary_color").value;
             const secondaryColor = document.getElementById("secondary_color").value;
             const accentColor = document.getElementById("accent_color").value;
 
@@ -1483,16 +1483,16 @@
             // Update status color text inputs
             if (document.getElementById("success-color-text")) {
                 document.getElementById("success-color-text").value = successColor;
-            }
+                }
             if (document.getElementById("info-color-text")) {
                 document.getElementById("info-color-text").value = infoColor;
-            }
+                }
             if (document.getElementById("warning-color-text")) {
                 document.getElementById("warning-color-text").value = warningColor;
-            }
+                }
             if (document.getElementById("danger-color-text")) {
                 document.getElementById("danger-color-text").value = dangerColor;
-            }
+                }
 
             // Apply comprehensive theme colors
             const root = document.documentElement;
@@ -1512,13 +1512,13 @@
 
             if (primaryRgb) {
                 root.style.setProperty('--primary-rgb', `${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}`);
-            }
+                }
             if (secondaryRgb) {
                 root.style.setProperty('--secondary-rgb', `${secondaryRgb.r}, ${secondaryRgb.g}, ${secondaryRgb.b}`);
-            }
+                }
             if (accentRgb) {
                 root.style.setProperty('--accent-rgb', `${accentRgb.r}, ${accentRgb.g}, ${accentRgb.b}`);
-            }
+                }
 
             // Apply colors immediately for preview
             applyThemeColors(primaryColor, secondaryColor, accentColor);
@@ -1539,78 +1539,78 @@
                 warningColor,
                 dangerColor
             });
-        }
+            }
 
-        function updateGradientPreview(type) {
-            const startColor = document.getElementById(`${type}-gradient-start`)?.value;
+            function updateGradientPreview(type) {
+                const startColor = document.getElementById(`${type}-gradient-start`)?.value;
             const endColor = document.getElementById(`${type}-gradient-end`)?.value;
 
             if (startColor && endColor) {
-                const preview = document.getElementById(`${type}-gradient-preview`);
-                if (preview) {
-                    preview.style.background = `linear-gradient(135deg, ${startColor}, ${endColor})`;
-                }
+                    const preview = document.getElementById(`${type}-gradient-preview`);
+            if (preview) {
+                preview.style.background = `linear-gradient(135deg, ${startColor}, ${endColor})`;
+                    }
 
-                // Update text inputs
-                const startText = document.getElementById(`${type}-gradient-start-text`);
-                const endText = document.getElementById(`${type}-gradient-end-text`);
-                if (startText) startText.value = startColor;
-                if (endText) endText.value = endColor;
+            // Update text inputs
+            const startText = document.getElementById(`${type}-gradient-start-text`);
+            const endText = document.getElementById(`${type}-gradient-end-text`);
+            if (startText) startText.value = startColor;
+            if (endText) endText.value = endColor;
 
-                // Update color preview circles
-                const startCircle = document.querySelector(`#${type}-gradient-start`).parentElement.querySelector(
-                    '.color-preview-circle');
-                const endCircle = document.querySelector(`#${type}-gradient-end`).parentElement.querySelector(
-                    '.color-preview-circle');
-                if (startCircle) startCircle.style.background = startColor;
-                if (endCircle) endCircle.style.background = endColor;
+            // Update color preview circles
+            const startCircle = document.querySelector(`#${type}-gradient-start`).parentElement.querySelector(
+            '.color-preview-circle');
+            const endCircle = document.querySelector(`#${type}-gradient-end`).parentElement.querySelector(
+            '.color-preview-circle');
+            if (startCircle) startCircle.style.background = startColor;
+            if (endCircle) endCircle.style.background = endColor;
 
-                // Apply gradient to theme system
-                const root = document.documentElement;
-                if (type === 'primary') {
-                    root.style.setProperty('--primary-gradient-start', startColor);
-                    root.style.setProperty('--primary-gradient-end', endColor);
-                } else if (type === 'secondary') {
-                    root.style.setProperty('--secondary-gradient-start', startColor);
-                    root.style.setProperty('--secondary-gradient-end', endColor);
+            // Apply gradient to theme system
+            const root = document.documentElement;
+            if (type === 'primary') {
+                root.style.setProperty('--primary-gradient-start', startColor);
+            root.style.setProperty('--primary-gradient-end', endColor);
+                    } else if (type === 'secondary') {
+                root.style.setProperty('--secondary-gradient-start', startColor);
+            root.style.setProperty('--secondary-gradient-end', endColor);
+                    }
                 }
             }
-        }
 
-        // Enhanced color update function
-        function updateColorFromText(colorType) {
-            const textInput = document.getElementById(colorType.replace('-', '_') + "_text") || document.getElementById(
-                colorType + "-text");
+            // Enhanced color update function
+            function updateColorFromText(colorType) {
+                const textInput = document.getElementById(colorType.replace('-', '_') + "_text") || document.getElementById(
+            colorType + "-text");
             const colorInput = document.getElementById(colorType.replace('_', '-'));
             const colorCircle = colorInput?.parentElement.querySelector('.color-preview-circle');
 
             if (textInput && isValidHexColor(textInput.value)) {
-                if (colorInput) {
-                    colorInput.value = textInput.value;
-                }
-                if (colorCircle) {
-                    colorCircle.style.background = textInput.value;
-                }
+                    if (colorInput) {
+                colorInput.value = textInput.value;
+                    }
+            if (colorCircle) {
+                colorCircle.style.background = textInput.value;
+                    }
 
-                // Update theme preview or gradient preview
-                if (colorType.includes('gradient')) {
-                    const gradientType = colorType.includes('primary') ? 'primary' : 'secondary';
-                    updateGradientPreview(gradientType);
-                } else {
-                    updateThemePreview();
-                }
-            } else if (textInput) {
+            // Update theme preview or gradient preview
+            if (colorType.includes('gradient')) {
+                        const gradientType = colorType.includes('primary') ? 'primary' : 'secondary';
+            updateGradientPreview(gradientType);
+                    } else {
+                updateThemePreview();
+                    }
+                } else if (textInput) {
                 // Show error for invalid color
                 textInput.style.borderColor = '#EF4444';
-                setTimeout(() => {
-                    textInput.style.borderColor = '';
-                }, 2000);
+                    setTimeout(() => {
+                textInput.style.borderColor = '';
+                    }, 2000);
+                }
             }
-        }
 
-        // Enhanced theme preview with color circle updates
-        function updateThemePreview() {
-            const primaryColor = document.getElementById("primary_color").value;
+            // Enhanced theme preview with color circle updates
+            function updateThemePreview() {
+                const primaryColor = document.getElementById("primary_color").value;
             const secondaryColor = document.getElementById("secondary_color").value;
             const accentColor = document.getElementById("accent_color").value;
 
@@ -1621,11 +1621,11 @@
 
             // Update color preview circles
             const primaryCircle = document.querySelector('#primary_color').parentElement.querySelector(
-                '.color-preview-circle');
+            '.color-preview-circle');
             const secondaryCircle = document.querySelector('#secondary_color').parentElement.querySelector(
-                '.color-preview-circle');
+            '.color-preview-circle');
             const accentCircle = document.querySelector('#accent_color').parentElement.querySelector(
-                '.color-preview-circle');
+            '.color-preview-circle');
 
             if (primaryCircle) primaryCircle.style.background = primaryColor;
             if (secondaryCircle) secondaryCircle.style.background = secondaryColor;
@@ -1639,34 +1639,34 @@
 
             // Update status color text inputs and circles
             const statusColors = [{
-                    id: 'success-color',
-                    color: successColor
-                },
-                {
-                    id: 'info-color',
-                    color: infoColor
-                },
-                {
-                    id: 'warning-color',
-                    color: warningColor
-                },
-                {
-                    id: 'danger-color',
-                    color: dangerColor
-                }
+                id: 'success-color',
+            color: successColor
+                    },
+            {
+                id: 'info-color',
+            color: infoColor
+                    },
+            {
+                id: 'warning-color',
+            color: warningColor
+                    },
+            {
+                id: 'danger-color',
+            color: dangerColor
+                    }
             ];
 
             statusColors.forEach(({
                 id,
                 color
             }) => {
-                const textInput = document.getElementById(id + "-text");
-                const circle = document.querySelector(`#${id}`).parentElement.querySelector(
-                    '.color-preview-circle');
+                    const textInput = document.getElementById(id + "-text");
+            const circle = document.querySelector(`#${id}`).parentElement.querySelector(
+            '.color-preview-circle');
 
-                if (textInput) textInput.value = color;
-                if (circle) circle.style.background = color;
-            });
+            if (textInput) textInput.value = color;
+            if (circle) circle.style.background = color;
+                });
 
             // Apply comprehensive theme colors
             const root = document.documentElement;
@@ -1686,13 +1686,13 @@
 
             if (primaryRgb) {
                 root.style.setProperty('--primary-rgb', `${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}`);
-            }
+                }
             if (secondaryRgb) {
                 root.style.setProperty('--secondary-rgb', `${secondaryRgb.r}, ${secondaryRgb.g}, ${secondaryRgb.b}`);
-            }
+                }
             if (accentRgb) {
                 root.style.setProperty('--accent-rgb', `${accentRgb.r}, ${accentRgb.g}, ${accentRgb.b}`);
-            }
+                }
 
             // Apply colors immediately for preview
             applyThemeColors(primaryColor, secondaryColor, accentColor);
@@ -1713,12 +1713,12 @@
                 warningColor,
                 dangerColor
             });
-        }
+            }
 
-        // Enhanced apply color preset function
-        function applyColorPreset(primary, secondary, accent) {
-            // Update primary colors
-            document.getElementById('primary_color').value = primary;
+            // Enhanced apply color preset function
+            function applyColorPreset(primary, secondary, accent) {
+                // Update primary colors
+                document.getElementById('primary_color').value = primary;
             document.getElementById('secondary_color').value = secondary;
             document.getElementById('accent_color').value = accent;
 
@@ -1729,11 +1729,11 @@
 
             // Update color circles
             const primaryCircle = document.querySelector('#primary_color').parentElement.querySelector(
-                '.color-preview-circle');
+            '.color-preview-circle');
             const secondaryCircle = document.querySelector('#secondary_color').parentElement.querySelector(
-                '.color-preview-circle');
+            '.color-preview-circle');
             const accentCircle = document.querySelector('#accent_color').parentElement.querySelector(
-                '.color-preview-circle');
+            '.color-preview-circle');
 
             if (primaryCircle) primaryCircle.style.background = primary;
             if (secondaryCircle) secondaryCircle.style.background = secondary;
@@ -1742,45 +1742,45 @@
             // Update gradients to match
             if (document.getElementById('primary-gradient-start')) {
                 document.getElementById('primary-gradient-start').value = primary;
-                document.getElementById('primary-gradient-end').value = secondary;
-                updateGradientPreview('primary');
-            }
+            document.getElementById('primary-gradient-end').value = secondary;
+            updateGradientPreview('primary');
+                }
 
             updateThemePreview();
 
             // Add visual feedback
             showNotification('Color preset applied successfully!', 'success');
-        }
+            }
 
-        // New functions for enhanced features
-        function toggleLivePreview() {
-            const toggleBtn = document.getElementById('preview-toggle-text');
+            // New functions for enhanced features
+            function toggleLivePreview() {
+                const toggleBtn = document.getElementById('preview-toggle-text');
             const isActive = toggleBtn.textContent === 'Stop Preview';
 
             if (isActive) {
                 toggleBtn.textContent = 'Live Preview';
-                hideColorPreview();
-            } else {
+            hideColorPreview();
+                } else {
                 toggleBtn.textContent = 'Stop Preview';
-                updateThemePreview();
+            updateThemePreview();
+                }
             }
-        }
 
-        function exportTheme() {
-            const themeData = {
+            function exportTheme() {
+                const themeData = {
                 primary_color: document.getElementById('primary_color').value,
-                secondary_color: document.getElementById('secondary_color').value,
-                accent_color: document.getElementById('accent_color').value,
-                success_color: document.getElementById('success-color').value,
-                info_color: document.getElementById('info-color').value,
-                warning_color: document.getElementById('warning-color').value,
-                danger_color: document.getElementById('danger-color').value,
-                primary_gradient_start: document.getElementById('primary-gradient-start').value,
-                primary_gradient_end: document.getElementById('primary-gradient-end').value,
-                secondary_gradient_start: document.getElementById('secondary-gradient-start').value,
-                secondary_gradient_end: document.getElementById('secondary-gradient-end').value,
-                exported_at: new Date().toISOString()
-            };
+            secondary_color: document.getElementById('secondary_color').value,
+            accent_color: document.getElementById('accent_color').value,
+            success_color: document.getElementById('success-color').value,
+            info_color: document.getElementById('info-color').value,
+            warning_color: document.getElementById('warning-color').value,
+            danger_color: document.getElementById('danger-color').value,
+            primary_gradient_start: document.getElementById('primary-gradient-start').value,
+            primary_gradient_end: document.getElementById('primary-gradient-end').value,
+            secondary_gradient_start: document.getElementById('secondary-gradient-start').value,
+            secondary_gradient_end: document.getElementById('secondary-gradient-end').value,
+            exported_at: new Date().toISOString()
+                };
 
             const dataStr = JSON.stringify(themeData, null, 2);
             const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
@@ -1793,36 +1793,36 @@
             linkElement.click();
 
             showNotification('Theme exported successfully!', 'success');
-        }
+            }
 
-        function isValidHexColor(hex) {
-            return /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(hex);
-        }
+            function isValidHexColor(hex) {
+                return /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(hex);
+            }
 
-        function showColorPreview(primary, secondary, accent) {
-            // Create or update preview badge
-            let previewBadge = document.getElementById('color-preview-badge');
+            function showColorPreview(primary, secondary, accent) {
+                // Create or update preview badge
+                let previewBadge = document.getElementById('color-preview-badge');
             if (!previewBadge) {
                 previewBadge = document.createElement('div');
-                previewBadge.id = 'color-preview-badge';
-                previewBadge.style.cssText = `
-              position: fixed;
-              top: 80px;
-              right: 20px;
-              background: white;
-              padding: 10px;
-              border-radius: 8px;
-              box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-              z-index: 1050;
-              display: flex;
-              align-items: center;
-              gap: 8px;
-              font-size: 12px;
-              font-weight: 500;
-              color: #374151;
+            previewBadge.id = 'color-preview-badge';
+            previewBadge.style.cssText = `
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1050;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #374151;
             `;
-                document.body.appendChild(previewBadge);
-            }
+            document.body.appendChild(previewBadge);
+                }
 
             previewBadge.innerHTML = `
             <span>Preview:</span>
@@ -1830,29 +1830,29 @@
             <div style="width: 20px; height: 20px; background: ${secondary}; border-radius: 4px; border: 1px solid #e5e7eb;"></div>
             <div style="width: 20px; height: 20px; background: ${accent}; border-radius: 4px; border: 1px solid #e5e7eb;"></div>
             <button onclick="hideColorPreview()" style="background: none; border: none; color: #6B7280; cursor: pointer; padding: 2px;">×</button>
-          `;
+            `;
 
             previewBadge.style.display = 'flex';
-        }
+            }
 
-        function hideColorPreview() {
-            const previewBadge = document.getElementById('color-preview-badge');
+            function hideColorPreview() {
+                const previewBadge = document.getElementById('color-preview-badge');
             if (previewBadge) {
                 previewBadge.style.display = 'none';
+                }
             }
-        }
 
-        function hexToRgb(hex) {
-            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            function hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
             return result ? {
                 r: parseInt(result[1], 16),
-                g: parseInt(result[2], 16),
-                b: parseInt(result[3], 16)
-            } : null;
-        }
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+                } : null;
+            }
 
-        function applyThemeColors(primary, secondary, accent) {
-            const root = document.documentElement;
+            function applyThemeColors(primary, secondary, accent) {
+                const root = document.documentElement;
 
             // Convert hex to RGB for glassmorphism effects
             const primaryRgb = hexToRgb(primary);
@@ -1862,169 +1862,169 @@
             if (primaryRgb && secondaryRgb && accentRgb) {
                 // Update CSS custom properties
                 root.style.setProperty('--primary-green', primary);
-                root.style.setProperty('--light-green', secondary);
-                root.style.setProperty('--dark-green', secondary);
-                root.style.setProperty('--accent-green', accent);
+            root.style.setProperty('--light-green', secondary);
+            root.style.setProperty('--dark-green', secondary);
+            root.style.setProperty('--accent-green', accent);
 
-                // Update Bootstrap variables
-                root.style.setProperty('--bs-primary', primary);
-                root.style.setProperty('--bs-secondary', secondary);
-                root.style.setProperty('--bs-success', primary);
+            // Update Bootstrap variables
+            root.style.setProperty('--bs-primary', primary);
+            root.style.setProperty('--bs-secondary', secondary);
+            root.style.setProperty('--bs-success', primary);
 
-                // Update RGB values for transparency effects
-                root.style.setProperty('--primary-rgb', `${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}`);
-                root.style.setProperty('--secondary-rgb', `${secondaryRgb.r}, ${secondaryRgb.g}, ${secondaryRgb.b}`);
-                root.style.setProperty('--accent-rgb', `${accentRgb.r}, ${accentRgb.g}, ${accentRgb.b}`);
+            // Update RGB values for transparency effects
+            root.style.setProperty('--primary-rgb', `${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}`);
+            root.style.setProperty('--secondary-rgb', `${secondaryRgb.r}, ${secondaryRgb.g}, ${secondaryRgb.b}`);
+            root.style.setProperty('--accent-rgb', `${accentRgb.r}, ${accentRgb.g}, ${accentRgb.b}`);
 
-                // Apply to all themed elements
-                const themedElements = [
-                    '.btn-primary',
-                    '.bg-gradient-primary',
-                    '.bg-gradient-dark',
-                    '.bg-gradient-secondary',
-                    '.bg-primary',
-                    '.text-primary',
-                    '.border-primary',
-                    '.navbar-brand',
-                    '.nav-link.active',
-                    '.btn-outline-primary',
-                    '.stat-icon',
-                    '.quick-action-btn',
-                    '.card-primary .card-header',
-                    '.progress-bar',
-                    '.badge-primary',
-                    '.icon-background',
-                    '.avatar-primary',
-                    '.notification-primary'
-                ];
+            // Apply to all themed elements
+            const themedElements = [
+            '.btn-primary',
+            '.bg-gradient-primary',
+            '.bg-gradient-dark',
+            '.bg-gradient-secondary',
+            '.bg-primary',
+            '.text-primary',
+            '.border-primary',
+            '.navbar-brand',
+            '.nav-link.active',
+            '.btn-outline-primary',
+            '.stat-icon',
+            '.quick-action-btn',
+            '.card-primary .card-header',
+            '.progress-bar',
+            '.badge-primary',
+            '.icon-background',
+            '.avatar-primary',
+            '.notification-primary'
+            ];
 
-                themedElements.forEach(selector => {
-                    const elements = document.querySelectorAll(selector);
-                    elements.forEach(element => {
-                        if (selector.includes('bg-gradient-primary') || selector.includes(
-                                'bg-gradient-dark') || selector.includes('bg-gradient-secondary')) {
-                            element.style.background = `linear-gradient(135deg, ${primary}, ${secondary})`;
-                        } else if (selector.includes('btn-primary') || selector.includes(
-                                'quick-action-btn') || selector.includes('stat-icon')) {
-                            element.style.background = `linear-gradient(135deg, ${primary}, ${secondary})`;
-                            element.style.borderColor = primary;
-                            element.style.color = 'white';
-                        } else if (selector.includes('bg-primary')) {
-                            element.style.backgroundColor = primary;
-                        } else if (selector.includes('text-primary')) {
-                            element.style.color = primary;
-                        } else if (selector.includes('border-primary')) {
-                            element.style.borderColor = primary;
-                        } else if (selector.includes('btn-outline-primary')) {
-                            element.style.color = primary;
-                            element.style.borderColor = primary;
-                        } else if (selector.includes('nav-link.active') || selector.includes(
-                                'card-primary')) {
-                            element.style.background = `linear-gradient(135deg, ${primary}, ${secondary})`;
-                            element.style.color = 'white';
-                        }
+                    themedElements.forEach(selector => {
+                        const elements = document.querySelectorAll(selector);
+                        elements.forEach(element => {
+                            if (selector.includes('bg-gradient-primary') || selector.includes(
+            'bg-gradient-dark') || selector.includes('bg-gradient-secondary')) {
+                element.style.background = `linear-gradient(135deg, ${primary}, ${secondary})`;
+                            } else if (selector.includes('btn-primary') || selector.includes(
+            'quick-action-btn') || selector.includes('stat-icon')) {
+                element.style.background = `linear-gradient(135deg, ${primary}, ${secondary})`;
+            element.style.borderColor = primary;
+            element.style.color = 'white';
+                            } else if (selector.includes('bg-primary')) {
+                element.style.backgroundColor = primary;
+                            } else if (selector.includes('text-primary')) {
+                element.style.color = primary;
+                            } else if (selector.includes('border-primary')) {
+                element.style.borderColor = primary;
+                            } else if (selector.includes('btn-outline-primary')) {
+                element.style.color = primary;
+            element.style.borderColor = primary;
+                            } else if (selector.includes('nav-link.active') || selector.includes(
+            'card-primary')) {
+                element.style.background = `linear-gradient(135deg, ${primary}, ${secondary})`;
+            element.style.color = 'white';
+                            }
+                        });
                     });
-                });
 
-                // Special handling for Material Dashboard classes
-                const materialElements = document.querySelectorAll(
-                    '.bg-gradient-faded-primary, .bg-gradient-faded-success');
-                materialElements.forEach(element => {
-                    element.style.background = `linear-gradient(135deg, ${primary}cc, ${secondary}cc)`;
-                });
+            // Special handling for Material Dashboard classes
+            const materialElements = document.querySelectorAll(
+            '.bg-gradient-faded-primary, .bg-gradient-faded-success');
+                    materialElements.forEach(element => {
+                element.style.background = `linear-gradient(135deg, ${primary}cc, ${secondary}cc)`;
+                    });
 
-                // Update progress bars
-                const progressBars = document.querySelectorAll('.progress-bar');
-                progressBars.forEach(bar => {
-                    bar.style.background = `linear-gradient(135deg, ${primary}, ${secondary})`;
-                });
+            // Update progress bars
+            const progressBars = document.querySelectorAll('.progress-bar');
+                    progressBars.forEach(bar => {
+                bar.style.background = `linear-gradient(135deg, ${primary}, ${secondary})`;
+                    });
 
-                // Update form control focus colors
-                const style = document.createElement('style');
-                style.textContent = `
-                    .form-control:focus {
-                        border-color: ${primary} !important;
-                        box-shadow: 0 0 0 0.2rem ${primary}40 !important;
-                    }
-                    .form-check-input:checked {
-                        background-color: ${primary} !important;
-                        border-color: ${primary} !important;
-                    }
-                `;
-                document.head.appendChild(style);
+            // Update form control focus colors
+            const style = document.createElement('style');
+            style.textContent = `
+            .form-control:focus {
+                border - color: ${primary} !important;
+            box-shadow: 0 0 0 0.2rem ${primary}40 !important;
+                        }
+            .form-check-input:checked {
+                background - color: ${primary} !important;
+            border-color: ${primary} !important;
+                        }
+            `;
+            document.head.appendChild(style);
+                }
             }
-        }
 
-        // Form submission handlers
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('school-info-form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                submitForm('school-info', '{{ route('admin.setup.settings.school-info') }}');
-            });
+            // Form submission handlers
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('school-info-form').addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    submitForm('school-info', '{{ route('admin.setup.settings.school-info') }}');
+                });
 
             document.getElementById('theme-form').addEventListener('submit', function(e) {
                 e.preventDefault();
-                submitForm('theme', '{{ route('admin.setup.settings.theme') }}');
-            });
+            submitForm('theme', '{{ route('admin.setup.settings.theme') }}');
+                });
 
             document.getElementById('academic-form').addEventListener('submit', function(e) {
                 e.preventDefault();
-                submitForm('academic', '{{ route('admin.setup.settings.academic') }}');
-            });
+            submitForm('academic', '{{ route('admin.setup.settings.academic') }}');
+                });
 
             // Language form handler
             document.getElementById('language-form').addEventListener('submit', function(e) {
                 e.preventDefault();
-                submitForm('language', '{{ route('admin.setup.settings.language') }}');
+            submitForm('language', '{{ route('admin.setup.settings.language') }}');
+                });
             });
-        });
 
-        function submitForm(type, url) {
-            const formData = new FormData(document.getElementById(type + '-form'));
+            function submitForm(type, url) {
+                const formData = new FormData(document.getElementById(type + '-form'));
 
             fetch(url, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(data => {
-                            throw new Error(data.message || 'Server error');
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        showNotification('Settings saved successfully!', 'success');
-                        hideColorPreview(); // Hide preview after successful save
-
-                        // If logo was uploaded, update sidebar logo
-                        if (type === 'school-info' && data.logo_url) {
-                            updateSidebarLogo(data.logo_url);
+                method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                         }
-                    } else {
-                        console.error('Validation errors:', data.errors);
-                        let errorMessage = 'Error saving settings';
-                        if (data.errors) {
-                            const errorFields = Object.keys(data.errors);
-                            errorMessage += ': ' + errorFields.join(', ') + ' validation failed';
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(data => {
+                                throw new Error(data.message || 'Server error');
+                            });
                         }
-                        showNotification(errorMessage, 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showNotification('Error saving settings: ' + error.message, 'error');
-                });
-        }
+            return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                showNotification('Settings saved successfully!', 'success');
+            hideColorPreview(); // Hide preview after successful save
 
-        function applyColorPreset(primary, secondary, accent) {
-            // Update primary colors
-            document.getElementById('primary_color').value = primary;
+            // If logo was uploaded, update sidebar logo
+            if (type === 'school-info' && data.logo_url) {
+                updateSidebarLogo(data.logo_url);
+                            }
+                        } else {
+                console.error('Validation errors:', data.errors);
+            let errorMessage = 'Error saving settings';
+            if (data.errors) {
+                                const errorFields = Object.keys(data.errors);
+            errorMessage += ': ' + errorFields.join(', ') + ' validation failed';
+                            }
+            showNotification(errorMessage, 'error');
+                        }
+                    })
+                    .catch(error => {
+                console.error('Error:', error);
+            showNotification('Error saving settings: ' + error.message, 'error');
+                    });
+            }
+
+            function applyColorPreset(primary, secondary, accent) {
+                // Update primary colors
+                document.getElementById('primary_color').value = primary;
             document.getElementById('secondary_color').value = secondary;
             document.getElementById('accent_color').value = accent;
 
@@ -2035,11 +2035,11 @@
 
             // Update color circles
             const primaryCircle = document.querySelector('#primary_color').parentElement.querySelector(
-                '.color-preview-circle');
+            '.color-preview-circle');
             const secondaryCircle = document.querySelector('#secondary_color').parentElement.querySelector(
-                '.color-preview-circle');
+            '.color-preview-circle');
             const accentCircle = document.querySelector('#accent_color').parentElement.querySelector(
-                '.color-preview-circle');
+            '.color-preview-circle');
 
             if (primaryCircle) primaryCircle.style.background = primary;
             if (secondaryCircle) secondaryCircle.style.background = secondary;
@@ -2048,211 +2048,211 @@
             // Update gradients to match
             if (document.getElementById('primary-gradient-start')) {
                 document.getElementById('primary-gradient-start').value = primary;
-                document.getElementById('primary-gradient-end').value = secondary;
-                updateGradientPreview('primary');
-            }
+            document.getElementById('primary-gradient-end').value = secondary;
+            updateGradientPreview('primary');
+                }
 
             updateThemePreview();
-        }
+            }
 
-        function resetToDefault() {
-            applyColorPreset('#06C167', '#10B981', '#F0FDF4');
+            function resetToDefault() {
+                applyColorPreset('#06C167', '#10B981', '#F0FDF4');
             showNotification('Theme reset to default colors!', 'success');
-        }
+            }
 
-        function showNotification(message, type) {
-            // Create notification element
-            const notification = document.createElement('div');
+            function showNotification(message, type) {
+                // Create notification element
+                const notification = document.createElement('div');
             notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
             notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                z-index: 1060;
-                min-width: 300px;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1060;
+            min-width: 300px;
             `;
             notification.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
-            `;
+            ${message}
+            <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
+                `;
 
-            document.body.appendChild(notification);
+                document.body.appendChild(notification);
 
-            // Auto remove after 3 seconds
-            setTimeout(() => {
-                if (notification.parentElement) {
-                    notification.remove();
+                // Auto remove after 3 seconds
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.remove();
+                    }
+                }, 3000);
+            }
+
+            function updateSidebarLogo(logoUrl) {
+                // Update sidebar logo immediately without page refresh
+                const sidebarLogo = document.querySelector('.sidebar-logo');
+                if (sidebarLogo) {
+                    sidebarLogo.src = logoUrl;
                 }
-            }, 3000);
-        }
 
-        function updateSidebarLogo(logoUrl) {
-            // Update sidebar logo immediately without page refresh
-            const sidebarLogo = document.querySelector('.sidebar-logo');
-            if (sidebarLogo) {
-                sidebarLogo.src = logoUrl;
+                // Also update the x-input preview if it exists
+                const logoPreview = document.getElementById('logo-preview');
+                if (logoPreview && logoPreview.tagName === 'IMG') {
+                    logoPreview.src = logoUrl;
+                }
             }
 
-            // Also update the x-input preview if it exists
-            const logoPreview = document.getElementById('logo-preview');
-            if (logoPreview && logoPreview.tagName === 'IMG') {
-                logoPreview.src = logoUrl;
-            }
-        }
+            // Language preview functionality
+            const translations = {
+                'en': {
+                    'language': 'Language',
+                    'dashboard': 'Dashboard',
+                    'settings': 'Settings',
+                    'save': 'Save'
+                },
+                'si': {
+                    'language': 'භාෂාව',
+                    'dashboard': 'පාලක පුවරුව',
+                    'settings': 'සැකසීම්',
+                    'save': 'සුරකින්න'
+                }
+            };
 
-        // Language preview functionality
-        const translations = {
-            'en': {
-                'language': 'Language',
-                'dashboard': 'Dashboard',
-                'settings': 'Settings',
-                'save': 'Save'
-            },
-            'si': {
-                'language': 'භාෂාව',
-                'dashboard': 'පාලක පුවරුව',
-                'settings': 'සැකසීම්',
-                'save': 'සුරකින්න'
-            }
-        };
+            function previewLanguageChange(lang) {
+                if (lang && translations[lang]) {
+                    const previewTitle = document.getElementById('preview-title');
+                    const previewDashboard = document.getElementById('preview-dashboard');
+                    const previewSettings = document.getElementById('preview-settings');
+                    const previewSave = document.getElementById('preview-save');
 
-        function previewLanguageChange(lang) {
-            if (lang && translations[lang]) {
-                const previewTitle = document.getElementById('preview-title');
-                const previewDashboard = document.getElementById('preview-dashboard');
-                const previewSettings = document.getElementById('preview-settings');
-                const previewSave = document.getElementById('preview-save');
-
-                if (previewTitle) previewTitle.textContent = translations[lang]['language'];
-                if (previewDashboard) previewDashboard.textContent = translations[lang]['dashboard'];
-                if (previewSettings) previewSettings.textContent = translations[lang]['settings'];
-                if (previewSave) previewSave.textContent = translations[lang]['save'];
+                    if (previewTitle) previewTitle.textContent = translations[lang]['language'];
+                    if (previewDashboard) previewDashboard.textContent = translations[lang]['dashboard'];
+                    if (previewSettings) previewSettings.textContent = translations[lang]['settings'];
+                    if (previewSave) previewSave.textContent = translations[lang]['save'];
+                }
             }
-        }
     </script>
 
     {{-- ── Attendance Mode JS + CSS ─────────────────────────── --}}
     <script>
-        (function() {
-            const cards = document.querySelectorAll('.atm-card');
-            const radios = document.querySelectorAll('.atm-radio');
-            const saveWrap = document.getElementById('atm-save-wrap');
+                    (function() {
+                const cards = document.querySelectorAll('.atm-card');
+                    const radios = document.querySelectorAll('.atm-radio');
+                    const saveWrap = document.getElementById('atm-save-wrap');
 
-            cards.forEach(card => {
-                card.addEventListener('click', function() {
-                    const radio = this.querySelector('.atm-radio');
-                    if (!radio) return;
-                    // Deselect all
-                    cards.forEach(c => {
-                        c.classList.remove('atm-card--active', 'border-primary');
-                        c.classList.add('border');
-                    });
-                    // Select clicked
-                    this.classList.add('atm-card--active', 'border-primary');
-                    radio.checked = true;
-                    // Update badges
-                    document.getElementById('atm-rfid-badge').className = 'badge bg-secondary';
-                    document.getElementById('atm-rfid-badge').textContent = 'Inactive';
-                    document.getElementById('atm-face-badge').className = 'badge bg-secondary';
-                    document.getElementById('atm-face-badge').textContent = 'Inactive';
-                    const activeBadgeId = radio.value === 'rfid' ? 'atm-rfid-badge' : 'atm-face-badge';
-                    document.getElementById(activeBadgeId).className = 'badge bg-success';
-                    document.getElementById(activeBadgeId).textContent = 'Active';
-                    // Show save button
-                    saveWrap.classList.remove('d-none');
+                cards.forEach(card => {
+                        card.addEventListener('click', function () {
+                            const radio = this.querySelector('.atm-radio');
+                            if (!radio) return;
+                            // Deselect all
+                            cards.forEach(c => {
+                                c.classList.remove('atm-card--active', 'border-primary');
+                                c.classList.add('border');
+                            });
+                            // Select clicked
+                            this.classList.add('atm-card--active', 'border-primary');
+                            radio.checked = true;
+                            // Update badges
+                            document.getElementById('atm-rfid-badge').className = 'badge bg-secondary';
+                            document.getElementById('atm-rfid-badge').textContent = 'Inactive';
+                            document.getElementById('atm-face-badge').className = 'badge bg-secondary';
+                            document.getElementById('atm-face-badge').textContent = 'Inactive';
+                            const activeBadgeId = radio.value === 'rfid' ? 'atm-rfid-badge' : 'atm-face-badge';
+                            document.getElementById(activeBadgeId).className = 'badge bg-success';
+                            document.getElementById(activeBadgeId).textContent = 'Active';
+                            // Show save button
+                            saveWrap.classList.remove('d-none');
+                        });
                 });
-            });
-        })();
+            })();
 
-        function saveAttendanceMode() {
-            const checked = document.querySelector('.atm-radio:checked');
-            if (!checked) return;
-            const btn = document.querySelector('#atm-save-wrap .btn');
-            const orig = btn.innerHTML;
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Saving…';
+                    function saveAttendanceMode() {
+                const checked = document.querySelector('.atm-radio:checked');
+                    if (!checked) return;
+                    const btn = document.querySelector('#atm-save-wrap .btn');
+                    const orig = btn.innerHTML;
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Saving…';
 
-            fetch('{{ route('admin.setup.settings.attendance-mode') }}', {
-                    method: 'POST',
+                    fetch('{{ route('admin.setup.settings.attendance-mode') }}', {
+                        method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
-                    },
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
+                        },
                     body: JSON.stringify({
                         attendance_mode: checked.value
-                    }),
-                })
-                .then(r => r.json())
-                .then(data => {
-                    btn.disabled = false;
+                        }),
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        btn.disabled = false;
                     btn.innerHTML = orig;
                     if (data.success) {
                         document.getElementById('atm-save-wrap').classList.add('d-none');
-                        // Show a toast if the page has one
-                        if (typeof showToast === 'function') {
-                            showToast('Attendance mode saved.', 'success');
+                    // Show a toast if the page has one
+                    if (typeof showToast === 'function') {
+                        showToast('Attendance mode saved.', 'success');
+                            } else {
+                        alert('Attendance mode updated successfully.');
+                            }
                         } else {
-                            alert('Attendance mode updated successfully.');
-                        }
-                    } else {
                         alert(data.message || 'Failed to update attendance mode.');
-                    }
-                })
-                .catch(() => {
-                    btn.disabled = false;
+                        }
+                    })
+                    .catch(() => {
+                        btn.disabled = false;
                     btn.innerHTML = orig;
                     alert('Network error — please try again.');
-                });
-        }
-
-        function saveAttendanceTiming() {
-            const form = document.getElementById('attendance-timing-form');
-            const deadline = form.querySelector('[name="checkin_deadline"]').value;
-            const checkout = form.querySelector('[name="checkout_time"]').value;
-            const lateMin = form.querySelector('[name="late_after_minutes"]').value;
-
-            if (!deadline || !checkout || lateMin === '') {
-                alert('Please fill in all attendance timing fields.');
-                return;
+                    });
             }
 
-            const btn = form.querySelector('button[onclick="saveAttendanceTiming()"]');
-            const orig = btn.innerHTML;
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Saving…';
+                    function saveAttendanceTiming() {
+                const form = document.getElementById('attendance-timing-form');
+                    const deadline = form.querySelector('[name="checkin_deadline"]').value;
+                    const checkout = form.querySelector('[name="checkout_time"]').value;
+                    const lateMin = form.querySelector('[name="late_after_minutes"]').value;
 
-            fetch('{{ route('admin.setup.settings.attendance-timing') }}', {
-                    method: 'POST',
+                    if (!deadline || !checkout || lateMin === '') {
+                        alert('Please fill in all attendance timing fields.');
+                    return;
+                }
+
+                    const btn = form.querySelector('button[onclick="saveAttendanceTiming()"]');
+                    const orig = btn.innerHTML;
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Saving…';
+
+                    fetch('{{ route('admin.setup.settings.attendance-timing') }}', {
+                        method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
-                    },
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
+                        },
                     body: JSON.stringify({
                         checkin_deadline: deadline,
-                        checkout_time: checkout,
-                        late_after_minutes: parseInt(lateMin, 10),
-                    }),
-                })
-                .then(r => r.json())
-                .then(data => {
-                    btn.disabled = false;
+                    checkout_time: checkout,
+                    late_after_minutes: parseInt(lateMin, 10),
+                        }),
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        btn.disabled = false;
                     btn.innerHTML = orig;
                     if (data.success) {
-                        if (typeof showToast === 'function') {
-                            showToast('Attendance timing settings saved.', 'success');
+                            if (typeof showToast === 'function') {
+                        showToast('Attendance timing settings saved.', 'success');
+                            } else {
+                        alert('Attendance timing settings updated successfully.');
+                            }
                         } else {
-                            alert('Attendance timing settings updated successfully.');
-                        }
-                    } else {
                         alert(data.message || 'Failed to save attendance timing settings.');
-                    }
-                })
-                .catch(() => {
-                    btn.disabled = false;
+                        }
+                    })
+                    .catch(() => {
+                        btn.disabled = false;
                     btn.innerHTML = orig;
                     alert('Network error — please try again.');
-                });
-        }
+                    });
+            }
     </script>
 
     <style>
