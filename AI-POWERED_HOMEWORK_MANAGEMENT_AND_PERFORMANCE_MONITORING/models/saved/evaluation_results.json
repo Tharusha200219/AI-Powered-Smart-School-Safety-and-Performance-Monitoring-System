@@ -17,23 +17,23 @@
   "subjective_grading": {
     "short_answer": {
       "tested": 30,
-      "avg_score_for_correct": 100.0
+      "avg_score_for_correct": 92.2
     },
     "descriptive": {
       "tested": 20,
-      "avg_score_for_correct": 74.27
+      "avg_score_for_correct": 68.47
     }
   },
   "keyword_extraction": {
-    "precision": 12.0,
-    "recall": 32.83,
-    "f1_score": 17.58
+    "precision": 14.67,
+    "recall": 37.78,
+    "f1_score": 21.13
   },
   "overall": {
     "question_validity": 100.0,
     "mcq_accuracy": 100.0,
-    "keyword_f1": 17.58,
-    "overall_score": 72.53
+    "keyword_f1": 21.13,
+    "overall_score": 73.71
   },
-  "evaluated_at": "2025-12-08T18:45:17.410981"
+  "evaluated_at": "2026-03-06T11:19:36.307283"
 }
