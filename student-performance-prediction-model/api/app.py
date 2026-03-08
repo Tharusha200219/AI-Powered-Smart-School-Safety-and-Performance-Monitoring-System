@@ -40,12 +40,12 @@ def health_check():
     return jsonify({
         'status': 'healthy',
         'service': 'Student Performance Prediction API',
-        'version': '2.0.0',  # Updated version for improved model
-        'model': 'RandomForestRegressor',
+        'version': '2.0.0',
+        'model': 'XGBRegressor (Extreme Gradient Boosting)',
         'features': [
             'One-Hot Encoding for subjects',
             '95% Confidence Intervals',
-            'Feature Engineering (risk_index, etc.)',
+            'Advanced Feature Engineering (Momentum, Interaction)',
             '5-Fold Cross-Validated'
         ]
     }), 200
@@ -229,7 +229,7 @@ def internal_error(error):
 if __name__ == '__main__':
     print("=" * 60)
     print("STUDENT PERFORMANCE PREDICTION API v2.0")
-    print("Model: RandomForestRegressor (improved accuracy)")
+    print("Model: XGBRegressor (optimized for school data)")
     print("=" * 60)
     print(f"Starting API server on {API_HOST}:{API_PORT}")
     print(f"Health check: http://localhost:{API_PORT}/health")

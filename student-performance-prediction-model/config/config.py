@@ -60,3 +60,14 @@ PERFORMANCE_POOR = 40
 # NEW: Confidence Interval Settings
 # ============================================
 CONFIDENCE_LEVEL = 0.95  # 95% confidence interval
+# ============================================
+# NEW: XGBoost Configuration
+# ============================================
+XGB_PARAMS = {
+    'n_estimators': 500,
+    'learning_rate': 0.05,
+    'max_depth': 8,
+    'subsample': 0.8,
+    'colsample_bytree': 0.8,
+    'random_state': RANDOM_STATE
+}

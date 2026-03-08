@@ -26,10 +26,10 @@ import numpy as np
 import os
 import sys
 import joblib
-from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import train_test_split, cross_val_score, RandomizedSearchCV
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from xgboost import XGBRegressor
 
 # Add parent directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -59,9 +59,12 @@ class PerformancePredictor:
         self.subject_encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
         
         # Updated feature columns - base numerical features (subject handled separately)
-        self.numerical_features = ['age', 'grade', 'attendance', 'marks']
-        # Engineered features that improve accuracy
-        self.engineered_features = ['attendance_score', 'grade_marks_ratio', 'risk_index']
+        self.numerical_features = ['age', 'grade', 'attendance', 'term1_marks', 'term2_marks', 'term3_marks']
+        self.engineered_features = [
+            'attendance_score', 'grade_marks_ratio', 'marks_avg', 
+            'marks_delta', 'marks_slope', 'marks_volatility', 
+            'is_crashing', 'performance_momentum', 'attendance_marks_interaction'
+        ]
         
         # Store feature order for consistency between training and prediction
         self.feature_order = None
@@ -189,20 +192,36 @@ class PerformancePredictor:
         X_train_scaled = self.scaler.fit_transform(X_train)
         X_test_scaled = self.scaler.transform(X_test)
         
-        # Initialize RandomForest with tuned hyperparameters
-        # WHY THESE HYPERPARAMETERS:
-        # - n_estimators=200: More trees = more stable predictions, diminishing returns after ~200
-        # - max_depth=12: Prevents overfitting while allowing complex patterns
-        # - min_samples_split=5: Requires reasonable sample size before splitting
-        # - min_samples_leaf=2: Ensures leaf nodes have multiple samples
-        model = RandomForestRegressor(
-            n_estimators=RF_N_ESTIMATORS,
-            max_depth=RF_MAX_DEPTH,
-            min_samples_split=5,
-            min_samples_leaf=2,
-            random_state=RANDOM_STATE,
-            n_jobs=-1  # Use all CPU cores for faster training
+        # IMPROVEMENT: Using XGBRegressor instead of RandomForest
+        # WHY XGBOOST: 
+        # 1. Faster training and better handling of large datasets
+        # 2. Advanced regularization (L1/L2) to prevent overfitting
+        # 3. Superior handling of sparse and tabular data
+        # 4. Built-in cross-validation and feature importance
+        
+        print("\n=== Hyperparameter Tuning (XGBoost) ===")
+        xgb_model = XGBRegressor(random_state=RANDOM_STATE)
+        
+        param_dist = {
+            'n_estimators': [200, 500, 1000],
+            'learning_rate': [0.01, 0.05, 0.1],
+            'max_depth': [6, 8, 10, 12],
+            'subsample': [0.7, 0.8, 0.9],
+            'colsample_bytree': [0.7, 0.8, 0.9]
+        }
+        
+        # Use RandomizedSearchCV for faster tuning with many parameters
+        tuning_search = RandomizedSearchCV(
+            xgb_model, param_distributions=param_dist, 
+            n_iter=10, cv=CV_FOLDS, scoring='r2', 
+            n_jobs=-1, random_state=RANDOM_STATE, verbose=1
         )
+        
+        tuning_search.fit(X_train_scaled, y_train)
+        model = tuning_search.best_estimator_
+        
+        print(f"\nBest Parameters: {tuning_search.best_params_}")
+        print(f"Best CV R² Score: {tuning_search.best_score_:.4f}")
         
         # Perform 5-fold cross-validation BEFORE final training
         # WHY: CV gives more reliable estimate of model performance than single split

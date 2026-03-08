@@ -155,43 +155,54 @@ class DataPreprocessor:
                 attendance = base_attendance + np.random.uniform(-5, 5)
                 attendance = max(0, min(100, attendance))  # Clamp between 0-100%
 
-                marks = base_marks + np.random.uniform(-10, 10)
-                marks = max(0, min(100, marks))  # Clamp between 0-100%
-
-                # IMPROVED: Create REALISTIC future performance with strong correlations
-                # This models how performance actually works in schools:
-                # 1. Current marks are the strongest predictor (~70% weight)
-                # 2. Attendance has significant impact (~20% weight)
-                # 3. Some random variation (~10% unexplained variance)
+                # Generate 3 terms of marks based on student profile
+                # Profiles: 'improving', 'declining', 'stable', 'crashing', 'erratic'
+                profile = np.random.choice(['improving', 'declining', 'stable', 'crashing', 'erratic'], 
+                                          p=[0.25, 0.20, 0.30, 0.10, 0.15])
                 
-                # Marks contribution: strong linear relationship
-                marks_contribution = marks * 0.70
+                if profile == 'improving':
+                    t1_m = np.random.uniform(20, 60)
+                    t2_m = t1_m + np.random.uniform(10, 25)
+                    t3_m = t2_m + np.random.uniform(10, 20)
+                elif profile == 'declining':
+                    t1_m = np.random.uniform(70, 95)
+                    t2_m = t1_m - np.random.uniform(5, 15)
+                    t3_m = t2_m - np.random.uniform(5, 15)
+                elif profile == 'crashing':
+                    t1_m = np.random.uniform(80, 98)
+                    t2_m = t1_m + np.random.uniform(-5, 5)
+                    t3_m = np.random.uniform(10, 30) # Sudden drop
+                elif profile == 'stable':
+                    t1_m = np.random.uniform(60, 85)
+                    t2_m = t1_m + np.random.uniform(-5, 5)
+                    t3_m = t2_m + np.random.uniform(-5, 5)
+                else: # erratic
+                    t1_m = np.random.uniform(30, 90)
+                    t2_m = np.random.uniform(30, 90)
+                    t3_m = np.random.uniform(30, 90)
                 
-                # Attendance contribution: non-linear - missing school hurts a lot
-                # Below 60% attendance has severe penalty
-                if attendance >= 80:
-                    attendance_contribution = 18 + (attendance - 80) * 0.1  # Bonus for excellent
-                elif attendance >= 60:
-                    attendance_contribution = 10 + (attendance - 60) * 0.4  # Normal range
-                else:
-                    # Severe penalty for low attendance
-                    attendance_contribution = attendance * 0.167  # Max 10 points at 60%
+                # Clamp all marks
+                t1_m, t2_m, t3_m = [max(0, min(100, round(m, 2))) for m in [t1_m, t2_m, t3_m]]
                 
-                # Random variation (represents unobserved factors)
-                noise = np.random.normal(0, 4)  # Small random variation
+                # Future performance depends heavily on the trend (slope)
+                slope = (t3_m - t1_m) / 2.0
+                recent_delta = t3_m - t2_m
                 
-                # Calculate future performance
-                future_performance = marks_contribution + attendance_contribution + noise
-                future_performance = max(0, min(100, future_performance))  # Clamp to valid range
+                # Target calculation: mostly based on last term + momentum
+                base_target = t3_m * 0.7 + (t3_m + slope) * 0.2 + (base_attendance / 100.0) * 10
+                noise = np.random.normal(0, 3)
+                future_performance = max(0, min(100, round(base_target + noise, 2)))
 
                 records.append({
                     'student_id': student_id,
                     'age': age,
                     'grade': grade,
                     'subject': subject,
-                    'attendance': round(attendance, 2),
-                    'marks': round(marks, 2),
-                    'future_performance': round(future_performance, 2)
+                    'attendance': round(base_attendance, 2),
+                    'term1_marks': t1_m,
+                    'term2_marks': t2_m,
+                    'term3_marks': t3_m,
+                    'future_performance': future_performance
                 })
 
         self.df_cleaned = pd.DataFrame(records)
@@ -224,19 +235,29 @@ class DataPreprocessor:
         """
         df = df.copy()
         
+        # Latest mark (Term 3)
+        df['marks'] = df['term3_marks']
+        
         # attendance_score: Normalized attendance (0-1 range)
-        # WHY: Provides consistent scale for model, reduces sensitivity to outliers
         df['attendance_score'] = df['attendance'] / 100.0
         
-        # grade_marks_ratio: Performance relative to grade level
-        # WHY: Captures if student performs above/below expected for their grade
-        # Avoids division by zero with np.maximum
-        df['grade_marks_ratio'] = df['marks'] / np.maximum(df['grade'], 1)
+        # Temporal Features (Time-Series)
+        df['marks_avg'] = (df['term1_marks'] + df['term2_marks'] + df['term3_marks']) / 3.0
+        df['marks_delta'] = df['term3_marks'] - df['term2_marks']
+        df['marks_slope'] = (df['term3_marks'] - df['term1_marks']) / 2.0
         
-        # risk_index: Identifies at-risk students needing intervention
-        # WHY: High risk_index indicates both poor attendance AND poor marks
-        # This feature significantly improves predictions for struggling students
-        df['risk_index'] = ((100 - df['attendance']) * (100 - df['marks'])) / 100.0
+        # volatility: Standard deviation across terms
+        df['marks_volatility'] = df[['term1_marks', 'term2_marks', 'term3_marks']].std(axis=1)
+        
+        # crashes: Sudden drops > 30 points
+        df['is_crashing'] = ((df['term2_marks'] - df['term3_marks']) > 30).astype(int)
+        
+        # Interaction features
+        df['performance_momentum'] = (df['marks'] * df['attendance_score']) / 100.0
+        df['attendance_marks_interaction'] = df['attendance_score'] * df['marks']
+        
+        # grade_marks_ratio
+        df['grade_marks_ratio'] = df['marks'] / np.maximum(df['grade'], 1)
         
         return df
         
