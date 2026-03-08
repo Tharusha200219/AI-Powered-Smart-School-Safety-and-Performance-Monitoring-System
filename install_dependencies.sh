@@ -67,6 +67,25 @@ echo ""
 install_requirements "Facial Recognition Attendance API" "$SCRIPT_DIR/Facial Recognition Attendance Systems"
 echo ""
 
+# 6. RFID Serial Bridge
+echo -e "${YELLOW}Installing RFID Serial Bridge dependencies...${NC}"
+RFID_BRIDGE_DIR="$SCRIPT_DIR/AI-Powered-Smart-School-Safety-and-Performance-Monitoring-System-main/arduino"
+if [ -d "$RFID_BRIDGE_DIR" ] && [ -f "$RFID_BRIDGE_DIR/rfid_bridge.py" ]; then
+    echo "pyserial>=3.5" > "$RFID_BRIDGE_DIR/requirements.txt"
+    echo "requests>=2.32.5" >> "$RFID_BRIDGE_DIR/requirements.txt"
+    
+    python3 -m pip install --break-system-packages -q pyserial requests
+    
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}✓ RFID Serial Bridge dependencies installed${NC}"
+    else
+        echo -e "${RED}✗ Failed to install RFID Serial Bridge dependencies${NC}"
+    fi
+else
+    echo -e "${YELLOW}⚠️  RFID Bridge directory or script not found (optional)${NC}"
+fi
+echo ""
+
 cd "$SCRIPT_DIR"
 
 echo ""
@@ -75,4 +94,5 @@ echo "║              ALL DEPENDENCIES INSTALLED SUCCESSFULLY                  
 echo "╚════════════════════════════════════════════════════════════════════════════╝"
 echo ""
 echo "✅ Ready to start services with: ./start_all_services.sh"
+echo "🔌 To start RFID Bridge: python3 AI-Powered-Smart-School-Safety-and-Performance-Monitoring-System-main/arduino/rfid_bridge.py"
 echo ""
