@@ -20,7 +20,7 @@ class UserService
             $user = User::create([
                 'name' => $this->buildFullName($userData),
                 'email' => $userData['email'],
-                'password' => Hash::make($userData['password']),
+                'password' => Hash::make($userData['password'] ?? 'password'),
                 'usertype' => $userType->value,
                 'status' => Status::ACTIVE->value,
             ]);

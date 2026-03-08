@@ -63,7 +63,7 @@ class TeacherController extends BaseManagementController
         $user = User::create([
             'name' => trim($request->first_name . ' ' . $request->last_name),
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => Hash::make($request->password ?? 'password'),
             'usertype' => UserType::TEACHER->value,
             'status' => Status::ACTIVE->value,
         ]);
