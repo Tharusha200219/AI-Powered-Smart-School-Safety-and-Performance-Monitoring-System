@@ -529,7 +529,7 @@ class StudentController extends BaseManagementController
     {
         try {
             $faceDataPath = storage_path('app/face_data/' . $studentId);
-            
+
             // Remove the entire face data directory if it exists
             if (is_dir($faceDataPath)) {
                 // Remove all files in the directory
@@ -542,7 +542,7 @@ class StudentController extends BaseManagementController
                 // Remove the directory itself
                 rmdir($faceDataPath);
             }
-            
+
             return redirect()->route('admin.management.students.show', $studentId)
                 ->with('success', 'Face recognition data removed successfully.');
         } catch (\Exception $e) {

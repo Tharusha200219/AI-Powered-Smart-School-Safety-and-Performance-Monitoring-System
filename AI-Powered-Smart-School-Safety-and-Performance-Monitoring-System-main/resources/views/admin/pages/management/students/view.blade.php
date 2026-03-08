@@ -359,51 +359,61 @@
 
                                     <!-- Face Recognition Section -->
                                     <div class="card mb-4">
-                                        <div class="card-header" style="background: linear-gradient(45deg, #1a3a6e, #2563eb);">
+                                        <div class="card-header"
+                                            style="background: linear-gradient(45deg, #1a3a6e, #2563eb);">
                                             <h6 class="mb-0 d-flex align-items-center text-white">
-                                                <i class="material-symbols-rounded me-2 icon-size-sm">face_retouching_natural</i>
+                                                <i
+                                                    class="material-symbols-rounded me-2 icon-size-sm">face_retouching_natural</i>
                                                 Face Recognition Status
                                             </h6>
                                         </div>
                                         <div class="card-body">
                                             @php
                                                 $faceDataPath = 'face_data/' . $student->student_id;
-                                                $hasFaceData = file_exists(storage_path('app/' . $faceDataPath . '/model.pkl'));
+                                                $hasFaceData = file_exists(
+                                                    storage_path('app/' . $faceDataPath . '/model.pkl'),
+                                                );
                                             @endphp
-                                            
+
                                             <div class="d-flex align-items-center gap-3 flex-wrap">
-                                                <span class="badge fs-6 px-3 py-2 {{ $hasFaceData ? 'bg-success' : 'bg-secondary' }}">
-                                                    <i class="material-symbols-rounded me-1" style="font-size:1rem;vertical-align:middle">face</i>
+                                                <span
+                                                    class="badge fs-6 px-3 py-2 {{ $hasFaceData ? 'bg-success' : 'bg-secondary' }}">
+                                                    <i class="material-symbols-rounded me-1"
+                                                        style="font-size:1rem;vertical-align:middle">face</i>
                                                     {{ $hasFaceData ? 'Registered' : 'Not Registered' }}
                                                 </span>
 
                                                 @if ($hasFaceData)
                                                     <button type="button" class="btn btn-sm btn-warning"
                                                         onclick="if(confirm('Are you sure you want to remove the face recognition data?')) { window.location.href='{{ route('admin.management.students.remove-face', $student->student_id) }}'; }">
-                                                        <i class="material-symbols-rounded me-1" style="font-size:1rem">delete</i>
+                                                        <i class="material-symbols-rounded me-1"
+                                                            style="font-size:1rem">delete</i>
                                                         Remove Face Data
                                                     </button>
                                                     <button type="button" class="btn btn-sm btn-primary"
                                                         onclick="alert('Please go to Edit Student page to re-capture face data')">
-                                                        <i class="material-symbols-rounded me-1" style="font-size:1rem">photo_camera</i>
+                                                        <i class="material-symbols-rounded me-1"
+                                                            style="font-size:1rem">photo_camera</i>
                                                         Re-capture
                                                     </button>
                                                 @endif
-                            </div>
+                                            </div>
 
-                            @if ($hasFaceData)
-                                <p class="text-muted small mt-3 mb-0">
-                                    <i class="material-symbols-rounded align-middle me-1" style="font-size:.85rem">check_circle</i>
-                                    Face data successfully registered and trained
-                                </p>
-                            @else
-                                <p class="text-muted small mt-3 mb-0">
-                                    <i class="material-symbols-rounded align-middle me-1" style="font-size:.85rem">info</i>
-                                    Go to Edit Student to set up face recognition for this student
-                                </p>
-                            @endif
-                        </div>
-                    </div>
+                                            @if ($hasFaceData)
+                                                <p class="text-muted small mt-3 mb-0">
+                                                    <i class="material-symbols-rounded align-middle me-1"
+                                                        style="font-size:.85rem">check_circle</i>
+                                                    Face data successfully registered and trained
+                                                </p>
+                                            @else
+                                                <p class="text-muted small mt-3 mb-0">
+                                                    <i class="material-symbols-rounded align-middle me-1"
+                                                        style="font-size:.85rem">info</i>
+                                                    Go to Edit Student to set up face recognition for this student
+                                                </p>
+                                            @endif
+                                        </div>
+                                    </div>
 
                                     <!-- Performance Prediction Section -->
                                     @include('admin.pages.management.students.partials.performance_prediction')
