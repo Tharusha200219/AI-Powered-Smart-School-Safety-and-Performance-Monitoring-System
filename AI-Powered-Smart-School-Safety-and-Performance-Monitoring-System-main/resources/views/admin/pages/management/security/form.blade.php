@@ -89,7 +89,7 @@
 
                                         <div class="col-md-6">
                                             <x-input name="gender" type="select" title="Gender"
-                                                placeholder="Select Gender" :options="['Male' => 'Male', 'Female' => 'Female', 'Other' => 'Other']" :value="old('gender', $security->gender ?? '')" />
+                                                placeholder="Select Gender" :options="['M' => 'Male', 'F' => 'Female', 'Other' => 'Other']" :value="old('gender', $security->gender ?? '')" />
                                         </div>
                                     </div>
 
@@ -105,9 +105,15 @@
                                             @enderror
                                         </div>
 
+                                    <div class="row">
                                         <div class="col-md-6">
                                             <x-input name="email" type="email" title="Email" :value="old('email', $security->email ?? '')"
                                                 placeholder="Enter email address" />
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <x-input name="password" type="password" title="Password"
+                                                placeholder="Min 8 characters. Leave empty to auto-generate (password)" />
                                         </div>
                                     </div>
                                 </div>

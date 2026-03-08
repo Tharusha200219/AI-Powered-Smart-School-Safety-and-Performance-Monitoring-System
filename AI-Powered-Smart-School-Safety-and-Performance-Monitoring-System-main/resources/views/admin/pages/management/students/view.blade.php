@@ -28,7 +28,7 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-16">
                                     <div class="card">
                                         <div class="card-header">
                                             <h6 class="mb-0 d-flex align-items-center">
@@ -50,7 +50,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-8">
+                                <div class="col-md-16">
                                     <div class="card mb-4">
                                         <div class="card-header">
                                             <h6 class="mb-0 d-flex align-items-center">

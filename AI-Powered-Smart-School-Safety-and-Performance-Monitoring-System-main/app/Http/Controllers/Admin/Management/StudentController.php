@@ -99,7 +99,7 @@ class StudentController extends BaseManagementController
         $user = User::create([
             'name' => trim($request->first_name . ' ' . $request->last_name),
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => Hash::make($request->password ?? 'password'),
             'usertype' => UserType::STUDENT->value,
             'status' => Status::ACTIVE->value,
         ]);
