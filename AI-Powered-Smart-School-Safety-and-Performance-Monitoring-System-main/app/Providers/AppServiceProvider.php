@@ -19,6 +19,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
+                $setting = \App\Models\Setting::first();
+                if ($setting && $setting->timezone) {
+                    date_default_timezone_set($setting->timezone);
+                    config(['app.timezone' => $setting->timezone]);
+                }
+            }
+        } catch (\Exception $e) {
+            // Ignore if DB is not ready yet
+        }
     }
 }

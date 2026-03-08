@@ -4579,7 +4579,7 @@ fieldset:disabled .btn {
 }
 
 .dropdown-item {
-  display: block;
+  display: flex;
   width: 100%;
   padding: var(--bs-dropdown-item-padding-y) var(--bs-dropdown-item-padding-x);
   clear: both;
@@ -24188,7 +24188,7 @@ label,
 }
 
 .icon-sm i {
-  top: 4px;
+  top: 0px;
   font-size: 0.875rem;
 }
 
