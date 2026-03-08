@@ -33,6 +33,10 @@ install_requirements() {
     
     echo -e "${YELLOW}Installing $service_name dependencies...${NC}"
     cd "$service_dir"
+    
+    # Ensure build tools are present (critical for Python 3.12/3.13)
+    python3 -m pip install --break-system-packages -q --upgrade pip setuptools wheel
+    
     python3 -m pip install --break-system-packages -q -r requirements.txt
     
     if [ $? -eq 0 ]; then
