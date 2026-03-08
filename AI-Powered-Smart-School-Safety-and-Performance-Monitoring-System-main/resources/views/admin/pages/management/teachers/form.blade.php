@@ -97,8 +97,8 @@
                                             <div class="col-md-4">
                                                 <x-input name="gender" type="select" title="Gender"
                                                     placeholder="Select Gender" :options="[
-                                                        'Male' => 'Male',
-                                                        'Female' => 'Female',
+                                                        'M' => 'Male',
+                                                        'F' => 'Female',
                                                         'Other' => 'Other',
                                                     ]" :value="old('gender', $teacher->gender ?? '')" />
                                             </div>
@@ -213,7 +213,7 @@
                                                 <div class="col-md-6">
                                                     <x-input name="password" type="password" title="Password"
                                                         attr="minlength='8'"
-                                                        placeholder="Leave empty to auto-generate password" />
+                                                        placeholder="Min 8 characters. Leave empty to auto-generate (password)" />
                                                 </div>
                                             @endif
                                         </div>
