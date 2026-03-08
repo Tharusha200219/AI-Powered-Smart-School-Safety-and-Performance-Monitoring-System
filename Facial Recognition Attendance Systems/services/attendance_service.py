@@ -135,9 +135,9 @@ class AttendanceService:
                 with self._lock:
                     self._last_marked[result.student_id] = datetime.now()
 
-                # Send webhook
+                # Send webhook asynchronously (don't block the main thread)
                 if self.webhook_url:
-                    self._send_webhook(record)
+                    Thread(target=self._send_webhook, args=(record,), daemon=True).start()
 
         return {
             'success': len(marked) > 0,
