@@ -140,4 +140,3 @@ The system uses a relational database to link AI outputs to real-world entities:
 4.  **Hardware**: Use the provided Arduino sketches in the `/arduino` folder to set up RFID/Camera modules.
 
 ---
-
