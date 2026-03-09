@@ -31,7 +31,7 @@ class StudentSeeder extends Seeder
     private function createStudentsForGrade(int $grade): void
     {
         $sections = ['A', 'B'];
-        $studentsPerSection = 2; // Create 2 students per section
+        $studentsPerSection = ($grade === 13) ? 30 : 2; // Create 30 students per section for Grade 13, 2 for others
 
         foreach ($sections as $section) {
             for ($i = 1; $i <= $studentsPerSection; $i++) {
@@ -59,9 +59,20 @@ class StudentSeeder extends Seeder
         $user->assignRole('Student');
 
         // Find the appropriate class based on grade and section
+        // Find the appropriate class based on grade and section
         $schoolClass = SchoolClass::where('grade_level', $grade)
             ->where('section', $section)
             ->first();
+
+        // Determine stream for Grade 12-13
+        $stream = null;
+        if ($grade >= 12 && $grade <= 13) {
+            $subjectsData = Subject::getSubjectsWithRules($grade);
+            $availableStreams = array_keys($subjectsData['subjects']['streams'] ?? []);
+            if (!empty($availableStreams)) {
+                $stream = $availableStreams[array_rand($availableStreams)];
+            }
+        }
 
         // Create student record
         $student = Student::create([
@@ -78,6 +89,7 @@ class StudentSeeder extends Seeder
             'enrollment_date' => $studentData['enrollment_date'],
             'grade_level' => $grade,
             'class_id' => $schoolClass ? $schoolClass->id : null,
+            'stream' => $stream,
             'section' => $section,
             'is_active' => true,
             'address_line1' => $studentData['address_line1'],
@@ -102,7 +114,7 @@ class StudentSeeder extends Seeder
         }
 
         // Attach subjects to student based on grade rules
-        $this->attachSubjectsToStudent($student, $grade);
+        $this->attachSubjectsToStudent($student, $grade, $stream);
 
         $this->command->info("Created student: {$student->full_name} ({$student->student_code}) - Grade {$grade}{$section}");
     }
@@ -110,7 +122,7 @@ class StudentSeeder extends Seeder
     /**
      * Attach subjects to student following grade-specific rules
      */
-    private function attachSubjectsToStudent(Student $student, int $grade): void
+    private function attachSubjectsToStudent(Student $student, int $grade, ?string $stream = null): void
     {
         $subjectsData = Subject::getSubjectsWithRules($grade);
         $subjects = $subjectsData['subjects'];
@@ -175,20 +187,20 @@ class StudentSeeder extends Seeder
         }
         // Advanced Level (Grades 12-13)
         elseif ($grade >= 12 && $grade <= 13) {
-            // Pick a stream and add its subjects
-            if (isset($subjects['streams'])) {
+            // Use provided stream or pick a random one if not provided
+            if (!$stream && isset($subjects['streams'])) {
                 $availableStreams = array_keys($subjects['streams']);
-                $selectedStream = $availableStreams[array_rand($availableStreams)];
+                $stream = $availableStreams[array_rand($availableStreams)];
+            }
 
-                if (isset($subjects['streams'][$selectedStream]) && $subjects['streams'][$selectedStream]) {
-                    $streamSubjectCount = min(3, count($subjects['streams'][$selectedStream]));
-                    $streamIndices = array_rand($subjects['streams'][$selectedStream], $streamSubjectCount);
-                    if ($streamSubjectCount === 1) {
-                        $streamIndices = [$streamIndices];
-                    }
-                    foreach ($streamIndices as $index) {
-                        $subjectsToAttach[] = $subjects['streams'][$selectedStream][$index]['id'];
-                    }
+            if ($stream && isset($subjects['streams'][$stream]) && $subjects['streams'][$stream]) {
+                $streamSubjectCount = min(3, count($subjects['streams'][$stream]));
+                $streamIndices = array_rand($subjects['streams'][$stream], $streamSubjectCount);
+                if ($streamSubjectCount === 1) {
+                    $streamIndices = [$streamIndices];
+                }
+                foreach ($streamIndices as $index) {
+                    $subjectsToAttach[] = $subjects['streams'][$stream][$index]['id'];
                 }
             }
         }
@@ -281,7 +293,7 @@ class StudentSeeder extends Seeder
         $gender = $genders[($grade + $index) % 2];
         $religion = $religions[$grade % count($religions)];
 
-        $email = strtolower($firstName . '.' . $lastName . $grade . $section . '@student.school.lk');
+        $email = strtolower($firstName . '.' . $lastName . $grade . $section . $index . '@student.school.lk');
 
         return [
             'first_name' => $firstName,
