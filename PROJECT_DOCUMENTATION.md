@@ -114,7 +114,66 @@ Each service is configured via the Laravel `.env` file to communicate with speci
 
 ---
 
-## 🛠️ 6. Core Technology Stack
+## 🛠️ 6. Hardware Implementation & Wiring Guide
+
+The system supports Arduino-based RFID scanning with visual and textual feedback.
+
+### 6.1 Component List
+
+- **Controller**: Arduino Uno R3 (SMD CH340).
+- **RFID**: MFRC522 (RC522) Reader/Writer.
+- **Feedback**: 1602 LCD with I2C Module + 4-Pin RGB LED (Common Cathode).
+
+### 6.2 Full Wiring Diagram (Color-Coded)
+
+Use the following wiring table to connect your components for easy debugging.
+
+| Component      | Pin Name  | Arduino Pin | Wire Color (Rec) | Notes                       |
+| :------------- | :-------- | :---------- | :--------------- | :-------------------------- |
+| **RC522 RFID** | VCC       | **3.3V**    | Red              | **CRITICAL: Do not use 5V** |
+|                | GND       | GND         | Black            |                             |
+|                | SDA (SS)  | 10          | Yellow           | SPI Chip Select             |
+|                | SCK       | 13          | Green            | SPI Clock                   |
+|                | MOSI      | 11          | Green            | Master Out                  |
+|                | MISO      | 12          | Green            | Master In                   |
+|                | RST       | 9           | Orange           | Reset Pin                   |
+| **RGB LED**    | Common    | GND         | Black            | Longest Pin                 |
+|                | Red (R)   | 6           | Red              | PWM for brightness          |
+|                | Green (G) | 5           | Green            | PWM for brightness          |
+|                | Blue (B)  | 3           | Blue             | PWM for brightness          |
+| **1602 LCD**   | VCC       | **5V**      | Red              | Powers the backlight        |
+|                | GND       | GND         | Black            |                             |
+|                | SDA       | A4          | Yellow           | I2C Data                    |
+|                | SCL       | A5          | Orange           | I2C Clock                   |
+
+### 6.3 RFID Serial Bridge (Python)
+
+The **RFID Serial Bridge** (`rfid bridge/rfid_bridge.py`) is the link between the Arduino and the Laravel Backend.
+
+- **Technology**: Python 3.x, `pyserial`, `requests`.
+- **Function**:
+  - Automatically detects the Arduino on USB ports (`/dev/cu.usbserial-*` or `COM*`).
+  - Reads JSON data from the Arduino.
+  - Forwards scans to the backend API.
+  - Logs all activity (including raw Arduino debug messages) to `logs/rfid_bridge.log`.
+
+### 6.4 Hardware Setup & Troubleshooting
+
+1.  **I2C LCD**: Ensure the I2C module is soldered correctly. Use the potentiometer on the back to adjust contrast.
+2.  **RFID Reader**: **CRITICAL: Connect to 3.3V (NOT 5V)**.
+3.  **LED Feedback**:
+    - **Backlight On**: Indicates successful Arduino startup.
+    - **Flash Green (2x)**: Indicates a successful RFID scan.
+
+**Diagnostics**:
+The latest `rfid_serial_reader.ino` sends debug info to the bridge log. Check `logs/rfid_bridge.log` for:
+
+- `DEBUG: LCD found at 0x27` (or error)
+- `DEBUG: RFID Reader detected` (or error)
+
+---
+
+## 🛠️ 7. Core Technology Stack
 
 - **Backend Framework**: Laravel 11 (PHP 8.2+).
 - **AI Frameworks**: Python 3.10+, PyTorch, TensorFlow, Scikit-learn.

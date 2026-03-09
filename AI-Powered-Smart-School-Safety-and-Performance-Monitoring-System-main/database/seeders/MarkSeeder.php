@@ -28,33 +28,78 @@ class MarkSeeder extends Seeder
         $marksCreated = 0;
 
         foreach ($students as $student) {
+            /** @var \App\Models\Student $student */
+            // Ensure student has subjects
             $studentSubjects = $student->subjects;
 
-            // If the student doesn't have any subjects, assign some random ones
             if ($studentSubjects->isEmpty()) {
-                // Try to get subjects for their grade level, otherwise just get any random subjects
-                if ($student->grade_level) {
-                    $randomSubjects = \App\Models\Subject::where('grade_level', $student->grade_level)->inRandomOrder()->take(5)->get();
+                $this->command->warn("Student {$student->full_name} has no subjects. Assigning defaults...");
+                
+                // Get subjects based on grade guidelines
+                $subjectsData = \App\Models\Subject::getSubjectsWithRules($student->grade_level);
+                $availableSubjects = [];
+
+                if ($student->grade_level >= 12 && $student->grade_level <= 13) {
+                    // Advanced Level - must pick stream first
+                    $stream = $student->stream;
+                    if (!$stream && isset($subjectsData['subjects']['streams'])) {
+                        $availableStreams = array_keys($subjectsData['subjects']['streams']);
+                        $stream = $availableStreams[array_rand($availableStreams)];
+                        // Update student stream if missing
+                        $student->update(['stream' => $stream]);
+                    }
+
+                    if ($stream && isset($subjectsData['subjects']['streams'][$stream])) {
+                        $streamSubjects = $subjectsData['subjects']['streams'][$stream];
+                        $count = min(3, count($streamSubjects));
+                        $indices = array_rand($streamSubjects, $count);
+                        if ($count === 1) $indices = [$indices];
+                        foreach ($indices as $idx) {
+                            $availableSubjects[] = $streamSubjects[$idx]['id'];
+                        }
+                    }
                 } else {
-                    $randomSubjects = \App\Models\Subject::inRandomOrder()->take(5)->get();
+                    // Primary/Secondary - simpler selection
+                    if (isset($subjectsData['subjects']['core'])) {
+                        foreach ($subjectsData['subjects']['core'] as $sub) {
+                            $availableSubjects[] = $sub['id'];
+                        }
+                    }
+                    if (isset($subjectsData['subjects']['first_language']) && !empty($subjectsData['subjects']['first_language'])) {
+                        $availableSubjects[] = $subjectsData['subjects']['first_language'][array_rand($subjectsData['subjects']['first_language'])]['id'];
+                    }
+                    if (isset($subjectsData['subjects']['religion']) && !empty($subjectsData['subjects']['religion'])) {
+                        $availableSubjects[] = $subjectsData['subjects']['religion'][array_rand($subjectsData['subjects']['religion'])]['id'];
+                    }
+                    if (isset($subjectsData['subjects']['elective']) && !empty($subjectsData['subjects']['elective'])) {
+                        $electiveCount = min(3, count($subjectsData['subjects']['elective']));
+                        $electiveIndices = array_rand($subjectsData['subjects']['elective'], $electiveCount);
+                        if ($electiveCount === 1) $electiveIndices = [$electiveIndices];
+                        foreach ($electiveIndices as $idx) {
+                            $availableSubjects[] = $subjectsData['subjects']['elective'][$idx]['id'];
+                        }
+                    }
                 }
 
-                if ($randomSubjects->isNotEmpty()) {
-                    $student->subjects()->sync($randomSubjects->pluck('id')->toArray());
-                    // Reload subjects to get the newly attached ones
+                if (!empty($availableSubjects)) {
+                    $syncData = [];
+                    foreach (array_unique($availableSubjects) as $subId) {
+                        $syncData[$subId] = [
+                            'enrollment_date' => $student->enrollment_date ?? now(),
+                            'grade' => $student->grade_level
+                        ];
+                    }
+                    $student->subjects()->sync($syncData);
                     $studentSubjects = $student->fresh()->subjects;
                 }
             }
 
-            // Create marks for each subject the student is enrolled in
+            // Create marks for each subject and term
             foreach ($studentSubjects as $subject) {
-                // Create marks for each term
                 foreach ($terms as $term) {
-                    // Generate random marks (between 0-98)
                     $totalMarks = 100;
-                    $obtainedMarks = rand(0, 98);
+                    $obtainedMarks = rand(30, 98); // Higher minimum for better display
 
-                    // Create or update mark entry
                     Mark::updateOrCreate(
                         [
                             'student_id' => $student->student_id,
@@ -70,13 +115,12 @@ class MarkSeeder extends Seeder
                             'entered_by' => $enteredBy ? $enteredBy->id : null,
                         ]
                     );
-
                     $marksCreated++;
                 }
             }
         }
 
-        $this->command->info("Created {$marksCreated} mark entries for students across all terms.");
+        $this->command->info("Created {$marksCreated} mark entries. Every student now has comprehensive marks.");
     }
 
     /**

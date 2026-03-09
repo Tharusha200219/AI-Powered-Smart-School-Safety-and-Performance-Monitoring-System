@@ -402,6 +402,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'In-depth study of historical periods and events',
                 'credits' => 5,
                 'type' => 'Arts Stream',
+                'stream' => 'Arts',
                 'status' => 'active',
             ],
             [
@@ -411,6 +412,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Advanced geographical studies and analysis',
                 'credits' => 5,
                 'type' => 'Arts Stream',
+                'stream' => 'Arts',
                 'status' => 'active',
             ],
             [
@@ -420,6 +422,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Study of political systems, theory, and governance',
                 'credits' => 5,
                 'type' => 'Arts Stream',
+                'stream' => 'Arts',
                 'status' => 'active',
             ],
             [
@@ -429,6 +432,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Logical reasoning and scientific methodology',
                 'credits' => 5,
                 'type' => 'Arts Stream',
+                'stream' => 'Arts',
                 'status' => 'active',
             ],
             [
@@ -438,6 +442,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Economic theory and principles',
                 'credits' => 5,
                 'type' => 'Arts Stream',
+                'stream' => 'Arts',
                 'status' => 'active',
             ],
             [
@@ -447,6 +452,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Advanced Buddhist philosophy and civilization',
                 'credits' => 5,
                 'type' => 'Arts Stream',
+                'stream' => 'Arts',
                 'status' => 'active',
             ],
             [
@@ -456,6 +462,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Advanced Hindu philosophy and civilization',
                 'credits' => 5,
                 'type' => 'Arts Stream',
+                'stream' => 'Arts',
                 'status' => 'active',
             ],
             [
@@ -465,6 +472,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Advanced Islamic studies and civilization',
                 'credits' => 5,
                 'type' => 'Arts Stream',
+                'stream' => 'Arts',
                 'status' => 'active',
             ],
             [
@@ -474,6 +482,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Advanced Christian studies and civilization',
                 'credits' => 5,
                 'type' => 'Arts Stream',
+                'stream' => 'Arts',
                 'status' => 'active',
             ],
             [
@@ -483,6 +492,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Advanced Art, Music, Dance, and Drama studies',
                 'credits' => 5,
                 'type' => 'Arts Stream',
+                'stream' => 'Arts',
                 'status' => 'active',
             ],
             [
@@ -492,6 +502,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Study of media, communication, and journalism',
                 'credits' => 5,
                 'type' => 'Arts Stream',
+                'stream' => 'Arts',
                 'status' => 'active',
             ],
             [
@@ -501,6 +512,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'IT systems and application development',
                 'credits' => 5,
                 'type' => 'Arts Stream',
+                'stream' => 'Arts',
                 'status' => 'active',
             ],
 
@@ -514,6 +526,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Comprehensive business management and entrepreneurship',
                 'credits' => 5,
                 'type' => 'Commerce Stream',
+                'stream' => 'Commerce',
                 'status' => 'active',
             ],
             [
@@ -523,6 +536,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Advanced accounting principles and practices',
                 'credits' => 5,
                 'type' => 'Commerce Stream',
+                'stream' => 'Commerce',
                 'status' => 'active',
             ],
             [
@@ -532,6 +546,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Microeconomics and macroeconomics',
                 'credits' => 5,
                 'type' => 'Commerce Stream',
+                'stream' => 'Commerce',
                 'status' => 'active',
             ],
             [
@@ -541,6 +556,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Business IT systems and applications',
                 'credits' => 5,
                 'type' => 'Commerce Stream',
+                'stream' => 'Commerce',
                 'status' => 'active',
             ],
             [
@@ -550,6 +566,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Entrepreneurial skills and business development',
                 'credits' => 5,
                 'type' => 'Commerce Stream',
+                'stream' => 'Commerce',
                 'status' => 'active',
             ],
 
@@ -563,6 +580,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Advanced physics including mechanics, electricity, and quantum physics',
                 'credits' => 5,
                 'type' => 'Science Stream',
+                'stream' => 'Science',
                 'status' => 'active',
             ],
             [
@@ -572,6 +590,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Advanced chemistry including organic, inorganic, and physical chemistry',
                 'credits' => 5,
                 'type' => 'Science Stream',
+                'stream' => 'Science',
                 'status' => 'active',
             ],
             [
@@ -581,6 +600,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Advanced biology including molecular biology, genetics, and ecology',
                 'credits' => 5,
                 'type' => 'Science Stream',
+                'stream' => 'Science',
                 'status' => 'active',
             ],
             [
@@ -590,6 +610,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Advanced mathematics including calculus, algebra, and statistics',
                 'credits' => 5,
                 'type' => 'Science Stream',
+                'stream' => 'Science',
                 'status' => 'active',
             ],
             [
@@ -599,6 +620,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Agricultural science and biotechnology',
                 'credits' => 5,
                 'type' => 'Science Stream',
+                'stream' => 'Science',
                 'status' => 'active',
             ],
             [
@@ -608,6 +630,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Computer science and IT applications',
                 'credits' => 5,
                 'type' => 'Science Stream',
+                'stream' => 'Science',
                 'status' => 'active',
             ],
 
@@ -621,6 +644,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Applied science for technological applications',
                 'credits' => 5,
                 'type' => 'Technology Stream',
+                'stream' => 'Technology',
                 'status' => 'active',
             ],
             [
@@ -630,6 +654,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Engineering principles and applications',
                 'credits' => 5,
                 'type' => 'Technology Stream',
+                'stream' => 'Technology',
                 'status' => 'active',
             ],
             [
@@ -639,6 +664,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Biological systems and agricultural technology',
                 'credits' => 5,
                 'type' => 'Technology Stream',
+                'stream' => 'Technology',
                 'status' => 'active',
             ],
             [
@@ -648,6 +674,7 @@ class SubjectSeeder extends Seeder
                 'description' => 'Advanced ICT systems and programming',
                 'credits' => 5,
                 'type' => 'Technology Stream',
+                'stream' => 'Technology',
                 'status' => 'active',
             ],
         ];

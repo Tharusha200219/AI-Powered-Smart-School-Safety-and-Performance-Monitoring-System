@@ -44,9 +44,9 @@
                                                     style="vertical-align:middle">auto_awesome</i>
                                                 AI Seating Generator
                                             </h6>
-                                            <p class="text-sm mb-0" style="color:#adb5bd">
+                                            {{-- <p class="text-sm mb-0" style="color:#adb5bd">
                                                 Optimally arranges students based on academic performance.
-                                            </p>
+                                            </p> --}}
                                         </div>
                                         <div class="col-md-5">
                                             <div class="row g-2">
