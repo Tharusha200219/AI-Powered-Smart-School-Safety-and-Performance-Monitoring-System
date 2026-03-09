@@ -30,6 +30,7 @@ AUDIO_PID=$(find_process_on_port 5005)
 PERFORMANCE_PID=$(find_process_on_port 5002)
 SEATING_PID=$(find_process_on_port 5003)
 FACIAL_PID=$(find_process_on_port 5004)
+RFID_PID=$(pgrep -f "rfid_bridge.py")
 
 # Count processes
 TOTAL_PIDS=0
@@ -37,8 +38,10 @@ TOTAL_PIDS=0
 [ -n "$HOMEWORK_PID" ] && TOTAL_PIDS=$((TOTAL_PIDS + 1))
 [ -n "$AUDIO_PID" ] && TOTAL_PIDS=$((TOTAL_PIDS + 1))
 [ -n "$PERFORMANCE_PID" ] && TOTAL_PIDS=$((TOTAL_PIDS + 1))
+# Count more PIDs for each service
 [ -n "$SEATING_PID" ] && TOTAL_PIDS=$((TOTAL_PIDS + 1))
 [ -n "$FACIAL_PID" ] && TOTAL_PIDS=$((TOTAL_PIDS + 1))
+[ -n "$RFID_PID" ] && TOTAL_PIDS=$((TOTAL_PIDS + 1))
 
 if [ $TOTAL_PIDS -eq 0 ]; then
     echo "ℹ️  No services are currently running."
@@ -55,6 +58,7 @@ echo ""
 [ -n "$PERFORMANCE_PID" ] && echo "  ✓ Performance Prediction (Port 5002) - PID: $PERFORMANCE_PID"
 [ -n "$SEATING_PID" ] && echo "  ✓ Seating Arrangement (Port 5003) - PID: $SEATING_PID"
 [ -n "$FACIAL_PID" ] && echo "  ✓ Facial Recognition (Port 5004) - PID: $FACIAL_PID"
+[ -n "$RFID_PID" ] && echo "  ✓ RFID Serial Bridge - PID: $RFID_PID"
 
 echo ""
 read -p "Do you want to stop these services? (Y/N): " confirmation
@@ -91,6 +95,7 @@ stop_service "$AUDIO_PID" "Audio Threat API (Port 5005)"
 stop_service "$PERFORMANCE_PID" "Performance Prediction (Port 5002)"
 stop_service "$SEATING_PID" "Seating Arrangement (Port 5003)"
 stop_service "$FACIAL_PID" "Facial Recognition (Port 5004)"
+stop_service "$RFID_PID" "RFID Serial Bridge"
 
 echo ""
 echo "✅ Verifying services are stopped..."

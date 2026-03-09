@@ -119,7 +119,7 @@
         let _token = null;
         let _pollTimer = null;
         let _detectedUid = null;
-        const POLL_MS = 1500;
+        const POLL_MS = 300; // Poll every 300ms for instant recognition
 
         const el = id => document.getElementById(id);
 
