@@ -223,12 +223,12 @@
 
                                                 {{-- Live camera feed (shown when active) --}}
                                                 <video id="faceAttendVideo" class="w-100 d-none" autoplay playsinline
-                                                    style="display:block;object-fit:cover;height:480px;transform: scaleX(-1);"></video>
+                                                    style="display:block;object-fit:cover;height:480px;"></video>
                                                 {{-- Hidden capture canvas (never shown) --}}
                                                 <canvas id="faceAttendCanvas" class="d-none"></canvas>
                                                 {{-- Bounding-box overlay canvas (always on top of video) --}}
                                                 <canvas id="faceBboxCanvas"
-                                                    style="position:absolute;top:0;left:0;width:100%;height:480px;pointer-events:none;transform: scaleX(-1);"></canvas>
+                                                    style="position:absolute;top:0;left:0;width:100%;height:480px;pointer-events:none;"></canvas>
 
                                                 {{-- Waiting state --}}
                                                 <div id="faceStateWaiting"
