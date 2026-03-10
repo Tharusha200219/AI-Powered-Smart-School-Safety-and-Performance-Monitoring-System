@@ -23,8 +23,8 @@ class AudioVideoThreatController extends Controller
 
     public function __construct()
     {
-        $this->audioApiUrl       = config('services.audio_threat.url', 'http://127.0.0.1:5002');
-        $this->videoApiUrl       = config('services.video_threat.url', 'http://127.0.0.1:5003');
+        $this->audioApiUrl       = config('services.audio_threat.url', 'http://127.0.0.1:5005');
+        $this->videoApiUrl       = config('services.video_threat.url', 'http://127.0.0.1:5006');
         $this->defaultAlertNumber = config('services.twilio.alert_number', '+9470032488');
     }
 

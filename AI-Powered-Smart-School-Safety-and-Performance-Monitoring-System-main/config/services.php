@@ -57,7 +57,7 @@ return [
     |
     */
     'audio_threat' => [
-        'url' => env('AUDIO_THREAT_API_URL', 'http://127.0.0.1:5002'),
+        'url' => env('AUDIO_THREAT_API_URL', 'http://127.0.0.1:5005'),
         'timeout' => env('AUDIO_THREAT_TIMEOUT', 30),
     ],
 
@@ -70,7 +70,7 @@ return [
     |
     */
     'video_threat' => [
-        'url' => env('VIDEO_THREAT_API_URL', 'http://127.0.0.1:5003'),
+        'url' => env('VIDEO_THREAT_API_URL', 'http://127.0.0.1:5006'),
         'timeout' => env('VIDEO_THREAT_TIMEOUT', 30),
     ],
 

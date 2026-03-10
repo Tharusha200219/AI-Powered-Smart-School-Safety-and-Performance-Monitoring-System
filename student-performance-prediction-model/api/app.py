@@ -51,6 +51,64 @@ def health_check():
     }), 200
 
 
+@app.route('/example', methods=['GET'])
+def example_request():
+    """Example request format endpoint"""
+    return jsonify({
+        'endpoint': '/predict',
+        'method': 'POST',
+        'description': 'Predict student performance with confidence intervals',
+        'request_example': {
+            'student_id': 123,
+            'age': 15,
+            'grade': 10,
+            'subjects': [
+                {
+                    'subject_name': 'Mathematics',
+                    'attendance': 85.5,
+                    'marks': 78.0
+                },
+                {
+                    'subject_name': 'Science',
+                    'attendance': 90.0,
+                    'marks': 82.0
+                }
+            ]
+        },
+        'response_example': {
+            'student_id': 123,
+            'age': 15,
+            'grade': 10,
+            'predictions': [
+                {
+                    'subject': 'Mathematics',
+                    'current_performance': 78.0,
+                    'predicted_performance': 82.5,
+                    'confidence_interval': {
+                        'lower_bound': 74.2,
+                        'upper_bound': 90.8,
+                        'confidence_level': 0.95
+                    },
+                    'prediction_trend': 'improving',
+                    'confidence': 0.89
+                }
+            ],
+            'total_subjects': 2
+        },
+        'curl_example': '''curl -X POST http://localhost:5002/predict \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "student_id": 123,
+    "age": 15,
+    "grade": 10,
+    "subjects": [
+      {"subject_name": "Mathematics", "attendance": 85.5, "marks": 78.0}
+    ]
+  }'
+'''
+    }), 200
+
+
 @app.route('/predict', methods=['POST'])
 def predict_performance():
     """
@@ -92,20 +150,74 @@ def predict_performance():
     }
     """
     try:
-        # Get request data
+        # Get request data with JSON parsing error handling
+        try:
+            data = request.get_json()
+        except Exception as json_error:
+            return jsonify({
+                'error': 'Invalid JSON format',
+                'message': 'The request body contains invalid JSON',
+                'details': str(json_error),
+                'tip': 'Make sure your JSON is properly formatted with correct quotes and commas'
+            }), 400
         data = request.get_json()
         
         # Validate required fields
         if not data:
             return jsonify({
                 'error': 'No data provided',
-                'message': 'Request body must contain JSON data'
+                'message': 'Request body must contain JSON data',
+                'example': {
+                    'student_id': 123,
+                    'age': 15,
+                    'grade': 10,
+                    'subjects': [
+                        {
+                            'subject_name': 'Mathematics',
+                            'attendance': 85.5,
+                            'marks': 78.0
+                        }
+                    ]
+                }
             }), 400
         
-        if 'subjects' not in data or not data['subjects']:
+        # Check if subjects field exists
+        if 'subjects' not in data:
             return jsonify({
-                'error': 'Missing subjects',
-                'message': 'At least one subject must be provided'
+                'error': 'Missing "subjects" field',
+                'message': 'The request must include a "subjects" array',
+                'received_fields': list(data.keys()),
+                'required_format': {
+                    'subjects': [
+                        {
+                            'subject_name': 'Mathematics',
+                            'attendance': 85.5,
+                            'marks': 78.0
+                        }
+                    ]
+                }
+            }), 400
+        
+        # Check if subjects array is empty
+        if not data['subjects'] or len(data['subjects']) == 0:
+            return jsonify({
+                'error': 'Empty subjects array',
+                'message': 'At least one subject must be provided in the subjects array',
+                'example': {
+                    'subjects': [
+                        {'subject_name': 'Mathematics', 'attendance': 85.5, 'marks': 78.0},
+                        {'subject_name': 'Science', 'attendance': 90.0, 'marks': 82.0}
+                    ]
+                }
+            }), 400
+        
+        # Check if subjects is actually an array
+        if not isinstance(data['subjects'], list):
+            return jsonify({
+                'error': 'Invalid subjects format',
+                'message': 'The "subjects" field must be an array/list',
+                'received_type': str(type(data['subjects']).__name__),
+                'expected_type': 'array'
             }), 400
         
         # Set defaults for optional fields
@@ -116,12 +228,41 @@ def predict_performance():
             'subjects': data.get('subjects', [])
         }
         
-        # Validate subjects format
-        for subject in student_data['subjects']:
-            if 'subject_name' not in subject:
+        # Validate each subject in the array
+        for idx, subject in enumerate(student_data['subjects']):
+            # Check if subject is a dict/object
+            if not isinstance(subject, dict):
                 return jsonify({
                     'error': 'Invalid subject format',
-                    'message': 'Each subject must have subject_name'
+                    'message': f'Subject at index {idx} must be an object/dictionary',
+                    'received_type': str(type(subject).__name__),
+                    'expected_format': {
+                        'subject_name': 'Mathematics',
+                        'attendance': 85.5,
+                        'marks': 78.0
+                    }
+                }), 400
+            
+            # Check for required subject_name field
+            if 'subject_name' not in subject:
+                return jsonify({
+                    'error': 'Missing "subject_name" field',
+                    'message': f'Subject at index {idx} is missing the required "subject_name" field',
+                    'received_fields': list(subject.keys()),
+                    'required_fields': ['subject_name', 'attendance', 'marks'],
+                    'example': {
+                        'subject_name': 'Mathematics',
+                        'attendance': 85.5,
+                        'marks': 78.0
+                    }
+                }), 400
+            
+            # Check if subject_name is not empty
+            if not subject['subject_name'] or str(subject['subject_name']).strip() == '':
+                return jsonify({
+                    'error': 'Empty subject_name',
+                    'message': f'Subject at index {idx} has an empty subject_name',
+                    'valid_examples': ['Mathematics', 'Science', 'English', 'History']
                 }), 400
             
             # Set defaults for missing attendance/marks
@@ -143,10 +284,25 @@ def predict_performance():
         
         return jsonify(response), 200
         
+    except ValueError as ve:
+        # Handle validation errors from the predictor
+        return jsonify({
+            'error': 'Validation error',
+            'message': str(ve),
+            'tip': 'Check that attendance and marks are valid numbers between 0-100'
+        }), 400
+        
     except Exception as e:
+        # Handle unexpected errors
+        import traceback
+        error_trace = traceback.format_exc()
+        print(f"Prediction error: {error_trace}")  # Log to console
+        
         return jsonify({
             'error': 'Prediction failed',
-            'message': str(e)
+            'message': str(e),
+            'type': type(e).__name__,
+            'tip': 'Please check your request format and try again. If the problem persists, contact support.'
         }), 500
 
 
@@ -232,12 +388,15 @@ if __name__ == '__main__':
     print("Model: XGBRegressor (optimized for school data)")
     print("=" * 60)
     print(f"Starting API server on {API_HOST}:{API_PORT}")
-    print(f"Health check: http://localhost:{API_PORT}/health")
-    print(f"Prediction endpoint: http://localhost:{API_PORT}/predict")
-    print("\nNew Features:")
+    print(f"\n📋 Available Endpoints:")
+    print(f"  • Health check:    http://localhost:{API_PORT}/health")
+    print(f"  • Request example: http://localhost:{API_PORT}/example")
+    print(f"  • Prediction:      http://localhost:{API_PORT}/predict")
+    print("\n✨ New Features:")
     print("  - 95% Confidence Intervals")
     print("  - One-Hot Encoded Subjects")
     print("  - Feature Engineering")
+    print("  - Improved Error Messages")
     print("=" * 60)
     
     app.run(host=API_HOST, port=API_PORT, debug=API_DEBUG)
