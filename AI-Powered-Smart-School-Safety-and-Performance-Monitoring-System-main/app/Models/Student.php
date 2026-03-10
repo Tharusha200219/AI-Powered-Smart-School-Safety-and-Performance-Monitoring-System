@@ -42,6 +42,7 @@ class Student extends Model
         'mobile_phone',
         'email',
         'rfid_uid',
+        'stream',
     ];
 
     protected $casts = [

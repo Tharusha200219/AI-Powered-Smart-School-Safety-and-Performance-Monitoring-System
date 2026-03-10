@@ -175,6 +175,7 @@ class SettingsController extends Controller
                 'academic_year_end' => 'required|in:January,February,March,April,May,June,July,August,September,October,November,December|different:academic_year_start',
                 'school_start_time' => 'required|date_format:H:i',
                 'school_end_time' => 'required|date_format:H:i|after:school_start_time',
+                'timezone' => 'required|string|timezone',
             ]);
 
             if ($validator->fails()) {
@@ -192,6 +193,7 @@ class SettingsController extends Controller
                 'academic_year_end' => $request->academic_year_end,
                 'school_start_time' => $request->school_start_time,
                 'school_end_time' => $request->school_end_time,
+                'timezone' => $request->timezone,
             ]);
 
             $setting->save();

@@ -160,8 +160,7 @@
                                                             style="font-size:1rem">history</i>
                                                         Today's Scans
                                                     </span>
-                                                    <span class="badge bg-primary rounded-pill"
-                                                        id="rfidScanCount">0</span>
+                                                    <span class="badge bg-primary rounded-pill" id="rfidScanCount">0</span>
                                                 </div>
                                                 <div class="card-body p-0" style="overflow-y:auto;max-height:360px;">
                                                     <div id="rfidScanLog">
@@ -224,12 +223,12 @@
 
                                                 {{-- Live camera feed (shown when active) --}}
                                                 <video id="faceAttendVideo" class="w-100 d-none" autoplay playsinline
-                                                    style="display:block;object-fit:cover;height:480px;"></video>
+                                                    style="display:block;object-fit:cover;height:480px;transform: scaleX(-1);"></video>
                                                 {{-- Hidden capture canvas (never shown) --}}
                                                 <canvas id="faceAttendCanvas" class="d-none"></canvas>
                                                 {{-- Bounding-box overlay canvas (always on top of video) --}}
                                                 <canvas id="faceBboxCanvas"
-                                                    style="position:absolute;top:0;left:0;width:100%;height:480px;pointer-events:none;"></canvas>
+                                                    style="position:absolute;top:0;left:0;width:100%;height:480px;pointer-events:none;transform: scaleX(-1);"></canvas>
 
                                                 {{-- Waiting state --}}
                                                 <div id="faceStateWaiting"
@@ -332,8 +331,7 @@
                                                             style="font-size:1rem">history</i>
                                                         Today's Recognitions
                                                     </span>
-                                                    <span class="badge bg-primary rounded-pill"
-                                                        id="faceScanCount">0</span>
+                                                    <span class="badge bg-primary rounded-pill" id="faceScanCount">0</span>
                                                 </div>
                                                 <div class="card-body p-0" style="overflow-y:auto;max-height:360px;">
                                                     <div id="faceScanLog">
@@ -409,7 +407,8 @@
                                                             <h6 class="mb-2">{{ __("Today's Status") }}</h6>
                                                             <div id="statusContent">
                                                                 <p class="mb-0">
-                                                                    {{ __('No attendance recorded yet today') }}</p>
+                                                                    {{ __('No attendance recorded yet today') }}
+                                                                </p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -432,8 +431,7 @@
                                                 <div class="card-body">
                                                     <form id="attendanceForm">
                                                         @csrf
-                                                        <input type="hidden" id="selectedStudentCode"
-                                                            name="student_code">
+                                                        <input type="hidden" id="selectedStudentCode" name="student_code">
 
                                                         <div class="input-group input-group-outline mb-3">
                                                             <label class="form-label">{{ __('Attendance Type') }}</label>
@@ -456,25 +454,26 @@
                                                             class="input-group input-group-outline mb-3"
                                                             style="display: none;">
                                                             <label class="form-label">{{ __('Check In Time') }}</label>
-                                                            <input type="time" class="form-control"
-                                                                name="check_in_time" id="checkInTime">
+                                                            <input type="time" class="form-control" name="check_in_time"
+                                                                id="checkInTime">
                                                         </div>
 
                                                         <div id="checkOutTimeGroup"
                                                             class="input-group input-group-outline mb-3"
                                                             style="display: none;">
                                                             <label class="form-label">{{ __('Check Out Time') }}</label>
-                                                            <input type="time" class="form-control"
-                                                                name="check_out_time" id="checkOutTime">
+                                                            <input type="time" class="form-control" name="check_out_time"
+                                                                id="checkOutTime">
                                                         </div>
 
                                                         <div class="input-group input-group-outline mb-3">
                                                             <label class="form-label">{{ __('Notes (Optional)') }}</label>
-                                                            <textarea class="form-control" name="notes" id="notes" rows="3"></textarea>
+                                                            <textarea class="form-control" name="notes" id="notes"
+                                                                rows="3"></textarea>
                                                         </div>
 
-                                                        <button type="submit" class="btn btn-success w-100"
-                                                            id="submitBtn" disabled>
+                                                        <button type="submit" class="btn btn-success w-100" id="submitBtn"
+                                                            disabled>
                                                             <i class="material-symbols-rounded text-sm">save</i>
                                                             {{ __('Record Attendance') }}
                                                         </button>
@@ -483,7 +482,8 @@
                                                     <div id="successMessage" class="alert alert-success mt-3"
                                                         style="display: none;">
                                                         <p class="mb-0" id="successText">
-                                                            {{ __('Attendance recorded successfully!') }}</p>
+                                                            {{ __('Attendance recorded successfully!') }}
+                                                        </p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -547,20 +547,20 @@
                 if (data.today_attendance) {
                     const status = data.today_attendance;
                     document.getElementById('statusContent').innerHTML = `
-            <div class="row">
-                <div class="col-6"><strong>{{ __('Status') }}:</strong></div>
-                <div class="col-6">${status.status}</div>
-            </div>
-            <div class="row">
-                <div class="col-6"><strong>{{ __('Check In') }}:</strong></div>
-                <div class="col-6">${status.check_in_time || '-'}</div>
-            </div>
-            <div class="row">
-                <div class="col-6"><strong>{{ __('Check Out') }}:</strong></div>
-                <div class="col-6">${status.check_out_time || '-'}</div>
-            </div>
-            ${status.is_late ? '<p class="text-warning mb-0 mt-2"><i class="material-symbols-rounded text-sm">schedule</i> {{ __('Late arrival') }}</p>' : ''}
-        `;
+                    <div class="row">
+                        <div class="col-6"><strong>{{ __('Status') }}:</strong></div>
+                        <div class="col-6">${status.status}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6"><strong>{{ __('Check In') }}:</strong></div>
+                        <div class="col-6">${status.check_in_time || '-'}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6"><strong>{{ __('Check Out') }}:</strong></div>
+                        <div class="col-6">${status.check_out_time || '-'}</div>
+                    </div>
+                    ${status.is_late ? '<p class="text-warning mb-0 mt-2"><i class="material-symbols-rounded text-sm">schedule</i> {{ __('Late arrival') }}</p>' : ''}
+                `;
                     document.getElementById('todayStatus').classList.remove('alert-info');
                     document.getElementById('todayStatus').classList.add('alert-warning');
                 }
@@ -578,7 +578,7 @@
             }
 
             // Handle attendance type change
-            document.getElementById('attendanceType').addEventListener('change', function() {
+            document.getElementById('attendanceType').addEventListener('change', function () {
                 const type = this.value;
 
                 document.getElementById('checkInTimeGroup').style.display = type === 'check_in' ? 'block' : 'none';
@@ -594,7 +594,7 @@
             });
 
             // Handle form submission
-            document.getElementById('attendanceForm').addEventListener('submit', async function(e) {
+            document.getElementById('attendanceForm').addEventListener('submit', async function (e) {
                 e.preventDefault();
 
                 const formData = new FormData(this);
@@ -635,7 +635,7 @@
             });
 
             // Allow Enter key to search
-            document.getElementById('studentCodeInput').addEventListener('keypress', function(e) {
+            document.getElementById('studentCodeInput').addEventListener('keypress', function (e) {
                 if (e.key === 'Enter') {
                     searchStudent();
                 }
@@ -829,15 +829,15 @@
                     const row = document.createElement('div');
                     row.className = 'rfid-log-row d-flex align-items-center gap-2 px-3 py-2 border-bottom';
                     row.innerHTML = `
-                        <i class="material-symbols-rounded text-${c}" style="font-size:1.2rem">${ico}</i>
-                        <div class="flex-grow-1 overflow-hidden">
-                            <div class="fw-semibold text-truncate small">${d.student_name || '—'}</div>
-                            <div class="text-muted" style="font-size:.75rem">${d.student_code || ''}</div>
-                        </div>
-                        <div class="text-end">
-                            <span class="badge bg-${c}-subtle text-${c} border border-${c}-subtle">${lbl}</span>
-                            <div class="text-muted" style="font-size:.72rem">${time}</div>
-                        </div>`;
+                                <i class="material-symbols-rounded text-${c}" style="font-size:1.2rem">${ico}</i>
+                                <div class="flex-grow-1 overflow-hidden">
+                                    <div class="fw-semibold text-truncate small">${d.student_name || '—'}</div>
+                                    <div class="text-muted" style="font-size:.75rem">${d.student_code || ''}</div>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-${c}-subtle text-${c} border border-${c}-subtle">${lbl}</span>
+                                    <div class="text-muted" style="font-size:.72rem">${time}</div>
+                                </div>`;
                     log.insertBefore(row, log.firstChild);
                 }
 
@@ -947,7 +947,8 @@
                         });
                         const data = await resp.json();
                         _drawFaceBoxes(data.faces || [], video.videoWidth || 640, video.videoHeight || 480);
-                        // Render result card immediately — don't wait for the poll cycle
+
+                        // Handle both success and error responses
                         const scanData = data.data;
                         if (scanData && scanData.scanned_at && scanData.scanned_at !== _lastScanAt) {
                             _lastScanAt = scanData.scanned_at;
@@ -1095,10 +1096,17 @@
                     if (d.action === 'check_in') {
                         avatar.className = 'rfid-avatar rfid-avatar--in flex-shrink-0';
                         avatar.style.cssText = 'width:64px;height:64px;';
-                        actionBadge.className = 'rfid-action-badge rfid-action-badge--in';
-                        actionBadge.innerHTML =
-                            `<i class="material-symbols-rounded me-1 align-middle" style="font-size:1rem">login</i>CHECKED IN`;
+                        actionBadge.className = 'rfid-action-badge ' + (d.is_late ? 'rfid-action-badge--late' : 'rfid-action-badge--in');
+                        actionBadge.innerHTML = d.is_late
+                            ? `<i class="material-symbols-rounded me-1 align-middle" style="font-size:1rem">schedule</i>LATE`
+                            : `<i class="material-symbols-rounded me-1 align-middle" style="font-size:1rem">login</i>CHECKED IN`;
                         _addToLog(d, 'in');
+                    } else if (d.action === 'duplicate_checkin') {
+                        document.getElementById('faceErrorTitle').textContent = 'Already Checked In';
+                        document.getElementById('faceErrorMsg').textContent = 'Student is already checked in. Please wait 10 minutes to check out.';
+                        _showState('error');
+                        _resetTimer = setTimeout(() => _showState('waiting'), RESET_MS);
+                        return;
                     } else if (d.action === 'check_out') {
                         avatar.className = 'rfid-avatar rfid-avatar--out flex-shrink-0';
                         avatar.style.cssText = 'width:64px;height:64px;';
@@ -1111,7 +1119,7 @@
                         avatar.style.cssText = 'width:64px;height:64px;';
                         actionBadge.className = 'rfid-action-badge rfid-action-badge--done';
                         actionBadge.innerHTML =
-                            `<i class="material-symbols-rounded me-1 align-middle" style="font-size:1rem">task_alt</i>FULLY RECORDED`;
+                            `<i class="material-symbols-rounded me-1 align-middle" style="font-size:1rem">task_alt</i>ALREADY MARKED`;
                         // Show check-in / check-out times in banner
                         document.getElementById('faceAlreadyCheckIn').textContent = d.check_in || '—';
                         document.getElementById('faceAlreadyCheckOut').textContent = d.check_out || '—';
@@ -1119,6 +1127,21 @@
                         document.getElementById('faceResultTime').textContent = d.check_in || d.time || '—';
                         alreadyBanner.classList.remove('d-none');
                         _addToLog(d, 'done');
+                    } else if (d.action === 'face_not_recognized') {
+                        // Face detected but not in system or not matched
+                        const facesDetected = d.faces_detected || 0;
+                        let errorMsg = 'Face not recognised. Please re-register.';
+                        if (facesDetected === 0) {
+                            errorMsg = 'No face detected. Please position camera clearly.';
+                        } else if (facesDetected > 1) {
+                            errorMsg = `${facesDetected} faces detected. Please ensure only one person is in frame.`;
+                        }
+
+                        document.getElementById('faceErrorTitle').textContent = 'Not Recognised';
+                        document.getElementById('faceErrorMsg').textContent = d.message || errorMsg;
+                        _showState('error');
+                        _resetTimer = setTimeout(() => _showState('waiting'), RESET_MS);
+                        return;
                     } else {
                         document.getElementById('faceErrorTitle').textContent = 'Not Recognised';
                         document.getElementById('faceErrorMsg').textContent = d.message ||
@@ -1170,15 +1193,15 @@
                     const row = document.createElement('div');
                     row.className = 'rfid-log-row d-flex align-items-center gap-2 px-3 py-2 border-bottom';
                     row.innerHTML = `
-                        <i class="material-symbols-rounded text-${c}" style="font-size:1.2rem">${ico}</i>
-                        <div class="flex-grow-1 overflow-hidden">
-                            <div class="fw-semibold text-truncate small">${d.student_name || '—'}</div>
-                            <div class="text-muted" style="font-size:.75rem">${d.student_code || ''}</div>
-                        </div>
-                        <div class="text-end">
-                            <span class="badge bg-${c}-subtle text-${c} border border-${c}-subtle">${lbl}</span>
-                            <div class="text-muted" style="font-size:.72rem">${d.time || ''}</div>
-                        </div>`;
+                                <i class="material-symbols-rounded text-${c}" style="font-size:1.2rem">${ico}</i>
+                                <div class="flex-grow-1 overflow-hidden">
+                                    <div class="fw-semibold text-truncate small">${d.student_name || '—'}</div>
+                                    <div class="text-muted" style="font-size:.75rem">${d.student_code || ''}</div>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-${c}-subtle text-${c} border border-${c}-subtle">${lbl}</span>
+                                    <div class="text-muted" style="font-size:.72rem">${d.time || ''}</div>
+                                </div>`;
                     log.insertBefore(row, log.firstChild);
                 }
 
@@ -1365,6 +1388,12 @@
                 background: #d1fae5;
                 color: #065f46;
                 border: 1.5px solid #10b981;
+            }
+
+            .rfid-action-badge--late {
+                background: #ffedd5;
+                color: #c2410c;
+                border: 1.5px solid #f97316;
             }
 
             .rfid-action-badge--out {

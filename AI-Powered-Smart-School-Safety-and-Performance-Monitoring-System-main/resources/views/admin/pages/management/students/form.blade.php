@@ -234,7 +234,7 @@
                                                         No wristband assigned
                                                     </span>
                                                     @if ($id)
-                                                        <button type="button" class="btn btn-sm btn-primary"
+                                                        <button type="button" class="btn btn-sm btn-primary mb-0"
                                                             onclick="openRfidModal('{{ $id }}')">
                                                             <i class="material-symbols-rounded me-1"
                                                                 style="font-size:1rem">add_link</i>
@@ -280,7 +280,7 @@
                                                 </span>
 
                                                 @if ($id)
-                                                    <button type="button" class="btn btn-sm btn-primary"
+                                                    <button type="button" class="btn btn-sm btn-primary mb-0"
                                                         onclick="faceCapture.open('{{ $id }}', '{{ addslashes((($student ?? null)?->first_name ?? '') . ' ' . (($student ?? null)?->last_name ?? '')) }}')">
                                                         <i class="material-symbols-rounded me-1"
                                                             style="font-size:1rem">photo_camera</i>
@@ -610,11 +610,11 @@
                                                 <div class="col-md-12">
                                                     <!-- Automatically assign student role -->
                                                     <input type="hidden" name="roles[]" value="student">
-                                                    <div class="alert alert-info mb-0">
+                                                    {{-- <div class="alert alert-info mb-0">
                                                         <i class="material-symbols-rounded align-middle me-2"
                                                             style="font-size: 1.2rem;">info</i>
                                                         <strong>Role:</strong> Student role will be automatically assigned
-                                                    </div>
+                                                    </div> --}}
                                                 </div>
                                             </div>
                                         </div>
@@ -863,7 +863,14 @@
             ];
         });
         $selectedClassId = old('class_id', $student->class_id ?? null);
-        $selectedSubjectsArr = old('subjects', isset($student) ? $student->subjects->pluck('id')->toArray() : []);
+        
+        // Handle subjects - they might come from old() as JSON string or from collection
+        $selectedSubjectsArr = [];
+        if (old('subject_ids')) {
+            $selectedSubjectsArr = json_decode(old('subject_ids'), true) ?? [];
+        } elseif (isset($student)) {
+            $selectedSubjectsArr = $student->subjects->pluck('id')->toArray();
+        }
     @endphp
     <script>
         window.isEditMode = @json($id ? true : false);
@@ -871,6 +878,7 @@
         window.subjectsByGradeUrl = @json(route('admin.management.students.subjects-by-grade'));
         window.classesByGradeUrl = @json(route('admin.management.students.classes-by-grade'));
         window.selectedSubjects = @json($selectedSubjectsArr);
+        window.selectedStream = @json($student->stream ?? null);
         window.allClasses = @json($classesForJs);
         window.selectedClassId = @json($selectedClassId);
         // RFID enrollment JS configuration

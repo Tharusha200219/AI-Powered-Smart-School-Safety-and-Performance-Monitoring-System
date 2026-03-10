@@ -137,17 +137,65 @@ class FaceRecognitionController extends Controller
             $faces  = $data['faces']  ?? [];   // [{bbox,confidence,is_recognized,student_name}]
 
             if (empty($data['success']) || empty($marked)) {
-                $msg = $data['message'] ?? 'No face recognised';
-                // Provide more useful message when faces were seen but not matched
-                if (!empty($data['total_faces']) && $data['total_faces'] > 0) {
-                    $msg = 'Face detected but not recognised. Please re-register or retrain.';
+                $recognizedButNotMarked = false;
+                $recognizedName = 'Unknown';
+                $recognizedStudentId = null;
+                $recognizedConfidence = null;
+                foreach ($faces as $f) {
+                    if (!empty($f['is_recognized'])) {
+                        $recognizedButNotMarked = true;
+                        $recognizedName = $f['student_name'] ?? 'Unknown';
+                        $recognizedStudentId = $f['student_id'] ?? null;
+                        $recognizedConfidence = $f['confidence'] ?? null;
+                        break;
+                    }
                 }
-                return response()->json([
-                    'success'    => false,
-                    'recognized' => false,
-                    'message'    => $msg,
-                    'faces'      => $faces,
-                ]);
+
+                if ($recognizedButNotMarked) {
+                    // Recognized but ignored by Python due to its own 5-min cooldown
+                    // We spoof the marked array to let Laravel handle the attendance state (check-in/already-checked-in/check-out)
+                    $studentId = (int) preg_replace('/^DASH_/i', '', (string) $recognizedStudentId);
+                    $marked = [
+                        [
+                            'student_id' => $studentId,
+                            'confidence' => $recognizedConfidence
+                        ]
+                    ];
+                } else {
+                    $msg = $data['message'] ?? 'No face detected in the frame';
+                    if ($msg === 'No faces detected' || $msg === 'No face recognised') {
+                        $msg = 'No face detected in the frame';
+                    }
+
+                    // Provide more useful message when faces were seen but not matched
+                    if (!empty($data['total_faces']) && $data['total_faces'] > 0) {
+                        $msg = 'Face detected but not recognised. Please re-register or retrain.';
+                    }
+
+                    // Return as successful response so UI can display it
+                    $errorResult = [
+                        'student_id'   => null,
+                        'student_name' => 'Unknown',
+                        'student_code' => '—',
+                        'grade'        => '—',
+                        'class'        => '—',
+                        'action'       => 'face_not_recognized',
+                        'time'         => now()->format('H:i:s'),
+                        'scanned_at'   => now()->toIso8601String(),
+                        'success'      => false,
+                        'message'      => $msg,
+                        'source'       => 'face',
+                        'faces_detected' => $data['total_faces'] ?? 0,
+                    ];
+                    Cache::put(self::LAST_SCAN_KEY, $errorResult, now()->addSeconds(5));
+                    return response()->json([
+                        'success'    => false,
+                        'recognized' => false,
+                        'message'    => $msg,
+                        'data'       => $errorResult,
+                        'faces'      => $faces,
+                    ], 200);
+                }
             }
 
             // student_id may be stored as "DASH_123" or plain "123" — strip prefix
@@ -203,7 +251,7 @@ class FaceRecognitionController extends Controller
                     'confidence'   => $pythonConfidence,
                 ];
                 Cache::put(self::LAST_SCAN_KEY, $result, now()->addMinutes(10));
-                return response()->json(['success' => false, 'action' => 'already_complete', 'data' => $result, 'faces' => $faces], 409);
+                return response()->json(['success' => false, 'action' => 'already_complete', 'data' => $result, 'faces' => $faces], 200);
             }
 
             // ── Check In ─────────────────────────────────────────────────────
@@ -214,6 +262,26 @@ class FaceRecognitionController extends Controller
                 $result = $this->buildScanData($student, $attendance, 'check_in', $pythonConfidence);
                 Cache::put(self::LAST_SCAN_KEY, $result, now()->addMinutes(10));
                 return response()->json(['success' => true, 'action' => 'check_in', 'data' => $result, 'faces' => $faces]);
+            }
+
+            // ── Check Out Cooldown ───────────────────────────────────────────
+            $minsSinceCheckin = $todayAttendance->check_in_time->diffInMinutes(now());
+            if ($minsSinceCheckin < 10) {
+                 $result = [
+                     'student_id'   => $studentId,
+                     'student_name' => $studentName,
+                     'student_code' => $student->student_code,
+                     'grade'        => $student->grade_level,
+                     'class'        => $student->schoolClass->class_name ?? 'N/A',
+                     'action'       => 'duplicate_checkin',
+                     'time'         => now()->format('H:i:s'),
+                     'scanned_at'   => now()->toIso8601String(),
+                     'success'      => false,
+                     'source'       => 'face',
+                     'confidence'   => $pythonConfidence,
+                 ];
+                 Cache::put(self::LAST_SCAN_KEY, $result, now()->addSeconds(10));
+                 return response()->json(['success' => false, 'action' => 'duplicate_checkin', 'data' => $result, 'faces' => $faces], 200);
             }
 
             // ── Check Out ────────────────────────────────────────────────────
@@ -255,7 +323,7 @@ class FaceRecognitionController extends Controller
 
         if ($action === 'check_in') {
             $data['time']    = $attendance->check_in_time->format('H:i:s');
-            $data['is_late'] = $attendance->is_late ?? false;
+            $data['is_late'] = $attendance->status === 'late';
         } else {
             $data['time']     = $attendance->check_out_time->format('H:i:s');
             $checkin = $attendance->check_in_time;
