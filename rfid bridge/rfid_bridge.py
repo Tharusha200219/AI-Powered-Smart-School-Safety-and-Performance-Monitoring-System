@@ -147,7 +147,7 @@ def read_loop(port: str) -> None:
             try:
                 msg = json.loads(line)
             except json.JSONDecodeError:
-                log.debug("Non-JSON line ignored: %s", line)
+                log.info("Arduino Raw: %s", line)
                 continue
 
             # Status / heartbeat messages (no 'uid' key)

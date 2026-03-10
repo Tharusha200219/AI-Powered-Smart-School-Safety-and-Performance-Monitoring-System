@@ -18,6 +18,8 @@ An integrated AI-powered solution designed to enhance school safety, optimize ed
 
 ## 📋 Table of Contents
 
+- [Project Documentation (Full)](PROJECT_DOCUMENTATION.md)
+- [API Specifications](Documentations/API_SPECIFICATIONS.md)
 - [Project Overview](#-project-overview)
 - [Key Features](#-key-features)
 - [System Architecture](#-system-architecture)
@@ -28,7 +30,6 @@ An integrated AI-powered solution designed to enhance school safety, optimize ed
 - [Quick Start](#-quick-start)
 - [API Endpoints](#-api-endpoints)
 - [Hardware Requirements](#-hardware-requirements)
-- [Documentation](#-documentation)
 - [Contributing](#-contributing)
 - [License](#-license)
 

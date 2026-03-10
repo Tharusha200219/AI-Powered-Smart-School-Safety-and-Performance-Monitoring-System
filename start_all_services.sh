@@ -49,7 +49,12 @@ sleep 2
 # 4. Start Student Performance Prediction API
 echo "4. Starting Student Performance Prediction API (Port 5002)..."
 cd "$SCRIPT_DIR/student-performance-prediction-model"
-python3 api/app.py > "$LOGS_DIR/performance.log" 2>&1 &
+PERF_VENV_PY="$SCRIPT_DIR/student-performance-prediction-model/venv/bin/python3"
+if [ -f "$PERF_VENV_PY" ]; then
+    "$PERF_VENV_PY" api/app.py > "$LOGS_DIR/performance.log" 2>&1 &
+else
+    python3 api/app.py > "$LOGS_DIR/performance.log" 2>&1 &
+fi
 echo "   ✓ Performance Prediction API started (PID: $!)"
 sleep 2
 
@@ -121,7 +126,7 @@ check_service() {
 check_service 8000 "Laravel App"
 check_service 5001 "Homework API" "/api/health"
 check_service 5005 "Audio Threat API" "/api/audio/health"
-check_service 5002 "Performance Prediction API" "/api/health"
+check_service 5002 "Performance Prediction API" "/health"
 check_service 5003 "Seating Arrangement API" "/api/health"
 check_service 5004 "Facial Recognition API" "/api/health"
 
