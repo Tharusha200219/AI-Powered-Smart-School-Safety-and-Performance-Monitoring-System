@@ -23,13 +23,23 @@ Start-Sleep -Seconds 2
 # Start Homework Management API
 Write-Host "2. Starting Homework Management API (Port 5001)..." -ForegroundColor White
 $homeworkPath = Join-Path $scriptDir "AI-POWERED_HOMEWORK_MANAGEMENT_AND_PERFORMANCE_MONITORING"
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$homeworkPath'; Write-Host '📚 Homework Management API' -ForegroundColor Cyan; Write-Host 'Port: 5001' -ForegroundColor Green; Write-Host ''; python app.py"
+$homeworkVenvPy = Join-Path $homeworkPath "venv\Scripts\python.exe"
+if (Test-Path $homeworkVenvPy) {
+    Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$homeworkPath'; Write-Host '📚 Homework Management API' -ForegroundColor Cyan; Write-Host 'Port: 5001' -ForegroundColor Green; Write-Host ''; & '$homeworkVenvPy' app.py"
+} else {
+    Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$homeworkPath'; Write-Host '📚 Homework Management API' -ForegroundColor Cyan; Write-Host 'Port: 5001' -ForegroundColor Green; Write-Host ''; python app.py"
+}
 Start-Sleep -Seconds 2
 
 # Start Audio Threat Detection API
 Write-Host "3. Starting Audio Threat Detection API (Port 5005)..." -ForegroundColor White
 $audioPath = Join-Path $scriptDir "Audio-Based_Threat_Detection"
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$audioPath'; Write-Host '🔊 Audio Threat Detection API' -ForegroundColor Cyan; Write-Host 'Port: 5005' -ForegroundColor Green; Write-Host ''; `$env:FLASK_PORT=5005; python app.py"
+$audioVenvPy = Join-Path $audioPath "venv\Scripts\python.exe"
+if (Test-Path $audioVenvPy) {
+    Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$audioPath'; Write-Host '🔊 Audio Threat Detection API' -ForegroundColor Cyan; Write-Host 'Port: 5005' -ForegroundColor Green; Write-Host ''; `$env:FLASK_PORT=5005; & '$audioVenvPy' app.py"
+} else {
+    Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$audioPath'; Write-Host '🔊 Audio Threat Detection API' -ForegroundColor Cyan; Write-Host 'Port: 5005' -ForegroundColor Green; Write-Host ''; `$env:FLASK_PORT=5005; python app.py"
+}
 Start-Sleep -Seconds 2
 
 # Start Student Performance Prediction API
@@ -47,11 +57,27 @@ Start-Sleep -Seconds 2
 # Start Facial Recognition Attendance API
 Write-Host "6. Starting Facial Recognition Attendance API (Port 5004)..." -ForegroundColor White
 $facialPath = Join-Path $scriptDir "Facial Recognition Attendance Systems"
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$facialPath'; Write-Host '👤 Facial Recognition Attendance API' -ForegroundColor Cyan; Write-Host 'Port: 5004' -ForegroundColor Green; Write-Host ''; python app.py"
+$facialVenvPy = Join-Path $facialPath "venv\Scripts\python.exe"
+if (Test-Path $facialVenvPy) {
+    Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$facialPath'; Write-Host '👤 Facial Recognition Attendance API' -ForegroundColor Cyan; Write-Host 'Port: 5004' -ForegroundColor Green; Write-Host ''; & '$facialVenvPy' app.py"
+} else {
+    Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$facialPath'; Write-Host '👤 Facial Recognition Attendance API' -ForegroundColor Cyan; Write-Host 'Port: 5004' -ForegroundColor Green; Write-Host ''; python app.py"
+}
+Start-Sleep -Seconds 2
+
+# Start Video-Based Threat Detection API
+Write-Host "7. Starting Video-Based Threat Detection API (Port 5006)..." -ForegroundColor White
+$videoPath = Join-Path $scriptDir "Video_Based_Left_Behind_Object_and_Threat_Detection"
+$videoVenvPy = Join-Path $videoPath "venv\Scripts\python.exe"
+if (Test-Path $videoVenvPy) {
+    Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$videoPath'; Write-Host '🎥 Video-Based Threat Detection API' -ForegroundColor Cyan; Write-Host 'Port: 5006' -ForegroundColor Green; Write-Host ''; `$env:FLASK_PORT=5006; & '$videoVenvPy' app.py"
+} else {
+    Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$videoPath'; Write-Host '🎥 Video-Based Threat Detection API' -ForegroundColor Cyan; Write-Host 'Port: 5006' -ForegroundColor Green; Write-Host ''; `$env:FLASK_PORT=5006; python app.py"
+}
 Start-Sleep -Seconds 2
 
 # Start RFID Serial Bridge
-Write-Host "7. Starting RFID Serial Bridge (Arduino + RC522)..." -ForegroundColor White
+Write-Host "8. Starting RFID Serial Bridge (Arduino + RC522)..." -ForegroundColor White
 $rfidPath = Join-Path $scriptDir "rfid bridge"
 $rfidScript = Join-Path $rfidPath "rfid_bridge.py"
 if (Test-Path $rfidScript) {
@@ -118,6 +144,14 @@ try {
     Write-Host "  ✗ Facial Recognition API (Port 5004): NOT RESPONDING" -ForegroundColor Red
 }
 
+# Check Video Threat API
+try {
+    $r7 = Invoke-WebRequest -Uri "http://127.0.0.1:5006/api/video/health" -UseBasicParsing -TimeoutSec 5 | ConvertFrom-Json
+    Write-Host "  ✓ Video Threat API (Port 5006): $($r7.status)" -ForegroundColor Green
+} catch {
+    Write-Host "  ✗ Video Threat API (Port 5006): NOT RESPONDING" -ForegroundColor Red
+}
+
 Write-Host ""
 Write-Host "╔════════════════════════════════════════════════════════════════════════════╗" -ForegroundColor Green
 Write-Host "║                    ALL SERVICES STARTED SUCCESSFULLY                      ║" -ForegroundColor Green
@@ -131,6 +165,7 @@ Write-Host "   • Audio Threat API:         http://127.0.0.1:5005" -ForegroundC
 Write-Host "   • Performance Prediction:   http://127.0.0.1:5002" -ForegroundColor Cyan
 Write-Host "   • Seating Arrangement:      http://127.0.0.1:5003" -ForegroundColor Cyan
 Write-Host "   • Facial Recognition:       http://127.0.0.1:5004" -ForegroundColor Cyan
+Write-Host "   • Video Threat API:         http://127.0.0.1:5006" -ForegroundColor Cyan
 Write-Host ""
 
 Write-Host "📝 Health Check URLs:" -ForegroundColor Yellow
@@ -139,6 +174,7 @@ Write-Host "   • Audio Threat API:         http://127.0.0.1:5005/api/audio/hea
 Write-Host "   • Performance Prediction:   http://127.0.0.1:5002/api/health" -ForegroundColor Cyan
 Write-Host "   • Seating Arrangement:      http://127.0.0.1:5003/api/health" -ForegroundColor Cyan
 Write-Host "   • Facial Recognition:       http://127.0.0.1:5004/api/health" -ForegroundColor Cyan
+Write-Host "   • Video Threat API:         http://127.0.0.1:5006/api/video/health" -ForegroundColor Cyan
 Write-Host ""
 
 Write-Host "🌐 Opening Laravel application in browser..." -ForegroundColor Yellow

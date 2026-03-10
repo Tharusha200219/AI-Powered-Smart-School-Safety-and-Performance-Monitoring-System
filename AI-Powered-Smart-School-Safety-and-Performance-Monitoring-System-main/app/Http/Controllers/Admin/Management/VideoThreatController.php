@@ -17,7 +17,7 @@ class VideoThreatController extends Controller
 
     public function __construct()
     {
-        $this->apiBaseUrl = config('services.video_threat.url', 'http://127.0.0.1:5003');
+        $this->apiBaseUrl = config('services.video_threat.url', 'http://127.0.0.1:5006');
     }
 
     /**

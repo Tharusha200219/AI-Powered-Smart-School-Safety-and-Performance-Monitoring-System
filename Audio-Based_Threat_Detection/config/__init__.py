@@ -309,7 +309,7 @@ class FlaskConfig:
     SECRET_KEY = os.environ.get('SECRET_KEY', 'audio-threat-detection-secret-key-2024')
     DEBUG = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
     HOST = os.environ.get('FLASK_HOST', '127.0.0.1')
-    PORT = int(os.environ.get('FLASK_PORT', 5002))
+    PORT = int(os.environ.get('FLASK_PORT', 5005))
     
     # CORS Settings
     CORS_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000']
