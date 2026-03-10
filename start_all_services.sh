@@ -35,14 +35,24 @@ sleep 2
 # 2. Start Homework Management API
 echo "2. Starting Homework Management API (Port 5001)..."
 cd "$SCRIPT_DIR/AI-POWERED_HOMEWORK_MANAGEMENT_AND_PERFORMANCE_MONITORING"
-python3 app.py > "$LOGS_DIR/homework.log" 2>&1 &
+HOMEWORK_VENV_PY="$SCRIPT_DIR/AI-POWERED_HOMEWORK_MANAGEMENT_AND_PERFORMANCE_MONITORING/venv/bin/python3"
+if [ -f "$HOMEWORK_VENV_PY" ]; then
+    "$HOMEWORK_VENV_PY" app.py > "$LOGS_DIR/homework.log" 2>&1 &
+else
+    python3 app.py > "$LOGS_DIR/homework.log" 2>&1 &
+fi
 echo "   ✓ Homework API started (PID: $!)"
 sleep 2
 
 # 3. Start Audio Threat Detection API
 echo "3. Starting Audio Threat Detection API (Port 5005)..."
 cd "$SCRIPT_DIR/Audio-Based_Threat_Detection"
-FLASK_PORT=5005 python3 app.py > "$LOGS_DIR/audio.log" 2>&1 &
+AUDIO_VENV_PY="$SCRIPT_DIR/Audio-Based_Threat_Detection/venv/bin/python3"
+if [ -f "$AUDIO_VENV_PY" ]; then
+    FLASK_PORT=5005 "$AUDIO_VENV_PY" app.py > "$LOGS_DIR/audio.log" 2>&1 &
+else
+    FLASK_PORT=5005 python3 app.py > "$LOGS_DIR/audio.log" 2>&1 &
+fi
 echo "   ✓ Audio Threat API started (PID: $!)"
 sleep 2
 
@@ -68,7 +78,7 @@ sleep 2
 # 6. Start Facial Recognition Attendance API
 echo "6. Starting Facial Recognition Attendance API (Port 5004)..."
 cd "$SCRIPT_DIR/Facial Recognition Attendance Systems"
-FACE_VENV_PY="$SCRIPT_DIR/face_venv/bin/python3"
+FACE_VENV_PY="$SCRIPT_DIR/Facial Recognition Attendance Systems/venv/bin/python3"
 if [ -f "$FACE_VENV_PY" ]; then
     "$FACE_VENV_PY" app.py > "$LOGS_DIR/facial.log" 2>&1 &
 else
@@ -77,8 +87,20 @@ fi
 echo "   ✓ Facial Recognition API started (PID: $!)"
 sleep 2
 
-# 7. Start RFID Serial Bridge (Arduino UNO R3 + RC522)
-echo "7. Starting RFID Serial Bridge (Arduino + RC522)..."
+# 7. Start Video-Based Threat Detection API
+echo "7. Starting Video-Based Threat Detection API (Port 5006)..."
+cd "$SCRIPT_DIR/Video_Based_Left_Behind_Object_and_Threat_Detection"
+VIDEO_VENV_PY="$SCRIPT_DIR/Video_Based_Left_Behind_Object_and_Threat_Detection/venv/bin/python3"
+if [ -f "$VIDEO_VENV_PY" ]; then
+    FLASK_PORT=5006 "$VIDEO_VENV_PY" app.py > "$LOGS_DIR/video_threat.log" 2>&1 &
+else
+    FLASK_PORT=5006 python3 app.py > "$LOGS_DIR/video_threat.log" 2>&1 &
+fi
+echo "   ✓ Video Threat API started (PID: $!)"
+sleep 2
+
+# 8. Start RFID Serial Bridge (Arduino UNO R3 + RC522)
+echo "8. Starting RFID Serial Bridge (Arduino + RC522)..."
 RFID_SCRIPT="$SCRIPT_DIR/rfid bridge/rfid_bridge.py"
 if [ -f "$RFID_SCRIPT" ]; then
     # Auto-detect Arduino port (prefer usbserial, skip WiFi/Bluetooth ports)
@@ -129,6 +151,7 @@ check_service 5005 "Audio Threat API" "/api/audio/health"
 check_service 5002 "Performance Prediction API" "/health"
 check_service 5003 "Seating Arrangement API" "/api/health"
 check_service 5004 "Facial Recognition API" "/api/health"
+check_service 5006 "Video Threat API" "/api/video/health"
 
 # RFID bridge is a background process, not an HTTP service — just report its log
 if pgrep -f "rfid_bridge.py" > /dev/null 2>&1; then
@@ -150,6 +173,7 @@ echo "   • Audio Threat API:         http://127.0.0.1:5005"
 echo "   • Performance Prediction:   http://127.0.0.1:5002"
 echo "   • Seating Arrangement:      http://127.0.0.1:5003"
 echo "   • Facial Recognition:       http://127.0.0.1:5004"
+echo "   • Video Threat API:         http://127.0.0.1:5006"
 echo "   • RFID Bridge:              (background process — USB serial)"
 echo ""
 
@@ -159,6 +183,7 @@ echo "   • Audio Threat API:         http://127.0.0.1:5005/api/audio/health"
 echo "   • Performance Prediction:   http://127.0.0.1:5002/api/health"
 echo "   • Seating Arrangement:      http://127.0.0.1:5003/api/health"
 echo "   • Facial Recognition:       http://127.0.0.1:5004/api/health"
+echo "   • Video Threat API:         http://127.0.0.1:5006/api/video/health"
 echo ""
 
 echo "📋 View Service Logs:"
@@ -168,6 +193,7 @@ echo "   • tail -f logs/audio.log"
 echo "   • tail -f logs/performance.log"
 echo "   • tail -f logs/seating.log"
 echo "   • tail -f logs/facial.log"
+echo "   • tail -f logs/video_threat.log"
 echo "   • tail -f logs/rfid_bridge.log"
 echo ""
 
