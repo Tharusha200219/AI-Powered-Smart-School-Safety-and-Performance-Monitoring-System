@@ -132,6 +132,14 @@ try {
     Write-Host "  ✓ Facial Recognition API (Port 5004): Stopped" -ForegroundColor Green
 }
 
+# Verify Video Threat API
+try {
+    $r7 = Invoke-WebRequest -Uri "http://127.0.0.1:5006/api/video/health" -UseBasicParsing -TimeoutSec 2
+    Write-Host "  ⚠️  Video Threat API (Port 5006): Still responding" -ForegroundColor Yellow
+} catch {
+    Write-Host "  ✓ Video Threat API (Port 5006): Stopped" -ForegroundColor Green
+}
+
 Write-Host ""
 Write-Host "╔════════════════════════════════════════════════════════════════════════════╗" -ForegroundColor Green
 Write-Host "║                    ALL SERVICES STOPPED SUCCESSFULLY                      ║" -ForegroundColor Green
