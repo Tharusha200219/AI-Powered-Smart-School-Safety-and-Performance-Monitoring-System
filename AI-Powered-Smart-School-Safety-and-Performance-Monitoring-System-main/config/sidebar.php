@@ -17,9 +17,7 @@ return [
             getSideBarElement('schedule', 'Timetables', 'admin.management.timetables.index'),
             getSideBarElement('security', 'Security Staff', 'admin.management.security.index'),
             getSideBarElement('fact_check', 'Attendance', 'admin.management.attendance.dashboard'),
-            getSideBarElement('event', 'Events', 'admin.management.events.index'),
             getSideBarElement('assessment', 'Marks', 'admin.management.marks.index'),
-            getSideBarElement('chair', 'Seating Arrangement', 'admin.management.seating.index'),
         ],
     ],
     [
@@ -27,8 +25,7 @@ return [
         'items' => [
             getSideBarElement('menu_book', 'Lessons', 'admin.management.lessons.index'),
             getSideBarElement('assignment', 'Homework', 'admin.management.homework.dashboard'),
-            getSideBarElement('analytics', 'Performance', 'admin.management.performance.dashboard'),
-            getSideBarElement('summarize', 'Monthly Reports', 'admin.management.reports.index'),
+            getSideBarElement('analytics', 'Performance & Reports', 'admin.management.performance.dashboard'),
             getSideBarElement('grade', 'Grades', 'admin.grades.index'),
             getSideBarElement('schedule', 'Timetable Viewer', 'admin.timetable-viewer.index'),
         ],

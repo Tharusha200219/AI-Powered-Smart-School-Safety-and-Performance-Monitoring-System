@@ -327,4 +327,3 @@ class NonSpeechThreatModel:
         if self.model is None:
             self.build_model()
         return str(self.model)
-

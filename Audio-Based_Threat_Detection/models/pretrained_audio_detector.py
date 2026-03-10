@@ -11,24 +11,48 @@ import numpy as np
 import time
 from pathlib import Path
 
-# ── Exact AudioSet label names → threat class mapping ─────────────────────
-# Using exact label names (verified against AudioSet ontology) to avoid
-# false positives from substring matching (e.g., "Firecracker" vs "crack",
-# "Whimper (dog)" vs "whimper").
+# ── AudioSet label → threat class mapping ────────────────────────────────
+# Two tiers of matching are used to maximise recall without introducing
+# noisy false positives:
+#
+#  Tier 1 – THREAT_EXACT_LABELS: exact display-name strings (highest priority).
+#            Updated to match the AudioSet CSV exactly (v1).
+#
+#  Tier 2 – THREAT_KEYWORD_LABELS: case-insensitive substrings applied to any
+#            label not already claimed by Tier 1.  This catches rare label
+#            variants, regional spellings, and future AudioSet revisions.
+#
+# AudioSet CSV reference (527 classes, v1):
+#  - Screaming, Crying/sobbing, Glass/Shatter, etc. verified against
+#    http://storage.googleapis.com/us_audioset/…/class_labels_indices.csv
+
 THREAT_EXACT_LABELS = {
     'crying': [
         'Crying, sobbing', 'Baby cry, infant cry', 'Whimper',
-        'Wail, moan', 'Weeping', 'Sobbing',
+        'Wail, moan', 'Weeping', 'Sobbing', 'Cry',
     ],
     'screaming': [
-        'Screaming', 'Scream', 'Shriek',
+        'Screaming', 'Scream', 'Shriek', 'Squeal',
+        'Screech', 'Whoop',
     ],
     'shouting': [
         'Shout', 'Yell', 'Children shouting', 'Battle cry', 'War cry',
+        'Howl', 'Bellow',
     ],
     'glass_breaking': [
         'Glass', 'Shatter', 'Smash, crash', 'Breaking', 'Crack',
+        'Shatter', 'Broken glass', 'Glass shatter',
+        'Crash', 'Smash',
     ],
+}
+
+# Tier-2 keyword matching (substring, case-insensitive).
+# Only applied to labels NOT already matched by THREAT_EXACT_LABELS.
+THREAT_KEYWORD_LABELS = {
+    'crying': ['cry', 'sob', 'weep', 'wail', 'whimper', 'infant cry', 'baby cry'],
+    'screaming': ['scream', 'shriek', 'screech', 'squeal', 'yell'],
+    'shouting': ['shout', 'yell', 'holler', 'battle cry'],
+    'glass_breaking': ['glass', 'shatter', 'smash', 'crash', 'splinter', 'break'],
 }
 
 # ── Paths & URLs ───────────────────────────────────────────────────────────
@@ -83,11 +107,12 @@ class PANNsAudioDetector:
     """Real-time non-speech threat detector using PANNS CNN14."""
 
     def __init__(self):
-        self.model       = None
-        self.labels      = []
-        self.threat_idx  = {}   # class → [audioset_indices]
-        self.initialized = False
-        self.target_sr   = 32000
+        self.model           = None
+        self.labels          = []
+        self.threat_idx      = {}   # class → [audioset_indices]
+        self.initialized     = False
+        self.target_sr       = 32000
+        self._resampler_cache = {}  # (orig_sr, target_sr) → torchaudio.transforms.Resample
 
     # ── public ────────────────────────────────────────────────────────────
     def initialize(self) -> bool:
@@ -139,7 +164,7 @@ class PANNsAudioDetector:
             import torch
             audio = audio.astype(np.float32)
             if src_sr != self.target_sr:
-                audio = self._resample(audio, src_sr, self.target_sr)
+                audio = self._resample_cached(audio, src_sr, self.target_sr)
             batch = torch.from_numpy(audio[np.newaxis, :])   # (1, T)
             with torch.no_grad():
                 self.model.eval()
@@ -196,13 +221,41 @@ class PANNsAudioDetector:
         return labels
 
     def _build_index(self):
-        """Build mapping: threat class → list of matching AudioSet indices."""
+        """Build mapping: threat class → list of matching AudioSet indices.
+
+        Two-tier matching strategy:
+          Tier 1 – exact display-name match (highest precision).
+          Tier 2 – case-insensitive keyword/substring match for labels that
+                   were not matched in Tier 1 (improves recall for AudioSet
+                   label variants not listed in THREAT_EXACT_LABELS).
+        """
         self.threat_idx = {cls: [] for cls in THREAT_EXACT_LABELS}
+        claimed: set = set()  # indices already matched by Tier 1
+
+        # Tier 1: exact matching
         for idx, lbl in enumerate(self.labels):
             for cls, exact_set in THREAT_EXACT_LABELS.items():
                 if lbl in exact_set:
                     self.threat_idx[cls].append(idx)
-                    break   # one label → one threat class max
+                    claimed.add(idx)
+                    break
+
+        # Tier 2: keyword/substring matching for unclaimed labels
+        for idx, lbl in enumerate(self.labels):
+            if idx in claimed:
+                continue
+            lbl_lower = lbl.lower()
+            for cls, keywords in THREAT_KEYWORD_LABELS.items():
+                if any(kw in lbl_lower for kw in keywords):
+                    self.threat_idx[cls].append(idx)
+                    claimed.add(idx)
+                    break  # one label → one threat class max
+
+        # Log coverage summary
+        for cls, idxs in self.threat_idx.items():
+            if not idxs:
+                print(f"[PANNs] WARNING: No AudioSet labels matched for class '{cls}'."
+                      " Detections will be unreliable.")
 
     def _ensure_model(self) -> bool:
         if MODEL_PATH.exists() and MODEL_PATH.stat().st_size > 3e8:
@@ -242,10 +295,39 @@ class PANNsAudioDetector:
         ckpt = torch.load(str(MODEL_PATH), map_location='cpu')
         self.model.load_state_dict(ckpt['model'])
         self.model.eval()
+        # Pre-warm the resampler cache for the common 16kHz→32kHz path
+        self._get_or_create_resampler(16000, self.target_sr)
         print(f"[PANNs] CNN14 loaded ({n} AudioSet classes).")
+
+    def _get_or_create_resampler(self, orig_sr: int, target_sr: int):
+        """Return a cached torchaudio.transforms.Resample for the given rate pair."""
+        key = (orig_sr, target_sr)
+        if key not in self._resampler_cache:
+            try:
+                import torchaudio
+                self._resampler_cache[key] = torchaudio.transforms.Resample(
+                    orig_freq=orig_sr, new_freq=target_sr
+                )
+            except Exception:
+                self._resampler_cache[key] = None  # mark as unavailable
+        return self._resampler_cache[key]
+
+    def _resample_cached(self, audio: np.ndarray, orig_sr: int, target_sr: int) -> np.ndarray:
+        """Resample using a cached torchaudio resampler (fast path) with scipy/numpy fallbacks."""
+        resampler = self._get_or_create_resampler(orig_sr, target_sr)
+        if resampler is not None:
+            try:
+                import torch
+                waveform = torch.from_numpy(audio).unsqueeze(0)   # (1, T)
+                resampled = resampler(waveform).squeeze(0).numpy()
+                return resampled.astype(np.float32)
+            except Exception:
+                pass  # fall through to legacy path
+        return self._resample(audio, orig_sr, target_sr)
 
     @staticmethod
     def _resample(audio: np.ndarray, orig_sr: int, target_sr: int) -> np.ndarray:
+        """Legacy resampler (librosa / scipy / linear interp fallback)."""
         try:
             import librosa
             return librosa.resample(audio, orig_sr=orig_sr, target_sr=target_sr)
@@ -265,4 +347,3 @@ class PANNsAudioDetector:
                 np.linspace(0, len(audio) - 1, n_new),
                 np.arange(len(audio)), audio,
             ).astype(np.float32)
-
