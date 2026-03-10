@@ -70,7 +70,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('/classes-by-grade', 'getClassesByGrade')->name('classes-by-grade');
                 Route::post('/write-nfc', 'writeToNFC')->name('write-nfc');
                 Route::get('/test-arduino', 'testArduino')->name('test-arduino');
-                // RFID Wristband Enrollment (UNO R3 + serial bridge)
+                  // RFID Wristband Enrollment (UNO R3 + serial bridge)
                 Route::post('/rfid/enrollment-start', 'startRfidEnrollment')->name('rfid.enrollment-start');
                 Route::post('/rfid/assign', 'assignRfid')->name('rfid.assign');
                 Route::delete('/{studentId}/rfid', 'removeRfid')->name('rfid.remove');
@@ -142,6 +142,10 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/stop-audio-session', 'stopAudioSession')->name('stop-audio-session');
                 Route::post('/process-frame', 'processFrame')->name('process-frame');
                 Route::post('/send-combined-alert', 'sendCombinedAlert')->name('send-combined-alert');
+                Route::post('/send-object-alert', 'sendObjectAlert')->name('send-object-alert');
+                // Classroom IoT device management
+                Route::get('/classrooms', 'classrooms')->name('classrooms');
+                Route::post('/classrooms/update-devices', 'updateClassroomDevices')->name('classrooms.update-devices');
             });
 
             // Timetables Management
@@ -186,8 +190,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/devices/sync', 'devicesSync')->name('devices.sync');
                 Route::delete('/devices/remove', 'devicesRemove')->name('devices.remove');
             });
-
-            // Events Management
+             // Events Management
             Route::prefix('events')->name('events.')->controller(\App\Http\Controllers\Admin\Management\EventController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::get('/create', 'create')->name('create');
@@ -250,6 +253,8 @@ Route::middleware(['auth'])->group(function () {
             Route::prefix('performance')->name('performance.')->controller(\App\Http\Controllers\Admin\Management\PerformanceController::class)->group(function () {
                 Route::get('/', 'dashboard')->name('dashboard');
                 Route::get('/student/{student}', 'studentPerformance')->name('student');
+                Route::get('/student/{student}/pdf', 'downloadStudentPdf')->name('student-pdf');
+                Route::get('/download-all', 'downloadAllPdf')->name('download-all');
                 Route::get('/class/{class}', 'classPerformance')->name('class');
                 Route::post('/trends', 'trends')->name('trends');
                 Route::post('/heatmap', 'heatmap')->name('heatmap');
@@ -265,6 +270,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/send-to-parents', 'sendToParents')->name('send-to-parents');
                 Route::post('/{report}/acknowledge', 'markAcknowledged')->name('acknowledge');
                 Route::get('/{report}/download', 'downloadPdf')->name('download');
+                Route::get('/class/{classId}/{year}/{month}/download', 'downloadClassPdf')->name('download-class');
                 Route::get('/statistics', 'statistics')->name('statistics');
             });
 
@@ -278,7 +284,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/stop-session', 'stopSession')->name('stop-session');
             });
 
-            // Seating Arrangement (AI Powered)
+              // Seating Arrangement (AI Powered)
             Route::prefix('seating')->name('seating.')->controller(\App\Http\Controllers\Admin\Management\SeatingArrangementController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::get('/{grade}/{section}', 'show')->name('show');
@@ -339,6 +345,7 @@ Route::middleware(['auth'])->group(function () {
 
                 // AJAX endpoints for settings page
                 Route::post('/school-info', 'updateSchoolInfo')->name('school-info');
+                Route::post('/theme', 'updateTheme')->name('theme');
                 Route::post('/academic', 'updateAcademic')->name('academic');
                 Route::post('/language', [SettingsController::class, 'updateLanguage'])->name('language');
                 Route::post('/attendance-mode', 'updateAttendanceMode')->name('attendance-mode');
@@ -349,8 +356,10 @@ Route::middleware(['auth'])->group(function () {
         // Dashboard Settings Routes
         Route::prefix('settings')->name('settings.')->controller(SettingsController::class)->group(function () {
             Route::post('/update-school-info', 'updateSchoolInfo')->name('update-school-info');
+            Route::post('/update-theme', 'updateTheme')->name('update-theme');
             Route::post('/update-academic', 'updateAcademic')->name('update-academic');
             Route::post('/update-social-media', 'updateSocialMedia')->name('update-social-media');
+            Route::get('/theme-colors', 'getThemeColors')->name('theme-colors');
         });
 
         // Notification API routes

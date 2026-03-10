@@ -1,1 +1,0 @@
-# student-seating-arrangement-model

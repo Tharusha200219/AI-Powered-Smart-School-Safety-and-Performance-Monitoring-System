@@ -41,8 +41,8 @@ class ThreatDetector:
         self,
         model_path: Optional[str] = None,   # unused, kept for API compat
         model_type: str = "pose",
-        confidence_threshold: float = 0.55,
-        clip_length: int = 16,
+        confidence_threshold: float = 0.40,
+        clip_length: int = 8,
         device: str = None,
     ):
         import torch
@@ -61,6 +61,9 @@ class ThreatDetector:
         self._prev_gray: Optional[np.ndarray] = None
         # Frame buffer for add_frame() API compatibility
         self.frame_buffer: deque = deque(maxlen=clip_length)
+        # Track previous person count so we can flush stale history when
+        # the scene drops from ≥2 people to <2 (avoids lingering false alerts)
+        self._prev_person_count: int = 0
 
         self.pose_model = self._load_pose_model()
 
@@ -106,37 +109,83 @@ class ThreatDetector:
     # -----------------------------------------------------------------------
 
     def _score_proximity(self, persons: List[Dict]) -> float:
-        """High score when two or more people's bounding boxes overlap."""
+        """
+        High score when two or more people are physically close to each other.
+
+        Uses center-to-center distance normalised by the average person width
+        so the score is scale-invariant.  This fires even when bounding boxes
+        do NOT overlap (e.g. two people standing side-by-side fighting), which
+        the old IoU-only approach completely missed.
+
+        Score mapping (D = distance / avg_width):
+          D <= 0.5  → 1.0  (touching / overlapping)
+          D  = 1.0  → 0.75 (very close — arms' reach)
+          D  = 2.0  → 0.25 (close but not in contact)
+          D >= 3.0  → 0.0  (far apart)
+        """
         if len(persons) < 2:
             return 0.0
-        max_iou = 0.0
+        max_score = 0.0
         for i in range(len(persons)):
             for j in range(i + 1, len(persons)):
                 b1, b2 = persons[i]['bbox'], persons[j]['bbox']
-                xi1 = max(b1[0], b2[0]); yi1 = max(b1[1], b2[1])
-                xi2 = min(b1[2], b2[2]); yi2 = min(b1[3], b2[3])
-                if xi2 > xi1 and yi2 > yi1:
-                    inter = (xi2 - xi1) * (yi2 - yi1)
-                    a1 = (b1[2]-b1[0]) * (b1[3]-b1[1])
-                    a2 = (b2[2]-b2[0]) * (b2[3]-b2[1])
-                    iou = inter / max(a1 + a2 - inter, 1e-6)
-                    max_iou = max(max_iou, iou)
-        return min(max(max_iou - 0.1, 0.0) / 0.5, 1.0)
+                # Center points
+                cx1 = (b1[0] + b1[2]) / 2.0;  cy1 = (b1[1] + b1[3]) / 2.0
+                cx2 = (b2[0] + b2[2]) / 2.0;  cy2 = (b2[1] + b2[3]) / 2.0
+                # Average person width as normalisation reference
+                w1 = max(b1[2] - b1[0], 1.0)
+                w2 = max(b2[2] - b2[0], 1.0)
+                avg_w = (w1 + w2) / 2.0
+                # Euclidean distance in "person-widths"
+                dist = ((cx2 - cx1) ** 2 + (cy2 - cy1) ** 2) ** 0.5
+                norm_dist = dist / avg_w
+                # Convert to [0,1] score: 0 distance → 1.0, ≥3 widths → 0.0
+                score = max(0.0, 1.0 - norm_dist / 3.0)
+                max_score = max(max_score, score)
+        return max_score
 
     def _score_arm_raise(self, persons: List[Dict]) -> float:
-        """Score high when wrists are above shoulders (punching / grabbing pose)."""
+        """
+        Score high for aggressive arm poses — punching, pushing, or swinging.
+
+        Two signals are combined per arm:
+          1. Vertical raise  : wrist is above the shoulder (uppercut / overhead blow).
+          2. Lateral extend  : wrist is far outside the body mid-line (side-swing / push).
+        The two signals are max-combined so either alone triggers the score.
+        """
         if not persons:
             return 0.0
         scores = []
         for p in persons:
             kp = p['keypoints']
             score, count = 0.0, 0
+            # Hip midpoint x as a rough body-center reference (keypoints 11,12)
+            KP_LEFT_HIP, KP_RIGHT_HIP = 11, 12
+            body_cx = None
+            if kp[KP_LEFT_HIP, 2] > 0.2 and kp[KP_RIGHT_HIP, 2] > 0.2:
+                body_cx = (kp[KP_LEFT_HIP, 0] + kp[KP_RIGHT_HIP, 0]) / 2.0
+
             for sh_idx, wr_idx in [(KP_LEFT_SHOULDER, KP_LEFT_WRIST),
                                    (KP_RIGHT_SHOULDER, KP_RIGHT_WRIST)]:
                 if kp[sh_idx, 2] > 0.3 and kp[wr_idx, 2] > 0.3:
                     sh_y, wr_y = kp[sh_idx, 1], kp[wr_idx, 1]
+                    sh_x, wr_x = kp[sh_idx, 0], kp[wr_idx, 0]
+
+                    # Vertical raise score
+                    v_score = 0.0
                     if wr_y < sh_y and sh_y > 0:
-                        score += min((sh_y - wr_y) / sh_y * 3, 1.0)
+                        v_score = min((sh_y - wr_y) / max(sh_y, 1) * 3, 1.0)
+
+                    # Lateral extension score
+                    l_score = 0.0
+                    if body_cx is not None:
+                        shoulder_span = abs(sh_x - body_cx)
+                        wrist_dist    = abs(wr_x - body_cx)
+                        if shoulder_span > 0:
+                            # Wrist more than 1.5× the shoulder-to-center distance = extended
+                            l_score = min(max(wrist_dist / max(shoulder_span, 1) - 1.0, 0.0) / 1.5, 1.0)
+
+                    score += max(v_score, l_score)
                     count += 1
             if count:
                 scores.append(score / count)
@@ -174,7 +223,7 @@ class ThreatDetector:
             person_mag = mag[mask == 1]
             if person_mag.size == 0:
                 return 0.0
-            return min(float(np.mean(person_mag)) / 15.0, 1.0)
+            return min(float(np.mean(person_mag)) / 8.0, 1.0)
         except Exception:
             return 0.0
 
@@ -216,19 +265,46 @@ class ThreatDetector:
             # Pose estimation (persons only — COCO class 0)
             results = self.pose_model(frame, verbose=False, classes=[0])
             persons = self._extract_persons(results)
+            n_persons = len(persons)
 
-            # Individual heuristic scores
-            s_prox   = self._score_proximity(persons)
-            s_arm    = self._score_arm_raise(persons)
-            s_fall   = self._score_fall(persons)
-            s_motion = self._score_motion(frame_gray, persons)
+            # ── Person-count guard ─────────────────────────────────────────
+            # Arm-raise and motion are normal, innocent behaviours for a
+            # single person (waving, walking, exercising).  They must NOT
+            # contribute to the threat score unless at least 2 people are
+            # in the scene.  Only fall detection applies to a lone person.
+            #
+            # When the scene drops from ≥2 people back to <2 we also flush
+            # the score history so stale high scores don't keep an alert
+            # alive after the situation resolved.
+            if n_persons < 2 and self._prev_person_count >= 2:
+                self._score_history.clear()
+                logger.debug("Person count dropped below 2 — score history cleared")
 
-            # Weighted blend
-            blended = (0.35 * s_prox + 0.25 * s_motion + 0.20 * s_arm + 0.20 * s_fall)
+            self._prev_person_count = n_persons
 
-            # Boost when proximity + motion both fire (most likely a fight)
-            if s_prox > 0.3 and s_motion > 0.3:
-                blended = min(blended * 1.4, 1.0)
+            # Fall score — valid for any person count (a lone person can fall)
+            s_fall = self._score_fall(persons)
+
+            if n_persons >= 2:
+                # Full multi-person scoring
+                s_prox   = self._score_proximity(persons)
+                s_arm    = self._score_arm_raise(persons)
+                s_motion = self._score_motion(frame_gray, persons)
+
+                # Weighted blend for interaction threats
+                blended = (0.40 * s_prox + 0.25 * s_motion + 0.15 * s_arm + 0.20 * s_fall)
+
+                # Boost when proximity + motion both fire (most likely a fight)
+                if s_prox > 0.2 and s_motion > 0.2:
+                    blended = min(blended * 1.6, 1.0)
+            else:
+                # Single person (or no persons): only fall detection
+                s_prox   = 0.0
+                s_arm    = 0.0
+                s_motion = self._score_motion(frame_gray, persons)  # still update optical flow
+                # Blended = fall score only; motion is computed to keep prev_gray
+                # updated but does NOT count toward the threat score here
+                blended = s_fall
 
             # Temporal smoothing
             self._score_history.append(blended)
@@ -237,34 +313,41 @@ class ThreatDetector:
             # Update previous frame for next optical-flow call
             self._prev_gray = frame_gray
 
-            # Classify threat type
+            # ── Classify threat type ───────────────────────────────────────
+            # fighting / pushing / aggressive_behavior require ≥2 people.
+            # fall_detected is the only single-person threat.
             threat_type = None
             if smoothed >= self.confidence_threshold:
                 if s_fall > 0.5:
                     threat_type = "fall_detected"
-                elif s_prox > 0.3 and s_motion > 0.3:
+                elif n_persons >= 2 and s_prox > 0.2 and s_motion > 0.2:
                     threat_type = "fighting"
-                elif s_arm > 0.4:
+                elif n_persons >= 2 and s_arm > 0.3:
                     threat_type = "aggressive_behavior"
-                else:
+                elif n_persons >= 2:
                     threat_type = "pushing"
+                # If n_persons < 2 and score is high but no fall → do NOT alert
+                # (stale history artefact — let it decay naturally)
 
             all_scores = {
-                "proximity": round(s_prox, 3),
-                "arm_raise": round(s_arm,  3),
-                "motion":    round(s_motion, 3),
-                "fall":      round(s_fall, 3),
-                "blended":   round(blended, 3),
-                "smoothed":  round(smoothed, 3),
+                "proximity":    round(s_prox, 3),
+                "arm_raise":    round(s_arm,  3),
+                "motion":       round(s_motion, 3),
+                "fall":         round(s_fall, 3),
+                "blended":      round(blended, 3),
+                "smoothed":     round(smoothed, 3),
+                "people_count": n_persons,
             }
 
+            is_threat = (smoothed >= self.confidence_threshold) and (threat_type is not None)
+
             return {
-                'is_threat':    smoothed >= self.confidence_threshold,
+                'is_threat':    is_threat,
                 'threat_type':  threat_type,
                 'confidence':   round(smoothed, 4),
                 'all_scores':   all_scores,
-                'status':       'threat' if smoothed >= self.confidence_threshold else 'normal',
-                'people_count': len(persons),
+                'status':       'threat' if is_threat else 'normal',
+                'people_count': n_persons,
             }
 
         except Exception as exc:
@@ -286,6 +369,7 @@ class ThreatDetector:
         self.frame_buffer.clear()
         self._score_history.clear()
         self._prev_gray = None
+        self._prev_person_count = 0
 
     def preprocess_frame(self, frame: np.ndarray, size=(224, 224)) -> np.ndarray:
         """Kept for API compatibility."""
@@ -316,5 +400,3 @@ class ThreatDetector:
             y += 18
 
         return annotated
-
-
