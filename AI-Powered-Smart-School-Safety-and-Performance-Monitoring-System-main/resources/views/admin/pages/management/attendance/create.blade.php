@@ -250,7 +250,7 @@
                                                 {{-- Result overlay — shown on top of live video --}}
                                                 <div id="faceStateResult"
                                                     class="d-none position-absolute bottom-0 start-0 w-100"
-                                                    style="background:linear-gradient(transparent 0%,rgba(0,0,0,.92) 35%);padding:24px 20px 20px;">
+                                                    style="background:linear-gradient(transparent 0%,rgba(0,0,0,.7) 35%);padding:24px 20px 20px;">
                                                     {{-- Already-marked banner --}}
                                                     <div id="faceAlreadyBanner" class="d-none mb-2">
                                                         <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -279,7 +279,7 @@
                                                         </div>
                                                         <div class="flex-grow-1 text-white">
                                                             <h4 class="fw-bold mb-0 lh-1" id="faceResultName"
-                                                                style="font-size:1.35rem;">—</h4>
+                                                                style="font-size:1.35rem; color: white;">—</h4>
                                                             <p class="mb-1 mt-1" style="font-size:.85rem;">
                                                                 <span
                                                                     class="badge bg-light text-dark border fw-semibold me-1"
