@@ -12,9 +12,12 @@ The system is built on a modern regression pipeline optimized for tabular school
 
 ### 2.1 Algorithm: XGBoost (Extreme Gradient Boosting)
 
-- **Model Type**: `XGBRegressor`.
+- **Model Type**: `XGBRegressor` — a **tabular regression model**, not a time series model (e.g. LSTM or ARIMA).
 - **Selection Reason**: High accuracy on small-to-medium datasets, excellent handling of non-linear relationships, and built-in feature importance tracking.
 - **Optimization**: 5-Fold Cross-Validated and tuned using `scikit-optimize`.
+
+> **Is this a time series model?**
+> No. Term marks (`term1_marks`, `term2_marks`, `term3_marks`) are provided as **individual static features** in a single row — not fed as a sequential time step. However, the model explicitly engineers temporal features (`marks_slope`, `marks_delta`, `marks_volatility`, `performance_momentum`) to extract the trend signal from those three terms. This is sometimes called a **regression model with temporal features**.
 
 ### 2.2 Feature Engineering (The Secret Sauce)
 
