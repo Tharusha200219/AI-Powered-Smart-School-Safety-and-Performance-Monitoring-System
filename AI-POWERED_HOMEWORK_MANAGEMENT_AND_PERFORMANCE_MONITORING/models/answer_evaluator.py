@@ -288,3 +288,4 @@ class AnswerEvaluator:
         if scores['coherence'] < 0.7:
             suggestions.append("Use clear paragraph structure with topic sentences")
         return suggestions
+
