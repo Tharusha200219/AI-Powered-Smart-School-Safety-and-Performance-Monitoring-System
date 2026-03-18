@@ -12,9 +12,12 @@ The system is built on a modern regression pipeline optimized for tabular school
 
 ### 2.1 Algorithm: XGBoost (Extreme Gradient Boosting)
 
-- **Model Type**: `XGBRegressor`.
+- **Model Type**: `XGBRegressor` — a **tabular regression model**, not a time series model (e.g. LSTM or ARIMA).
 - **Selection Reason**: High accuracy on small-to-medium datasets, excellent handling of non-linear relationships, and built-in feature importance tracking.
 - **Optimization**: 5-Fold Cross-Validated and tuned using `scikit-optimize`.
+
+> **Is this a time series model?**
+> No. Term marks (`term1_marks`, `term2_marks`, `term3_marks`) are provided as **individual static features** in a single row — not fed as a sequential time step. However, the model explicitly engineers temporal features (`marks_slope`, `marks_delta`, `marks_volatility`, `performance_momentum`) to extract the trend signal from those three terms. This is sometimes called a **regression model with temporal features**.
 
 ### 2.2 Feature Engineering (The Secret Sauce)
 
@@ -115,3 +118,50 @@ graph LR
 - **Jupyter Notebooks**: Used for initial EDA and model accuracy analysis.
 - **`test_system.py`**: End-to-end verification of the prediction pipeline.
 - **`verify_trends.py`**: Specifically tests the trend detection logic against edge cases.
+
+---
+
+## 📐 8. How Accuracy Is Calculated (Equations Used)
+
+The project evaluates prediction quality in `evaluate_model.py` using regression metrics.
+
+### 8.1 Core error metrics
+
+- **MAE (Mean Absolute Error)**
+  - `MAE = (1/n) * sum(|y_i - y_hat_i|)`
+  - Interpretation: average absolute error in score points.
+
+- **MSE (Mean Squared Error)**
+  - `MSE = (1/n) * sum((y_i - y_hat_i)^2)`
+
+- **RMSE (Root Mean Squared Error)**
+  - `RMSE = sqrt(MSE)`
+  - Penalizes large errors more strongly than MAE.
+
+- **MAPE (Mean Absolute Percentage Error)**
+  - `MAPE = (100/n) * sum(|(y_i - y_hat_i) / y_i|)`
+
+### 8.2 Variance explanation metrics
+
+- **R² (Coefficient of Determination)**
+  - `R² = 1 - (sum((y_i - y_hat_i)^2) / sum((y_i - y_mean)^2))`
+  - Shows how much variance in future performance is explained by the model.
+
+- **Adjusted R²**
+  - `Adjusted R² = 1 - (1 - R²) * (n - 1) / (n - p - 1)`
+  - Where:
+    - `n` = number of test samples
+    - `p` = number of features
+  - Used to account for model complexity.
+
+### 8.3 Practical "accuracy" thresholds used in this project
+
+In addition to R², this project reports accuracy as the percentage of predictions within fixed error bounds:
+
+- **Accuracy within ±5 points**
+  - `Accuracy_±5 = (count(|y_i - y_hat_i| <= 5) / n) * 100`
+
+- **Accuracy within ±10 points**
+  - `Accuracy_±10 = (count(|y_i - y_hat_i| <= 10) / n) * 100`
+
+This gives an easy classroom interpretation of model quality (how often predictions are close enough to real marks).

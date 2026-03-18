@@ -55,7 +55,7 @@
     }
 
     .subject-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #06C167 0%, #047b41 100%);
         color: white;
         padding: 1rem 1.25rem;
         display: flex;
@@ -447,9 +447,9 @@
             <div class="subject-performance-card">
                 <!-- Subject Header with Attendance -->
                 <div class="subject-header">
-                    <h5>📚 ${prediction.subject}</h5>
+                    <h5>${prediction.subject}</h5>
                     <div class="attendance-badge ${attendanceClass}">
-                        📊 ${attendance.toFixed(1)}%
+                        ${attendance.toFixed(1)}%
                     </div>
                 </div>
 

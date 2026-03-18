@@ -160,7 +160,8 @@
                                                             style="font-size:1rem">history</i>
                                                         Today's Scans
                                                     </span>
-                                                    <span class="badge bg-primary rounded-pill" id="rfidScanCount">0</span>
+                                                    <span class="badge bg-primary rounded-pill"
+                                                        id="rfidScanCount">0</span>
                                                 </div>
                                                 <div class="card-body p-0" style="overflow-y:auto;max-height:360px;">
                                                     <div id="rfidScanLog">
@@ -223,12 +224,12 @@
 
                                                 {{-- Live camera feed (shown when active) --}}
                                                 <video id="faceAttendVideo" class="w-100 d-none" autoplay playsinline
-                                                    style="display:block;object-fit:cover;height:480px;transform: scaleX(-1);"></video>
+                                                    style="display:block;object-fit:cover;height:480px;"></video>
                                                 {{-- Hidden capture canvas (never shown) --}}
                                                 <canvas id="faceAttendCanvas" class="d-none"></canvas>
                                                 {{-- Bounding-box overlay canvas (always on top of video) --}}
                                                 <canvas id="faceBboxCanvas"
-                                                    style="position:absolute;top:0;left:0;width:100%;height:480px;pointer-events:none;transform: scaleX(-1);"></canvas>
+                                                    style="position:absolute;top:0;left:0;width:100%;height:480px;pointer-events:none;"></canvas>
 
                                                 {{-- Waiting state --}}
                                                 <div id="faceStateWaiting"
@@ -249,7 +250,7 @@
                                                 {{-- Result overlay — shown on top of live video --}}
                                                 <div id="faceStateResult"
                                                     class="d-none position-absolute bottom-0 start-0 w-100"
-                                                    style="background:linear-gradient(transparent 0%,rgba(0,0,0,.92) 35%);padding:24px 20px 20px;">
+                                                    style="background:linear-gradient(transparent 0%,rgba(0,0,0,.7) 35%);padding:24px 20px 20px;">
                                                     {{-- Already-marked banner --}}
                                                     <div id="faceAlreadyBanner" class="d-none mb-2">
                                                         <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -278,7 +279,7 @@
                                                         </div>
                                                         <div class="flex-grow-1 text-white">
                                                             <h4 class="fw-bold mb-0 lh-1" id="faceResultName"
-                                                                style="font-size:1.35rem;">—</h4>
+                                                                style="font-size:1.35rem; color: white;">—</h4>
                                                             <p class="mb-1 mt-1" style="font-size:.85rem;">
                                                                 <span
                                                                     class="badge bg-light text-dark border fw-semibold me-1"
@@ -331,7 +332,8 @@
                                                             style="font-size:1rem">history</i>
                                                         Today's Recognitions
                                                     </span>
-                                                    <span class="badge bg-primary rounded-pill" id="faceScanCount">0</span>
+                                                    <span class="badge bg-primary rounded-pill"
+                                                        id="faceScanCount">0</span>
                                                 </div>
                                                 <div class="card-body p-0" style="overflow-y:auto;max-height:360px;">
                                                     <div id="faceScanLog">
@@ -431,7 +433,8 @@
                                                 <div class="card-body">
                                                     <form id="attendanceForm">
                                                         @csrf
-                                                        <input type="hidden" id="selectedStudentCode" name="student_code">
+                                                        <input type="hidden" id="selectedStudentCode"
+                                                            name="student_code">
 
                                                         <div class="input-group input-group-outline mb-3">
                                                             <label class="form-label">{{ __('Attendance Type') }}</label>
@@ -454,26 +457,25 @@
                                                             class="input-group input-group-outline mb-3"
                                                             style="display: none;">
                                                             <label class="form-label">{{ __('Check In Time') }}</label>
-                                                            <input type="time" class="form-control" name="check_in_time"
-                                                                id="checkInTime">
+                                                            <input type="time" class="form-control"
+                                                                name="check_in_time" id="checkInTime">
                                                         </div>
 
                                                         <div id="checkOutTimeGroup"
                                                             class="input-group input-group-outline mb-3"
                                                             style="display: none;">
                                                             <label class="form-label">{{ __('Check Out Time') }}</label>
-                                                            <input type="time" class="form-control" name="check_out_time"
-                                                                id="checkOutTime">
+                                                            <input type="time" class="form-control"
+                                                                name="check_out_time" id="checkOutTime">
                                                         </div>
 
                                                         <div class="input-group input-group-outline mb-3">
                                                             <label class="form-label">{{ __('Notes (Optional)') }}</label>
-                                                            <textarea class="form-control" name="notes" id="notes"
-                                                                rows="3"></textarea>
+                                                            <textarea class="form-control" name="notes" id="notes" rows="3"></textarea>
                                                         </div>
 
-                                                        <button type="submit" class="btn btn-success w-100" id="submitBtn"
-                                                            disabled>
+                                                        <button type="submit" class="btn btn-success w-100"
+                                                            id="submitBtn" disabled>
                                                             <i class="material-symbols-rounded text-sm">save</i>
                                                             {{ __('Record Attendance') }}
                                                         </button>
@@ -578,7 +580,7 @@
             }
 
             // Handle attendance type change
-            document.getElementById('attendanceType').addEventListener('change', function () {
+            document.getElementById('attendanceType').addEventListener('change', function() {
                 const type = this.value;
 
                 document.getElementById('checkInTimeGroup').style.display = type === 'check_in' ? 'block' : 'none';
@@ -594,7 +596,7 @@
             });
 
             // Handle form submission
-            document.getElementById('attendanceForm').addEventListener('submit', async function (e) {
+            document.getElementById('attendanceForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
 
                 const formData = new FormData(this);
@@ -635,7 +637,7 @@
             });
 
             // Allow Enter key to search
-            document.getElementById('studentCodeInput').addEventListener('keypress', function (e) {
+            document.getElementById('studentCodeInput').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     searchStudent();
                 }
@@ -1096,14 +1098,16 @@
                     if (d.action === 'check_in') {
                         avatar.className = 'rfid-avatar rfid-avatar--in flex-shrink-0';
                         avatar.style.cssText = 'width:64px;height:64px;';
-                        actionBadge.className = 'rfid-action-badge ' + (d.is_late ? 'rfid-action-badge--late' : 'rfid-action-badge--in');
-                        actionBadge.innerHTML = d.is_late
-                            ? `<i class="material-symbols-rounded me-1 align-middle" style="font-size:1rem">schedule</i>LATE`
-                            : `<i class="material-symbols-rounded me-1 align-middle" style="font-size:1rem">login</i>CHECKED IN`;
+                        actionBadge.className = 'rfid-action-badge ' + (d.is_late ? 'rfid-action-badge--late' :
+                            'rfid-action-badge--in');
+                        actionBadge.innerHTML = d.is_late ?
+                            `<i class="material-symbols-rounded me-1 align-middle" style="font-size:1rem">schedule</i>LATE` :
+                            `<i class="material-symbols-rounded me-1 align-middle" style="font-size:1rem">login</i>CHECKED IN`;
                         _addToLog(d, 'in');
                     } else if (d.action === 'duplicate_checkin') {
                         document.getElementById('faceErrorTitle').textContent = 'Already Checked In';
-                        document.getElementById('faceErrorMsg').textContent = 'Student is already checked in. Please wait 10 minutes to check out.';
+                        document.getElementById('faceErrorMsg').textContent =
+                            'Student is already checked in. Please wait 10 minutes to check out.';
                         _showState('error');
                         _resetTimer = setTimeout(() => _showState('waiting'), RESET_MS);
                         return;

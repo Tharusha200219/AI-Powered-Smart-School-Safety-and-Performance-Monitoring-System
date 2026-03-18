@@ -107,7 +107,7 @@
         </div>
 
         <!-- ===================== ADMIN CONTACT NUMBER ===================== -->
-        <div class="card mb-4 border-0 shadow-sm">
+        {{-- <div class="card mb-4 border-0 shadow-sm">
             <div class="card-body py-3">
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
                     <div class="d-flex align-items-center gap-3">
@@ -141,7 +141,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <!-- ===================== CRITICAL ALERT BANNER ===================== -->
         <div id="criticalAlertBanner" class="alert alert-critical d-none mb-4" role="alert">

@@ -186,6 +186,45 @@
             margin-bottom: 25px;
         }
 
+        .login-input-group>.mt-2 {
+            margin-top: 0 !important;
+        }
+
+        .login-input-group .input-group {
+            margin: 0 !important;
+            position: relative;
+        }
+
+        .login-input-group .form-input {
+            padding-left: 50px;
+            padding-right: 50px;
+        }
+
+        .login-input-group .input-icon,
+        .login-input-group .password-toggle {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 5;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-input-group .input-icon {
+            left: 18px;
+            pointer-events: none;
+        }
+
+        .login-input-group .password-toggle {
+            right: 18px;
+        }
+
+        .login-input-group small.text-primary.ms-2 {
+            display: none;
+        }
+
         .form-input {
             width: 100%;
             padding: 15px 20px 15px 50px;
@@ -475,20 +514,25 @@
                         </div>
                     @endif
 
-                    <div class="form-group">
-
-                        <x-input name="email" type="email" class="form-input @error('email') is-invalid @enderror"
-                            placeholder="Enter your email address" :isRequired="true" attr="autocomplete='email' autofocus"
-                            :value="old('email')" />
+                    <div class="form-group login-input-group">
+                        <input type="email" name="email" id="email"
+                            class="form-input @error('email') is-invalid @enderror" placeholder="Enter your email address"
+                            autocomplete="email" autofocus required value="{{ old('email') }}">
                         <i class="fas fa-envelope input-icon"></i>
+                        @error('email')
+                            <small class="text-danger d-block mt-1">{{ $message }}</small>
+                        @enderror
                     </div>
 
-                    <div class="form-group">
-                        <x-input name="password" type="password" class="form-input @error('password') is-invalid @enderror"
-                            placeholder="Enter your password" :isRequired="true"
-                            attr="autocomplete='current-password' id='passwordInput'" />
+                    <div class="form-group login-input-group">
+                        <input type="password" name="password" id="passwordInput"
+                            class="form-input @error('password') is-invalid @enderror" placeholder="Enter your password"
+                            autocomplete="current-password" required>
                         <i class="fas fa-lock input-icon"></i>
                         <i class="fas fa-eye password-toggle" id="passwordToggle"></i>
+                        @error('password')
+                            <small class="text-danger d-block mt-1">{{ $message }}</small>
+                        @enderror
                     </div>
 
                     <div class="remember-forgot">

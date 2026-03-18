@@ -9,6 +9,8 @@ return [
     'parents' => 'දෙමවුපියන්',
     'classes' => 'පන්ති',
     'subjects' => 'විෂයයන්',
+    'events' => 'සිදුවීම්',
+    'seating_arrangement' => 'ආසන සැකසුම',
     'security' => 'ආරක්ෂාව',
     'security_staff' => 'ආරක්ෂක කාර්ය මණ්ඩලය',
     'setup' => 'සැකසුම',
