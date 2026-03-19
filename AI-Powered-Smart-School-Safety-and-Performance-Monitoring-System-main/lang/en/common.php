@@ -9,6 +9,8 @@ return [
     'parents' => 'Parents',
     'classes' => 'Classes',
     'subjects' => 'Subjects',
+    'events' => 'Events',
+    'seating_arrangement' => 'Seating Arrangement',
     'security' => 'Security',
     'security_staff' => 'Security Staff',
     'setup' => 'Setup',

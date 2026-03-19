@@ -528,4 +528,3 @@ class QuestionGenerator:
             'topic': topic,
             'bloom_level': 'analyze'
         }
-

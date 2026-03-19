@@ -13,7 +13,7 @@ class PlaceholderController extends Controller
     {
         return view('admin.pages.placeholder.index', [
             'module' => ucfirst($module ?? 'Feature'),
-            'message' => 'This feature is coming soon! Our development team is working on implementing this functionality.',
+            'message' => '..',
         ]);
     }
 

@@ -41,6 +41,9 @@ class AudioVideoThreatDetector {
         /* ---------- history ---------- */
         this.history = [];
 
+        /* ---------- classroom / IoT state ---------- */
+        this.selectedClassroom = null; // { id, name, grade, section, room, cameraIp, audioIp }
+
         this.init();
     }
 
@@ -54,58 +57,68 @@ class AudioVideoThreatDetector {
     }
 
     _bindEls() {
-        this.startBtn      = document.getElementById('startAllBtn');
-        this.stopBtn       = document.getElementById('stopAllBtn');
-        this.calibrateBtn  = document.getElementById('calibrateAudioBtn');
-        this.clearAlertsBtn= document.getElementById('clearAlertsBtn');
+        this.startBtn = document.getElementById('startAllBtn');
+        this.stopBtn = document.getElementById('stopAllBtn');
+        this.calibrateBtn = document.getElementById('calibrateAudioBtn');
+        this.clearAlertsBtn = document.getElementById('clearAlertsBtn');
 
-        this.audioStatusEl    = document.getElementById('audioStatus');
-        this.videoStatusEl    = document.getElementById('videoStatus');
-        this.micStatusEl      = document.getElementById('micStatus');
-        this.cameraStatusEl   = document.getElementById('cameraStatus');
+        this.audioStatusEl = document.getElementById('audioStatus');
+        this.videoStatusEl = document.getElementById('videoStatus');
+        this.micStatusEl = document.getElementById('micStatus');
+        this.cameraStatusEl = document.getElementById('cameraStatus');
         this.audioThreatCount = document.getElementById('audioThreatCount');
         this.videoThreatCount = document.getElementById('videoThreatCount');
-        this.lastAudioEl      = document.getElementById('lastAudioThreat');
-        this.lastVideoEl      = document.getElementById('lastVideoThreat');
+        this.lastAudioEl = document.getElementById('lastAudioThreat');
+        this.lastVideoEl = document.getElementById('lastVideoThreat');
 
-        this.inputLevelBar   = document.getElementById('inputLevelBar');
+        this.inputLevelBar = document.getElementById('inputLevelBar');
         this.inputLevelValue = document.getElementById('inputLevelValue');
-        this.nonSpeechDiv    = document.getElementById('nonSpeechResults');
-        this.speechDiv       = document.getElementById('speechResults');
+        this.nonSpeechDiv = document.getElementById('nonSpeechResults');
+        this.speechDiv = document.getElementById('speechResults');
 
-        this.videoEl     = document.getElementById('videoElement');
-        this.canvas      = document.getElementById('detectionCanvas');
-        this.esp32Img    = document.getElementById('esp32Stream');
-        this.noVideoMsg  = document.getElementById('noVideoMsg');
-        this.fpsCounter  = document.getElementById('fpsCounter');
-        this.latencyEl   = document.getElementById('latencyCounter');
+        this.videoEl = document.getElementById('videoElement');
+        this.canvas = document.getElementById('detectionCanvas');
+        this.esp32Img = document.getElementById('esp32Stream');
+        this.noVideoMsg = document.getElementById('noVideoMsg');
+        this.fpsCounter = document.getElementById('fpsCounter');
+        this.latencyEl = document.getElementById('latencyCounter');
 
-        this.alertsContainer      = document.getElementById('alertsContainer');
-        this.noAlertsMsg          = document.getElementById('noAlertsMsg');
-        this.historyBody          = document.getElementById('historyTableBody');
+        this.alertsContainer = document.getElementById('alertsContainer');
+        this.noAlertsMsg = document.getElementById('noAlertsMsg');
+        this.historyBody = document.getElementById('historyTableBody');
         this.videoThreatsContainer = document.getElementById('videoThreatsContainer');
-        this.noVideoThreatsMsg    = document.getElementById('noVideoThreatsMsg');
-        this.videoThreatBadge     = document.getElementById('videoThreatBadge');
+        this.noVideoThreatsMsg = document.getElementById('noVideoThreatsMsg');
+        this.videoThreatBadge = document.getElementById('videoThreatBadge');
 
-        this.criticalBanner  = document.getElementById('criticalAlertBanner');
-        this.criticalMsg     = document.getElementById('criticalAlertMsg');
+        this.criticalBanner = document.getElementById('criticalAlertBanner');
+        this.criticalMsg = document.getElementById('criticalAlertMsg');
 
         // Admin contact number UI
         this.adminContactDisplay = document.getElementById('adminContactDisplay');
-        this.adminContactInput   = document.getElementById('adminContactInput');
-        this.contactDisplayRow   = document.getElementById('contactDisplayRow');
-        this.contactEditRow      = document.getElementById('contactEditRow');
-        this.editContactBtn      = document.getElementById('editContactBtn');
-        this.saveContactBtn      = document.getElementById('saveContactBtn');
-        this.cancelContactBtn    = document.getElementById('cancelContactBtn');
+        this.adminContactInput = document.getElementById('adminContactInput');
+        this.contactDisplayRow = document.getElementById('contactDisplayRow');
+        this.contactEditRow = document.getElementById('contactEditRow');
+        this.editContactBtn = document.getElementById('editContactBtn');
+        this.saveContactBtn = document.getElementById('saveContactBtn');
+        this.cancelContactBtn = document.getElementById('cancelContactBtn');
 
-        this.visualizer    = document.getElementById('audioVisualizer');
+        this.visualizer = document.getElementById('audioVisualizer');
         this.visualizerCtx = this.visualizer?.getContext('2d');
+
+        // Classroom IoT panel
+        this.classroomSelect = document.getElementById('classroomSelect');
+        this.classroomCameraIp = document.getElementById('classroomCameraIp');
+        this.classroomAudioIp = document.getElementById('classroomAudioIp');
+        this.saveClassroomDevicesBtn = document.getElementById('saveClassroomDevicesBtn');
+        this.loadClassroomBtn = document.getElementById('loadClassroomBtn');
+        this.selectedClassBadge = document.getElementById('selectedClassBadge');
+        this.classroomCriticalIndicator = document.getElementById('classroomCriticalIndicator');
+        this.criticalClassroomName = document.getElementById('criticalClassroomName');
     }
 
     _bindEvents() {
-        this.startBtn?.addEventListener('click',     () => this.startAll());
-        this.stopBtn?.addEventListener('click',      () => this.stopAll());
+        this.startBtn?.addEventListener('click', () => this.startAll());
+        this.stopBtn?.addEventListener('click', () => this.stopAll());
         this.calibrateBtn?.addEventListener('click', () => this._calibrateAudio());
         this.clearAlertsBtn?.addEventListener('click', () => this._clearAlerts());
 
@@ -147,6 +160,11 @@ class AudioVideoThreatDetector {
             this.contactEditRow?.classList.add('d-none');
             this.contactDisplayRow?.classList.remove('d-none');
         });
+
+        // Classroom IoT panel
+        this.classroomSelect?.addEventListener('change', () => this._onClassroomChange());
+        this.saveClassroomDevicesBtn?.addEventListener('click', () => this._saveClassroomDevices());
+        this.loadClassroomBtn?.addEventListener('click', () => this._loadClassroomIntoMonitoring());
     }
 
     /* ============================================================
@@ -216,12 +234,12 @@ class AudioVideoThreatDetector {
                 this.audioBuffer.push(new Float32Array(e.inputBuffer.getChannelData(0)));
             };
 
-            // Process audio every 4 seconds
+            // Process audio every 2 seconds (reduced from 4s for faster detection)
             this.audioInterval = setInterval(() => {
                 if (this.audioBuffer.length > 0 && this.isRunning) {
                     this._processAudioBuffer();
                 }
-            }, 4000);
+            }, 2000);
 
             this._setStatus(this.audioStatusEl, 'Active', 'text-success');
             this.micStatusEl && (this.micStatusEl.innerHTML = '<span class="text-success text-sm">🎙 Microphone active</span>');
@@ -309,7 +327,7 @@ class AudioVideoThreatDetector {
         }
 
         this._addAlert(
-            `Audio Threat: ${label} (${Math.round((result.confidence||0)*100)}%)${detail}`,
+            `Audio Threat: ${label} (${Math.round((result.confidence || 0) * 100)}%)${detail}`,
             'audio-threat', 'Audio'
         );
         this._addHistory('Audio', label, result.threat_level || 'High');
@@ -333,8 +351,8 @@ class AudioVideoThreatDetector {
             return kw ? `Speech (${kw})` : 'Speech Threat';
         }
         if (type === 'combined') {
-            const ns  = result.non_speech_result?.detected_class || '';
-            const kw  = result.speech_result?.detected_keywords?.map(k => k.keyword || k).join(', ') || '';
+            const ns = result.non_speech_result?.detected_class || '';
+            const kw = result.speech_result?.detected_keywords?.map(k => k.keyword || k).join(', ') || '';
             const parts = [ns && ns.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()), kw && `Speech(${kw})`].filter(Boolean);
             return parts.length ? parts.join(' + ') : 'Combined Threat';
         }
@@ -351,17 +369,17 @@ class AudioVideoThreatDetector {
             let html = `<div class="result-item">
                 <div class="d-flex justify-content-between">
                     <span>Detected: <strong class="text-capitalize">${ns.detected_class || 'Clear'}</strong></span>
-                    <span class="badge ${ns.is_threat ? 'bg-danger' : 'bg-success'}">${((ns.confidence||0)*100).toFixed(1)}%</span>
+                    <span class="badge ${ns.is_threat ? 'bg-danger' : 'bg-success'}">${((ns.confidence || 0) * 100).toFixed(1)}%</span>
                 </div>
             </div>`;
             for (const [cls, prob] of Object.entries(probs)) {
                 if (cls === 'normal') continue;
                 html += `<div class="result-item">
                     <div class="d-flex justify-content-between text-sm">
-                        <span class="text-capitalize">${cls.replace('_',' ')}</span>
-                        <span>${(prob*100).toFixed(1)}%</span>
+                        <span class="text-capitalize">${cls.replace('_', ' ')}</span>
+                        <span>${(prob * 100).toFixed(1)}%</span>
                     </div>
-                    <div class="probability-bar"><div class="fill ${cls}" style="width:${prob*100}%"></div></div>
+                    <div class="probability-bar"><div class="fill ${cls}" style="width:${prob * 100}%"></div></div>
                 </div>`;
             }
             this.nonSpeechDiv.innerHTML = html;
@@ -373,7 +391,7 @@ class AudioVideoThreatDetector {
             let html = '';
             if (sp.text) {
                 const kwHtml = (sp.detected_keywords?.length > 0)
-                    ? `<div class="mt-2"><small class="text-danger"><strong>Keywords:</strong> ${sp.detected_keywords.map(k=>k.keyword||k).join(', ')}</small></div>`
+                    ? `<div class="mt-2"><small class="text-danger"><strong>Keywords:</strong> ${sp.detected_keywords.map(k => k.keyword || k).join(', ')}</small></div>`
                     : '';
                 html = `<div class="result-item">
                     <p class="text-sm mb-2"><strong>Transcription:</strong></p>
@@ -409,7 +427,7 @@ class AudioVideoThreatDetector {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': this.csrf },
             body: JSON.stringify({ session_id: this.sessionId })
-        }).catch(() => {});
+        }).catch(() => { });
     }
 
     _drawAudioVisualizer() {
@@ -502,7 +520,7 @@ class AudioVideoThreatDetector {
                     return;
                 }
 
-                captureCanvas.width  = this.videoEl.videoWidth;
+                captureCanvas.width = this.videoEl.videoWidth;
                 captureCanvas.height = this.videoEl.videoHeight;
                 captureCtx.drawImage(this.videoEl, 0, 0);
                 const b64Frame = captureCanvas.toDataURL('image/jpeg', 0.8).split(',')[1];
@@ -600,7 +618,7 @@ class AudioVideoThreatDetector {
 
         // Real-time alerts feed
         this._addAlert(
-            `Video Threat: ${label} (${Math.round((threats.confidence||0)*100)}%)`,
+            `Video Threat: ${label} (${Math.round((threats.confidence || 0) * 100)}%)`,
             'video-threat', 'Video'
         );
 
@@ -633,9 +651,9 @@ class AudioVideoThreatDetector {
         const level = (threats.threat_level || 'High');
         const levelCls = {
             Critical: 'danger',
-            High:     'danger',
-            Medium:   'warning',
-            Low:      'secondary'
+            High: 'danger',
+            Medium: 'warning',
+            Low: 'secondary'
         }[level] || 'danger';
 
         const el = document.createElement('div');
@@ -660,9 +678,9 @@ class AudioVideoThreatDetector {
     _drawDetections(data) {
         if (!this.canvas) return;
         const video = this.videoSource === 'pc' ? this.videoEl : this.esp32Img;
-        const width  = video?.videoWidth  || video?.width  || 640;
+        const width = video?.videoWidth || video?.width || 640;
         const height = video?.videoHeight || video?.height || 480;
-        this.canvas.width  = width;
+        this.canvas.width = width;
         this.canvas.height = height;
         const ctx = this.canvas.getContext('2d');
         ctx.clearRect(0, 0, width, height);
@@ -694,7 +712,7 @@ class AudioVideoThreatDetector {
                 ctx.fillStyle = '#FFFFFF'; ctx.font = 'bold 14px Arial';
                 ctx.fillText(label, x1 + 5, Math.max(15, y1 - 7));
                 ctx.font = '12px Arial';
-                ctx.fillText(`${((obj.confidence||0)*100).toFixed(1)}%`, x1 + 5, y2 - 5);
+                ctx.fillText(`${((obj.confidence || 0) * 100).toFixed(1)}%`, x1 + 5, y2 - 5);
             });
         }
 
@@ -707,8 +725,8 @@ class AudioVideoThreatDetector {
             ctx.strokeText(`⚠ THREAT: ${data.threats.threat_type}`, 10, 40);
             ctx.fillText(`⚠ THREAT: ${data.threats.threat_type}`, 10, 40);
             ctx.font = 'bold 18px Arial';
-            ctx.strokeText(`Confidence: ${((data.threats.confidence||0)*100).toFixed(1)}%`, 10, 70);
-            ctx.fillText(`Confidence: ${((data.threats.confidence||0)*100).toFixed(1)}%`, 10, 70);
+            ctx.strokeText(`Confidence: ${((data.threats.confidence || 0) * 100).toFixed(1)}%`, 10, 70);
+            ctx.fillText(`Confidence: ${((data.threats.confidence || 0) * 100).toFixed(1)}%`, 10, 70);
         }
     }
 
@@ -737,6 +755,102 @@ class AudioVideoThreatDetector {
             imgEl.style.display = 'block';
             document.getElementById('noEsp32Msg')?.classList.add('d-none');
         }
+    }
+
+    /* ============================================================
+       CLASSROOM IoT MANAGEMENT
+    ============================================================ */
+
+    /** Called when the classroom dropdown changes */
+    _onClassroomChange() {
+        const opt = this.classroomSelect?.options[this.classroomSelect.selectedIndex];
+        if (!opt || !opt.value) {
+            this.selectedClassroom = null;
+            if (this.saveClassroomDevicesBtn) this.saveClassroomDevicesBtn.disabled = true;
+            if (this.loadClassroomBtn) this.loadClassroomBtn.disabled = true;
+            if (this.selectedClassBadge) this.selectedClassBadge.style.display = 'none';
+            if (this.classroomCameraIp) this.classroomCameraIp.value = '';
+            if (this.classroomAudioIp) this.classroomAudioIp.value = '';
+            return;
+        }
+
+        this.selectedClassroom = {
+            id: opt.value,
+            name: opt.dataset.name,
+            grade: opt.dataset.grade,
+            section: opt.dataset.section,
+            room: opt.dataset.room,
+            cameraIp: opt.dataset.camera || '',
+            audioIp: opt.dataset.audio || '',
+        };
+
+        // Pre-fill the IP fields with saved values
+        if (this.classroomCameraIp) this.classroomCameraIp.value = this.selectedClassroom.cameraIp;
+        if (this.classroomAudioIp) this.classroomAudioIp.value = this.selectedClassroom.audioIp;
+
+        // Enable buttons
+        if (this.saveClassroomDevicesBtn) this.saveClassroomDevicesBtn.disabled = false;
+        if (this.loadClassroomBtn) this.loadClassroomBtn.disabled = false;
+
+        // Show badge
+        if (this.selectedClassBadge) {
+            this.selectedClassBadge.textContent =
+                `Grade ${this.selectedClassroom.grade} – ${this.selectedClassroom.name}`;
+            this.selectedClassBadge.style.display = '';
+        }
+    }
+
+    /** Persist the camera/audio IPs for the selected classroom via the Laravel API */
+    async _saveClassroomDevices() {
+        if (!this.selectedClassroom) return;
+        const camIp = this.classroomCameraIp?.value?.trim() || '';
+        const audioIp = this.classroomAudioIp?.value?.trim() || '';
+
+        try {
+            const r = await fetch(this.routes.updateClassroomDevices, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': this.csrf },
+                body: JSON.stringify({
+                    classroom_id: this.selectedClassroom.id,
+                    camera_ip: camIp,
+                    audio_ip: audioIp,
+                }),
+            });
+            const data = await r.json();
+            if (data.success) {
+                // Update local state so "Use" button uses latest IPs
+                this.selectedClassroom.cameraIp = camIp;
+                this.selectedClassroom.audioIp = audioIp;
+                // Update dataset on the option element
+                const opt = this.classroomSelect?.options[this.classroomSelect.selectedIndex];
+                if (opt) { opt.dataset.camera = camIp; opt.dataset.audio = audioIp; }
+                this._addAlert(`IoT endpoints saved for ${this.selectedClassroom.name}.`, 'info', 'System');
+            } else {
+                console.error('Save classroom devices failed:', data);
+            }
+        } catch (e) { console.error('Error saving classroom devices:', e); }
+    }
+
+    /** Apply the selected classroom's IPs to the monitoring panel and switch to ESP32 mode */
+    _loadClassroomIntoMonitoring() {
+        if (!this.selectedClassroom) return;
+
+        const camIp = this.classroomCameraIp?.value?.trim() || this.selectedClassroom.cameraIp;
+
+        // Switch video source to ESP32-CAM and pre-fill the IP input
+        const esp32Radio = document.getElementById('esp32Camera');
+        if (esp32Radio) {
+            esp32Radio.checked = true;
+            esp32Radio.dispatchEvent(new Event('change'));
+        }
+        const esp32IpInput = document.getElementById('esp32IpInput');
+        if (esp32IpInput && camIp) esp32IpInput.value = camIp;
+
+        this._addAlert(
+            `Monitoring classroom: ${this.selectedClassroom.name} (Grade ${this.selectedClassroom.grade}). ` +
+            `Camera: ${camIp || '—'}  Audio: ${this.selectedClassroom.audioIp || '—'}`,
+            'info', 'Classroom'
+        );
     }
 
     /* ============================================================
@@ -771,8 +885,20 @@ class AudioVideoThreatDetector {
         // Show banner
         if (this.criticalBanner) {
             this.criticalBanner.classList.remove('d-none');
-            this.criticalMsg && (this.criticalMsg.textContent =
-                `Audio: ${audioLabel} + Video: ${videoLabel} — SMS alert sent to ${alertNumber}`);
+            let bannerText = `Audio: ${audioLabel} + Video: ${videoLabel} — SMS alert sent to ${alertNumber}`;
+            if (this.selectedClassroom) {
+                bannerText = `[${this.selectedClassroom.name} · Grade ${this.selectedClassroom.grade}] ` + bannerText;
+            }
+            this.criticalMsg && (this.criticalMsg.textContent = bannerText);
+        }
+
+        // Show classroom-specific critical indicator
+        if (this.selectedClassroom && this.classroomCriticalIndicator) {
+            this.classroomCriticalIndicator.classList.remove('d-none');
+            if (this.criticalClassroomName) {
+                this.criticalClassroomName.textContent =
+                    `${this.selectedClassroom.name} (Grade ${this.selectedClassroom.grade})`;
+            }
         }
 
         // Populate modal fields
@@ -781,9 +907,9 @@ class AudioVideoThreatDetector {
         const modalVideoType = document.getElementById('modalVideoType');
         const modalVideoConf = document.getElementById('modalVideoConf');
         if (modalAudioType) modalAudioType.textContent = audioLabel;
-        if (modalAudioConf) modalAudioConf.textContent = `Confidence: ${Math.round((audioData.confidence||0)*100)}%`;
+        if (modalAudioConf) modalAudioConf.textContent = `Confidence: ${Math.round((audioData.confidence || 0) * 100)}%`;
         if (modalVideoType) modalVideoType.textContent = videoLabel;
-        if (modalVideoConf) modalVideoConf.textContent = `Confidence: ${Math.round((videoData.confidence||0)*100)}%`;
+        if (modalVideoConf) modalVideoConf.textContent = `Confidence: ${Math.round((videoData.confidence || 0) * 100)}%`;
 
         // Show modal
         const modalEl = document.getElementById('criticalThreatModal');
@@ -808,6 +934,8 @@ class AudioVideoThreatDetector {
                     audio_threat: audioData,
                     video_threat: videoData,
                     alert_number: alertNumber,
+                    classroom_name: this.selectedClassroom?.name || '',
+                    grade_level: this.selectedClassroom?.grade || '',
                 })
             });
         } catch (e) { console.error('Failed to send combined alert SMS:', e); }
@@ -862,9 +990,9 @@ class AudioVideoThreatDetector {
         const row = document.createElement('tr');
         const sevCls = {
             Critical: 'severity-critical',
-            High:     'severity-high',
-            Medium:   'severity-medium',
-            Low:      'severity-low'
+            High: 'severity-high',
+            Medium: 'severity-medium',
+            Low: 'severity-low'
         }[severity] || 'severity-medium';
 
         row.innerHTML = `
@@ -911,9 +1039,9 @@ class AudioVideoThreatDetector {
         for (let i = 0; i < newLength; i++) {
             const srcIdx = i * ratio;
             const floor = Math.floor(srcIdx);
-            const ceil  = Math.min(floor + 1, audioData.length - 1);
-            const t     = srcIdx - floor;
-            result[i]   = audioData[floor] * (1 - t) + audioData[ceil] * t;
+            const ceil = Math.min(floor + 1, audioData.length - 1);
+            const t = srcIdx - floor;
+            result[i] = audioData[floor] * (1 - t) + audioData[ceil] * t;
         }
         return result;
     }
@@ -930,7 +1058,7 @@ class AudioVideoThreatDetector {
     /* ---- Video detection results panel ---- */
     _addDetectionResult(type, detections) {
         const container = document.getElementById('resultsContainer');
-        const noMsg     = document.getElementById('noResultsMsg');
+        const noMsg = document.getElementById('noResultsMsg');
         if (!container) return;
 
         this._clearDetectionResults();
@@ -944,7 +1072,7 @@ class AudioVideoThreatDetector {
                 if (obj.class_name?.toLowerCase() === 'person') {
                     alertType = 'warning'; badge = '<span class="badge bg-warning text-dark">👤 PERSON</span>'; icon = '👤';
                 } else if (obj.is_left_behind) {
-                    alertType = 'danger';  badge = '<span class="badge bg-danger">⚠️ LEFT BEHIND</span>';  icon = '⚠️';
+                    alertType = 'danger'; badge = '<span class="badge bg-danger">⚠️ LEFT BEHIND</span>'; icon = '⚠️';
                 } else if (obj.is_unknown) {
                     alertType = 'secondary'; badge = '<span class="badge bg-secondary">❓ UNKNOWN</span>'; icon = '❓';
                 } else {
@@ -963,7 +1091,7 @@ class AudioVideoThreatDetector {
                             <span class="badge bg-secondary">ID:${obj.track_id ?? '?'}</span>
                         </div>
                         <div class="text-sm">
-                            <span class="text-muted">Conf: ${((obj.confidence||0)*100).toFixed(1)}%</span>${stationaryHtml}
+                            <span class="text-muted">Conf: ${((obj.confidence || 0) * 100).toFixed(1)}%</span>${stationaryHtml}
                         </div>
                     </div>
                     <small class="text-muted">${time}</small>
@@ -988,4 +1116,3 @@ class AudioVideoThreatDetector {
 document.addEventListener('DOMContentLoaded', () => {
     window.audioVideoDetector = new AudioVideoThreatDetector();
 });
-

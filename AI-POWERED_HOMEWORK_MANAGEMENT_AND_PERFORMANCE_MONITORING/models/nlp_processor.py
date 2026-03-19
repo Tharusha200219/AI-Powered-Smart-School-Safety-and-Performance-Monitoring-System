@@ -163,4 +163,3 @@ class NLPProcessor:
         if self.embeddings_model is None:
             raise ValueError("Embeddings model not initialized")
         return self.embeddings_model.encode(texts)
-

@@ -135,3 +135,63 @@ graph TD
 - **OpenCV**: Image processing and camera handling.
 - **Mediapipe**: Landmarks and light-weight liveness detection.
 - **SQLite/SQLAlchemy**: Fast local data storage.
+
+---
+
+## 📐 8. How Accuracy Is Calculated (Equations Used)
+
+This system does not use a single "classification accuracy %" in runtime code. Instead, attendance decisions are made using similarity and threshold equations.
+
+### 8.1 Embedding normalization
+
+Each face embedding is L2-normalized:
+
+- `e_norm = e / ||e||`
+
+This ensures stable similarity comparison.
+
+### 8.2 Cosine similarity (main matching equation)
+
+Used in `core/face_recognizer.py`:
+
+- `similarity = (e1 . e2) / (||e1|| * ||e2||)`
+
+Range is `[-1, 1]`, where higher means more similar.
+
+### 8.3 Multi-embedding score per student
+
+Used in `core/attendance_engine.py`:
+
+1. Compute similarities between query embedding and all stored embeddings of a student.
+2. Sort descending and take top 3.
+3. Student score is top-3 mean:
+
+- `score_student = mean(top3(similarities))`
+
+If only one embedding exists, fallback uses direct dot product against the stored normalized embedding matrix.
+
+### 8.4 Ambiguity penalty
+
+If top-1 and top-2 scores are very close (`difference < 0.04`), confidence is reduced:
+
+- `score_top1 = score_top1 * 0.95`
+
+This helps reduce false positives.
+
+### 8.5 Recognition decision rule
+
+A face is recognized only when:
+
+- `score_top1 >= recognition_threshold`
+
+Current threshold values come from configuration/engine initialization (for example around `0.55` to `0.65`, depending on active settings).
+
+### 8.6 Attendance marking decision rule
+
+Attendance is marked only when all checks pass:
+
+- `is_recognized == True`
+- `is_live == True` (anti-spoof/liveness pass)
+- cooldown condition is satisfied (`elapsed_seconds >= ATTENDANCE_COOLDOWN_SECONDS`)
+
+So practical attendance "accuracy" is controlled by similarity threshold + liveness threshold + cooldown logic, not by one standalone equation.

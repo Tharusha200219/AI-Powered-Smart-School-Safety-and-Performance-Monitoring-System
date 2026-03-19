@@ -23,7 +23,7 @@
                             </div>
                             <h4 class="text-center mb-4">{{ $module }} - Coming Soon!</h4>
                             <p class="text-muted mb-4">{{ $message }}</p>
-                            <div class="row text-center">
+                            {{-- <div class="row text-center">
                                 <div class="col-md-4">
                                     <div class="info">
                                         <i class="material-symbols-outlined text-gradient text-info text-3xl">schedule</i>
@@ -46,9 +46,9 @@
                                         <p class="info-description">Will be available in upcoming updates</p>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="mt-4">
-                                <a href="{{ route('admin.dashboard.index') }}" class="btn bg-gradient-primary">
+                            </div> --}}
+                            <div class="mt-4 w-20 mx-auto d-flex justify-content-center">
+                                <a href="{{ route('admin.dashboard.index') }}" class="btn bg-gradient-primary d-flex align-items-center">
                                     <i class="material-symbols-outlined me-2">arrow_back</i>
                                     Back to Dashboard
                                 </a>

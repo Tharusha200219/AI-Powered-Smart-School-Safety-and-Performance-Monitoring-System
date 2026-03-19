@@ -7,6 +7,7 @@ import numpy as np
 import time
 from typing import Dict, Optional, Tuple, List
 from collections import deque
+from concurrent.futures import ThreadPoolExecutor
 import os
 import sys
 
@@ -61,13 +62,22 @@ class ThreatDetector:
         # PANNS CNN14 (primary) outputs AudioSet probabilities spread across 527
         # classes, so raw scores for threat events are typically 0.05–0.40.
         # These thresholds are calibrated to PANNS output scale.
-        # Custom model fallback uses higher scores (0.5–0.9) but we raise its
-        # thresholds dynamically inside analyze_audio when panns_available=False.
+        #
+        # Glass breaking and screaming previously had 0-10% detection rates.
+        # Root causes identified and fixed:
+        #  1. AudioSet label coverage was too narrow (fixed in pretrained_audio_detector.py).
+        #  2. SNR minimum (12 dB) was filtering out transient sounds (now 6 dB).
+        #  3. Adaptive threshold grew too aggressively (fixed in noise_profiler.py).
+        #  4. Thresholds here were slightly too high relative to typical PANNS scores.
+        #
+        # New thresholds use more conservative (lower) values for the previously
+        # under-detected classes so that genuine threat events at PANNS score ~0.05
+        # are reliably reported.
         self.class_thresholds = {
-            'crying':         0.06,   # Soft sounds — very sensitive threshold
-            'screaming':      0.08,   # High-energy but score still modest in AudioSet
-            'shouting':       0.08,   # Same as screaming
-            'glass_breaking': 0.08,   # Distinctive transient
+            'crying':         0.05,   # Soft sounds — very sensitive threshold
+            'screaming':      0.05,   # Increased recall; adaptive threshold guards FP
+            'shouting':       0.06,   # Slightly higher — shouts are louder/more common
+            'glass_breaking': 0.05,   # Sharp transient — needs low base threshold
             'normal':         0.0     # Always allow normal (no threshold)
         }
 
@@ -173,60 +183,71 @@ class ThreatDetector:
                     self.detection_history.append({'class': 'normal', 'is_threat': False})
                     return result
 
-                # Apply noise reduction
+                # Apply noise reduction.
+                # NOTE: We keep a copy of the un-denoised audio for the PANNS
+                # path because spectral subtraction is destructive for impulsive
+                # transient sounds (glass breaking, sharp screams).  PANNS CNN14
+                # was trained on raw AudioSet audio, so it performs best on
+                # minimally-processed input.  We still denoise for the custom
+                # model (MFCC-based) which benefits from cleaner spectrograms.
+                audio_for_panns = processed_audio   # preserve transients
                 processed_audio = self.noise_profiler.denoise_audio(processed_audio)
 
-            # ── Non-speech threat detection ────────────────────────────────
-            # Primary: PANNS CNN14 (pre-trained on AudioSet, no feature extraction needed)
-            # Fallback: custom CNN-BiLSTM model (uses MFCC features)
-            if enable_non_speech:
+            # ── Run non-speech and speech detection in parallel ─────────────
+            # Both branches are I/O-bound (PANNS inference + Google STT network
+            # call), so threading gives real wall-clock speedup.
+
+            non_speech_future = None
+            speech_future = None
+
+            def _run_non_speech():
                 if self.panns_available:
-                    # PANNS path: feed raw preprocessed audio directly
-                    class_name, confidence, all_probs_dict = self.panns_detector.detect(
-                        processed_audio, AudioConfig.SAMPLE_RATE
+                    panns_audio = audio_for_panns if self.noise_profiler.is_calibrated else processed_audio
+                    cls, conf, probs_dict = self.panns_detector.detect(
+                        panns_audio, AudioConfig.SAMPLE_RATE
                     )
-                    all_probs_display = {k: round(v, 4) for k, v in all_probs_dict.items()}
-                    detector_used = 'panns_cnn14'
+                    return cls, conf, {k: round(v, 4) for k, v in probs_dict.items()}, 'panns_cnn14'
                 else:
-                    # Fallback: extract MFCC features and run custom model
                     features = self.feature_extractor.extract_fixed_length_features(processed_audio)
                     features_normalized, _, _ = self.feature_extractor.normalize_features(features)
-                    model_input = features_normalized.T
-                    class_name, confidence, all_probs_list = self.non_speech_model.predict(model_input)
-                    all_probs_display = dict(zip(
+                    cls, conf, probs_list = self.non_speech_model.predict(features_normalized.T)
+                    return cls, conf, dict(zip(
                         self.non_speech_model.classes,
-                        [round(p, 4) for p in all_probs_list]
-                    ))
-                    detector_used = 'custom_cnn_bilstm'
+                        [round(p, 4) for p in probs_list]
+                    )), 'custom_cnn_bilstm'
 
-                # Get class-specific threshold.
-                # PANNS output is on AudioSet probability scale (0.05–0.40 typical).
-                # Custom model output is on softmax scale (0.50–0.95 typical).
+            def _run_speech():
+                return self.speech_detector.analyze_audio(
+                    processed_audio, AudioConfig.SAMPLE_RATE
+                )
+
+            with ThreadPoolExecutor(max_workers=2) as executor:
+                if enable_non_speech:
+                    non_speech_future = executor.submit(_run_non_speech)
+                if enable_speech:
+                    speech_future = executor.submit(_run_speech)
+
+            # ── Non-speech result processing ───────────────────────────────
+            if enable_non_speech and non_speech_future is not None:
+                class_name, confidence, all_probs_display, detector_used = non_speech_future.result()
+
                 if self.panns_available:
                     thresholds = self.class_thresholds
                 else:
                     thresholds = self.custom_class_thresholds
                 class_threshold = thresholds.get(class_name, self.non_speech_threshold)
-
-                # Apply adaptive threshold based on noise profile
                 adaptive_threshold = self.noise_profiler.get_adaptive_threshold(class_threshold)
 
-                # For screaming/shouting on the custom model only: guard against
-                # low-energy false positives.  PANNS already handles this internally
-                # (it evaluates all 527 AudioSet classes and won't fire on silence).
                 if not self.panns_available and class_name in ['screaming', 'shouting']:
                     if audio_energy < self.high_energy_threshold:
                         adaptive_threshold = min(0.99, adaptive_threshold + 0.15)
                     elif audio_energy < self.high_energy_threshold * 1.3:
                         adaptive_threshold = min(0.98, adaptive_threshold + 0.05)
 
-                # Initial threat determination
                 initial_is_threat = (
                     class_name != 'normal' and
                     confidence >= adaptive_threshold
                 )
-
-                # Consecutive detection check to reduce false positives
                 confirmed_threat = self._check_consecutive_detection(class_name, initial_is_threat)
 
                 result['non_speech_result'] = {
@@ -246,15 +267,10 @@ class ThreatDetector:
                     result['threat_type'] = 'non_speech'
                     result['confidence'] = confidence
                     result['details']['non_speech_class'] = class_name
-            
-            # Speech threat detection
-            if enable_speech:
-                speech_result = self.speech_detector.analyze_audio(
-                    processed_audio,
-                    AudioConfig.SAMPLE_RATE
-                )
 
-                # Get transcription info including any errors
+            # ── Speech result processing ───────────────────────────────────
+            if enable_speech and speech_future is not None:
+                speech_result = speech_future.result()
                 transcription = speech_result.get('transcription', {})
 
                 result['speech_result'] = {
@@ -267,7 +283,6 @@ class ThreatDetector:
                     'transcription_error': transcription.get('error')
                 }
 
-                # Speech threats don't need consecutive detection - immediate alert
                 if speech_result.get('is_threat', False):
                     result['is_threat'] = True
                     if result['threat_type'] is None:
@@ -410,10 +425,10 @@ class ThreatDetector:
         else:  # normal — balanced (default)
             self.consecutive_required = 1
             self.class_thresholds = {            # PANNS scale
-                'crying':         0.06,
-                'screaming':      0.08,
-                'shouting':       0.08,
-                'glass_breaking': 0.08,
+                'crying':         0.05,
+                'screaming':      0.05,
+                'shouting':       0.06,
+                'glass_breaking': 0.05,
                 'normal':         0.0
             }
             self.custom_class_thresholds = {     # custom model scale
@@ -452,4 +467,3 @@ class ThreatDetector:
             'sensitivity': self.get_sensitivity_settings(),
             'max_latency': self.max_latency
         }
-

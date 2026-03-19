@@ -17,16 +17,16 @@ class AudioThreatDetector {
             totalLatency: 0,
             startTime: null
         };
-        
+
         this.init();
     }
-    
+
     init() {
         this.bindElements();
         this.bindEvents();
         this.checkApiStatus();
     }
-    
+
     bindElements() {
         this.startBtn = document.getElementById('startDetectionBtn');
         this.stopBtn = document.getElementById('stopDetectionBtn');
@@ -35,7 +35,7 @@ class AudioThreatDetector {
         this.visualizerCtx = this.visualizer?.getContext('2d');
         this.alertsContainer = document.getElementById('alertsContainer');
         this.noAlertsMsg = document.getElementById('noAlertsMsg');
-        
+
         // Status elements
         this.detectionStatus = document.getElementById('detectionStatus');
         this.micStatus = document.getElementById('micStatus');
@@ -43,7 +43,7 @@ class AudioThreatDetector {
         this.chunksProcessed = document.getElementById('chunksProcessed');
         this.avgLatency = document.getElementById('avgLatency');
     }
-    
+
     bindEvents() {
         this.startBtn?.addEventListener('click', () => this.startDetection());
         this.stopBtn?.addEventListener('click', () => this.stopDetection());
@@ -52,12 +52,12 @@ class AudioThreatDetector {
         document.getElementById('grantMicPermissionBtn')?.addEventListener('click', () => this.requestMicPermission());
         document.getElementById('startCalibrationBtn')?.addEventListener('click', () => this.startCalibration());
     }
-    
+
     async checkApiStatus() {
         try {
             const response = await fetch(this.config.routes?.status || '/admin/management/audio-threat/status');
             const data = await response.json();
-            
+
             if (data.status === 'ok') {
                 console.log('API connected:', data);
                 this.calibrateBtn.disabled = false;
@@ -67,7 +67,7 @@ class AudioThreatDetector {
             this.showNotification('API service not available. Please start the Python server.', 'warning');
         }
     }
-    
+
     async startDetection() {
         try {
             // Request microphone permission
@@ -98,28 +98,28 @@ class AudioThreatDetector {
                 this.audioBuffer.push(new Float32Array(inputData));
             };
 
-            // Send audio every 4 seconds
+            // Send audio every 2 seconds (reduced from 4s for faster detection)
             this.audioInterval = setInterval(() => {
                 if (this.audioBuffer.length > 0) {
                     this.processAudioBuffer();
                 }
-            }, 4000);
+            }, 2000);
             this.isRecording = true;
             this.stats.startTime = Date.now();
             this.sessionId = `session_${Date.now()}`;
-            
+
             // Update UI
             this.startBtn.classList.add('d-none');
             this.stopBtn.classList.remove('d-none');
             this.detectionStatus.textContent = 'Active';
             this.detectionStatus.className = 'status-active';
             this.micStatus.innerHTML = '<span class="recording-indicator"><span class="dot"></span>Recording</span>';
-            
+
             // Start visualization
             this.startVisualization();
-            
+
             this.showNotification('Audio threat detection started', 'success');
-            
+
         } catch (error) {
             console.error('Failed to start detection:', error);
             if (error.name === 'NotAllowedError') {
@@ -129,7 +129,7 @@ class AudioThreatDetector {
             }
         }
     }
-    
+
     stopDetection() {
         // Stop audio interval
         if (this.audioInterval) {
@@ -221,22 +221,22 @@ class AudioThreatDetector {
             this.stats.chunksProcessed++;
             this.stats.totalLatency += latency;
             this.updateStats(latency);
-            
+
             // Handle result
             if (data.success && data.result) {
                 this.handleDetectionResult(data.result);
             }
-            
+
         } catch (error) {
             console.error('Failed to process audio:', error);
         }
     }
-    
+
     handleDetectionResult(result) {
         // Update detection panels
         this.updateNonSpeechResults(result.non_speech_result);
         this.updateSpeechResults(result.speech_result);
-        
+
         // Handle threat - show in Real-time Alerts section only (no popup)
         if (result.is_threat) {
             this.stats.threatCount++;
@@ -247,7 +247,7 @@ class AudioThreatDetector {
             // this.playAlertSound();
         }
     }
-    
+
     updateNonSpeechResults(result) {
         if (!result) return;
 
@@ -279,7 +279,7 @@ class AudioThreatDetector {
 
         container.innerHTML = html;
     }
-    
+
     updateSpeechResults(result) {
         if (!result) return;
 
@@ -313,7 +313,7 @@ class AudioThreatDetector {
 
         container.innerHTML = html;
     }
-    
+
     addAlert(result) {
         if (this.noAlertsMsg) {
             this.noAlertsMsg.style.display = 'none';
@@ -353,29 +353,29 @@ class AudioThreatDetector {
         this.alertsContainer.insertAdjacentHTML('afterbegin', alertHtml);
         document.getElementById('lastThreatTime').innerHTML = `<span class="text-danger text-sm">Last: ${time}</span>`;
     }
-    
+
     showThreatModal(result) {
         const modal = new bootstrap.Modal(document.getElementById('threatAlertModal'));
-        
+
         document.getElementById('modalThreatType').textContent = result.threat_type || 'Unknown';
         document.getElementById('modalThreatLevel').innerHTML = `<span class="level-badge ${result.threat_level}">${result.threat_level}</span>`;
         document.getElementById('modalConfidence').textContent = `${(result.confidence * 100).toFixed(1)}%`;
         document.getElementById('modalTime').textContent = new Date().toLocaleTimeString();
-        
+
         if (result.non_speech_result) {
             document.getElementById('modalDetails').textContent = `Detected: ${result.non_speech_result.detected_class}`;
         }
-        
+
         if (result.speech_result?.text) {
             document.getElementById('speechTextRow').style.display = 'block';
             document.getElementById('modalSpeechText').textContent = result.speech_result.text;
         } else {
             document.getElementById('speechTextRow').style.display = 'none';
         }
-        
+
         modal.show();
     }
-    
+
     updateStats(latency) {
         this.chunksProcessed.textContent = this.stats.chunksProcessed;
         const avgLat = this.stats.totalLatency / this.stats.chunksProcessed;
@@ -594,8 +594,8 @@ class AudioThreatDetector {
         try {
             const audio = new Audio('/assets/audio/alert.mp3');
             audio.volume = 0.5;
-            audio.play().catch(() => {});
-        } catch (e) {}
+            audio.play().catch(() => { });
+        } catch (e) { }
     }
 
     showNotification(message, type = 'info') {
@@ -625,4 +625,3 @@ class AudioThreatDetector {
 document.addEventListener('DOMContentLoaded', () => {
     window.audioThreatDetector = new AudioThreatDetector();
 });
-

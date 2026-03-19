@@ -14,17 +14,17 @@ return new class extends Migration
         Schema::create('seating_arrangements', function (Blueprint $table) {
             $table->id();
             $table->integer('grade_level');
-            $table->string('section');
-            $table->json('arrangement')->nullable();
-            $table->json('students_data')->nullable();
+            $table->string('section', 10);
+            $table->json('arrangement');
+            $table->json('students_data');
             $table->timestamp('generated_at')->nullable();
-            $table->unsignedBigInteger('generated_by')->nullable();
+            $table->unsignedBigInteger('generated_by');
             $table->boolean('is_active')->default(true);
             $table->timestamps();
 
-            // Indexes for common queries
-            $table->index(['grade_level', 'section']);
-            $table->index(['is_active']);
+            // Indexes for faster querying
+            $table->index(['grade_level', 'section', 'is_active']);
+            $table->foreign('generated_by')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
