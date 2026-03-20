@@ -9,7 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
-use Twilio\Rest\Client as TwilioClient;
+
 
 class AudioVideoThreatController extends Controller
 {
@@ -18,14 +18,10 @@ class AudioVideoThreatController extends Controller
     protected string $videoApiUrl;
     protected int $timeout = 30;
 
-    // Default SMS recipient (admin can override via the UI)
-    protected string $defaultAlertNumber;
-
     public function __construct()
     {
-        $this->audioApiUrl       = config('services.audio_threat.url', 'http://127.0.0.1:5005');
-        $this->videoApiUrl       = config('services.video_threat.url', 'http://127.0.0.1:5006');
-        $this->defaultAlertNumber = config('services.twilio.alert_number', '+9470032488');
+        $this->audioApiUrl = config('services.audio_threat.url', 'http://127.0.0.1:5002');
+        $this->videoApiUrl = config('services.video_threat.url', 'http://127.0.0.1:5003');
     }
 
     /**
@@ -38,7 +34,7 @@ class AudioVideoThreatController extends Controller
         $classrooms = SchoolClass::where('status', 'active')
             ->orderBy('grade_level')
             ->orderBy('class_name')
-            ->get(['id', 'class_name', 'grade_level', 'section', 'room_number', 'camera_ip', 'audio_ip']);
+            ->get(['id', 'class_name', 'grade_level', 'section', 'room_number', 'camera_ip', 'camera_port', 'camera_off', 'audio_ip', 'audio_port', 'mic_off']);
 
         return view($this->viewDirectory . 'dashboard', [
             'audioStats'  => $audioStats,
@@ -57,39 +53,112 @@ class AudioVideoThreatController extends Controller
         $classrooms = SchoolClass::where('status', 'active')
             ->orderBy('grade_level')
             ->orderBy('class_name')
-            ->get(['id', 'class_name', 'grade_level', 'section', 'room_number', 'camera_ip', 'audio_ip']);
+            ->get(['id', 'class_name', 'grade_level', 'section', 'room_number', 'camera_ip', 'camera_port', 'camera_off', 'audio_ip', 'audio_port', 'mic_off']);
 
         return response()->json(['success' => true, 'classrooms' => $classrooms]);
     }
 
     /**
-     * Save the camera_ip and audio_ip for a specific classroom.
+     * Save the camera_ip and audio_ip for a specific classroom (JSON API, used by dashboard).
      */
     public function updateClassroomDevices(Request $request): JsonResponse
     {
         $request->validate([
             'classroom_id' => 'required|exists:school_classes,id',
             'camera_ip'    => 'nullable|string|max:255',
+            'camera_port'  => 'nullable|string|max:10',
             'audio_ip'     => 'nullable|string|max:255',
+            'audio_port'   => 'nullable|string|max:10',
         ]);
 
         $classroom = SchoolClass::findOrFail($request->classroom_id);
         $classroom->update([
-            'camera_ip' => $request->camera_ip,
-            'audio_ip'  => $request->audio_ip,
+            'camera_ip'   => $request->camera_ip,
+            'camera_port' => $request->input('camera_port', '80'),
+            'audio_ip'    => $request->audio_ip,
+            'audio_port'  => $request->input('audio_port', '5002'),
         ]);
 
         Log::info('AudioVideo: Classroom IoT devices updated', [
             'classroom_id' => $classroom->id,
             'class_name'   => $classroom->class_name,
             'camera_ip'    => $classroom->camera_ip,
+            'camera_port'  => $classroom->camera_port,
             'audio_ip'     => $classroom->audio_ip,
+            'audio_port'   => $classroom->audio_port,
         ]);
 
         return response()->json([
             'success'   => true,
             'message'   => "IoT endpoints saved for {$classroom->class_name}",
-            'classroom' => $classroom->only(['id', 'class_name', 'grade_level', 'section', 'room_number', 'camera_ip', 'audio_ip']),
+            'classroom' => $classroom->only(['id', 'class_name', 'grade_level', 'section', 'room_number', 'camera_ip', 'camera_port', 'camera_off', 'audio_ip', 'audio_port', 'mic_off']),
+        ]);
+    }
+
+    /**
+     * Show the Classroom IoT Setup management page.
+     */
+    public function classroomSetup(): View
+    {
+        $classrooms = SchoolClass::orderBy('grade_level')->orderBy('class_name')->get([
+            'id',
+            'class_name',
+            'grade_level',
+            'section',
+            'room_number',
+            'camera_ip',
+            'camera_port',
+            'camera_off',
+            'audio_ip',
+            'audio_port',
+            'mic_off',
+            'status',
+        ]);
+
+        return view($this->viewDirectory . 'classroom-setup', compact('classrooms'));
+    }
+
+    /**
+     * Save IoT device settings (camera IP/port, camera_off, audio IP/port, mic_off) for one classroom.
+     * Called from the Classroom IoT Setup page.
+     */
+    public function saveClassroomSetup(Request $request): JsonResponse
+    {
+        $request->validate([
+            'classroom_id' => 'required|exists:school_classes,id',
+            'camera_ip'    => 'nullable|string|max:255',
+            'camera_port'  => 'nullable|string|max:10',
+            'camera_off'   => 'nullable|boolean',
+            'audio_ip'     => 'nullable|string|max:255',
+            'audio_port'   => 'nullable|string|max:10',
+            'mic_off'      => 'nullable|boolean',
+        ]);
+
+        $classroom = SchoolClass::findOrFail($request->classroom_id);
+        $classroom->update([
+            'camera_ip'   => $request->input('camera_ip', $classroom->camera_ip),
+            'camera_port' => $request->input('camera_port', $classroom->camera_port ?? '80'),
+            'camera_off'  => (bool) $request->input('camera_off', false),
+            'audio_ip'    => $request->input('audio_ip', $classroom->audio_ip),
+            'audio_port'  => $request->input('audio_port', $classroom->audio_port ?? '5002'),
+            'mic_off'     => (bool) $request->input('mic_off', false),
+        ]);
+
+        Log::info('AudioVideo: Classroom IoT setup saved', [
+            'classroom_id' => $classroom->id,
+            'class_name'   => $classroom->class_name,
+            'camera_ip'    => $classroom->camera_ip,
+            'camera_port'  => $classroom->camera_port,
+            'camera_off'   => $classroom->camera_off,
+            'audio_ip'     => $classroom->audio_ip,
+            'audio_port'   => $classroom->audio_port,
+            'mic_off'      => $classroom->mic_off,
+        ]);
+
+        return response()->json([
+            'success'   => true,
+            'message'   => "IoT settings saved for {$classroom->class_name}",
+            'classroom' => $classroom->only(['id', 'class_name', 'grade_level', 'section', 'room_number', 'camera_ip', 'camera_port', 'camera_off', 'audio_ip', 'audio_port', 'mic_off']),
         ]);
     }
 
@@ -266,8 +335,7 @@ class AudioVideoThreatController extends Controller
             $timestamp     = now()->format('Y-m-d H:i:s');
             $classroomName = $request->input('classroom_name', '');
             $gradeLevel    = $request->input('grade_level', '');
-            // Use admin-supplied number from the UI; fall back to the default from config
-            $alertNumber   = trim($request->input('alert_number', $this->defaultAlertNumber)) ?: $this->defaultAlertNumber;
+            $chatId = config('services.telegram.alert_chat_id');
 
             // Resolve human-readable audio type:
             // For non_speech threats the actual class is nested inside non_speech_result.detected_class
@@ -296,7 +364,7 @@ class AudioVideoThreatController extends Controller
             // Speech transcript (if available)
             $speechText = $audioThreat['speech_result']['text'] ?? null;
 
-            // Build a concise SMS body (Twilio standard SMS max 1600 chars)
+            // Build the alert message body
             $smsBody  = "⚠ CRITICAL SCHOOL THREAT ALERT ⚠\n";
             $smsBody .= "Time: {$timestamp}\n";
             if ($classroomName) {
@@ -315,29 +383,90 @@ class AudioVideoThreatController extends Controller
             $smsBody .= "ACTION: Dispatch security immediately and review live footage.\n";
             $smsBody .= "— School Safety Monitoring System";
 
-            // Send SMS via Twilio
-            $twilio = new TwilioClient(
-                config('services.twilio.sid'),
-                config('services.twilio.auth_token')
-            );
+            // Send alert via Telegram Bot API using raw cURL (more reliable than Guzzle on Windows)
+            $botToken = config('services.telegram.bot_token');
+            $tgResult = $this->sendViaTelegram($botToken, $chatId, $smsBody);
 
-            $twilio->messages->create($alertNumber, [
-                'from' => config('services.twilio.from'),
-                'body' => $smsBody,
+            if (!$tgResult['ok']) {
+                Log::error('AudioVideo: Telegram API rejected combined alert', [
+                    'error' => $tgResult['error'],
+                ]);
+                return response()->json(['success' => false, 'error' => 'Telegram error: ' . $tgResult['error']], 500);
+            }
+
+            Log::critical('AudioVideo: COMBINED CRITICAL TELEGRAM ALERT sent', [
+                'audio_threat' => $audioType,
+                'video_threat' => $videoType,
+                'classroom'    => $classroomName ?: 'N/A',
+                'grade'        => $gradeLevel ?: 'N/A',
+                'telegram_to'  => $chatId,
+                'timestamp'    => $timestamp,
             ]);
 
-            Log::critical('AudioVideo: COMBINED CRITICAL SMS ALERT sent', [
-                'audio_threat'  => $audioType,
-                'video_threat'  => $videoType,
-                'classroom'     => $classroomName ?: 'N/A',
-                'grade'         => $gradeLevel ?: 'N/A',
-                'sms_to'        => $alertNumber,
-                'timestamp'     => $timestamp,
-            ]);
-
-            return response()->json(['success' => true, 'message' => 'Critical SMS alert sent to ' . $alertNumber]);
+            return response()->json(['success' => true, 'message' => 'Critical Telegram alert sent successfully.']);
         } catch (\Exception $e) {
-            Log::error('AudioVideo: Failed to send combined SMS alert: ' . $e->getMessage());
+            Log::error('AudioVideo: Failed to send combined Telegram alert: ' . $e->getMessage());
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Send a Telegram alert for a single object/threat that was detected
+     * continuously for 10+ seconds on the frontend.
+     * Each unique object key triggers exactly one message per session (enforced on frontend).
+     */
+    public function sendObjectAlert(Request $request): JsonResponse
+    {
+        try {
+            $objectKey    = $request->input('object_key', 'unknown');
+            $objectLabel  = $request->input('object_label', 'Unknown Object');
+            $confidence   = $request->input('confidence');
+            $classroomName = $request->input('classroom_name', '');
+            $gradeLevel   = $request->input('grade_level', '');
+            $timestamp    = now()->format('Y-m-d H:i:s');
+
+            // Build the Telegram message
+            $msg  = "⚠ PERSISTENT OBJECT ALERT ⚠\n";
+            $msg .= "Time: {$timestamp}\n";
+            if ($classroomName) {
+                $locationLine = "Classroom: {$classroomName}";
+                if ($gradeLevel) $locationLine .= " (Grade {$gradeLevel})";
+                $msg .= "{$locationLine}\n";
+            }
+            $msg .= "\n";
+            $msg .= "Object: {$objectLabel}\n";
+            if ($confidence !== null) {
+                $msg .= "Confidence: {$confidence}%\n";
+            }
+            $msg .= "Duration: Detected continuously for 10+ seconds\n\n";
+            $msg .= "ACTION: Investigate this object immediately.\n";
+            $msg .= "— School Safety Monitoring System";
+
+            $botToken = config('services.telegram.bot_token');
+            $chatId   = config('services.telegram.alert_chat_id');
+
+            // Send via raw cURL (more reliable than Guzzle on Windows dev environments)
+            $tgResult = $this->sendViaTelegram($botToken, $chatId, $msg);
+
+            if (!$tgResult['ok']) {
+                Log::error('AudioVideo: Telegram API rejected object alert', [
+                    'error'  => $tgResult['error'],
+                    'object' => $objectLabel,
+                ]);
+                return response()->json(['success' => false, 'error' => 'Telegram error: ' . $tgResult['error']], 500);
+            }
+
+            Log::warning('AudioVideo: Persistent object Telegram alert sent', [
+                'object_key'   => $objectKey,
+                'object_label' => $objectLabel,
+                'classroom'    => $classroomName ?: 'N/A',
+                'grade'        => $gradeLevel ?: 'N/A',
+                'timestamp'    => $timestamp,
+            ]);
+
+            return response()->json(['success' => true, 'message' => "Persistent object alert sent for: {$objectLabel}"]);
+        } catch (\Exception $e) {
+            Log::error('AudioVideo: Failed to send persistent object alert: ' . $e->getMessage());
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
@@ -372,5 +501,48 @@ class AudioVideoThreatController extends Controller
             Log::debug('AudioVideo: Could not fetch video status: ' . $e->getMessage());
         }
         return ['object_detector_loaded' => false, 'threat_detector_loaded' => false];
+    }
+
+    /**
+     * Send a Telegram message via raw cURL.
+     * Uses cURL directly instead of Guzzle/Http because cURL is more reliable
+     * on Windows dev environments (SSL verification disabled, explicit timeout).
+     *
+     * @return array{ok: bool, error: string}
+     */
+    private function sendViaTelegram(string $botToken, string $chatId, string $text): array
+    {
+        $url = "https://api.telegram.org/bot{$botToken}/sendMessage";
+
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL            => $url,
+            CURLOPT_POST           => true,
+            CURLOPT_POSTFIELDS     => http_build_query(['chat_id' => $chatId, 'text' => $text]),
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_SSL_VERIFYPEER => false,   // required on Windows dev (no system CA bundle)
+            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_TIMEOUT        => 15,
+            CURLOPT_CONNECTTIMEOUT => 10,
+        ]);
+
+        $response  = curl_exec($ch);
+        $curlError = curl_error($ch);
+        unset($ch);
+
+        if ($curlError) {
+            Log::error('AudioVideo: cURL Telegram send error', ['curl_error' => $curlError]);
+            return ['ok' => false, 'error' => "cURL error: {$curlError}"];
+        }
+
+        $result = json_decode($response, true);
+
+        if (empty($result['ok'])) {
+            $desc = $result['description'] ?? $response;
+            Log::error('AudioVideo: Telegram API error', ['response' => $result]);
+            return ['ok' => false, 'error' => $desc];
+        }
+
+        return ['ok' => true, 'error' => ''];
     }
 }

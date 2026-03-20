@@ -57,7 +57,7 @@ return [
     |
     */
     'audio_threat' => [
-        'url' => env('AUDIO_THREAT_API_URL', 'http://127.0.0.1:5005'),
+        'url' => env('AUDIO_THREAT_API_URL', 'http://127.0.0.1:5002'),
         'timeout' => env('AUDIO_THREAT_TIMEOUT', 30),
     ],
 
@@ -70,23 +70,22 @@ return [
     |
     */
     'video_threat' => [
-        'url' => env('VIDEO_THREAT_API_URL', 'http://127.0.0.1:5006'),
+        'url' => env('VIDEO_THREAT_API_URL', 'http://127.0.0.1:5003'),
         'timeout' => env('VIDEO_THREAT_TIMEOUT', 30),
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | Twilio SMS Configuration
+    | Telegram Bot Configuration
     |--------------------------------------------------------------------------
     |
-    | Credentials for sending critical threat SMS alerts via Twilio.
+    | Credentials for sending critical threat alerts via Telegram Bot API.
+    | Completely free, no rate limits for alert messages.
     |
     */
-    'twilio' => [
-        'sid'          => env('TWILIO_SID'),
-        'auth_token'   => env('TWILIO_AUTH_TOKEN'),
-        'from'         => env('TWILIO_FROM', '+19122148002'),
-        'alert_number' => env('TWILIO_ALERT_NUMBER', '+9470032488'),
+    'telegram' => [
+        'bot_token'     => env('TELEGRAM_BOT_TOKEN'),
+        'alert_chat_id' => env('TELEGRAM_ALERT_CHAT_ID'),
     ],
 
 ];
