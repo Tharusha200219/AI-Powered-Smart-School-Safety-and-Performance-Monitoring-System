@@ -107,6 +107,23 @@ class RfidController extends Controller
 
         if (! $student) {
             Log::warning('RFID scan: student not found for UID', ['uid' => $uid]);
+            
+            // Store error state in cache so UI can display it
+            $errorData = [
+                'student_id'   => null,
+                'student_name' => 'Unknown Student',
+                'student_code' => 'N/A',
+                'grade'        => '—',
+                'class'        => '—',
+                'action'       => 'error',
+                'time'         => now()->format('H:i:s'),
+                'scanned_at'   => now()->toIso8601String(),
+                'success'      => false,
+                'message'      => 'No student is assigned to this wristband',
+                'uid'          => $uid,
+            ];
+            Cache::put('rfid_last_scan', $errorData, now()->addMinutes(10));
+            
             return response()->json([
                 'success' => false,
                 'message' => 'No student is assigned to this wristband',
@@ -253,6 +270,13 @@ class RfidController extends Controller
             'is_late'      => $attendance->is_late ?? false,
             'duration'     => $attendance->duration ?? null,
         ];
+
+        Log::info('RFID: Storing scan result in cache', [
+            'student_id' => $studentId,
+            'action' => $action,
+            'cache_key' => 'rfid_last_scan',
+            'scanned_at' => $result['scanned_at']
+        ]);
 
         Cache::put('rfid_last_scan', $result, now()->addMinutes(10));
     }

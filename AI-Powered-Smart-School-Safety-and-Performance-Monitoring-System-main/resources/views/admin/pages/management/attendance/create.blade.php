@@ -655,9 +655,25 @@
 
                 /* ─── start / stop / toggle ─── */
                 function start() {
-                    if (_pollTimer) return;
+                    if (_pollTimer) {
+                        console.log('[RFID] Already polling, skipping start');
+                        return;
+                    }
+                    
+                    // Reset state when starting fresh polling
+                    _lastScannedAt = null;
+                    _scanCount = 0;
+                    console.log('[RFID] ▶ Starting polling at', POLL_MS, 'ms interval');
+                    
+                    // Clear any old cached data before starting
+                    _clearCache();
+                    
                     _active = true;
-                    _pollTimer = setInterval(_poll, POLL_MS);
+                    _pollTimer = setInterval(() => {
+                        _poll();
+                    }, POLL_MS);
+                    // Run first poll immediately instead of waiting
+                    _poll();
                     _setStatusBar(true);
                 }
 
@@ -665,10 +681,27 @@
                     clearInterval(_pollTimer);
                     _pollTimer = null;
                     _active = false;
+                    console.log('[RFID] ⏸ Stopped polling');
+                    
+                    // Clear the old cached scan when stopping
+                    _clearCache();
+                    
                     _setStatusBar(false);
                 }
 
+                /* ─── clear cache ─── */
+                function _clearCache() {
+                    fetch('{{ url('/api/attendance/rfid-last-scan') }}', {
+                        method: 'DELETE',
+                        headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}', 'X-Requested-With': 'XMLHttpRequest'}
+                    }).catch(() => {
+                        // If DELETE doesn't work, that's ok - just log it
+                        console.log('[RFID] Cache clear attempted');
+                    });
+                }
+
                 function toggle() {
+                    console.log('[RFID] Toggle: was', _active ? 'active' : 'inactive');
                     _active ? stop() : start();
                 }
 
@@ -699,21 +732,57 @@
 
                 /* ─── polling ─── */
                 async function _poll() {
+                    if (!_active) {
+                        console.log('[RFID Poll] Skipped (not active)');
+                        return;
+                    }
+
                     try {
-                        const resp = await fetch('{{ url('/api/attendance/rfid-last-scan') }}');
+                        console.log('[RFID Poll] Fetching from /api/attendance/rfid-last-scan...');
+                        
+                        const resp = await fetch('{{ url('/api/attendance/rfid-last-scan') }}', {
+                            cache: 'no-store',
+                            headers: {'X-Requested-With': 'XMLHttpRequest'}
+                        });
+                        
+                        console.log('[RFID Poll] Response status:', resp.status);
+                        
                         const data = await resp.json();
-                        if (data.found && data.data && data.data.scanned_at !== _lastScannedAt) {
-                            _lastScannedAt = data.data.scanned_at;
-                            _renderResult(data.data);
+                        
+                        console.log('[RFID Poll] Response data:', {
+                            found: data.found,
+                            hasData: !!data.data,
+                            action: data.data?.action,
+                            studentName: data.data?.student_name,
+                            scannedAt: data.data?.scanned_at,
+                            lastScannedAt: _lastScannedAt
+                        });
+                        
+                        if (data.found && data.data) {
+                            // Check if this is a new scan
+                            if (data.data.scanned_at !== _lastScannedAt) {
+                                _lastScannedAt = data.data.scanned_at;
+                                console.log('[RFID] ✓ NEW RESULT - Rendering:', {
+                                    action: data.data.action,
+                                    student: data.data.student_name
+                                });
+                                _renderResult(data.data);
+                            } else {
+                                console.log('[RFID Poll] Duplicate scan detected, skipping');
+                            }
+                        } else {
+                            console.log('[RFID Poll] No data in cache');
                         }
-                    } catch (_) {
-                        /* network blip */
+                    } catch (err) {
+                        console.error('[RFID Poll] ✗ ERROR:', err.message, err);
                     }
                 }
 
                 /* ─── render result ─── */
                 function _renderResult(d) {
                     clearTimeout(_resetTimer);
+                    
+                    console.log('[RFID Render] Starting to render result:', d.student_name, d.action);
 
                     const name = d.student_name || 'Unknown';
                     const code = d.student_code || '—';
@@ -721,63 +790,88 @@
                     const cls = d.class || '—';
                     const initials = _getInitials(name);
 
-                    document.getElementById('rfidResultName').textContent = name;
-                    document.getElementById('rfidResultCode').textContent = code;
-                    document.getElementById('rfidResultMeta').textContent = `Grade ${grade} · ${cls}`;
-                    document.getElementById('rfidAvatarInitials').textContent = initials;
+                    try {
+                        // Update DOM elements
+                        document.getElementById('rfidResultName').textContent = name;
+                        document.getElementById('rfidResultCode').textContent = code;
+                        document.getElementById('rfidResultMeta').textContent = `Grade ${grade} · ${cls}`;
+                        document.getElementById('rfidAvatarInitials').textContent = initials;
 
-                    const avatar = document.getElementById('rfidAvatar');
-                    const actionBadge = document.getElementById('rfidResultAction');
-                    const timEl = document.getElementById('rfidResultTime');
-                    const extraWrap = document.getElementById('rfidDetailExtraWrap');
-                    const extraLabel = document.getElementById('rfidDetailExtraLabel');
-                    const extraValue = document.getElementById('rfidDetailExtraValue');
+                        const avatar = document.getElementById('rfidAvatar');
+                        const actionBadge = document.getElementById('rfidResultAction');
+                        const timEl = document.getElementById('rfidResultTime');
+                        const extraWrap = document.getElementById('rfidDetailExtraWrap');
+                        const extraLabel = document.getElementById('rfidDetailExtraLabel');
+                        const extraValue = document.getElementById('rfidDetailExtraValue');
 
-                    if (d.action === 'check_in') {
-                        avatar.className = 'rfid-avatar rfid-avatar--in mx-auto mb-3';
-                        actionBadge.className = 'rfid-action-badge rfid-action-badge--in';
-                        actionBadge.innerHTML =
-                            `<i class="material-symbols-rounded me-1 align-middle" style="font-size:1rem">login</i>CHECKED IN`;
-                        timEl.textContent = d.time || '—';
-                        if (d.is_late) {
-                            extraWrap.classList.remove('d-none');
-                            extraLabel.textContent = 'Status';
-                            extraValue.innerHTML = `<span class="text-warning fw-bold">Late</span>`;
-                        } else {
-                            extraWrap.classList.add('d-none');
+                        if (!avatar || !actionBadge || !timEl) {
+                            console.error('[RFID Render] Missing required DOM elements');
+                            return;
                         }
-                        _addToLog(d, 'in');
-                    } else if (d.action === 'check_out') {
-                        avatar.className = 'rfid-avatar rfid-avatar--out mx-auto mb-3';
-                        actionBadge.className = 'rfid-action-badge rfid-action-badge--out';
-                        actionBadge.innerHTML =
-                            `<i class="material-symbols-rounded me-1 align-middle" style="font-size:1rem">logout</i>CHECKED OUT`;
-                        timEl.textContent = d.time || '—';
-                        if (d.duration) {
+
+                        if (d.action === 'check_in') {
+                            avatar.className = 'rfid-avatar rfid-avatar--in mx-auto mb-3';
+                            actionBadge.className = 'rfid-action-badge rfid-action-badge--in';
+                            actionBadge.innerHTML =
+                                `<i class="material-symbols-rounded me-1 align-middle" style="font-size:1rem">login</i>CHECKED IN`;
+                            timEl.textContent = d.time || '—';
+                            if (d.is_late) {
+                                extraWrap.classList.remove('d-none');
+                                extraLabel.textContent = 'Status';
+                                extraValue.innerHTML = `<span class="text-warning fw-bold">Late</span>`;
+                            } else {
+                                extraWrap.classList.add('d-none');
+                            }
+                            _addToLog(d, 'in');
+                        } else if (d.action === 'check_out') {
+                            avatar.className = 'rfid-avatar rfid-avatar--out mx-auto mb-3';
+                            actionBadge.className = 'rfid-action-badge rfid-action-badge--out';
+                            actionBadge.innerHTML =
+                                `<i class="material-symbols-rounded me-1 align-middle" style="font-size:1rem">logout</i>CHECKED OUT`;
+                            timEl.textContent = d.time || '—';
+                            if (d.duration) {
+                                extraWrap.classList.remove('d-none');
+                                extraLabel.textContent = 'Duration';
+                                extraValue.textContent = d.duration;
+                            } else {
+                                extraWrap.classList.add('d-none');
+                            }
+                            _addToLog(d, 'out');
+                        } else if (d.action === 'already_complete') {
+                            avatar.className = 'rfid-avatar rfid-avatar--done mx-auto mb-3';
+                            actionBadge.className = 'rfid-action-badge rfid-action-badge--done';
+                            actionBadge.innerHTML =
+                                `<i class="material-symbols-rounded me-1 align-middle" style="font-size:1rem">task_alt</i>ALREADY RECORDED`;
+                            timEl.textContent = d.check_in || '—';
                             extraWrap.classList.remove('d-none');
-                            extraLabel.textContent = 'Duration';
-                            extraValue.textContent = d.duration;
+                            extraLabel.textContent = 'Check-Out';
+                            extraValue.textContent = d.check_out || '—';
+                            _addToLog(d, 'done');
+                        } else if (d.action === 'error') {
+                            avatar.className = 'rfid-avatar rfid-avatar--error mx-auto mb-3';
+                            actionBadge.className = 'rfid-action-badge rfid-action-badge--error';
+                            actionBadge.innerHTML =
+                                `<i class="material-symbols-rounded me-1 align-middle" style="font-size:1rem">error</i>ERROR`;
+                            timEl.textContent = d.time || '—';
+                            if (d.message) {
+                                extraWrap.classList.remove('d-none');
+                                extraLabel.textContent = 'Error';
+                                extraValue.innerHTML = `<span class="text-danger fw-bold">${d.message}</span>`;
+                            } else {
+                                extraWrap.classList.add('d-none');
+                            }
+                            _addToLog(d, 'error');
                         } else {
-                            extraWrap.classList.add('d-none');
+                            _showError('Unknown action', 'Unrecognised scan action: ' + d.action);
+                            return;
                         }
-                        _addToLog(d, 'out');
-                    } else if (d.action === 'already_complete') {
-                        avatar.className = 'rfid-avatar rfid-avatar--done mx-auto mb-3';
-                        actionBadge.className = 'rfid-action-badge rfid-action-badge--done';
-                        actionBadge.innerHTML =
-                            `<i class="material-symbols-rounded me-1 align-middle" style="font-size:1rem">task_alt</i>ALREADY RECORDED`;
-                        timEl.textContent = d.check_in || '—';
-                        extraWrap.classList.remove('d-none');
-                        extraLabel.textContent = 'Check-Out';
-                        extraValue.textContent = d.check_out || '—';
-                        _addToLog(d, 'done');
-                    } else {
-                        _showError('Unknown action', 'Unrecognised scan action: ' + d.action);
-                        return;
+
+                        console.log('[RFID Render] ✓ Successfully rendered result');
+                        _showState('result');
+                        _resetTimer = setTimeout(() => _showState('waiting'), RESET_MS);
+                    } catch (err) {
+                        console.error('[RFID Render] ✗ Error rendering result:', err.message, err);
                     }
-
-                    _showState('result');
-                    _resetTimer = setTimeout(() => _showState('waiting'), RESET_MS);
                 }
 
                 /* ─── helpers ─── */
@@ -1359,6 +1453,11 @@
                 border: 3px solid #f59e0b;
             }
 
+            .rfid-avatar--error {
+                background: #fee2e2;
+                border: 3px solid #ef4444;
+            }
+
             .rfid-avatar-text {
                 font-size: 1.6rem;
                 font-weight: 700;
@@ -1375,6 +1474,10 @@
 
             .rfid-avatar--done .rfid-avatar-text {
                 color: #92400e;
+            }
+
+            .rfid-avatar--error .rfid-avatar-text {
+                color: #991b1b;
             }
 
             /* ── Action badge ────────────────────────────────── */
@@ -1410,6 +1513,12 @@
                 background: #fef3c7;
                 color: #92400e;
                 border: 1.5px solid #f59e0b;
+            }
+
+            .rfid-action-badge--error {
+                background: #fee2e2;
+                color: #991b1b;
+                border: 1.5px solid #ef4444;
             }
 
             /* ── Detail row ──────────────────────────────────── */
