@@ -659,15 +659,15 @@
                         console.log('[RFID] Already polling, skipping start');
                         return;
                     }
-                    
+
                     // Reset state when starting fresh polling
                     _lastScannedAt = null;
                     _scanCount = 0;
                     console.log('[RFID] ▶ Starting polling at', POLL_MS, 'ms interval');
-                    
+
                     // Clear any old cached data before starting
                     _clearCache();
-                    
+
                     _active = true;
                     _pollTimer = setInterval(() => {
                         _poll();
@@ -682,10 +682,10 @@
                     _pollTimer = null;
                     _active = false;
                     console.log('[RFID] ⏸ Stopped polling');
-                    
+
                     // Clear the old cached scan when stopping
                     _clearCache();
-                    
+
                     _setStatusBar(false);
                 }
 
@@ -693,7 +693,10 @@
                 function _clearCache() {
                     fetch('{{ url('/api/attendance/rfid-last-scan') }}', {
                         method: 'DELETE',
-                        headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}', 'X-Requested-With': 'XMLHttpRequest'}
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
                     }).catch(() => {
                         // If DELETE doesn't work, that's ok - just log it
                         console.log('[RFID] Cache clear attempted');
@@ -739,16 +742,18 @@
 
                     try {
                         console.log('[RFID Poll] Fetching from /api/attendance/rfid-last-scan...');
-                        
+
                         const resp = await fetch('{{ url('/api/attendance/rfid-last-scan') }}', {
                             cache: 'no-store',
-                            headers: {'X-Requested-With': 'XMLHttpRequest'}
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
                         });
-                        
+
                         console.log('[RFID Poll] Response status:', resp.status);
-                        
+
                         const data = await resp.json();
-                        
+
                         console.log('[RFID Poll] Response data:', {
                             found: data.found,
                             hasData: !!data.data,
@@ -757,7 +762,7 @@
                             scannedAt: data.data?.scanned_at,
                             lastScannedAt: _lastScannedAt
                         });
-                        
+
                         if (data.found && data.data) {
                             // Check if this is a new scan
                             if (data.data.scanned_at !== _lastScannedAt) {
@@ -781,7 +786,7 @@
                 /* ─── render result ─── */
                 function _renderResult(d) {
                     clearTimeout(_resetTimer);
-                    
+
                     console.log('[RFID Render] Starting to render result:', d.student_name, d.action);
 
                     const name = d.student_name || 'Unknown';
