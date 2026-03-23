@@ -19,7 +19,7 @@
 # For GPU support replace with: pip install torch torchaudio --index-url https://download.pytorch.org/whl/cu121
 torch>=2.0.0
 torchaudio>=2.0.0
-numpy>=1.26.4,<2.0.0
+numpy>=1.24.0,<2.0.0
 scipy>=1.11.0
 
 # PANNS pre-trained audio classifier (PRIMARY non-speech detector)

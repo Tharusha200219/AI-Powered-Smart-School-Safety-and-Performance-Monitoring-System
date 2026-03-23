@@ -70,6 +70,12 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('/classes-by-grade', 'getClassesByGrade')->name('classes-by-grade');
                 Route::post('/write-nfc', 'writeToNFC')->name('write-nfc');
                 Route::get('/test-arduino', 'testArduino')->name('test-arduino');
+                // RFID Wristband Enrollment (UNO R3 + serial bridge)
+                Route::post('/rfid/enrollment-start', 'startRfidEnrollment')->name('rfid.enrollment-start');
+                Route::post('/rfid/assign', 'assignRfid')->name('rfid.assign');
+                Route::delete('/{studentId}/rfid', 'removeRfid')->name('rfid.remove');
+                // Face Recognition Management
+                Route::get('/{studentId}/remove-face', 'removeFaceData')->name('remove-face');
             });
 
             // Teachers Management
@@ -188,6 +194,19 @@ Route::middleware(['auth'])->group(function () {
                 Route::delete('/devices/remove', 'devicesRemove')->name('devices.remove');
             });
 
+            // Events Management
+            Route::prefix('events')->name('events.')->controller(\App\Http\Controllers\Admin\Management\EventController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/create', 'create')->name('create');
+                Route::post('/', 'store')->name('store');
+                Route::get('/{event}/edit', 'edit')->name('edit');
+                Route::put('/{event}', 'update')->name('update');
+                Route::delete('/{event}', 'destroy')->name('destroy');
+                Route::get('/{event}/attendance', 'attendance')->name('attendance');
+                Route::get('/{event}/poll-scans', 'pollScans')->name('poll-scans');
+                Route::post('/stop-scanning', 'stopScanning')->name('stop-scanning');
+            });
+
             // Marks Management
             Route::prefix('marks')->name('marks.')->controller(MarkController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
@@ -268,6 +287,14 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/start-session', 'startSession')->name('start-session');
                 Route::post('/stop-session', 'stopSession')->name('stop-session');
             });
+
+            // Seating Arrangement (AI Powered)
+            Route::prefix('seating')->name('seating.')->controller(\App\Http\Controllers\Admin\Management\SeatingArrangementController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/{grade}/{section}', 'show')->name('show');
+                Route::get('/{grade}/{section}/data', 'data')->name('data');
+                Route::post('/generate', 'generate')->name('generate');
+            });
         });
 
         // Placeholder routes for features in development
@@ -325,6 +352,8 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/theme', 'updateTheme')->name('theme');
                 Route::post('/academic', 'updateAcademic')->name('academic');
                 Route::post('/language', [SettingsController::class, 'updateLanguage'])->name('language');
+                Route::post('/attendance-mode', 'updateAttendanceMode')->name('attendance-mode');
+                Route::post('/attendance-timing', 'updateAttendanceTiming')->name('attendance-timing');
             });
         });
 
