@@ -527,9 +527,26 @@ class AttendanceApiController extends Controller
         $result = Cache::get('rfid_last_scan');
 
         if (! $result) {
+            // Log::debug('[RFID Polling] No cache found for rfid_last_scan');
             return response()->json(['found' => false]);
         }
 
+        // Log::debug('[RFID Polling] Returning cached scan', [
+        //     'action' => $result['action'] ?? 'unknown',
+        //     'student' => $result['student_name'] ?? 'unknown',
+        //     'scanned_at' => $result['scanned_at'] ?? 'unknown'
+        // ]);
+
         return response()->json(['found' => true, 'data' => $result]);
+    }
+
+    /**
+     * Clear the RFID scan cache (called when user stops polling)
+     */
+    public function clearLastRfidScan(): JsonResponse
+    {
+        Cache::forget('rfid_last_scan');
+        Log::info('RFID: User cleared scan cache');
+        return response()->json(['success' => true, 'message' => 'Cache cleared']);
     }
 }

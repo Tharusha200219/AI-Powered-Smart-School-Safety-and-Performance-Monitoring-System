@@ -70,7 +70,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('/classes-by-grade', 'getClassesByGrade')->name('classes-by-grade');
                 Route::post('/write-nfc', 'writeToNFC')->name('write-nfc');
                 Route::get('/test-arduino', 'testArduino')->name('test-arduino');
-                  // RFID Wristband Enrollment (UNO R3 + serial bridge)
+                // RFID Wristband Enrollment (UNO R3 + serial bridge)
                 Route::post('/rfid/enrollment-start', 'startRfidEnrollment')->name('rfid.enrollment-start');
                 Route::post('/rfid/assign', 'assignRfid')->name('rfid.assign');
                 Route::delete('/{studentId}/rfid', 'removeRfid')->name('rfid.remove');
@@ -146,6 +146,9 @@ Route::middleware(['auth'])->group(function () {
                 // Classroom IoT device management
                 Route::get('/classrooms', 'classrooms')->name('classrooms');
                 Route::post('/classrooms/update-devices', 'updateClassroomDevices')->name('classrooms.update-devices');
+                // Classroom IoT setup page
+                Route::get('/classroom-setup', 'classroomSetup')->name('classroom-setup');
+                Route::post('/classroom-setup/save', 'saveClassroomSetup')->name('classroom-setup.save');
             });
 
             // Timetables Management
@@ -190,7 +193,8 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/devices/sync', 'devicesSync')->name('devices.sync');
                 Route::delete('/devices/remove', 'devicesRemove')->name('devices.remove');
             });
-             // Events Management
+
+            // Events Management
             Route::prefix('events')->name('events.')->controller(\App\Http\Controllers\Admin\Management\EventController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::get('/create', 'create')->name('create');
@@ -284,7 +288,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/stop-session', 'stopSession')->name('stop-session');
             });
 
-              // Seating Arrangement (AI Powered)
+            // Seating Arrangement (AI Powered)
             Route::prefix('seating')->name('seating.')->controller(\App\Http\Controllers\Admin\Management\SeatingArrangementController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::get('/{grade}/{section}', 'show')->name('show');

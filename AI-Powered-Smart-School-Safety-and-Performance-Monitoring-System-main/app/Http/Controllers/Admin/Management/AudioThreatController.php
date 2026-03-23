@@ -17,7 +17,7 @@ class AudioThreatController extends Controller
 
     public function __construct()
     {
-        $this->apiBaseUrl = config('services.audio_threat.url', 'http://127.0.0.1:5005');
+        $this->apiBaseUrl = config('services.audio_threat.url', 'http://127.0.0.1:5002');
     }
 
     /**

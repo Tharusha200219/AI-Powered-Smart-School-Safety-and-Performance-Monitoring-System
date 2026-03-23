@@ -143,3 +143,4 @@ class NoiseProfiler:
             'samples_collected': len(self.noise_samples),
             'samples_required': 5
         }
+

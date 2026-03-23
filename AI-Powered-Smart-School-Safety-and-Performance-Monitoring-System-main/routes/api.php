@@ -36,6 +36,10 @@ Route::prefix('attendance')->name('api.attendance.')->group(function () {
     Route::get('/rfid-last-scan', [AttendanceApiController::class, 'getLastRfidScan'])
         ->name('rfid-last-scan');
 
+    // Clear cached RFID scan result (called when user stops polling)
+    Route::delete('/rfid-last-scan', [AttendanceApiController::class, 'clearLastRfidScan'])
+        ->name('rfid-last-scan-delete');
+
     // Device registration and health check
     Route::post('/device/register', [AttendanceApiController::class, 'registerDevice'])
         ->name('device.register');

@@ -192,6 +192,7 @@ class SeatingArrangementService
     public function getClassesWithStudents(): array
     {
         return Student::where('is_active', true)
+            ->whereNotNull('section')  // Filter out students without a section
             ->select('grade_level', 'section', DB::raw('count(*) as student_count'))
             ->groupBy('grade_level', 'section')
             ->orderBy('grade_level')

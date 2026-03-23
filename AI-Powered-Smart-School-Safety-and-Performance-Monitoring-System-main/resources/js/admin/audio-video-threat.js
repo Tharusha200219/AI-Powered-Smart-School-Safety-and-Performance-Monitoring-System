@@ -38,6 +38,12 @@ class AudioVideoThreatDetector {
         this.combinedCooldown = false; // prevent spamming alerts
         this.COMBINED_WINDOW_MS = 8000; // threats within 8 s = combined
 
+        /* ---------- persistent object tracking (10-second Telegram alert) ---------- */
+        // key = object/threat type string
+        // value = { firstSeen: timestamp|null, alertSent: boolean }
+        this.trackedObjects = {};
+        this.OBJECT_PERSIST_MS = 10000; // 10 seconds continuous detection → alert
+
         /* ---------- history ---------- */
         this.history = [];
 
@@ -93,14 +99,7 @@ class AudioVideoThreatDetector {
         this.criticalBanner = document.getElementById('criticalAlertBanner');
         this.criticalMsg = document.getElementById('criticalAlertMsg');
 
-        // Admin contact number UI
-        this.adminContactDisplay = document.getElementById('adminContactDisplay');
-        this.adminContactInput = document.getElementById('adminContactInput');
-        this.contactDisplayRow = document.getElementById('contactDisplayRow');
-        this.contactEditRow = document.getElementById('contactEditRow');
-        this.editContactBtn = document.getElementById('editContactBtn');
-        this.saveContactBtn = document.getElementById('saveContactBtn');
-        this.cancelContactBtn = document.getElementById('cancelContactBtn');
+        // (Telegram info card — no editable fields, no DOM refs needed)
 
         this.visualizer = document.getElementById('audioVisualizer');
         this.visualizerCtx = this.visualizer?.getContext('2d');
@@ -108,7 +107,9 @@ class AudioVideoThreatDetector {
         // Classroom IoT panel
         this.classroomSelect = document.getElementById('classroomSelect');
         this.classroomCameraIp = document.getElementById('classroomCameraIp');
+        this.classroomCameraPort = document.getElementById('classroomCameraPort');
         this.classroomAudioIp = document.getElementById('classroomAudioIp');
+        this.classroomAudioPort = document.getElementById('classroomAudioPort');
         this.saveClassroomDevicesBtn = document.getElementById('saveClassroomDevicesBtn');
         this.loadClassroomBtn = document.getElementById('loadClassroomBtn');
         this.selectedClassBadge = document.getElementById('selectedClassBadge');
@@ -134,32 +135,6 @@ class AudioVideoThreatDetector {
         });
 
         document.getElementById('connectEsp32Btn')?.addEventListener('click', () => this._connectEsp32());
-
-        // Admin contact number edit/save/cancel
-        this.editContactBtn?.addEventListener('click', () => {
-            this.adminContactInput.value = this.adminContactDisplay.textContent.trim();
-            this.contactDisplayRow?.classList.add('d-none');
-            this.contactEditRow?.classList.remove('d-none');
-            this.adminContactInput?.focus();
-        });
-
-        this.saveContactBtn?.addEventListener('click', () => {
-            const val = this.adminContactInput?.value?.trim();
-            if (!val || !/^\+[0-9]{7,15}$/.test(val)) {
-                this.adminContactInput?.classList.add('is-invalid');
-                return;
-            }
-            this.adminContactInput?.classList.remove('is-invalid');
-            if (this.adminContactDisplay) this.adminContactDisplay.textContent = val;
-            this.contactEditRow?.classList.add('d-none');
-            this.contactDisplayRow?.classList.remove('d-none');
-        });
-
-        this.cancelContactBtn?.addEventListener('click', () => {
-            this.adminContactInput?.classList.remove('is-invalid');
-            this.contactEditRow?.classList.add('d-none');
-            this.contactDisplayRow?.classList.remove('d-none');
-        });
 
         // Classroom IoT panel
         this.classroomSelect?.addEventListener('change', () => this._onClassroomChange());
@@ -602,6 +577,107 @@ class AudioVideoThreatDetector {
             this._addAlert(`Left-behind object: ${leftBehindItems}`, 'video-threat', 'Video');
             this._addHistory('Video', 'Left-Behind Object', 'Medium');
         }
+
+        // --- 10-second persistence tracking (with 2-second gap tolerance) ---
+        // Tracks ALL detected objects (any bounding box) plus confirmed threats.
+        // Fires a Telegram alert once per object type after 10 continuous seconds.
+        // Gap tolerance: up to 2 s of model-flicker does NOT reset the timer.
+        const now = Date.now();
+        const GAP_TOLERANCE_MS = 2000;
+        const currentKeys = new Set();
+
+        // Track ALL detected objects (every bounding box the model returns)
+        // 'person' detections are intentionally excluded — no alert needed for people.
+        if (objects?.detections?.length > 0) {
+            objects.detections.forEach(det => {
+                if (!det.class_name) return;
+                if (det.class_name.toLowerCase() === 'person') return; // skip person
+                const prefix = det.is_left_behind ? 'leftbehind'
+                    : det.is_unknown ? 'unknown'
+                        : 'object';
+                currentKeys.add(prefix + ':' + (det.original_class_name || det.class_name));
+            });
+        }
+
+        // Also track confirmed pose/behaviour threats
+        if (threats?.is_threat && threats.threat_type) {
+            currentKeys.add('threat:' + threats.threat_type);
+        }
+
+        console.log('[PersistTrack] frame keys:', [...currentKeys]);
+
+        // Step 1: objects absent this frame — reset streak only after gap exceeds tolerance
+        for (const key of Object.keys(this.trackedObjects)) {
+            if (!currentKeys.has(key)) {
+                const lastSeen = this.trackedObjects[key].lastSeen || 0;
+                if ((now - lastSeen) > GAP_TOLERANCE_MS) {
+                    this.trackedObjects[key].firstSeen = null; // streak broken
+                }
+                // within tolerance → flicker gap, keep streak alive
+            }
+        }
+
+        // Step 2: objects visible this frame — accumulate time, fire alert at 10 s
+        for (const key of currentKeys) {
+            if (!this.trackedObjects[key]) {
+                this.trackedObjects[key] = { firstSeen: now, lastSeen: now, alertSent: false };
+                console.log(`[PersistTrack] NEW: ${key}`);
+            } else {
+                this.trackedObjects[key].lastSeen = now;
+
+                if (this.trackedObjects[key].firstSeen === null) {
+                    // Reappeared after a long gap — restart timer
+                    this.trackedObjects[key].firstSeen = now;
+                    console.log(`[PersistTrack] RESTART: ${key}`);
+                } else {
+                    const elapsed = now - this.trackedObjects[key].firstSeen;
+                    console.log(`[PersistTrack] ${key} → ${(elapsed / 1000).toFixed(1)}s / 10s`);
+
+                    if (elapsed >= this.OBJECT_PERSIST_MS && !this.trackedObjects[key].alertSent) {
+                        this.trackedObjects[key].alertSent = true;
+
+                        const parts = key.split(':');
+                        const label = (parts[1] || key).replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                        const confidence = (threats?.is_threat && ('threat:' + threats.threat_type) === key)
+                            ? Math.round((threats.confidence || 0) * 100)
+                            : null;
+
+                        console.log(`[PersistTrack] ✅ ALERT at 10s for: ${key}`);
+                        this._sendObjectAlert(key, label, confidence);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Send a Telegram alert for a single object/threat that has been
+     * continuously detected for 10+ seconds. Fires only ONCE per object key.
+     */
+    async _sendObjectAlert(key, label, confidencePct) {
+        console.log(`[ObjectAlert] Sending Telegram for: ${label} → ${this.routes.sendObjectAlert}`);
+        try {
+            const body = {
+                object_key: key,
+                object_label: label,
+                confidence: confidencePct,
+                classroom_name: this.selectedClassroom?.name || '',
+                grade_level: this.selectedClassroom?.grade || '',
+            };
+            const resp = await fetch(this.routes.sendObjectAlert, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': this.csrf },
+                body: JSON.stringify(body),
+            });
+            const data = await resp.json();
+            if (data.success) {
+                console.log(`[ObjectAlert] ✅ Telegram delivered for: ${label}`);
+            } else {
+                console.error(`[ObjectAlert] ❌ Server error for ${label}:`, data.error);
+            }
+        } catch (e) {
+            console.error('[ObjectAlert] ❌ Fetch failed:', e);
+        }
     }
 
     _onVideoThreat(threats) {
@@ -766,11 +842,14 @@ class AudioVideoThreatDetector {
         const opt = this.classroomSelect?.options[this.classroomSelect.selectedIndex];
         if (!opt || !opt.value) {
             this.selectedClassroom = null;
+            if (this.startBtn) { this.startBtn.disabled = true; this.startBtn.title = 'Select a classroom first'; }
             if (this.saveClassroomDevicesBtn) this.saveClassroomDevicesBtn.disabled = true;
             if (this.loadClassroomBtn) this.loadClassroomBtn.disabled = true;
             if (this.selectedClassBadge) this.selectedClassBadge.style.display = 'none';
             if (this.classroomCameraIp) this.classroomCameraIp.value = '';
+            if (this.classroomCameraPort) this.classroomCameraPort.value = '80';
             if (this.classroomAudioIp) this.classroomAudioIp.value = '';
+            if (this.classroomAudioPort) this.classroomAudioPort.value = '5002';
             return;
         }
 
@@ -781,14 +860,21 @@ class AudioVideoThreatDetector {
             section: opt.dataset.section,
             room: opt.dataset.room,
             cameraIp: opt.dataset.camera || '',
+            cameraPort: opt.dataset.cameraPort || '80',
             audioIp: opt.dataset.audio || '',
+            audioPort: opt.dataset.audioPort || '5002',
+            cameraOff: opt.dataset.cameraOff === '1',
+            micOff: opt.dataset.micOff === '1',
         };
 
-        // Pre-fill the IP fields with saved values
+        // Pre-fill the IP and port fields with saved values
         if (this.classroomCameraIp) this.classroomCameraIp.value = this.selectedClassroom.cameraIp;
+        if (this.classroomCameraPort) this.classroomCameraPort.value = this.selectedClassroom.cameraPort;
         if (this.classroomAudioIp) this.classroomAudioIp.value = this.selectedClassroom.audioIp;
+        if (this.classroomAudioPort) this.classroomAudioPort.value = this.selectedClassroom.audioPort;
 
-        // Enable buttons
+        // Enable all action buttons now that a classroom is chosen
+        if (this.startBtn) { this.startBtn.disabled = false; this.startBtn.title = ''; }
         if (this.saveClassroomDevicesBtn) this.saveClassroomDevicesBtn.disabled = false;
         if (this.loadClassroomBtn) this.loadClassroomBtn.disabled = false;
 
@@ -800,11 +886,13 @@ class AudioVideoThreatDetector {
         }
     }
 
-    /** Persist the camera/audio IPs for the selected classroom via the Laravel API */
+    /** Persist the camera/audio IPs and ports for the selected classroom via the Laravel API */
     async _saveClassroomDevices() {
         if (!this.selectedClassroom) return;
         const camIp = this.classroomCameraIp?.value?.trim() || '';
+        const camPort = this.classroomCameraPort?.value?.trim() || '80';
         const audioIp = this.classroomAudioIp?.value?.trim() || '';
+        const audioPort = this.classroomAudioPort?.value?.trim() || '5002';
 
         try {
             const r = await fetch(this.routes.updateClassroomDevices, {
@@ -813,17 +901,26 @@ class AudioVideoThreatDetector {
                 body: JSON.stringify({
                     classroom_id: this.selectedClassroom.id,
                     camera_ip: camIp,
+                    camera_port: camPort,
                     audio_ip: audioIp,
+                    audio_port: audioPort,
                 }),
             });
             const data = await r.json();
             if (data.success) {
-                // Update local state so "Use" button uses latest IPs
+                // Update local state so "Use" button uses latest values
                 this.selectedClassroom.cameraIp = camIp;
+                this.selectedClassroom.cameraPort = camPort;
                 this.selectedClassroom.audioIp = audioIp;
+                this.selectedClassroom.audioPort = audioPort;
                 // Update dataset on the option element
                 const opt = this.classroomSelect?.options[this.classroomSelect.selectedIndex];
-                if (opt) { opt.dataset.camera = camIp; opt.dataset.audio = audioIp; }
+                if (opt) {
+                    opt.dataset.camera = camIp;
+                    opt.dataset.cameraPort = camPort;
+                    opt.dataset.audio = audioIp;
+                    opt.dataset.audioPort = audioPort;
+                }
                 this._addAlert(`IoT endpoints saved for ${this.selectedClassroom.name}.`, 'info', 'System');
             } else {
                 console.error('Save classroom devices failed:', data);
@@ -831,11 +928,12 @@ class AudioVideoThreatDetector {
         } catch (e) { console.error('Error saving classroom devices:', e); }
     }
 
-    /** Apply the selected classroom's IPs to the monitoring panel and switch to ESP32 mode */
+    /** Apply the selected classroom's IPs/ports to the monitoring panel and switch to ESP32 mode */
     _loadClassroomIntoMonitoring() {
         if (!this.selectedClassroom) return;
 
         const camIp = this.classroomCameraIp?.value?.trim() || this.selectedClassroom.cameraIp;
+        const camPort = this.classroomCameraPort?.value?.trim() || this.selectedClassroom.cameraPort || '80';
 
         // Switch video source to ESP32-CAM and pre-fill the IP input
         const esp32Radio = document.getElementById('esp32Camera');
@@ -848,7 +946,7 @@ class AudioVideoThreatDetector {
 
         this._addAlert(
             `Monitoring classroom: ${this.selectedClassroom.name} (Grade ${this.selectedClassroom.grade}). ` +
-            `Camera: ${camIp || '—'}  Audio: ${this.selectedClassroom.audioIp || '—'}`,
+            `Camera: ${camIp || '—'}:${camPort}  Audio: ${this.selectedClassroom.audioIp || '—'}:${this.selectedClassroom.audioPort || '5002'}`,
             'info', 'Classroom'
         );
     }
@@ -879,13 +977,10 @@ class AudioVideoThreatDetector {
             ? videoData.threat_type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
             : 'Unknown';
 
-        // Read admin contact number from UI
-        const alertNumber = this.adminContactDisplay?.textContent?.trim() || '+9470032488';
-
         // Show banner
         if (this.criticalBanner) {
             this.criticalBanner.classList.remove('d-none');
-            let bannerText = `Audio: ${audioLabel} + Video: ${videoLabel} — SMS alert sent to ${alertNumber}`;
+            let bannerText = `Audio: ${audioLabel} + Video: ${videoLabel} — Telegram alert sent to admin.`;
             if (this.selectedClassroom) {
                 bannerText = `[${this.selectedClassroom.name} · Grade ${this.selectedClassroom.grade}] ` + bannerText;
             }
@@ -925,20 +1020,26 @@ class AudioVideoThreatDetector {
         );
         this._addHistory('CRITICAL', `${audioLabel} + ${videoLabel}`, 'Critical');
 
-        // Send SMS via Laravel → Twilio
+        // Send Telegram alert via Laravel
+        console.log('[CriticalAlert] Sending combined Telegram alert →', this.routes.sendCombinedAlert);
         try {
-            await fetch(this.routes.sendCombinedAlert, {
+            const resp = await fetch(this.routes.sendCombinedAlert, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': this.csrf },
                 body: JSON.stringify({
                     audio_threat: audioData,
                     video_threat: videoData,
-                    alert_number: alertNumber,
                     classroom_name: this.selectedClassroom?.name || '',
                     grade_level: this.selectedClassroom?.grade || '',
                 })
             });
-        } catch (e) { console.error('Failed to send combined alert SMS:', e); }
+            const data = await resp.json();
+            if (data.success) {
+                console.log('[CriticalAlert] ✅ Combined Telegram alert delivered.');
+            } else {
+                console.error('[CriticalAlert] ❌ Server error:', data.error);
+            }
+        } catch (e) { console.error('[CriticalAlert] ❌ Fetch failed:', e); }
     }
 
     /* ============================================================
