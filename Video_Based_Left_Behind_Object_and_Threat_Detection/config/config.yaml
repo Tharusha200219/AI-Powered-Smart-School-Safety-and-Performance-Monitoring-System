@@ -78,6 +78,7 @@ object_detection:
     # Custom-trained model with school-specific classes (Pen, Backpack/Tas-Ransel,
     # Laptop, Water-bottle, Umbrella, Sports equipment etc.)
     weights: "models/object_detection_training/weights/best.pt"
+    # weights: "yolov8s.pt"
     # Secondary COCO model for items not in custom model (book, cell phone, keyboard…)
     secondary_weights: "yolov8s.pt"
     input_size: [640, 640]
