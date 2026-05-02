@@ -1,0 +1,28 @@
+SYSTEM ARCHITECTURE DOCUMENTATION
+
+1. OVERVIEW
+The Smart School Safety and Performance Monitoring System is built on a microservices architecture. It decouples the core web application (Laravel) from the heavy AI/ML processing services (Flask).
+
+2. CORE COMPONENTS
+- Orchestrator (Laravel 11): Handles user management, dashboard UI, database persistence, and API orchestration.
+- AI Services (Flask): Specialized Python APIs for Face Recognition, Performance Prediction, and Seating Optimization.
+- IoT Layer (Arduino): Hardware modules for RFID-based student tracking.
+
+3. COMMUNICATION PROTOCOL
+- All internal communication between the Orchestrator and AI Services is done via RESTful APIs over HTTP.
+- JSON is the primary data exchange format.
+- IoT devices communicate with the system via a Python-based Serial Bridge.
+
+4. PORT MAPPING
+| Service                  | Port | Endpoint (Example)           |
+|--------------------------|------|------------------------------|
+| Performance Prediction   | 5002 | /predict-marks               |
+| Seating Arrangement      | 5003 | /generate-seating            |
+| Facial Recognition       | 5004 | /api/attendance/recognize    |
+| Laravel Dashboard        | 8000 | (Main Web UI)                |
+
+5. SYSTEM WORKFLOW
+1. Student enters school -> RFID/Camera captures data.
+2. Data forwarded to respective Flask Service.
+3. Service processes (Detect/Predict) and returns JSON to Laravel.
+4. Laravel updates the MySQL database and notifies stakeholders (Teachers/Parents).

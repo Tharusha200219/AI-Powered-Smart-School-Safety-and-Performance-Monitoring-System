@@ -1,0 +1,38 @@
+DATABASE DOCUMENTATION
+
+1. PRIMARY DATABASE
+The system uses MySQL 8.0+ as the central repository for all structured data.
+
+2. KEY TABLES & SCHEMA
+
+A. STUDENTS
+- id (INT, PK)
+- student_id (VARCHAR, UNIQUE): School identifier.
+- name (VARCHAR)
+- face_data_path (VARCHAR): Path to facial embeddings folder.
+- rfid_tag (VARCHAR, UNIQUE): UID of the RFID wristband.
+
+B. ATTENDANCE
+- id (INT, PK)
+- student_id (INT, FK)
+- method (ENUM: 'FACE', 'RFID', 'MANUAL')
+- timestamp (DATETIME)
+- status (ENUM: 'PRESENT', 'ABSENT', 'LATE')
+
+C. MARKS
+- id (INT, PK)
+- student_id (INT, FK)
+- subject (VARCHAR)
+- term_1 (FLOAT)
+- term_2 (FLOAT)
+- term_3 (FLOAT)
+- attendance_percentage (FLOAT)
+
+D. SEATING_ARRANGEMENTS
+- id (INT, PK)
+- grade (VARCHAR)
+- section (VARCHAR)
+- arrangement_json (JSON): Stores the optimized seat coordinates and student IDs.
+
+3. AI CACHE (SQLITE/PKL)
+- Each AI service (Facial Recognition) maintains a local cache of student embeddings for fast matching, serialized as .pkl files to avoid repeated database lookups for every frame.

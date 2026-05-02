@@ -1,0 +1,39 @@
+HARDWARE WIRING AND DIAGRAMS DOCUMENTATION
+
+1. ARDUINO UNO R3 PINOUT CONFIGURATION
+
+A. RC522 RFID READER
+- VCC   -> 3.3V (CRITICAL: DO NOT USE 5V)
+- GND   -> GND
+- RST   -> Pin 9
+- SDA (SS) -> Pin 10
+- SCK   -> Pin 13
+- MOSI  -> Pin 11
+- MISO  -> Pin 12
+
+B. 1602 LCD (WITH I2C MODULE)
+- VCC   -> 5V
+- GND   -> GND
+- SDA   -> Pin A4
+- SCL   -> Pin A5
+
+C. RGB LED (COMMON CATHODE)
+- Common -> GND
+- Red    -> Pin 6
+- Green  -> Pin 5
+- Blue   -> Pin 3
+
+2. WIRING COLOR CODE RECOMMENDATIONS
+- Red: Power (VCC)
+- Black: Ground (GND)
+- Yellow: Data (SDA/MOSI)
+- Green: Clock (SCL/SCK)
+- Blue: blue-channel LED
+
+3. POWER ARCHITECTURE
+- Primary Power: USB 5V (from PC/Bridge)
+- RFID Power: Regulated 3.3V (from Arduino 3.3V pin)
+- LCD Power: 5V (from Arduino 5V pin)
+
+4. DIAGRAM DESCRIPTION
+The hardware setup follows a Star Topology where the Arduino Uno R3 acts as the central hub. The RFID reader is connected via SPI, the LCD via I2C, and the RGB LED via PWM-capable digital pins (3, 5, 6) for smooth color transitions and status feedback.

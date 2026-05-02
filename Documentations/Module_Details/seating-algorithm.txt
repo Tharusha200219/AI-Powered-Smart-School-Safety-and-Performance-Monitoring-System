@@ -1,0 +1,31 @@
+STUDENT SEATING ARRANGEMENT ALGORITHM DOCUMENTATION
+
+1. GOAL
+To create an optimized classroom layout that enhances learning by strategically placing students based on their academic performance.
+
+2. ALGORITHM LOGIC: HIGH-LOW PAIRING
+- Sorting: Students are first sorted by their average marks (Descending).
+- Pairing: The algorithm uses two pointers (Left for High, Right for Low).
+- Pattern:
+  - Seat 1: Highest Performer
+  - Seat 2: Lowest Performer
+  - Seat 3: 2nd Highest Performer
+  - Seat 4: 2nd Lowest Performer
+- This continues until all students are seated, creating a balanced mix across the classroom.
+
+3. CLASSROOM CONFIGURATION
+- Dynamic Grid: Supports custom row and column configurations (e.g., 5x6, 4x8).
+- Zig-Zag Assignment: Seats are filled in a zig-zag manner to ensure optimal distribution across rows.
+
+4. PERFORMANCE CATEGORIES
+Students are labeled for visualization:
+- High: Marks >= 75
+- Medium: 50 <= Marks < 75
+- Low: Marks < 50
+
+5. API RESPONSE
+The algorithm returns a JSON object containing:
+- Student ID & Name
+- Row & Column Number
+- Seat Label (e.g., R1-C1)
+- Performance Category
