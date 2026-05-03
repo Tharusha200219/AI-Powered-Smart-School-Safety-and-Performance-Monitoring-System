@@ -77,12 +77,12 @@ object_detection:
     type: "yolov8"
     # Custom-trained model with school-specific classes (Pen, Backpack/Tas-Ransel,
     # Laptop, Water-bottle, Umbrella, Sports equipment etc.)
-    weights: "models/object_detection_training/weights/best.pt"
+    weights: "yolov8n.pt"
     # Secondary COCO model for items not in custom model (book, cell phone, keyboard…)
-    secondary_weights: "yolov8s.pt"
+    secondary_weights: "yolov8n.pt"
     input_size: [640, 640]
-    confidence_threshold: 0.30        # Balanced: catches phones/bottles without face FPs
-    secondary_confidence_threshold: 0.30  # Same bar for COCO model
+    confidence_threshold: 0.20        # More sensitive for testing
+    secondary_confidence_threshold: 0.20  # Same bar for COCO model
     iou_threshold: 0.45
 
   # Classes to detect — includes BOTH custom-model names AND COCO names.
@@ -123,7 +123,7 @@ object_detection:
     - "Umbrella"       # Umbrella (capitalized, matches COCO alias)
 
   # Time threshold for left-behind detection (minutes after last class)
-  left_behind_threshold: 60
+  left_behind_threshold: 1
 
   # Minimum object size (pixels²) — kept low for small items like pens
   min_object_size: 400  # Phone at 2-3m = ~20x50px = 1000px²; 400 gives comfortable margin
@@ -135,7 +135,7 @@ threat_detection:
     weights: null                   # no custom weights needed — uses yolov8n-pose.pt
     input_size: [640, 640]
     clip_length: 8                  # smoothing history window (frames) — shorter = faster response
-    confidence_threshold: 0.55     # raised from 0.40 to reduce false positives on normal movement
+    confidence_threshold: 0.35     # Lowered from 0.55 for easier testing
 
   # Threat categories detected by the pose-based system
   threat_classes:

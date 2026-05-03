@@ -15,7 +15,7 @@ from src.models.object_detector import (
     SCHOOL_VIRTUAL_CLASS_IDS,
 )
 
-CUSTOM_MODEL = 'models/object_detection_training/weights/best.pt'
+CUSTOM_MODEL = 'yolov8n.pt'
 COCO_MODEL   = 'yolov8n.pt'
 
 print("=" * 60)
