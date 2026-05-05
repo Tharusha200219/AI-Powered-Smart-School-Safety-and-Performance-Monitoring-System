@@ -533,19 +533,56 @@ class AudioVideoThreatDetector {
     }
 
     _startEsp32Capture() {
+        // ── WHY SNAPSHOT FETCH instead of canvas-capture of the <img> stream ──
+        // Drawing a cross-origin MJPEG <img> onto a canvas taints the canvas,
+        // making toDataURL() throw a SecurityError (caught silently).  No frame
+        // ever reaches the Python detection API → detection appears broken.
+        //
+        // FIX: fetch /capture from ESP32 → blob URL (same-origin) → canvas
+        //      → toDataURL() works. The live <img> MJPEG display is unaffected.
+
+        // If the IP hasn't been set yet (user clicked Start before Connect),
+        // try reading it from the input field now.
+        if (!this._esp32Ip) {
+            const ip = document.getElementById('esp32IpInput')?.value?.trim();
+            if (ip) {
+                this._esp32Ip = ip;
+                // Also connect the stream display
+                if (this.esp32Img) {
+                    this.esp32Img.src = `http://${ip}/stream`;
+                    this.esp32Img.style.display = 'block';
+                    document.getElementById('noEsp32Msg')?.classList.add('d-none');
+                }
+            }
+        }
+
+        let prevBlobUrl = null;
+
         this.esp32Interval = setInterval(async () => {
-            if (!this.isRunning || !this.esp32Img?.src) return;
+            if (!this.isRunning || !this._esp32Ip) return;
             try {
-                const c = document.createElement('canvas');
-                c.width = this.esp32Img.width || 640;
-                c.height = this.esp32Img.height || 480;
-                c.getContext('2d').drawImage(this.esp32Img, 0, 0);
-                const b64 = c.toDataURL('image/jpeg', 0.8).split(',')[1];
-                if (!b64) return;
+                const result = await this._captureEsp32Snapshot();
+                if (!result) {
+                    console.warn('ESP32 snapshot not ready, skipping frame');
+                    return;
+                }
+
+                const { frameData, blobUrl } = result;
+
+                // Update live display image with fresh snapshot (~4 FPS view)
+                if (blobUrl && this.esp32Img) {
+                    this.esp32Img.src = blobUrl;
+                    if (prevBlobUrl) {
+                        const old = prevBlobUrl;
+                        setTimeout(() => URL.revokeObjectURL(old), 500);
+                    }
+                    prevBlobUrl = blobUrl;
+                }
+
                 const r = await fetch(this.routes.processFrame, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': this.csrf },
-                    body: JSON.stringify({ frame: b64 })
+                    body: JSON.stringify({ frame: frameData })
                 });
                 const data = await r.json();
                 if (data.success) {
@@ -553,7 +590,71 @@ class AudioVideoThreatDetector {
                     this._handleVideoDetections(data);
                 }
             } catch (e) { console.error('ESP32 frame error:', e); }
-        }, 200);
+        }, 250); // ~4 FPS – snapshot fetch takes ~50-150 ms
+    }
+
+    /**
+     * Fetches a single JPEG frame from the ESP32-CAM /capture endpoint.
+     * Returns base64-encoded JPEG string, or null on failure.
+     *
+     * HOW IT AVOIDS THE CORS CANVAS-TAINT PROBLEM:
+     *   1. fetch() with mode:'cors' → ESP32 responds with Access-Control-Allow-Origin:*
+     *   2. Convert response to blob → URL.createObjectURL() → a blob: URL (same-origin)
+     *   3. Draw blob-URL image onto canvas → canvas is NOT tainted
+     *   4. canvas.toDataURL() succeeds → base64 JPEG sent to Python detection API
+     */
+    async _captureEsp32Snapshot() {
+        try {
+            const response = await fetch(`http://${this._esp32Ip}/capture`, {
+                mode: 'cors',
+                cache: 'no-cache'
+            });
+
+            if (!response.ok) {
+                console.warn(`ESP32 /capture returned ${response.status}`);
+                return null;
+            }
+
+            const blob = await response.blob();
+            if (!blob || blob.size === 0) return null;
+
+            // blob: URL is same-origin → canvas drawImage won't taint it
+            const blobUrl = URL.createObjectURL(blob);
+
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    const w = img.naturalWidth  || 320;
+                    const h = img.naturalHeight || 240;
+
+                    // Store actual frame dimensions for the overlay canvas
+                    this._esp32FrameWidth  = w;
+                    this._esp32FrameHeight = h;
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width  = w;
+                    canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                    // NOTE: blobUrl NOT revoked here — caller uses it to update
+                    // the live display image, then revokes it after a short delay.
+
+                    let frameData = null;
+                    try {
+                        frameData = canvas.toDataURL('image/jpeg', 0.8).split(',')[1] || null;
+                    } catch (e) {
+                        console.error('ESP32 toDataURL error:', e.message);
+                    }
+
+                    resolve(frameData ? { frameData, blobUrl } : null);
+                };
+                img.onerror = () => { URL.revokeObjectURL(blobUrl); resolve(null); };
+                img.src = blobUrl;
+            });
+
+        } catch (e) {
+            if (e.name !== 'TypeError') console.warn('ESP32 snapshot fetch failed:', e.message);
+            return null;
+        }
     }
 
     _handleVideoDetections(data) {
@@ -753,10 +854,20 @@ class AudioVideoThreatDetector {
 
     _drawDetections(data) {
         if (!this.canvas) return;
-        const video = this.videoSource === 'pc' ? this.videoEl : this.esp32Img;
-        const width = video?.videoWidth || video?.width || 640;
-        const height = video?.videoHeight || video?.height || 480;
-        this.canvas.width = width;
+
+        // For PC camera: use <video> natural pixel dimensions.
+        // For ESP32-CAM: use dimensions stored by _captureEsp32Snapshot() from the
+        //   last /capture response – these are the ACTUAL frame pixels, so bounding
+        //   boxes align correctly.  Fall back to common defaults if not yet known.
+        let width, height;
+        if (this.videoSource === 'pc') {
+            width  = this.videoEl?.videoWidth  || 640;
+            height = this.videoEl?.videoHeight || 480;
+        } else {
+            width  = this._esp32FrameWidth  || this.esp32Img?.naturalWidth  || 320;
+            height = this._esp32FrameHeight || this.esp32Img?.naturalHeight || 240;
+        }
+        this.canvas.width  = width;
         this.canvas.height = height;
         const ctx = this.canvas.getContext('2d');
         ctx.clearRect(0, 0, width, height);
@@ -825,9 +936,17 @@ class AudioVideoThreatDetector {
     _connectEsp32() {
         const ip = document.getElementById('esp32IpInput')?.value?.trim();
         if (!ip) return;
+
+        // Store IP so _captureEsp32Snapshot() can reach /capture for detection
+        this._esp32Ip = ip;
+
         const imgEl = this.esp32Img;
         if (imgEl) {
-            imgEl.src = `http://${ip}/stream`;
+            // *** KEY FIX: Do NOT set src to the MJPEG /stream URL. ***
+            // Loading the stream opens a persistent connection that blocks the ESP32's
+            // HTTP server in a while-loop, preventing it from handling /capture requests.
+            // Snapshots (fetched every 250 ms by the detection interval) update this
+            // image element directly, providing a live ~4 FPS view without blocking.
             imgEl.style.display = 'block';
             document.getElementById('noEsp32Msg')?.classList.add('d-none');
         }
@@ -934,6 +1053,9 @@ class AudioVideoThreatDetector {
 
         const camIp = this.classroomCameraIp?.value?.trim() || this.selectedClassroom.cameraIp;
         const camPort = this.classroomCameraPort?.value?.trim() || this.selectedClassroom.cameraPort || '80';
+
+        // Store IP immediately so detection can reach /capture without waiting for Connect click
+        if (camIp) this._esp32Ip = camIp;
 
         // Switch video source to ESP32-CAM and pre-fill the IP input
         const esp32Radio = document.getElementById('esp32Camera');
