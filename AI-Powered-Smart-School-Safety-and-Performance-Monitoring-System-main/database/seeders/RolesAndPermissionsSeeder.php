@@ -85,11 +85,11 @@ class RolesAndPermissionsSeeder extends Seeder
         }
 
         echo "Roles and permissions created successfully!\n";
-        echo 'Admin role has '.$adminRole->permissions->count()." permissions\n";
-        echo 'Teacher role has '.$teacherRole->permissions->count()." permissions\n";
-        echo 'Student role has '.$studentRole->permissions->count()." permissions\n";
-        echo 'Parent role has '.$parentRole->permissions->count()." permissions\n";
-        echo 'Security role has '.$securityRole->permissions->count()." permissions\n";
+        echo 'Admin role has ' . $adminRole->permissions->count() . " permissions\n";
+        echo 'Teacher role has ' . $teacherRole->permissions->count() . " permissions\n";
+        echo 'Student role has ' . $studentRole->permissions->count() . " permissions\n";
+        echo 'Parent role has ' . $parentRole->permissions->count() . " permissions\n";
+        echo 'Security role has ' . $securityRole->permissions->count() . " permissions\n";
     }
 
     /**
@@ -129,114 +129,102 @@ class RolesAndPermissionsSeeder extends Seeder
     }
 
     /**
-     * Check if permission should be granted to teacher role
+     * Check if permission should be granted to teacher role.
+     * NOTE: $permission is the DB-stored name with spaces, e.g. "admin dashboard index"
      */
     private function isTeacherPermission($permission)
     {
-        $teacherPermissions = [
-            'admin.dashboard.index',
-            'admin.students.index',
-            'admin.students.show',
-            'admin.classes.index',
-            'admin.classes.show',
-            'admin.classes.form',
-            'admin.classes.enroll',
-            'admin.grades.index',
-            'admin.grades.form',
-            'admin.grades.enroll',
-            'admin.grades.show',
-            'admin.attendance.index',
-            'admin.attendance.form',
-            'admin.attendance.mark',
-            'admin.attendance.show',
-            'admin.assignments.index',
-            'admin.assignments.form',
-            'admin.assignments.enroll',
-            'admin.assignments.show',
-            'admin.assignments.grade',
-            'admin.subjects.index',
-            'admin.subjects.show',
-            'admin.timetable.index',
-            'admin.timetable.show',
-            'admin.reports.students.index',
-            'admin.reports.academic.index',
-            'admin.reports.attendance.index',
-        ];
-
-        return in_array($permission, $teacherPermissions) ||
-            str_contains($permission, 'students') ||
+        // Use space-separated format matching what formatPermissionString() produces
+        return str_contains($permission, 'students') ||
             str_contains($permission, 'classes') ||
             str_contains($permission, 'grades') ||
             str_contains($permission, 'attendance') ||
             str_contains($permission, 'assignments') ||
             str_contains($permission, 'subjects') ||
-            str_contains($permission, 'timetable');
+            str_contains($permission, 'timetable') ||
+            in_array($permission, [
+                'admin dashboard index',
+                'admin management marks index',
+                'admin management homework index',
+                'admin management homework create',
+                'admin management homework show',
+                'admin management homework edit',
+                'admin management homework destroy',
+                'admin reports students index',
+                'admin reports academic index',
+                'admin reports attendance index',
+                'admin communication announcements index',
+                'admin communication messages index',
+                'admin profile index',
+                'admin profile edit',
+            ]);
     }
 
     /**
-     * Check if permission should be granted to parent role
+     * Check if permission should be granted to parent role.
+     * NOTE: $permission is the DB-stored name with spaces, e.g. "admin dashboard index"
      */
     private function isParentPermission($permission)
     {
         $parentPermissions = [
-            'admin.dashboard.index',
-            'admin.students.show', // Only view their own child
-            'admin.grades.index', // Only view their child's grades
-            'admin.attendance.index', // Only view their child's attendance
-            'admin.assignments.index', // Only view their child's assignments
-            'admin.assignments.show',
-            'admin.reports.students.index', // Only their child's reports
-            'admin.communication.announcements.index',
-            'admin.communication.messages.index',
+            'admin dashboard index',
+            'admin management students show',
+            'admin management marks index',
+            'admin management attendance index',
+            'admin management attendance dashboard',
+            'admin reports students index',
+            'admin communication announcements index',
+            'admin communication messages index',
+            'admin profile index',
+            'admin profile edit',
         ];
 
         return in_array($permission, $parentPermissions);
     }
 
     /**
-     * Check if permission should be granted to student role
+     * Check if permission should be granted to student role.
+     * NOTE: $permission is the DB-stored name with spaces, e.g. "admin student homework index"
      */
     private function isStudentPermission($permission)
     {
+        // All admin student * routes are student-accessible (space-separated in DB)
+        if (str_starts_with($permission, 'admin student ')) {
+            return true;
+        }
+
+        // Additional shared pages students can access (space-separated format)
         $studentPermissions = [
-            'admin.dashboard.index',
-            'admin.grades.index', // Only view own grades
-            'admin.attendance.index', // Only view own attendance
-            'admin.assignments.index', // Only view own assignments
-            'admin.assignments.show', // Only view own assignments
-            'admin.timetable.index', // View own timetable
-            'admin.timetable.show',
-            'admin.communication.announcements.index',
-            'admin.communication.messages.index',
+            'admin dashboard index',
+            'admin timetable-viewer index',
+            'admin management marks index',
+            'admin management attendance dashboard',
+            'admin management attendance index',
+            'admin communication announcements index',
+            'admin communication messages index',
+            'admin profile index',
+            'admin profile edit',
         ];
 
         return in_array($permission, $studentPermissions);
     }
 
     /**
-     * Check if permission should be granted to security role
+     * Check if permission should be granted to security role.
+     * NOTE: $permission is the DB-stored name with spaces, e.g. "admin dashboard index"
      */
     private function isSecurityPermission($permission)
     {
-        $securityPermissions = [
-            'admin.dashboard.index',
-            'admin.security.staff.index',
-            'admin.security.visitors.index',
-            'admin.security.visitors.form',
-            'admin.security.visitors.enroll',
-            'admin.security.visitors.show',
-            'admin.security.visitors.check-in',
-            'admin.security.visitors.check-out',
-            'admin.security.incidents.index',
-            'admin.security.incidents.form',
-            'admin.security.incidents.enroll',
-            'admin.security.incidents.show',
-            'admin.attendance.index', // View attendance for security purposes
-        ];
-
-        return in_array($permission, $securityPermissions) ||
-            str_contains($permission, 'security') ||
+        // Use str_contains checks (keywords are the same with or without dots)
+        return str_contains($permission, 'security') ||
             str_contains($permission, 'visitors') ||
-            str_contains($permission, 'incidents');
+            str_contains($permission, 'incidents') ||
+            in_array($permission, [
+                'admin dashboard index',
+                'admin management attendance index',
+                'admin management attendance dashboard',
+                'admin profile index',
+                'admin profile edit',
+            ]);
     }
 }

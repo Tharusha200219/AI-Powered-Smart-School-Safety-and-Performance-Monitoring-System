@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "trained_at": "2025-12-08T18:45:11.200994",
   "total_lessons": 156,
   "total_questions": 1560,
@@ -7,6 +8,16 @@
     "history",
     "science",
     "english"
+=======
+  "trained_at": "2026-03-22T20:21:58.816685",
+  "total_lessons": 156,
+  "total_questions": 1560,
+  "subjects": [
+    "english",
+    "science",
+    "history",
+    "health_science"
+>>>>>>> origin/dev-new-changes-v1
   ],
   "grades": [
     6,
@@ -17,8 +28,14 @@
     11
   ],
   "question_types": [
+<<<<<<< HEAD
     "DESCRIPTIVE",
     "MCQ",
     "SHORT_ANSWER"
+=======
+    "MCQ",
+    "SHORT_ANSWER",
+    "DESCRIPTIVE"
+>>>>>>> origin/dev-new-changes-v1
   ]
 }

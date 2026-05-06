@@ -288,3 +288,4 @@ class FeatureExtractor:
 
         normalized = (features - mean) / std
         return normalized, mean, std
+

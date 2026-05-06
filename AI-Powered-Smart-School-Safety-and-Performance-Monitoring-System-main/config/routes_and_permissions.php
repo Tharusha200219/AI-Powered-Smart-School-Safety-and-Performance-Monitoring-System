@@ -341,6 +341,57 @@ return [
     ],
 
     [
+        'name' => 'Student Portal',
+        'items' => [
+            getSideBarElement(
+                'dashboard',
+                'My Dashboard',
+                'admin.student.dashboard.index',
+                [],
+                [],
+                additional_permissions: []
+            ),
+            getSideBarElement(
+                'assignment',
+                'My Homework',
+                'admin.student.homework.index',
+                [],
+                [
+                    'admin.student.homework.show',
+                    'admin.student.homework.results',
+                    'admin.student.homework.submit',
+                    'admin.student.homework.save-progress',
+                ],
+                additional_permissions: []
+            ),
+            getSideBarElement(
+                'schedule',
+                'My Timetable',
+                'admin.timetable-viewer.index',
+                [],
+                [],
+                additional_permissions: []
+            ),
+            getSideBarElement(
+                'grade',
+                'My Marks',
+                'admin.management.marks.index',
+                [],
+                [],
+                additional_permissions: []
+            ),
+            getSideBarElement(
+                'fact_check',
+                'My Attendance',
+                'admin.management.attendance.dashboard',
+                [],
+                [],
+                additional_permissions: []
+            ),
+        ],
+    ],
+
+    [
         'name' => 'System Setup',
         'items' => [
             getSideBarElement(

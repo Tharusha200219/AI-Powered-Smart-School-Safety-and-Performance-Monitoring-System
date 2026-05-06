@@ -277,3 +277,4 @@ class SpeechThreatDetector:
             'threat_level': threat_analysis['threat_level'],
             'threat_score': threat_analysis['threat_score']
         }
+

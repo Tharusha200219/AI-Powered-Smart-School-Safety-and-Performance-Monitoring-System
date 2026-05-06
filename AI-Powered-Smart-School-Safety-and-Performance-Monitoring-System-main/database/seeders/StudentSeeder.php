@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserType;
 use App\Models\ParentModel;
 use App\Models\SchoolClass;
 use App\Models\Student;
@@ -52,11 +53,12 @@ class StudentSeeder extends Seeder
             'name' => $studentData['first_name'] . ' ' . $studentData['last_name'],
             'email' => $studentData['email'],
             'password' => Hash::make('student123'), // Default password
+            'usertype' => UserType::STUDENT->value,
             'email_verified_at' => now(),
         ]);
 
-        // Assign student role
-        $user->assignRole('Student');
+        // Assign student role (lowercase, matching RolesAndPermissionsSeeder)
+        $user->assignRole('student');
 
         // Find the appropriate class based on grade and section
         // Find the appropriate class based on grade and section

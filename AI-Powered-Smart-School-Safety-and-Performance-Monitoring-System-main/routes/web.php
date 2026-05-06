@@ -30,10 +30,10 @@ Route::get('/', function () {
         $user = Auth::user();
         // usertype is cast to UserType enum
         return match ($user->usertype) {
-            UserType::STUDENT => Redirect::to('/student/dashboard'),
-            UserType::TEACHER => Redirect::to('/teacher/dashboard'),
-            UserType::PARENT => Redirect::to('/parent/dashboard'),
-            UserType::SECURITY => Redirect::to('/security/dashboard'),
+            UserType::STUDENT => Redirect::to('/admin/student/dashboard'),
+            UserType::TEACHER => Redirect::to('/admin/dashboard'),
+            UserType::PARENT => Redirect::to('/admin/dashboard'),
+            UserType::SECURITY => Redirect::to('/admin/dashboard'),
             default => Redirect::to('/admin/dashboard'),
         };
     }
@@ -70,7 +70,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('/classes-by-grade', 'getClassesByGrade')->name('classes-by-grade');
                 Route::post('/write-nfc', 'writeToNFC')->name('write-nfc');
                 Route::get('/test-arduino', 'testArduino')->name('test-arduino');
-                  // RFID Wristband Enrollment (UNO R3 + serial bridge)
+                // RFID Wristband Enrollment (UNO R3 + serial bridge)
                 Route::post('/rfid/enrollment-start', 'startRfidEnrollment')->name('rfid.enrollment-start');
                 Route::post('/rfid/assign', 'assignRfid')->name('rfid.assign');
                 Route::delete('/{studentId}/rfid', 'removeRfid')->name('rfid.remove');
@@ -146,6 +146,9 @@ Route::middleware(['auth'])->group(function () {
                 // Classroom IoT device management
                 Route::get('/classrooms', 'classrooms')->name('classrooms');
                 Route::post('/classrooms/update-devices', 'updateClassroomDevices')->name('classrooms.update-devices');
+                // Classroom IoT setup page
+                Route::get('/classroom-setup', 'classroomSetup')->name('classroom-setup');
+                Route::post('/classroom-setup/save', 'saveClassroomSetup')->name('classroom-setup.save');
             });
 
             // Timetables Management
@@ -190,7 +193,8 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/devices/sync', 'devicesSync')->name('devices.sync');
                 Route::delete('/devices/remove', 'devicesRemove')->name('devices.remove');
             });
-             // Events Management
+
+            // Events Management
             Route::prefix('events')->name('events.')->controller(\App\Http\Controllers\Admin\Management\EventController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::get('/create', 'create')->name('create');
@@ -237,6 +241,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('/{homework}/edit', 'edit')->name('edit');
                 Route::put('/{homework}', 'update')->name('update');
                 Route::post('/generate-questions', 'generateQuestions')->name('generate-questions');
+                Route::post('/generate-and-store', 'generateAndStore')->name('generate-and-store');
                 Route::post('/schedule-weekly', 'scheduleWeekly')->name('schedule-weekly');
                 Route::post('/toggle-auto-homework', 'toggleAutoHomework')->name('toggle-auto-homework');
                 Route::post('/{homework}/assign', 'assignToStudents')->name('assign');
@@ -284,7 +289,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/stop-session', 'stopSession')->name('stop-session');
             });
 
-              // Seating Arrangement (AI Powered)
+            // Seating Arrangement (AI Powered)
             Route::prefix('seating')->name('seating.')->controller(\App\Http\Controllers\Admin\Management\SeatingArrangementController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::get('/{grade}/{section}', 'show')->name('show');
@@ -372,17 +377,29 @@ Route::middleware(['auth'])->group(function () {
         });
     });
 
-    // Student Routes
-    Route::prefix('student')->name('student.')->middleware('usertype:' . UserType::STUDENT->value)->group(function () {
+    // Student Portal Routes (under admin prefix for unified dashboard access)
+    Route::prefix('admin/student')->name('admin.student.')->group(function () {
         Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard.index');
 
-        // Homework routes
+        // Student Homework routes
         Route::prefix('homework')->name('homework.')->group(function () {
             Route::get('/', [StudentHomeworkController::class, 'index'])->name('index');
             Route::get('/{submission}', [StudentHomeworkController::class, 'show'])->name('show');
             Route::get('/{submission}/results', [StudentHomeworkController::class, 'showResults'])->name('results');
             Route::post('/{submission}/submit', [StudentHomeworkController::class, 'submit'])->name('submit');
             Route::post('/{submission}/save-progress', [StudentHomeworkController::class, 'saveProgress'])->name('save-progress');
+        });
+    });
+
+    // Legacy student routes - redirect to unified admin student routes
+    Route::prefix('student')->name('student.')->group(function () {
+        Route::get('/dashboard', function () {
+            return redirect()->route('admin.student.dashboard.index');
+        })->name('dashboard.index');
+        Route::prefix('homework')->name('homework.')->group(function () {
+            Route::get('/', function () {
+                return redirect()->route('admin.student.homework.index');
+            })->name('index');
         });
     });
 

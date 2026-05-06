@@ -3,25 +3,25 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
                 @php
-                    $breadcrumbs = getBreadcrumbs();
+                $breadcrumbs = getBreadcrumbs();
                 @endphp
 
                 @if (is_array($breadcrumbs))
-                    @foreach ($breadcrumbs as $key => $breadcrumb)
-                        @if ($breadcrumb != 'index')
-                            @php
-                                $breadcrumb = ucfirst($breadcrumb);
-                            @endphp
-                            @if (count($breadcrumbs) - ($breadcrumb != 'index' ? 2 : 1) == $key)
-                                <li class="breadcrumb-item text-sm text-dark active" aria-current="page">
-                                    {{ $breadcrumb }}
-                                </li>
-                            @else
-                                <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark"
-                                        href="javascript:;">{{ $breadcrumb }}</a></li>
-                            @endif
-                        @endif
-                    @endforeach
+                @foreach ($breadcrumbs as $key => $breadcrumb)
+                @if ($breadcrumb != 'index')
+                @php
+                $breadcrumb = ucfirst($breadcrumb);
+                @endphp
+                @if (count($breadcrumbs) - ($breadcrumb != 'index' ? 2 : 1) == $key)
+                <li class="breadcrumb-item text-sm text-dark active" aria-current="page">
+                    {{ $breadcrumb }}
+                </li>
+                @else
+                <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark"
+                        href="javascript:;">{{ $breadcrumb }}</a></li>
+                @endif
+                @endif
+                @endforeach
                 @endif
             </ol>
         </nav>
@@ -42,11 +42,13 @@
                         </div>
                     </a>
                 </li>
+                @if(auth()->user()->usertype !== \App\Enums\UserType::STUDENT)
                 <li class="nav-item px-3 d-flex align-items-center d-none d-md-block">
                     <a href="{{ route('admin.setup.settings.index') }}" class="nav-link text-body p-0">
                         <i class="d-flex material-symbols-rounded fixed-plugin-button-nav">settings</i>
                     </a>
                 </li>
+                @endif
                 <li class="nav-item dropdown pe-3 d-flex align-items-center d-none d-md-block">
                     <a href="javascript:;" class="nav-link text-body p-0 position-relative" id="dropdownMenuButton"
                         data-bs-toggle="dropdown" aria-expanded="false">
@@ -86,10 +88,10 @@
                     <a href="javascript:;" class="d-flex gap-3 nav-link text-body font-weight-bold px-0 position-relative"
                         id="profileDropdownButton" data-bs-toggle="dropdown" aria-expanded="false">
                         @if (Auth::user()->profile_image)
-                            <img src="{{ Storage::url(Auth::user()->profile_image) }}" alt="Profile"
-                                class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                        <img src="{{ Storage::url(Auth::user()->profile_image) }}" alt="Profile"
+                            class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
                         @else
-                            <i class="material-symbols-rounded">account_circle</i>
+                        <i class="material-symbols-rounded">account_circle</i>
                         @endif
                         <span class="d-none d-lg-inline">{{ Auth::user()->name }}</span>
                         <i class="d-flex align-items-center material-symbols-rounded ms-1" style="font-size: 16px;">keyboard_arrow_down</i>
@@ -99,22 +101,22 @@
                         <li class="mb-2">
                             <div class="d-flex align-items-center p-2">
                                 @if (Auth::user()->profile_image)
-                                    <img src="{{ Storage::url(Auth::user()->profile_image) }}" alt="Profile"
-                                        class="rounded-circle me-3"
-                                        style="width: 40px; height: 40px; object-fit: cover;">
+                                <img src="{{ Storage::url(Auth::user()->profile_image) }}" alt="Profile"
+                                    class="rounded-circle me-3"
+                                    style="width: 40px; height: 40px; object-fit: cover;">
                                 @else
-                                    <div class="bg-gradient-primary rounded-circle me-3 d-flex align-items-center justify-content-center"
-                                        style="width: 40px; height: 40px;">
-                                        <i class="material-symbols-rounded text-white">account_circle</i>
-                                    </div>
+                                <div class="bg-gradient-primary rounded-circle me-3 d-flex align-items-center justify-content-center"
+                                    style="width: 40px; height: 40px;">
+                                    <i class="material-symbols-rounded text-white">account_circle</i>
+                                </div>
                                 @endif
                                 <div>
                                     <h6 class="mb-0 text-sm">{{ Auth::user()->name }}</h6>
                                     <p class="mb-0 text-xs text-secondary">
                                         @if (Auth::user()->getRoleNames()->isNotEmpty())
-                                            {{ Auth::user()->getRoleNames()->first() }}
+                                        {{ Auth::user()->getRoleNames()->first() }}
                                         @else
-                                            User
+                                        User
                                         @endif
                                     </p>
                                 </div>
@@ -135,12 +137,14 @@
                                 <span class="text-sm">Edit Profile</span>
                             </a>
                         </li>
+                        @if(auth()->user()->usertype !== \App\Enums\UserType::STUDENT)
                         <li>
                             <a class="d-flex dropdown-item border-radius-md" href="{{ route('admin.setup.settings.index') }}">
                                 <i class="material-symbols-rounded me-2">settings</i>
                                 <span class="text-sm">Settings</span>
                             </a>
                         </li>
+                        @endif
                         <li>
                             <hr class="dropdown-divider">
                         </li>

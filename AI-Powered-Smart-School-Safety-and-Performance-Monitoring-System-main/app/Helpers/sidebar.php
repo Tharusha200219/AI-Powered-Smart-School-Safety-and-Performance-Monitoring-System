@@ -30,9 +30,15 @@ function translateSidebarText($text)
         'Reports' => __('common.reports'),
         'Communication' => __('common.communication'),
         'System Setup' => __('common.system_setup'),
+        'Student Portal' => __('common.student_portal'),
 
         // Menu items
         'Dashboard' => __('common.dashboard'),
+        'My Dashboard' => __('common.my_dashboard'),
+        'My Homework' => __('common.my_homework'),
+        'My Timetable' => __('common.my_timetable'),
+        'My Marks' => __('common.my_marks'),
+        'My Attendance' => __('common.my_attendance'),
         'Students' => __('common.students'),
         'Teachers' => __('common.teachers'),
         'Parents' => __('common.parents'),

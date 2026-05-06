@@ -1,0 +1,24 @@
+FACIAL RECOGNITION MODULE DOCUMENTATION
+
+1. TECHNOLOGY STACK
+- Language: Python 3.10+
+- Detection: MTCNN (Multi-task Cascaded Convolutional Networks)
+- Recognition: FaceNet / ArcFace (InceptionResnetV1)
+- Framework: PyTorch / Flask
+
+2. RECOGNITION PIPELINE
+1. Face Detection: MTCNN detects faces in the incoming frame/image.
+2. Face Alignment: Images are rotated and scaled to ensure eyes and nose are in consistent positions.
+3. Feature Extraction: The aligned image is passed through a Deep CNN to generate a 512-dimensional numerical embedding.
+4. Matching: The system uses Cosine Similarity to compare the new embedding against the registered student database.
+5. Verification: If similarity score > threshold (e.g., 0.6), attendance is marked.
+
+3. REGISTRATION PROCESS
+- Capture: 40 unique images per student from various angles.
+- Augmentation: Applies random rotation, brightness, and contrast shifts to increase model robustness.
+- Embedding Storage: Embeddings are saved as serialized files linked to the student ID.
+
+4. KEY FEATURES
+- Sub-100ms processing time.
+- Handles multiple faces in a single frame.
+- Basic anti-spoofing logic to prevent photo-based attacks.

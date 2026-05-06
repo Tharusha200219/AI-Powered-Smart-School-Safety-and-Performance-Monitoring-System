@@ -33,13 +33,13 @@ class RoleController extends Controller
         checkPermissionAndRedirect('admin.setup.role.index');
         Session::put('title', 'Role Management');
 
-        return $datatable->render($this->parentViewPath.'index');
+        return $datatable->render($this->parentViewPath . 'index');
     }
 
     public function form($id = null)
     {
-        checkPermissionAndRedirect('admin.setup.role.'.($id ? 'edit' : 'form'));
-        Session::put('title', ($id ? 'Update' : 'Create').' Role');
+        checkPermissionAndRedirect('admin.setup.role.' . ($id ? 'edit' : 'form'));
+        Session::put('title', ($id ? 'Update' : 'Create') . ' Role');
         $permissionsGrouped = $this->getPermissionsGrouped();
         $processedPermissionsGrouped = [];
 
@@ -58,23 +58,23 @@ class RoleController extends Controller
             if (! $role) {
                 flashResponse('Role not found.', 'danger');
 
-                return Redirect::route($this->parentRoutePath.'index');
+                return Redirect::route($this->parentRoutePath . 'index');
             }
             $rolePermissions = $role->permissions->pluck('name')->toArray();
 
-            return view($this->parentViewPath.'form', compact('role', 'id', 'processedPermissionsGrouped', 'rolePermissions'));
+            return view($this->parentViewPath . 'form', compact('role', 'id', 'processedPermissionsGrouped', 'rolePermissions'));
         }
 
         $role = null;
         $rolePermissions = [];
 
-        return view($this->parentViewPath.'form', compact('id', 'processedPermissionsGrouped', 'rolePermissions'));
+        return view($this->parentViewPath . 'form', compact('id', 'processedPermissionsGrouped', 'rolePermissions'));
     }
 
     public function enroll(Request $request)
     {
         $id = $request->input('id');
-        checkPermissionAndRedirect('admin.setup.role.'.($id ? 'edit' : 'form'));
+        checkPermissionAndRedirect('admin.setup.role.' . ($id ? 'edit' : 'form'));
         if ($request->has('id') && $request->filled('id')) {
             return $this->update($request);
         }
@@ -87,7 +87,7 @@ class RoleController extends Controller
                 'unique:roles,name',
             ],
             'description' => 'nullable|max:255',
-            'status' => 'sometimes|in:'.implode(',', Status::values()),
+            'status' => 'sometimes|in:' . implode(',', Status::values()),
             'permissions' => 'sometimes|array',
             'permissions.*' => 'exists:permissions,name',
         ];
@@ -116,7 +116,7 @@ class RoleController extends Controller
             flashResponse('Failed to create Role. Please try again.', 'danger');
         }
 
-        return redirect()->route($this->parentRoutePath.'index');
+        return redirect()->route($this->parentRoutePath . 'index');
     }
 
     public function show(string $id)
@@ -144,7 +144,7 @@ class RoleController extends Controller
             }
         }
 
-        return view($this->parentViewPath.'view', compact('role', 'processedPermissionsGrouped'));
+        return view($this->parentViewPath . 'view', compact('role', 'processedPermissionsGrouped'));
     }
 
     public function update(Request $request)
@@ -157,7 +157,7 @@ class RoleController extends Controller
                 Rule::unique('roles')->ignore($request->id),
             ],
             'description' => 'nullable|max:255',
-            'status' => 'sometimes|in:'.implode(',', Status::values()),
+            'status' => 'sometimes|in:' . implode(',', Status::values()),
             'permissions' => 'sometimes|array',
             'permissions.*' => 'exists:permissions,name',
         ];
@@ -189,7 +189,7 @@ class RoleController extends Controller
             flashResponse('Failed to update Role. Please try again.', 'danger');
         }
 
-        return redirect()->route($this->parentRoutePath.'index');
+        return redirect()->route($this->parentRoutePath . 'index');
     }
 
     public function delete($id)
@@ -299,8 +299,10 @@ class RoleController extends Controller
 
     private function getActionFromPermission($permissionName)
     {
-        $parts = explode('.', $permissionName);
-        $action = end($parts);
+        // Permission names in DB use spaces (e.g. "admin student homework index")
+        // Split on spaces and take the last segment as the action label
+        $parts = explode(' ', $permissionName);
+        $action = (string) end($parts);
 
         return ucfirst(Str::replace('-', ' ', $action));
     }

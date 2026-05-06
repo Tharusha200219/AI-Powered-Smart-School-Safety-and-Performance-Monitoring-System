@@ -110,18 +110,18 @@ class ThreatDetector:
 
     def _score_proximity(self, persons: List[Dict]) -> float:
         """
-        High score when two or more people are physically close to each other.
+        High score only when people are physically very close (touching / overlapping).
 
-        Uses center-to-center distance normalised by the average person width
-        so the score is scale-invariant.  This fires even when bounding boxes
-        do NOT overlap (e.g. two people standing side-by-side fighting), which
-        the old IoU-only approach completely missed.
+        Uses center-to-center distance normalised by the average person width.
+        The denominator was reduced from 3.0 to 1.5 so that normal classroom
+        standing distance (1.5+ person-widths apart) produces a score of 0.0.
+        Only people who are within arm's reach score meaningfully.
 
         Score mapping (D = distance / avg_width):
-          D <= 0.5  → 1.0  (touching / overlapping)
-          D  = 1.0  → 0.75 (very close — arms' reach)
-          D  = 2.0  → 0.25 (close but not in contact)
-          D >= 3.0  → 0.0  (far apart)
+          D <= 0.0  → 1.0  (overlapping bboxes — physical contact)
+          D  = 0.5  → 0.67 (very close — arm's reach, likely contact)
+          D  = 1.0  → 0.33 (close — suspicious proximity)
+          D >= 1.5  → 0.0  (normal classroom/conversation distance — no score)
         """
         if len(persons) < 2:
             return 0.0
@@ -139,8 +139,10 @@ class ThreatDetector:
                 # Euclidean distance in "person-widths"
                 dist = ((cx2 - cx1) ** 2 + (cy2 - cy1) ** 2) ** 0.5
                 norm_dist = dist / avg_w
-                # Convert to [0,1] score: 0 distance → 1.0, ≥3 widths → 0.0
-                score = max(0.0, 1.0 - norm_dist / 3.0)
+                # Raised denominator from 3.0 → 1.5: normal conversation distance (1.5 widths)
+                # now scores 0.0 instead of 0.5, eliminating false positives from
+                # students/teacher standing near each other in normal classroom settings.
+                score = max(0.0, 1.0 - norm_dist / 1.5)
                 max_score = max(max_score, score)
         return max_score
 
@@ -152,12 +154,27 @@ class ThreatDetector:
           1. Vertical raise  : wrist is above the shoulder (uppercut / overhead blow).
           2. Lateral extend  : wrist is far outside the body mid-line (side-swing / push).
         The two signals are max-combined so either alone triggers the score.
+
+        FIX: Vertical raise is now normalised by the person's bounding-box height
+        (not the raw shoulder Y pixel coordinate which caused massive false positives
+        — e.g. a student raising a hand in class used to score 1.0 because sh_y was
+        used as the denominator, making any tiny wrist lift appear huge when the
+        shoulder appeared high in the frame).
+
+        Score reaches 1.0 only when the wrist is ≥50 % of body-height above the
+        shoulder — a genuinely aggressive overhead strike / punch.  Normal gestures
+        (waving, pointing, writing on the board) stay well below 0.40.
         """
         if not persons:
             return 0.0
         scores = []
         for p in persons:
             kp = p['keypoints']
+            b  = p['bbox']
+            # Person bounding-box height as the scale reference.
+            # This makes the score camera-position-independent.
+            person_height = max(b[3] - b[1], 1.0)
+
             score, count = 0.0, 0
             # Hip midpoint x as a rough body-center reference (keypoints 11,12)
             KP_LEFT_HIP, KP_RIGHT_HIP = 11, 12
@@ -171,19 +188,32 @@ class ThreatDetector:
                     sh_y, wr_y = kp[sh_idx, 1], kp[wr_idx, 1]
                     sh_x, wr_x = kp[sh_idx, 0], kp[wr_idx, 0]
 
-                    # Vertical raise score
+                    # ── Vertical raise score ───────────────────────────────
+                    # Normalise by person height (NOT by sh_y which was the bug).
+                    # Score = 1.0 only when wrist is 50 % of body-height above
+                    # shoulder, e.g. on a 300 px tall person the wrist must be
+                    # ≥150 px above the shoulder — a true overhead strike.
+                    # A student raising a hand (~30 px above shoulder on 300 px
+                    # person) scores 30/(300*0.50) = 0.20 — safely below alert
+                    # thresholds.
                     v_score = 0.0
-                    if wr_y < sh_y and sh_y > 0:
-                        v_score = min((sh_y - wr_y) / max(sh_y, 1) * 3, 1.0)
+                    if wr_y < sh_y:
+                        raise_amount = sh_y - wr_y
+                        v_score = min(raise_amount / (person_height * 0.50), 1.0)
 
-                    # Lateral extension score
+                    # ── Lateral extension score ────────────────────────────
+                    # Wrist must be 2.5× the shoulder-to-centre distance to
+                    # begin scoring (raised from 2× to cut normal gesturing).
                     l_score = 0.0
                     if body_cx is not None:
                         shoulder_span = abs(sh_x - body_cx)
                         wrist_dist    = abs(wr_x - body_cx)
                         if shoulder_span > 0:
-                            # Wrist more than 1.5× the shoulder-to-center distance = extended
-                            l_score = min(max(wrist_dist / max(shoulder_span, 1) - 1.0, 0.0) / 1.5, 1.0)
+                            # wrist_dist / shoulder_span > 2.5 → starts scoring
+                            l_score = min(
+                                max(wrist_dist / max(shoulder_span, 1) - 1.5, 0.0) / 2.0,
+                                1.0,
+                            )
 
                     score += max(v_score, l_score)
                     count += 1
@@ -207,7 +237,17 @@ class ThreatDetector:
         return max_score
 
     def _score_motion(self, frame_gray: np.ndarray, persons: List[Dict]) -> float:
-        """Dense optical flow magnitude inside person regions."""
+        """Dense optical flow magnitude inside person regions.
+
+        Uses the 90th-percentile magnitude instead of the mean to focus on the
+        most intense movement within person bounding boxes.  Normal walking
+        produces moderate, evenly distributed flow; fighting produces extreme
+        localised spikes.  Mean would average these with background pixels and
+        slow-moving body parts, blurring the distinction.
+
+        Denominator raised to 15.0 so that fast but normal movement (running,
+        gesturing) stays below 0.6 while violent flailing reaches 1.0.
+        """
         if self._prev_gray is None or not persons:
             return 0.0
         try:
@@ -223,7 +263,10 @@ class ThreatDetector:
             person_mag = mag[mask == 1]
             if person_mag.size == 0:
                 return 0.0
-            return min(float(np.mean(person_mag)) / 8.0, 1.0)
+            # 90th-percentile focuses on peak motion (aggressive strikes / falls)
+            # rather than average motion (walking, fidgeting).
+            peak_mag = float(np.percentile(person_mag, 90))
+            return min(peak_mag / 15.0, 1.0)
         except Exception:
             return 0.0
 
@@ -294,9 +337,14 @@ class ThreatDetector:
                 # Weighted blend for interaction threats
                 blended = (0.40 * s_prox + 0.25 * s_motion + 0.15 * s_arm + 0.20 * s_fall)
 
-                # Boost when proximity + motion both fire (most likely a fight)
-                if s_prox > 0.2 and s_motion > 0.2:
-                    blended = min(blended * 1.6, 1.0)
+                # Boost ONLY when BOTH proximity AND motion are very strongly
+                # elevated simultaneously.  Raised thresholds (0.70 / 0.60) ensure
+                # that students walking close together in a hallway or sitting at
+                # adjacent desks never trigger the multiplier.
+                # Only genuine physical confrontation (bodies nearly touching AND
+                # fast violent movement) should clear both gates at once.
+                if s_prox > 0.70 and s_motion > 0.60:
+                    blended = min(blended * 1.5, 1.0)
             else:
                 # Single person (or no persons): only fall detection
                 s_prox   = 0.0
@@ -305,6 +353,15 @@ class ThreatDetector:
                 # Blended = fall score only; motion is computed to keep prev_gray
                 # updated but does NOT count toward the threat score here
                 blended = s_fall
+
+            # ── Stale-history guard ────────────────────────────────────────
+            # If the current frame produces a very low blended score the
+            # situation has resolved.  Clear the history immediately so that
+            # old high-scored frames do not keep the smoothed value above the
+            # alert threshold and produce a lingering false positive.
+            if blended < 0.15 and len(self._score_history) > 0:
+                self._score_history.clear()
+                logger.debug("Blended score dropped below 0.15 — score history flushed")
 
             # Temporal smoothing
             self._score_history.append(blended)
@@ -316,18 +373,39 @@ class ThreatDetector:
             # ── Classify threat type ───────────────────────────────────────
             # fighting / pushing / aggressive_behavior require ≥2 people.
             # fall_detected is the only single-person threat.
+            #
+            # Thresholds tightened to prevent false positives in normal
+            # crowded scenes (hallway, classroom activity, group discussion):
+            #
+            #   fighting          : bodies nearly touching (prox > 0.65) AND
+            #                       very fast movement (motion > 0.55)
+            #   aggressive_behavior: clear overhead/lateral arm strike (arm > 0.50)
+            #                       AND at least moderate proximity (prox > 0.45)
+            #   pushing           : meaningful contact distance (prox > 0.55)
+            #                       AND elevated motion (motion > 0.40)
+            #   fall_detected     : unusually wide bounding box (score > 0.55)
+            #
+            # None of these combos should fire for normal walking, gesturing,
+            # or sitting near each other.
             threat_type = None
             if smoothed >= self.confidence_threshold:
-                if s_fall > 0.5:
+                if s_fall > 0.55:
                     threat_type = "fall_detected"
-                elif n_persons >= 2 and s_prox > 0.2 and s_motion > 0.2:
+                elif n_persons >= 2 and s_prox > 0.65 and s_motion > 0.55:
+                    # Both proximity AND motion very strongly elevated → fighting
                     threat_type = "fighting"
-                elif n_persons >= 2 and s_arm > 0.3:
+                elif n_persons >= 2 and s_arm > 0.50 and s_prox > 0.45:
+                    # Clear aggressive arm pose + proximity → aggression
+                    # Arm score alone without proximity is never flagged (waving etc.)
                     threat_type = "aggressive_behavior"
-                elif n_persons >= 2:
+                elif n_persons >= 2 and s_prox > 0.55 and s_motion > 0.40:
+                    # Close proximity + elevated motion — pushing/shoving
+                    # Both signals required to avoid firing on normal co-presence.
                     threat_type = "pushing"
+                # If none of the above conditions are met (e.g. two people simply
+                # standing in frame with low proximity/motion), no threat is declared
+                # even if the smoothed score exceeds the threshold due to stale history.
                 # If n_persons < 2 and score is high but no fall → do NOT alert
-                # (stale history artefact — let it decay naturally)
 
             all_scores = {
                 "proximity":    round(s_prox, 3),
@@ -400,3 +478,5 @@ class ThreatDetector:
             y += 18
 
         return annotated
+
+

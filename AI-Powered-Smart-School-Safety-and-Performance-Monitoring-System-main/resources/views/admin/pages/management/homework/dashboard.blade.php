@@ -767,31 +767,73 @@
         </div>
     </div>
 
-    {{-- Auto-Generate Questions Modal --}}
+    {{-- Auto-Generate & Save Questions Modal --}}
     <div class="modal fade" id="generateQuestionsModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content" style="border-radius:16px;border:none;overflow:hidden;">
                 <div class="modal-header border-0 pb-0" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:20px 24px 16px;">
                     <div>
                         <span class="material-symbols-outlined" style="font-size:28px;display:block;margin-bottom:4px;">psychology</span>
-                        <h5 class="modal-title fw-bold mb-0">AI Question Generator</h5>
-                        <p class="mb-0" style="font-size:.8rem;opacity:.85;">Generate questions automatically from lesson content</p>
+                        <h5 class="modal-title fw-bold mb-0">AI Question Generator &amp; Save</h5>
+                        <p class="mb-0" style="font-size:.8rem;opacity:.85;">Generate questions from lesson content and save homework for students instantly</p>
                     </div>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
+                    {{-- Row 1: Title + Subject --}}
+                    <div class="row mb-3">
+                        <div class="col-md-7">
+                            <label class="form-label fw-600" style="font-size:.82rem;color:#4a5568;">Homework Title <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="genTitle" placeholder="e.g. Chapter 3 – Algebra Basics" style="border-radius:10px;">
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label fw-600" style="font-size:.82rem;color:#4a5568;">Subject <span class="text-danger">*</span></label>
+                            <select class="form-control" id="genSubject" style="border-radius:10px;">
+                                <option value="">Select Subject</option>
+                                @foreach($subjects ?? [] as $subject)
+                                <option value="{{ $subject->id }}">{{ $subject->subject_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    {{-- Row 2: Grade + Class + Due Date --}}
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label class="form-label fw-600" style="font-size:.82rem;color:#4a5568;">Grade Level <span class="text-danger">*</span></label>
+                            <select class="form-control" id="genGrade" style="border-radius:10px;">
+                                @for($i = 6; $i <= 13; $i++)
+                                    <option value="{{ $i }}">Grade {{ $i }}</option>
+                                    @endfor
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-600" style="font-size:.82rem;color:#4a5568;">Class <small class="text-muted">(optional)</small></label>
+                            <select class="form-control" id="genClass" style="border-radius:10px;">
+                                <option value="">All Classes</option>
+                                @foreach($classes ?? [] as $class)
+                                <option value="{{ $class->id }}" data-grade="{{ $class->grade_level }}">{{ $class->class_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label fw-600" style="font-size:.82rem;color:#4a5568;">Due Date <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="genDueDate" min="{{ date('Y-m-d', strtotime('+1 day')) }}" style="border-radius:10px;">
+                        </div>
+                    </div>
+                    {{-- Row 3: Source Lesson --}}
                     <div class="mb-3">
                         <label class="form-label fw-600" style="font-size:.82rem;color:#4a5568;">Source Lesson <span class="text-danger">*</span></label>
                         <select class="form-control" id="generateLesson" style="border-radius:10px;">
-                            <option value="">Select Lesson</option>
+                            <option value="">Select Lesson (AI will use its content)</option>
                             @foreach($lessons ?? [] as $lesson)
-                            <option value="{{ $lesson->lesson_id }}">{{ $lesson->title }} — {{ $lesson->subject->subject_name ?? 'N/A' }}</option>
+                            <option value="{{ $lesson->lesson_id }}" data-subject="{{ $lesson->subject_id }}">{{ $lesson->title }} — {{ $lesson->subject->subject_name ?? 'N/A' }}</option>
                             @endforeach
                         </select>
                     </div>
+                    {{-- Row 4: Question mix --}}
                     <div class="row mb-3">
                         <div class="col-4">
-                            <label class="form-label fw-600" style="font-size:.82rem;color:#4a5568;">MCQ</label>
+                            <label class="form-label fw-600" style="font-size:.82rem;color:#4a5568;">MCQ Questions</label>
                             <input type="number" class="form-control" id="numMcq" value="3" min="0" max="10" style="border-radius:10px;">
                         </div>
                         <div class="col-4">
@@ -808,8 +850,9 @@
                 </div>
                 <div class="modal-footer border-0 pt-0 px-4 pb-4">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius:10px;">Cancel</button>
-                    <button type="button" class="btn text-white" id="generateQuestionsBtn" style="background:linear-gradient(135deg,#667eea,#764ba2);border-radius:10px;">
-                        <span class="material-symbols-outlined me-1" style="font-size:16px;vertical-align:middle;">auto_awesome</span>Generate
+                    <button type="button" class="btn text-white" id="generateQuestionsBtn"
+                        style="background:linear-gradient(135deg,#667eea,#764ba2);border-radius:10px;min-width:180px;">
+                        <span class="material-symbols-outlined me-1" style="font-size:16px;vertical-align:middle;">auto_awesome</span>Generate &amp; Save Homework
                     </button>
                 </div>
             </div>
@@ -937,62 +980,86 @@
             });
         }
 
-        // Auto-Generate Questions
+        // Auto-Generate & Save Homework
         const generateBtn = document.getElementById('generateQuestionsBtn');
         if (generateBtn) {
             generateBtn.addEventListener('click', async function() {
+                const title = document.getElementById('genTitle').value.trim();
+                const subjectId = document.getElementById('genSubject').value;
+                const gradeLevel = document.getElementById('genGrade').value;
+                const classId = document.getElementById('genClass').value;
+                const dueDate = document.getElementById('genDueDate').value;
                 const lessonId = document.getElementById('generateLesson').value;
-                const numMcq = document.getElementById('numMcq').value;
-                const numShort = document.getElementById('numShort').value;
-                const numDesc = document.getElementById('numDesc').value;
+                const numMcq = parseInt(document.getElementById('numMcq').value) || 0;
+                const numShort = parseInt(document.getElementById('numShort').value) || 0;
+                const numDesc = parseInt(document.getElementById('numDesc').value) || 0;
 
                 const errorDiv = document.getElementById('generateError');
                 const successDiv = document.getElementById('generateSuccess');
-
                 errorDiv.classList.add('d-none');
                 successDiv.classList.add('d-none');
 
-                if (!lessonId) {
-                    errorDiv.textContent = 'Please select a lesson.';
+                // Validate required fields
+                const missing = [];
+                if (!title) missing.push('Homework Title');
+                if (!subjectId) missing.push('Subject');
+                if (!dueDate) missing.push('Due Date');
+                if (!lessonId) missing.push('Source Lesson');
+                if (numMcq + numShort + numDesc === 0) missing.push('at least 1 question type (MCQ / Short / Descriptive)');
+
+                if (missing.length) {
+                    errorDiv.textContent = 'Please fill in: ' + missing.join(', ') + '.';
                     errorDiv.classList.remove('d-none');
                     return;
                 }
 
                 generateBtn.disabled = true;
-                generateBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Generating...';
+                generateBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Generating & Saving...';
 
                 try {
-                    const response = await fetch('{{ route("admin.management.homework.generate-questions") }}', {
+                    const payload = {
+                        title,
+                        subject_id: subjectId,
+                        grade_level: gradeLevel,
+                        due_date: dueDate,
+                        lesson_id: lessonId,
+                        num_mcq: numMcq,
+                        num_short: numShort,
+                        num_descriptive: numDesc,
+                    };
+                    if (classId) payload.class_id = classId;
+
+                    const response = await fetch('{{ route("admin.management.homework.generate-and-store") }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
                             'Accept': 'application/json'
                         },
-                        body: JSON.stringify({
-                            lesson_id: lessonId,
-                            num_mcq: parseInt(numMcq),
-                            num_short: parseInt(numShort),
-                            num_descriptive: parseInt(numDesc)
-                        })
+                        body: JSON.stringify(payload)
                     });
 
                     const data = await response.json();
 
                     if (data.success) {
-                        successDiv.innerHTML = `Questions generated successfully! <a href="{{ route('admin.management.homework.create') }}?lesson_id=${lessonId}" class="alert-link">Create homework with these questions</a>`;
+                        successDiv.innerHTML = `✅ ${data.message} &nbsp;<a href="${data.redirect_url}" class="alert-link fw-bold">View Homework →</a>`;
                         successDiv.classList.remove('d-none');
+                        // Redirect after 2 seconds
+                        setTimeout(() => {
+                            window.location.href = data.redirect_url;
+                        }, 2000);
                     } else {
-                        errorDiv.textContent = data.error || 'Failed to generate questions. Please try again.';
+                        errorDiv.textContent = data.error || 'Failed to generate. Please try again.';
                         errorDiv.classList.remove('d-none');
+                        generateBtn.disabled = false;
+                        generateBtn.innerHTML = '<span class="material-symbols-outlined me-1" style="font-size:16px;vertical-align:middle;">auto_awesome</span>Generate &amp; Save Homework';
                     }
                 } catch (error) {
                     console.error('Error:', error);
                     errorDiv.textContent = 'An error occurred. Please check if the AI service is running.';
                     errorDiv.classList.remove('d-none');
-                } finally {
                     generateBtn.disabled = false;
-                    generateBtn.innerHTML = '<i class="material-symbols-outlined me-1">auto_awesome</i>Generate';
+                    generateBtn.innerHTML = '<span class="material-symbols-outlined me-1" style="font-size:16px;vertical-align:middle;">auto_awesome</span>Generate &amp; Save Homework';
                 }
             });
         }

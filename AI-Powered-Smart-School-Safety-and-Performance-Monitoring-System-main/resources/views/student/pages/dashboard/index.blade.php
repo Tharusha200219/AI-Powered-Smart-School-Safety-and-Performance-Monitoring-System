@@ -193,8 +193,11 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header pb-0">
+                    <div class="card-header pb-0 d-flex justify-content-between align-items-center">
                         <h6><i class="material-symbols-rounded me-2">assignment</i>Pending Homework</h6>
+                        <a href="{{ route('admin.student.homework.index') }}" class="btn btn-sm btn-outline-primary">
+                            <i class="material-symbols-rounded me-1" style="font-size:16px;">open_in_new</i>View All
+                        </a>
                     </div>
                     <div class="card-body p-3">
                         @forelse($pendingHomework as $submission)
@@ -211,9 +214,16 @@
                                     </p>
                                 </div>
                             </div>
-                            <span class="badge bg-gradient-{{ $submission->homework->due_date->isPast() ? 'danger' : 'warning' }}">
-                                {{ $submission->homework->due_date->isPast() ? 'Overdue' : 'Pending' }}
-                            </span>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-gradient-{{ $submission->homework->due_date->isPast() ? 'danger' : 'warning' }}">
+                                    {{ $submission->homework->due_date->isPast() ? 'Overdue' : 'Pending' }}
+                                </span>
+                                <a href="{{ route('admin.student.homework.show', $submission->submission_id) }}"
+                                    class="btn btn-sm btn-primary">
+                                    <i class="material-symbols-rounded" style="font-size:14px;">edit</i>
+                                    {{ $submission->status === 'in_progress' ? 'Continue' : 'Start' }}
+                                </a>
+                            </div>
                         </div>
                         @empty
                         <p class="text-center text-muted py-4">No pending homework - Great job!</p>

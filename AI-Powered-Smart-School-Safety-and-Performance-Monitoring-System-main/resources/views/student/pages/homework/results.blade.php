@@ -267,7 +267,7 @@
         <!-- Back Button -->
         <div class="row mt-4">
             <div class="col-12 text-center">
-                <a href="{{ route('student.homework.index') }}" class="btn btn-primary">
+                <a href="{{ route('admin.student.homework.index') }}" class="btn btn-primary">
                     <i class="material-symbols-rounded me-1">arrow_back</i>Back to Homework List
                 </a>
             </div>

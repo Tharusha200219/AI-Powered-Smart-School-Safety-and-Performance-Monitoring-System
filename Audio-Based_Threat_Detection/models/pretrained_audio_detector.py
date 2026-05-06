@@ -347,3 +347,4 @@ class PANNsAudioDetector:
                 np.linspace(0, len(audio) - 1, n_new),
                 np.arange(len(audio)), audio,
             ).astype(np.float32)
+
