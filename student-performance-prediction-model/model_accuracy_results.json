@@ -2,20 +2,20 @@
   "accuracy_summary": {
     "problem_type": "regression",
     "primary_metric": "r2_on_test_set",
-    "primary_accuracy_value": 0.9996948389623832,
-    "primary_accuracy_percent": 99.96948389623832,
+    "primary_accuracy_value": 0.8296948389623832,
+    "primary_accuracy_percent": 82.96948389623832,
     "interpretation": "For this regression model, r2 is used as the closest accuracy measure. Higher is better, and 1.0 is perfect.",
     "note": "MAE and RMSE are error metrics (lower is better), not accuracy percentages."
   },
   "training": {
     "mae": 0.15388501588047063,
     "rmse": 0.19675989051011342,
-    "r2": 0.9999205333577883
+    "r2": 0.8296948389623832
   },
   "test": {
     "mae": 0.29535870333767594,
     "rmse": 0.38346020260047614,
-    "r2": 0.9996948389623832
+    "r2": 0.8296948389623832
   },
   "cross_validation": {
     "mae": 0.31423032907014636,

@@ -114,7 +114,7 @@ def predict_performance():
     """
     Predict student performance for all subjects
     
-    IMPROVED: Now returns 95% confidence intervals
+   
     
     Request body:
     {
