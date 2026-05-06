@@ -129,7 +129,7 @@ class HomeworkController extends Controller
             $request->merge(['questions' => $questionsData]);
         }
 
-        // If no questions provided, create a default structure
+        // If no questions provided, reject
         if (empty($questionsData)) {
             return redirect()
                 ->back()
@@ -156,9 +156,111 @@ class HomeworkController extends Controller
 
         $homework = Homework::create($validated);
 
+        // ✅ Fix 1: Auto-create HomeworkSubmission records for all relevant students
+        $assigned = $this->createSubmissionsForHomework($homework);
+
         return redirect()
             ->route('admin.management.homework.show', $homework->homework_id)
-            ->with('success', 'Homework created successfully');
+            ->with('success', "Homework created successfully and assigned to {$assigned} student(s).");
+    }
+
+    /**
+     * Auto-generate questions via AI AND immediately save the homework with submissions.
+     * Called from the dashboard "Auto-Generate Questions" modal.
+     */
+    public function generateAndStore(Request $request): JsonResponse
+    {
+        set_time_limit(300);
+
+        $validated = $request->validate([
+            'title'           => 'required|string|max:255',
+            'subject_id'      => 'required|exists:subjects,id',
+            'class_id'        => 'nullable|exists:school_classes,id',
+            'grade_level'     => 'required|integer|min:1|max:13',
+            'due_date'        => 'required|date|after:today',
+            'lesson_id'       => 'required|exists:lessons,lesson_id',
+            'description'     => 'nullable|string',
+            'num_mcq'         => 'integer|min:0|max:10',
+            'num_short'       => 'integer|min:0|max:10',
+            'num_descriptive' => 'integer|min:0|max:5',
+        ]);
+
+        $lesson = Lesson::find($validated['lesson_id']);
+
+        try {
+            $questions = $this->aiService->generateQuestions(
+                $lesson->getAIFormatted(),
+                $validated['num_mcq'] ?? 2,
+                $validated['num_short'] ?? 2,
+                $validated['num_descriptive'] ?? 1
+            );
+
+            if (empty($questions)) {
+                return response()->json(['success' => false, 'error' => 'AI returned no questions. Try again.'], 422);
+            }
+
+            $homework = Homework::create([
+                'title'         => $validated['title'],
+                'subject_id'    => $validated['subject_id'],
+                'class_id'      => $validated['class_id'] ?? null,
+                'lesson_id'     => $validated['lesson_id'],
+                'grade_level'   => $validated['grade_level'],
+                'description'   => $validated['description'] ?? null,
+                'due_date'      => $validated['due_date'],
+                'questions'     => $questions,
+                'total_marks'   => collect($questions)->sum('marks'),
+                'assigned_by'   => auth()->user()->teacher->teacher_id ?? 1,
+                'assigned_date' => now(),
+                'status'        => 'active',
+                'academic_year' => Homework::getCurrentAcademicYear(),
+            ]);
+
+            // Auto-assign to all relevant students
+            $assigned = $this->createSubmissionsForHomework($homework);
+
+            return response()->json([
+                'success'      => true,
+                'message'      => count($questions) . ' questions generated. Homework assigned to ' . $assigned . ' student(s).',
+                'homework_id'  => $homework->homework_id,
+                'redirect_url' => route('admin.management.homework.show', $homework->homework_id),
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('generateAndStore error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Create HomeworkSubmission records for all active students matching the homework's
+     * grade_level (and optionally class_id). Returns the count of records created.
+     */
+    private function createSubmissionsForHomework(Homework $homework): int
+    {
+        $query = Student::where('is_active', true)
+            ->where('grade_level', $homework->grade_level);
+
+        if ($homework->class_id) {
+            $query->where('class_id', $homework->class_id);
+        }
+
+        $students = $query->get();
+        $created  = 0;
+
+        foreach ($students as $student) {
+            HomeworkSubmission::firstOrCreate(
+                [
+                    'homework_id' => $homework->homework_id,
+                    'student_id'  => $student->student_id,
+                ],
+                [
+                    'answers' => [],
+                    'status'  => 'assigned',
+                ]
+            );
+            $created++;
+        }
+
+        return $created;
     }
 
     public function show(Homework $homework): View
@@ -303,19 +405,8 @@ class HomeworkController extends Controller
                     'academic_year' => Homework::getCurrentAcademicYear(),
                 ]);
 
-                // Auto-assign to all students in the class
-                $students = \App\Models\Student::where('class_id', $validated['class_id'])
-                    ->where('is_active', true)
-                    ->get();
-
-                foreach ($students as $student) {
-                    HomeworkSubmission::create([
-                        'homework_id' => $homework->homework_id,
-                        'student_id' => $student->student_id,
-                        'status' => 'assigned',
-                        'answers' => [],
-                    ]);
-                }
+                // Auto-assign to all relevant students using the shared helper
+                $this->createSubmissionsForHomework($homework);
 
                 $createdHomework[] = $homework;
             }

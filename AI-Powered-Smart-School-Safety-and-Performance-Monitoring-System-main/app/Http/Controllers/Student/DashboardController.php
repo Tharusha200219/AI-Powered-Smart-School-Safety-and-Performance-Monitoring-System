@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Student;
 
+use App\Enums\UserType;
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\HomeworkSubmission;
@@ -9,7 +10,6 @@ use App\Models\Mark;
 use App\Models\Student;
 use App\Models\Timetable;
 use Carbon\Carbon;
-use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -21,9 +21,15 @@ class DashboardController extends Controller
         $this->middleware('auth');
     }
 
-    public function index(): View
+    public function index()
     {
         $user = Auth::user();
+
+        // Non-student users should use the admin dashboard
+        if ($user->usertype !== UserType::STUDENT) {
+            return redirect()->route('admin.dashboard.index');
+        }
+
         $student = Student::where('user_id', $user->id)->first();
 
         if (!$student) {

@@ -220,6 +220,16 @@
     </div>
 </main>
 
+{{-- Hidden element carrying all PHP data safely into JS via data-* attributes --}}
+<div id="hw-attempt-data"
+    data-submission-id="{{ $submission->submission_id }}"
+    data-total-questions="{{ count($questions) }}"
+    data-submit-url="{{ route('admin.student.homework.submit', $submission->submission_id) }}"
+    data-save-url="{{ route('admin.student.homework.save-progress', $submission->submission_id) }}"
+    data-csrf="{{ csrf_token() }}"
+    data-saved-answers="{{ htmlspecialchars(json_encode($submission->answers ?? []), ENT_QUOTES, 'UTF-8') }}"
+    hidden></div>
+
 <!-- Confirm Submit Modal -->
 <div class="modal fade" id="confirmSubmitModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
@@ -247,13 +257,6 @@
 </div>
 @endsection
 
-@section('js')
-<script>
-    const submissionId = {{ $submission->submission_id }};
-    const totalQuestions = {{ count($questions) }};
-    const submitUrl = "{{ route('student.homework.submit', $submission->submission_id) }}";
-    const saveUrl = "{{ route('student.homework.save-progress', $submission->submission_id) }}";
-    const csrfToken = "{{ csrf_token() }}";
-</script>
+@push('scripts')
 @vite('resources/js/student/homework-attempt.js')
-@endsection
+@endpush

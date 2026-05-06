@@ -70,4 +70,14 @@ return [
             getSideBarElement('settings', 'Settings', 'admin.setup.settings.index'),
         ],
     ],
+    [
+        'name' => 'Student Portal',
+        'items' => [
+            getSideBarElement('dashboard', 'My Dashboard', 'admin.student.dashboard.index'),
+            getSideBarElement('assignment', 'My Homework', 'admin.student.homework.index'),
+            getSideBarElement('schedule', 'My Timetable', 'admin.timetable-viewer.index'),
+            getSideBarElement('grade', 'My Marks', 'admin.management.marks.index'),
+            getSideBarElement('fact_check', 'My Attendance', 'admin.management.attendance.dashboard'),
+        ],
+    ],
 ];

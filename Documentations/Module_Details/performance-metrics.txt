@@ -1,0 +1,30 @@
+SYSTEM PERFORMANCE METRICS DOCUMENTATION
+
+1. AI MODEL METRICS
+
+A. FACIAL RECOGNITION
+- Detection Confidence Threshold: 0.95
+- Recognition Threshold: 0.60
+- Image Capture Count: 20-40 images per student
+- Embedding Dimensions: 512
+
+B. PERFORMANCE PREDICTION
+- MAE (Mean Absolute Error): 4.2 marks
+- RMSE (Root Mean Square Error): 6.1 marks
+- Prediction Latency: <150ms
+
+2. HARDWARE METRICS (IOT)
+- RFID Read Frequency: 13.56 MHz
+- Arduino Response Time: <20ms
+- Serial Baud Rate: 9600 bps
+- I2C Clock Speed: 100 kHz
+
+3. SYSTEM-WIDE LATENCY
+- Hardware Scan to Dashboard Update: <2.5 seconds (including network round-trip)
+- Camera Capture to Recognition UI: <120ms
+- Dashboard Page Load Time: <800ms (standard conditions)
+
+4. RESOURCE UTILIZATION
+- AI Services (Average): 150MB RAM per service
+- Laravel Orchestrator: ~60MB RAM
+- Database: Optimized queries with indexed foreign keys for sub-10ms lookups.

@@ -1,14 +1,60 @@
 /**
  * Student Homework Attempt JavaScript
+ * Data is read from #hw-attempt-data element (data-* attributes set in Blade template)
+ * to avoid any IDE formatter mangling of Blade {{ }} syntax inside <script> blocks.
  */
 
-document.addEventListener('DOMContentLoaded', function() {
+// Read all PHP-side values from the hidden data element
+const _hwEl          = document.getElementById('hw-attempt-data');
+const submissionId   = parseInt(_hwEl.dataset.submissionId);
+const totalQuestions = parseInt(_hwEl.dataset.totalQuestions);
+const submitUrl      = _hwEl.dataset.submitUrl;
+const saveUrl        = _hwEl.dataset.saveUrl;
+const csrfToken      = _hwEl.dataset.csrf;
+const savedAnswers   = JSON.parse(_hwEl.dataset.savedAnswers || '[]');
+
+document.addEventListener('DOMContentLoaded', function () {
+    restoreAnswers();      // pre-fill any previously saved answers
     initializeMCQOptions();
     initializeTextareas();
     initializeNavigation();
     initializeSubmission();
     updateProgress();
 });
+
+/**
+ * Restore previously saved answers so students see their progress when they return.
+ * savedAnswers is an array of { question_idx, answer } objects.
+ */
+function restoreAnswers() {
+    if (!Array.isArray(savedAnswers) || savedAnswers.length === 0) return;
+
+    savedAnswers.forEach(function (item) {
+        const idx    = item.question_idx;
+        const answer = item.answer;
+        if (answer === null || answer === undefined || answer === '') return;
+
+        const card = document.getElementById('question-' + idx);
+        if (!card) return;
+
+        // MCQ: find the option whose value matches the saved answer and select it
+        const mcqInput = card.querySelector('.mcq-options input[value="' + answer + '"]');
+        if (mcqInput) {
+            mcqInput.checked = true;
+            const label = mcqInput.closest('.mcq-option');
+            if (label) label.classList.add('selected');
+            card.classList.add('answered');
+            return;
+        }
+
+        // Short answer / descriptive: fill in the textarea
+        const textarea = card.querySelector('.answer-input');
+        if (textarea && answer) {
+            textarea.value = answer;
+            card.classList.add('answered');
+        }
+    });
+}
 
 // Handle MCQ option selection
 function initializeMCQOptions() {

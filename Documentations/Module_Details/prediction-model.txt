@@ -1,0 +1,23 @@
+STUDENT PERFORMANCE PREDICTION MODEL DOCUMENTATION
+
+1. ALGORITHM
+- Model: XGBoost (Extreme Gradient Boosting)
+- Implementation: Python (Scikit-learn)
+
+2. INPUT FEATURES
+- Academic History: Marks from Term 1 and Term 2.
+- Attendance: Current attendance percentage.
+- Momentum: Calculation of improvement or decline between terms.
+
+3. PREDICTION OUTPUTS
+- Forecasted Score: Predicted marks for Term 3.
+- Confidence Interval: A 95% range indicating the prediction's reliability.
+- Risk Level: Categorization as 'High Performant', 'Stable', or 'At-Risk'.
+
+4. FEATURE ENGINEERING
+- Synthetic Data: The model was trained on thousands of synthetic student profiles to learn common performance patterns.
+- Temporal Weighting: More recent performance (Term 2) is given slightly higher weight than Term 1.
+
+5. INTEGRATION
+- Flask API: The model is deployed as a standalone Flask service.
+- Laravel Controller: StudentController calls the API when an admin views a student's profile, displaying the prediction trend graph in real-time.

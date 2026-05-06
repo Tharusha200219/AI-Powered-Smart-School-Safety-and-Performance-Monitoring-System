@@ -1,0 +1,23 @@
+RFID WRISTBAND ATTENDANCE MODULE DOCUMENTATION
+
+1. HARDWARE COMPONENTS
+- Controller: Arduino Uno R3
+- RFID Reader: MFRC522 (RC522) 13.56 MHz
+- Display: 16x2 I2C LCD Module
+- Feedback: RGB LED (Common Cathode)
+
+2. SYSTEM ARCHITECTURE (IOT)
+- Arduino Firmware: Written in C++, handles SPI communication with the RFID reader and I2C with the LCD.
+- Serial Bridge: A Python script (rfid_bridge.py) that monitors the USB/Serial port and forwards data to the Laravel API.
+
+3. WORKFLOW
+1. Student presents the RFID wristband to the reader.
+2. Arduino reads the unique Tag ID (UID).
+3. UID is sent via Serial (JSON format) to the Python Bridge.
+4. Python Bridge sends a POST request to /api/attendance/rfid.
+5. LCD displays "Welcome [Student Name]" or "Access Denied".
+6. RGB LED flashes Green for success or Red for failure.
+
+4. SAFETY & SECURITY
+- Data Privacy: RFID tags only store a unique ID, not student personal data.
+- Redundancy: Serves as a reliable backup when lighting conditions are poor for facial recognition.

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Student;
 
+use App\Enums\UserType;
 use App\Http\Controllers\Controller;
 use App\Models\Homework;
 use App\Models\HomeworkSubmission;
@@ -25,10 +26,14 @@ class HomeworkController extends Controller
     }
 
     /**
-     * Get the current student
+     * Get the current student, or abort if user is not a student
      */
     private function getStudent(): ?Student
     {
+        $user = Auth::user();
+        if ($user->usertype !== UserType::STUDENT) {
+            abort(403, 'This section is only accessible to students.');
+        }
         return Student::where('user_id', Auth::id())->first();
     }
 
@@ -142,9 +147,10 @@ class HomeworkController extends Controller
         }
 
         $validated = $request->validate([
-            'answers' => 'required|array',
+            'answers'               => 'required|array',
             'answers.*.question_idx' => 'required|integer',
-            'answers.*.answer' => 'required|string',
+            // nullable: students may leave a question blank — still allow submission
+            'answers.*.answer'      => 'nullable|string',
         ]);
 
         // Save answers and mark as submitted
@@ -160,7 +166,7 @@ class HomeworkController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Homework submitted successfully!',
-            'redirect' => route('student.homework.results', $submission->submission_id),
+            'redirect' => route('admin.student.homework.results', $submission->submission_id),
         ]);
     }
 

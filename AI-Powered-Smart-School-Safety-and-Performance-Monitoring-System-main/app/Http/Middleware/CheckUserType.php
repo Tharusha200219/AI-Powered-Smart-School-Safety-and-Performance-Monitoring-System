@@ -44,10 +44,10 @@ class CheckUserType
     {
         // Handle both enum and integer types
         $route = match (true) {
-            $userType === UserType::STUDENT || $userType === UserType::STUDENT->value => '/student/dashboard',
-            $userType === UserType::TEACHER || $userType === UserType::TEACHER->value => '/teacher/dashboard',
-            $userType === UserType::PARENT || $userType === UserType::PARENT->value => '/parent/dashboard',
-            $userType === UserType::SECURITY || $userType === UserType::SECURITY->value => '/security/dashboard',
+            $userType === UserType::STUDENT || $userType === UserType::STUDENT->value => '/admin/student/dashboard',
+            $userType === UserType::TEACHER || $userType === UserType::TEACHER->value => '/admin/dashboard',
+            $userType === UserType::PARENT || $userType === UserType::PARENT->value => '/admin/dashboard',
+            $userType === UserType::SECURITY || $userType === UserType::SECURITY->value => '/admin/dashboard',
             $userType === UserType::ADMIN || $userType === UserType::ADMIN->value => '/admin/dashboard',
             $userType === UserType::USER || $userType === UserType::USER->value => '/admin/dashboard',
             default => '/admin/dashboard',

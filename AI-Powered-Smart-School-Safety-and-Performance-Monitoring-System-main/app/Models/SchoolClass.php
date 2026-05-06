@@ -22,11 +22,19 @@ class SchoolClass extends Model
         'capacity',
         'description',
         'status',
+        'camera_ip',
+        'camera_port',
+        'camera_off',
+        'audio_ip',
+        'audio_port',
+        'mic_off',
     ];
 
     protected $casts = [
-        'capacity' => 'integer',
+        'capacity'   => 'integer',
         'academic_year' => 'string',
+        'camera_off' => 'boolean',
+        'mic_off'    => 'boolean',
     ];
 
     /**

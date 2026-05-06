@@ -55,10 +55,10 @@ class LoginController extends Controller
 
         // Redirect based on user type (usertype is cast to UserType enum)
         return match ($user->usertype) {
-            UserType::STUDENT => '/student/dashboard',
-            UserType::TEACHER => '/teacher/dashboard',
-            UserType::PARENT => '/parent/dashboard',
-            UserType::SECURITY => '/security/dashboard',
+            UserType::STUDENT => '/admin/student/dashboard',
+            UserType::TEACHER => '/admin/dashboard',
+            UserType::PARENT => '/admin/dashboard',
+            UserType::SECURITY => '/admin/dashboard',
             UserType::ADMIN, UserType::USER => '/admin/dashboard',
             default => '/admin/dashboard',
         };
